@@ -10,9 +10,9 @@ const getVersionMeta = (version: string) => {
   if (!match) return {};
   const meta = match[0].split(".");
   return {
-    major: meta[0],
-    minor: meta[1],
-    patch: meta[2]
+    major: Number(meta[0]),
+    minor: Number(meta[1]),
+    patch: Number(meta[2])
   };
 };
 
