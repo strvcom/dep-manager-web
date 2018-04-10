@@ -4,6 +4,7 @@ import { ScrollSync } from "react-virtualized";
 
 import "./styles.example.css";
 
+import Loading from "../Loading";
 import { Wrapper } from "./styled";
 import LeftContainer from "./LeftContainer";
 import RightContainer from "./RightContainer";
@@ -12,7 +13,7 @@ export default class GridExample extends React.PureComponent<*, *> {
   render() {
     const { data: { groups, libs, repos } } = this.props;
     if (!repos) {
-      return <div>Loading</div>;
+      return <Loading />;
     }
     if (repos.length < 2) {
       return <div>Empty</div>;

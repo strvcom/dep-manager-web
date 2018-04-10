@@ -5,6 +5,7 @@ import { Query } from "react-apollo";
 
 import { ME_QUERY } from "./data/queries";
 import Login from "./Login";
+import Loading from "./components/Loading";
 import Header from "./components/Header";
 import DependencyTable from "./containers/DependencyTable";
 
@@ -27,7 +28,7 @@ const App = ({ token, setToken }: { token: String, setToken: Function }) => {
         }
 
         if (loading) {
-          return <p>Loading...</p>;
+          return <Loading />;
         }
 
         if (viewer) {
