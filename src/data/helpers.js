@@ -123,28 +123,33 @@ const makeRepoList = libs => {
 
   const result = repoNames.reduce(
     (acc, repoName) => {
-      acc.repoNames.push(repoName);
-      acc.versions.push(
-        libs.reduce((a, lib) => {
-          const version = repositoryInfo[repoName][lib.name] || "-";
-          const versionMeta = getVersionMeta(version);
-          let status = version === "-" ? "notUsed" : "ok";
-          if (versionMeta.patch < usedLibraryList[lib.name].versionMeta.patch) {
-            status = "patch";
-          }
-          if (versionMeta.minor < usedLibraryList[lib.name].versionMeta.minor) {
-            status = "minor";
-          }
-          if (versionMeta.major < usedLibraryList[lib.name].versionMeta.major) {
-            status = "major";
-          }
+      let usedLibraryCount = 0;
 
-          return a.concat({
-            version,
-            status
-          });
-        }, [])
-      );
+      const versions = libs.reduce((a, lib) => {
+        const libraryVersion = repositoryInfo[repoName][lib.name];
+        if (libraryVersion) usedLibraryCount++;
+        const version = libraryVersion || "-";
+        const versionMeta = getVersionMeta(version);
+        let status = version === "-" ? "notUsed" : "ok";
+        if (versionMeta.patch < usedLibraryList[lib.name].versionMeta.patch) {
+          status = "patch";
+        }
+        if (versionMeta.minor < usedLibraryList[lib.name].versionMeta.minor) {
+          status = "minor";
+        }
+        if (versionMeta.major < usedLibraryList[lib.name].versionMeta.major) {
+          status = "major";
+        }
+
+        return a.concat({
+          version,
+          status
+        });
+      }, []);
+
+      acc.repoNames.push({ name: repoName, usedLibraryCount });
+      acc.versions.push(versions);
+
       return acc;
     },
     { repoNames: [], versions: [] }

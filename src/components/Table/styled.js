@@ -71,3 +71,7 @@ export const VersionInfo = styled.div`
     }
   }};
 `;
+
+export const LibCount = styled.span`
+  font-size: 12px;
+`;
