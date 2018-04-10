@@ -4,7 +4,7 @@ import { withState } from "recompose";
 import { Query } from "react-apollo";
 
 import { ME_QUERY } from "./data/queries";
-import Login from "./Login";
+import Login from "./containers/Login";
 import Loading from "./components/Loading";
 import Header from "./components/Header";
 import DependencyTable from "./containers/DependencyTable";
