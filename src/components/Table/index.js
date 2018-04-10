@@ -12,6 +12,9 @@ export default class GridExample extends React.PureComponent<*, *> {
   render() {
     const { data: { groups, libs, repos } } = this.props;
     if (!repos) {
+      return <div>Loading</div>;
+    }
+    if (repos.length < 2) {
       return <div>Empty</div>;
     }
     return (

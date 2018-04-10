@@ -2,8 +2,8 @@
 import axios from "axios";
 import groupInfo from "./groups";
 
-const usedLibraryList = {};
-const repositoryInfo = {};
+let usedLibraryList = {};
+let repositoryInfo = {};
 
 const getVersionMeta = (version: string) => {
   const match = version.match(/[0-9]+\.[0-9]+(\.[0-9]+)?/);
@@ -103,7 +103,10 @@ const makeLibraryList = () => {
 
   groupInfo.forEach(group => {
     group.libs.forEach(libName => {
-      const version = usedLibraryList[libName].version || "-";
+      const usedLibraryInfo = usedLibraryList[libName];
+      if (!usedLibraryInfo) return;
+
+      const version = usedLibraryInfo.version || "-";
       addedLibs[libName] = true;
       libs.push({ name: libName, version });
     });
@@ -151,6 +154,8 @@ const makeRepoList = libs => {
 };
 
 const refineData = async (data: any) => {
+  usedLibraryList = {};
+  repositoryInfo = {};
   const { search } = data;
   if (!search) return {};
 
@@ -160,6 +165,7 @@ const refineData = async (data: any) => {
     const packageJSON = parsePackageJSON(node.object);
     createUsedLibraryList(node.name, packageJSON);
   }
+
   await getLibraryLatestVersion();
 
   const groups = makeGroupList();
