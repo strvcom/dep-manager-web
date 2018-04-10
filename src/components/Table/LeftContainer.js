@@ -12,13 +12,14 @@ type Props = {|
 |};
 
 const LeftContainer = ({ repoNames, scrollTop }: Props) => {
+  const columnWidth = 200;
   return (
     <LeftContainerWrapper>
       <HeaderGrid
         cellRenderer={LeftHeaderCell}
         columnCount={1}
-        width={200}
-        columnWidth={200}
+        width={columnWidth}
+        columnWidth={columnWidth}
         rowCount={3}
         height={120}
         rowHeight={40}
@@ -28,8 +29,8 @@ const LeftContainer = ({ repoNames, scrollTop }: Props) => {
           <LeftGrid
             cellRenderer={LeftBodyCell(repoNames)}
             columnCount={1}
-            width={200}
-            columnWidth={200}
+            width={columnWidth}
+            columnWidth={columnWidth}
             rowCount={repoNames.length}
             height={height - scrollbarSize()}
             rowHeight={40}

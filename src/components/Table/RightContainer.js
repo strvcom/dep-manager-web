@@ -20,6 +20,7 @@ const RightContainer = ({
   scrollLeft,
   onScroll
 }: Props) => {
+  const columnWidth = 120;
   return (
     <RightContainerWrapper>
       <AutoSizer>
@@ -29,7 +30,7 @@ const RightContainer = ({
               cellRenderer={RightHeaderCell(groups, libs)}
               columnCount={libs.length}
               width={width - scrollbarSize()}
-              columnWidth={75}
+              columnWidth={columnWidth}
               rowCount={3}
               height={120}
               rowHeight={40}
@@ -40,7 +41,7 @@ const RightContainer = ({
               cellRenderer={RightBodyCell(versions)}
               columnCount={libs.length}
               width={width}
-              columnWidth={75}
+              columnWidth={columnWidth}
               rowCount={versions.length}
               height={height}
               rowHeight={40}

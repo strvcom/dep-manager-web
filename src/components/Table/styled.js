@@ -54,6 +54,8 @@ export const VersionInfo = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
+
+  ${({ greyBg }) => greyBg && "background-color: rgba(0, 0, 0, 0.1)"};
   color: ${({ status }) => {
     switch (status) {
       case "ok":

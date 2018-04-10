@@ -27,8 +27,13 @@ class DependencyTable extends Component<*, *> {
     filteredData: null
   };
 
+  usernameInput = null;
+
   componentDidMount = () => {
     this.handleGetNewData();
+    if (this.usernameInput) {
+      this.usernameInput.focus();
+    }
   };
 
   handleInputChange = (key: string) => ({
@@ -108,6 +113,9 @@ class DependencyTable extends Component<*, *> {
           <Form onSubmit={this.handleGetNewData}>
             <label>username: </label>
             <input
+              ref={component => {
+                this.usernameInput = component;
+              }}
               value={user}
               placeholder="username"
               onChange={this.handleInputChange("user")}
