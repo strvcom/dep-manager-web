@@ -2,7 +2,7 @@
 const groups = [
   {
     label: "Core",
-    libs: ["react", "react-dom"]
+    libs: ["react", "react-dom", "next"]
   },
   {
     label: "State",

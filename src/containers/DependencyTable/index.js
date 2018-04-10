@@ -1,9 +1,7 @@
 // @flow
 import React, { Component } from "react";
 
-import client from "../../apolloClient";
-import { REPOSITORIES_QUERY } from "../../data/queries";
-import refineData from "../../data/helpers";
+import { getRepositories } from "../../data/apis";
 
 import Table from "../../components/Table";
 
@@ -11,18 +9,9 @@ class DependencyTable extends Component<*, *> {
   state = { data: {} };
 
   componentDidMount = () => {
-    client
-      .query({
-        query: REPOSITORIES_QUERY,
-        variables: {
-          query: `user:strvcom fork:true`
-        }
-      })
-      .then(({ data }) => {
-        refineData(data).then(refined => {
-          this.setState({ data: refined });
-        });
-      });
+    getRepositories(`user:strvcom fork:true`).then(data => {
+      this.setState(() => ({ data }));
+    });
   };
 
   render() {
