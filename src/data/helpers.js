@@ -82,24 +82,21 @@ const getLibraryLatestVersion = async () => {
 };
 
 const makeGroupList = () => {
-  return groupInfo.reduce(
-    (acc, value) => {
-      value.libs.forEach((lib, index) => {
-        if (index === 0) {
-          acc.push(value.label);
-        } else {
-          acc.push(undefined);
-        }
-      });
-      return acc;
-    },
-    ["Groups"]
-  );
+  return groupInfo.reduce((acc, value) => {
+    value.libs.forEach((lib, index) => {
+      if (index === 0) {
+        acc.push(value.label);
+      } else {
+        acc.push(undefined);
+      }
+    });
+    return acc;
+  }, []);
 };
 
 const makeLibraryList = () => {
   const addedLibs = {};
-  const libs = [{ name: "Libraries", version: "latest" }];
+  const libs = [];
 
   groupInfo.forEach(group => {
     group.libs.forEach(libName => {
@@ -123,34 +120,36 @@ const makeLibraryList = () => {
 
 const makeRepoList = libs => {
   const repoNames = Object.keys(repositoryInfo);
-  const r = repoNames.map(repoName => {
-    return libs.reduce(
-      (acc, lib, index) => {
-        if (index === 0) {
-          return acc;
-        }
-        const version = repositoryInfo[repoName][lib.name] || "-";
-        const versionMeta = getVersionMeta(version);
-        let status = version === "-" ? "notUsed" : "ok";
-        if (versionMeta.patch < usedLibraryList[lib.name].versionMeta.patch) {
-          status = "patch";
-        }
-        if (versionMeta.minor < usedLibraryList[lib.name].versionMeta.minor) {
-          status = "minor";
-        }
-        if (versionMeta.major < usedLibraryList[lib.name].versionMeta.major) {
-          status = "major";
-        }
 
-        return acc.concat({
-          version,
-          status
-        });
-      },
-      [repoName]
-    );
-  });
-  return r;
+  const result = repoNames.reduce(
+    (acc, repoName) => {
+      acc.repoNames.push(repoName);
+      acc.versions.push(
+        libs.reduce((a, lib) => {
+          const version = repositoryInfo[repoName][lib.name] || "-";
+          const versionMeta = getVersionMeta(version);
+          let status = version === "-" ? "notUsed" : "ok";
+          if (versionMeta.patch < usedLibraryList[lib.name].versionMeta.patch) {
+            status = "patch";
+          }
+          if (versionMeta.minor < usedLibraryList[lib.name].versionMeta.minor) {
+            status = "minor";
+          }
+          if (versionMeta.major < usedLibraryList[lib.name].versionMeta.major) {
+            status = "major";
+          }
+
+          return a.concat({
+            version,
+            status
+          });
+        }, [])
+      );
+      return acc;
+    },
+    { repoNames: [], versions: [] }
+  );
+  return result;
 };
 
 const refineData = async (data: any) => {
@@ -175,10 +174,10 @@ const refineData = async (data: any) => {
   const refined = {
     groups,
     libs,
-    repos
+    repoNames: repos.repoNames,
+    versions: repos.versions
   };
 
-  // console.log("refined", refined);
   return refined;
 };
 

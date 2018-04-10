@@ -7,9 +7,6 @@ const RightHeaderCell = (groups, libs) => ({
   rowIndex,
   style
 }) => {
-  if (columnIndex < 1) {
-    return;
-  }
   if (rowIndex === 0) {
     return (
       <Cell key={key} style={style}>

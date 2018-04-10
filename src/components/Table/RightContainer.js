@@ -8,7 +8,7 @@ import { RightHeaderCell, RightBodyCell } from "./Cells";
 type Props = {|
   groups: [],
   libs: [],
-  repos: [],
+  versions: [],
   scrollLeft: number,
   onScroll: Function
 |};
@@ -16,7 +16,7 @@ type Props = {|
 const RightContainer = ({
   groups,
   libs,
-  repos,
+  versions,
   scrollLeft,
   onScroll
 }: Props) => {
@@ -37,11 +37,11 @@ const RightContainer = ({
               overscanColumnCount={0}
             />
             <BodyGrid
-              cellRenderer={RightBodyCell(repos)}
+              cellRenderer={RightBodyCell(versions)}
               columnCount={libs.length}
               width={width}
               columnWidth={75}
-              rowCount={repos.length}
+              rowCount={versions.length}
               height={height}
               rowHeight={40}
               onScroll={onScroll}

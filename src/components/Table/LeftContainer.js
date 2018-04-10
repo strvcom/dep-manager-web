@@ -7,11 +7,11 @@ import { LeftContainerWrapper, HeaderGrid, LeftGrid } from "./styled";
 import { LeftHeaderCell, LeftBodyCell } from "./Cells";
 
 type Props = {|
-  repos: [],
+  repoNames: [],
   scrollTop: number
 |};
 
-const LeftContainer = ({ repos, scrollTop }: Props) => {
+const LeftContainer = ({ repoNames, scrollTop }: Props) => {
   return (
     <LeftContainerWrapper>
       <HeaderGrid
@@ -26,11 +26,11 @@ const LeftContainer = ({ repos, scrollTop }: Props) => {
       <AutoSizer disableWidth>
         {({ height }) => (
           <LeftGrid
-            cellRenderer={LeftBodyCell(repos)}
+            cellRenderer={LeftBodyCell(repoNames)}
             columnCount={1}
             width={200}
             columnWidth={200}
-            rowCount={repos.length}
+            rowCount={repoNames.length}
             height={height - scrollbarSize()}
             rowHeight={40}
             scrollTop={scrollTop}

@@ -1,11 +1,8 @@
 import React from "react";
 import { VersionInfo } from "../styled";
 
-const RightBodyCell = repos => ({ columnIndex, key, rowIndex, style }) => {
-  if (columnIndex < 1) {
-    return;
-  }
-  const d = repos[rowIndex][columnIndex];
+const RightBodyCell = versions => ({ columnIndex, key, rowIndex, style }) => {
+  const d = versions[rowIndex][columnIndex];
   if (d) {
     return (
       <VersionInfo status={d.status} key={key} style={style}>
