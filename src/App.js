@@ -1,5 +1,5 @@
 // @flow
-import React from "react";
+import React, { Fragment } from "react";
 import { withState } from "recompose";
 import { Query } from "react-apollo";
 
@@ -15,28 +15,30 @@ const App = ({ token, setToken }: { token: String, setToken: Function }) => {
   return (
     <Query query={ME_QUERY} fetchPolicy="network-only">
       {({ client, loading, error, data: { viewer } = {} }) => {
-        if (error) {
+        const clearState = () => {
+          localStorage.clear();
+          client.resetStore();
           setToken(null);
+        };
+
+        if (error) {
+          clearState();
           return <Login setToken={setToken} />;
         }
+
         if (loading) {
           return <p>Loading...</p>;
         }
+
         if (viewer) {
           return (
-            <div>
-              <Header
-                viewer={viewer}
-                onLogout={() => {
-                  localStorage.clear();
-                  client.resetStore();
-                  setToken(null);
-                }}
-              />
+            <Fragment>
+              <Header viewer={viewer} onLogout={clearState} />
               <DependencyTable />
-            </div>
+            </Fragment>
           );
         }
+
         return <Login setToken={setToken} />;
       }}
     </Query>
