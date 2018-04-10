@@ -3,6 +3,7 @@ import React, { Component, Fragment } from "react";
 import styled from "styled-components";
 
 import { getRepositories } from "../../data/apis";
+import groups from "../../data/groups";
 import Table from "../../components/Table";
 import Loading from "../../components/Loading";
 
@@ -28,6 +29,8 @@ class DependencyTable extends Component<*, *> {
   };
 
   usernameInput = null;
+
+  groupOptions = groups.map(group => group.label);
 
   componentDidMount = () => {
     this.handleGetNewData();
@@ -106,9 +109,11 @@ class DependencyTable extends Component<*, *> {
           <label>Filter by group</label>
           <select onChange={this.handleFilterChange} value={filter}>
             <option value="All">All</option>
-            <option value="Core">Core</option>
-            <option value="State">State</option>
-            <option value="Etc">Etc</option>
+            {this.groupOptions.map((option, index) => (
+              <option key={index} value={option}>
+                {option}
+              </option>
+            ))}
           </select>
           <Form onSubmit={this.handleGetNewData}>
             <label>username: </label>

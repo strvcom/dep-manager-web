@@ -9,8 +9,28 @@ const groups = [
     libs: ["redux", "mobx"]
   },
   {
-    label: "Etc",
+    label: "Styles",
     libs: ["styled-components"]
+  },
+  {
+    label: "Build tools",
+    libs: ["webpack", "babel-core"]
+  },
+  {
+    label: "Test tools",
+    libs: ["jest", "mocha", "chai"]
+  },
+  {
+    label: "Etc",
+    libs: [
+      "react-router",
+      "react-router-redux",
+      "history",
+      "react-helmet",
+      "date-fns",
+      "formik",
+      "immutable"
+    ]
   }
 ];
 
