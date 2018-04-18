@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ApolloProvider } from "react-apollo";
-import "./index.css";
+import "./globalStyles";
 
 import App from "./App";
 import registerServiceWorker from "./registerServiceWorker";
