@@ -2,12 +2,15 @@
 import React, { Fragment } from "react";
 import { withState } from "recompose";
 import { Query } from "react-apollo";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import { ME_QUERY } from "./data/queries";
 import Login from "./containers/Login";
 import Loading from "./components/Loading";
-import Header from "./components/Header";
-import DependencyTable from "./containers/DependencyTable";
+import Nav from "./components/Nav";
+import SubNav from "./components/SubNav";
+// import Header from "./components/Header";
+// import DependencyTable from "./containers/DependencyTable";
 
 const App = ({ token, setToken }: { token: String, setToken: Function }) => {
   if (!token) {
@@ -33,10 +36,17 @@ const App = ({ token, setToken }: { token: String, setToken: Function }) => {
 
         if (viewer) {
           return (
-            <Fragment>
-              <Header viewer={viewer} onLogout={clearState} />
-              <DependencyTable />
-            </Fragment>
+            <Router>
+              <Fragment>
+                <Route path="/" component={Nav} />
+                <Route
+                  path="/:department"
+                  render={({ match }) => <SubNav match={match} />}
+                />
+                {/* <Header viewer={viewer} onLogout={clearState} /> */}
+                {/* <DependencyTable /> */}
+              </Fragment>
+            </Router>
           );
         }
 
