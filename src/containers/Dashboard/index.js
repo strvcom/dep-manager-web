@@ -1,7 +1,7 @@
 // @flow
 import React, { Fragment, Component } from "react";
 import styled from "styled-components";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import { sort, descend, prop } from "ramda";
 import { format, isAfter, addMonths } from "date-fns";
 
@@ -214,6 +214,7 @@ export default class Dashboard extends Component<*, *> {
                   />
                 )}
               />
+              <Redirect to="/frontend/libraries" />
             </Switch>
           </Container>
         </StyledDashboard>
