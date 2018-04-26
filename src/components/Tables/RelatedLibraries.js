@@ -43,7 +43,10 @@ export default ({ history, match: { params }, relatedLibraries }) => (
           rowGetter={({ index }) => relatedLibraries[index]}
           onRowClick={({ rowData }) => {
             history.push(
-              `/${params.department}/library/${rowData.libraryName}`
+              `/${params.department}/library/${rowData.libraryName.replace(
+                "/",
+                "%2f"
+              )}`
             );
           }}
         >

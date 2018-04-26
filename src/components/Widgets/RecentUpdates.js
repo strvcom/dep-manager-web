@@ -52,7 +52,7 @@ export default ({
     <Libraries>
       {recentLibraries.map(lib => (
         <LibraryLink
-          to={`/${params.department}/library/${lib.name}`}
+          to={`/${params.department}/library/${lib.name.replace("/", "%2f")}`}
           key={lib.name}
         >
           <NameAndVersion>

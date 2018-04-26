@@ -74,13 +74,14 @@ const SubNav = ({ projects, libraries }) => {
           <Route
             path="/:department/:category/:name"
             render={({ match: { params: { category, name } } }) => {
+              const decodedName = decodeURIComponent(name);
               const url =
                 category === "project"
                   ? projects[name].url
-                  : libraries[name].url;
+                  : libraries[decodedName].url;
               return (
                 <div>
-                  <Title mb="10px">{name}</Title>
+                  <Title mb="10px">{decodedName}</Title>
                   <A href={url} target="_blank" rel="noopener noreferrer">
                     {url}
                   </A>

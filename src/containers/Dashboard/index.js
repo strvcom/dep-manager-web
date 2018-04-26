@@ -173,7 +173,9 @@ export default class Dashboard extends Component<*, *> {
                 render={({ match, history }) => (
                   <LibraryDetail
                     relatedProjects={projectLibraryRelation.filter(
-                      relation => relation.libraryName === match.params.name
+                      relation =>
+                        relation.libraryName ===
+                        decodeURIComponent(match.params.name)
                     )}
                     match={match}
                     history={history}

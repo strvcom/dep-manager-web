@@ -20,7 +20,12 @@ export default ({ history, match: { params }, libraries }) => (
           rowCount={libraries.length}
           rowGetter={({ index }) => libraries[index]}
           onRowClick={({ rowData }) => {
-            history.push(`/${params.department}/library/${rowData.name}`);
+            history.push(
+              `/${params.department}/library/${rowData.name.replace(
+                "/",
+                "%2f"
+              )}`
+            );
           }}
         >
           <Column width={380} label="Name" dataKey="name" />
