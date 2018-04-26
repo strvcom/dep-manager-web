@@ -2,16 +2,18 @@
 import React from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
+import { space } from "styled-system";
 
-const StyledNav = styled.nav`
+const StyledNav = styled.section`
   background: white;
   display: flex;
   justify-content: center;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.06);
 `;
 
 const Container = styled.div`
   width: 1140px;
-  heigth: 140px;
 `;
 
 const Title = styled.h1`
@@ -19,6 +21,15 @@ const Title = styled.h1`
   font-size: 26px;
   line-height: 29px;
   margin: 40px 0 20px;
+
+  ${space};
+`;
+
+const A = styled.a`
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: 40px;
 `;
 
 const StyledNavLink = styled(NavLink)`
@@ -55,38 +66,53 @@ const Input = styled.input`
 
 const activeStyle = { borderBottom: "2px solid black" };
 
-type Props = {
-  match: {
-    url: string
-  }
-};
-
-const SubNav = ({ match }: Props) => {
-  const showNav =
-    !match.url.startsWith("/library") && !match.url.startsWith("/project");
+const SubNav = ({ projects, libraries }) => {
   return (
     <StyledNav>
       <Container>
-        <Title>Dashboard</Title>
-        {showNav && (
-          <Wrapper>
-            <Nav>
-              <StyledNavLink
-                to={`${match.url}/libraries`}
-                activeStyle={activeStyle}
-              >
-                Libraries
-              </StyledNavLink>
-              <StyledNavLink
-                to={`${match.url}/projects`}
-                activeStyle={activeStyle}
-              >
-                Projects
-              </StyledNavLink>
-            </Nav>
-            <Input placeholder="Search Libraries" />
-          </Wrapper>
-        )}
+        <Switch>
+          <Route
+            path="/:department/:category/:name"
+            render={({ match: { params: { category, name } } }) => {
+              const url =
+                category === "project"
+                  ? projects[name].url
+                  : libraries[name].url;
+              return (
+                <div>
+                  <Title mb="10px">{name}</Title>
+                  <A href={url} target="_blank" rel="noopener noreferrer">
+                    {url}
+                  </A>
+                </div>
+              );
+            }}
+          />
+          <Route path="/" render={() => <Title>Dashboard</Title>} />
+        </Switch>
+        <Route
+          exact
+          path="/:department/:category"
+          render={({ match: { params: { department } } }) => (
+            <Wrapper>
+              <Nav>
+                <StyledNavLink
+                  to={`/${department}/libraries`}
+                  activeStyle={activeStyle}
+                >
+                  Libraries
+                </StyledNavLink>
+                <StyledNavLink
+                  to={`/${department}/projects`}
+                  activeStyle={activeStyle}
+                >
+                  Projects
+                </StyledNavLink>
+              </Nav>
+              <Input placeholder="Search Libraries" />
+            </Wrapper>
+          )}
+        />
       </Container>
     </StyledNav>
   );

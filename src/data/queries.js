@@ -12,7 +12,8 @@ export const ME_QUERY = gql`
 
 export const REPOSITORIES_QUERY = gql`
   query Repositories($query: String!, $after: String) {
-    search(type: REPOSITORY, query: $query, first: 20, after: $after) {
+    search(type: REPOSITORY, query: $query, first: 50, after: $after) {
+      repositoryCount
       pageInfo {
         endCursor
         hasNextPage
@@ -24,6 +25,8 @@ export const REPOSITORIES_QUERY = gql`
           id
           name
           nameWithOwner
+          url
+          pushedAt
           object(expression: "HEAD:package.json") {
             ... on Blob {
               byteSize
@@ -32,6 +35,12 @@ export const REPOSITORIES_QUERY = gql`
           }
         }
       }
+    }
+    rateLimit {
+      limit
+      cost
+      remaining
+      resetAt
     }
   }
 `;

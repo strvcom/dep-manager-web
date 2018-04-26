@@ -2,12 +2,53 @@
 import axios from "axios";
 import groupInfo from "./groups";
 
-let usedLibraryList = {};
-let repositoryInfo = {};
+type VersionMeta = {
+  major?: number,
+  minor?: number,
+  patch?: number
+};
 
-const getVersionMeta = (version: string) => {
+type LibraryStatus = "upToDate" | "major" | "minor" | "patch";
+
+type Project = {
+  name: string,
+  url: string,
+  lastActive: string
+};
+
+type Projects = {
+  [string]: Project
+};
+
+type Library = {
+  name: string,
+  url: string,
+  licence: string,
+  version: string,
+  versionMeta: VersionMeta,
+  updatedAt: string,
+  group: string
+};
+
+type Libraries = {
+  [string]: Library
+};
+
+type ProjectLibraryRelation = {
+  projectName: string,
+  libraryName: string,
+  licence: string,
+  currentVersion: string,
+  currentVersionMeta: VersionMeta,
+  latestVersion?: string,
+  latestVersionMeta?: VersionMeta,
+  status: LibraryStatus
+};
+
+const getVersionMeta = (version: string): VersionMeta => {
   const match = version.match(/[0-9]+\.[0-9]+(\.[0-9]+)?/);
   if (!match) return {};
+
   const meta = match[0].split(".");
   return {
     major: Number(meta[0]),
@@ -16,174 +57,246 @@ const getVersionMeta = (version: string) => {
   };
 };
 
-const parsePackageJSON = nodeObject => {
-  if (!nodeObject) return null;
-
-  return JSON.parse(nodeObject.text);
-};
-
-const createUsedLibraryList = (repoName, packageJSON) => {
-  if (!packageJSON) return null;
-
-  const { dependencies = {}, devDependencies = {} } = packageJSON;
-
-  const libraries = Object.keys(dependencies).concat(
-    Object.keys(devDependencies)
-  );
-  if (!libraries.length) return null;
-
-  libraries.forEach(lib => {
-    usedLibraryList[lib] = { version: "unknown", versionMeta: {} };
-  });
-
-  groupInfo.forEach(info => {
-    info.libs.forEach(lib => {
-      usedLibraryList[lib] = { version: "unknown", versionMeta: {} };
-    });
-  });
-
-  repositoryInfo[repoName] = {
-    ...dependencies,
-    ...devDependencies
-  };
-};
-
-const getLibraryLatestVersion = async () => {
-  const usedLibraryNames = Object.keys(usedLibraryList);
-
-  const result = {};
-  const maxChunkData = 250;
-  for (let i = 0; i < usedLibraryNames.length; i += maxChunkData) {
-    const chunkData = usedLibraryNames.slice(i, i + maxChunkData);
-    const response = await axios.post(
-      "https://api.npms.io/v2/package/mget",
-      chunkData,
-      {
-        headers: {
-          "content-type": "application/json"
-        }
-      }
-    );
-    Object.assign(result, response.data);
+const getVersionStatus = (
+  latestVersionMeta: VersionMeta,
+  currentVersionMeta: VersionMeta
+): LibraryStatus => {
+  let status = "upToDate";
+  if (
+    currentVersionMeta.patch &&
+    latestVersionMeta.patch &&
+    currentVersionMeta.patch < latestVersionMeta.patch
+  ) {
+    status = "patch";
   }
+  if (
+    currentVersionMeta.minor &&
+    latestVersionMeta.minor &&
+    currentVersionMeta.minor < latestVersionMeta.minor
+  ) {
+    status = "minor";
+  }
+  if (
+    currentVersionMeta.major &&
+    latestVersionMeta.major &&
+    currentVersionMeta.major < latestVersionMeta.major
+  ) {
+    status = "major";
+  }
+  return status;
+};
 
-  usedLibraryNames.forEach(name => {
-    const latestLibraryInfo = result[name];
-    const version = latestLibraryInfo
-      ? latestLibraryInfo.collected.metadata.version
-      : "unknow";
-    const versionMeta = getVersionMeta(version);
-
-    usedLibraryList[name] = {
-      version,
-      versionMeta
-    };
+const getGroupInfo = (libraryName: string): string => {
+  let group = "Etc";
+  groupInfo.some(info => {
+    const hasGroup = info.libs.includes(libraryName);
+    if (hasGroup) {
+      group = info.label;
+    }
+    return hasGroup;
   });
+  return group;
 };
 
-const makeGroupList = () => {
-  return groupInfo.reduce((acc, value) => {
-    value.libs.forEach((lib, index) => {
-      if (index === 0) {
-        acc.push(value.label);
-      } else {
-        acc.push(undefined);
-      }
+const getLatestLibrariesBatch = async (
+  usedLibraries: string[]
+): Promise<Libraries | {}> => {
+  try {
+    const result = {};
+    const maxChunkData = 250;
+    for (let i = 0; i < usedLibraries.length; i += maxChunkData) {
+      const chunkData = usedLibraries.slice(i, i + maxChunkData);
+      const response = await axios.post(
+        "https://api.npms.io/v2/package/mget",
+        chunkData,
+        {
+          headers: {
+            "content-type": "application/json"
+          }
+        }
+      );
+      Object.assign(result, response.data);
+    }
+
+    const latestLibraries = {};
+
+    usedLibraries.forEach(libraryName => {
+      const latestLibraryInfo = result[libraryName];
+
+      latestLibraries[libraryName] = {
+        name: libraryName,
+        url: "/",
+        licence: "unknown",
+        version: "unknown",
+        versionMeta: {},
+        updatedAt: "unknown",
+        group: "Etc"
+      };
+
+      groupInfo.some(info => {
+        const hasGroup = info.libs.includes(libraryName);
+        if (hasGroup) {
+          latestLibraries[libraryName].group = info.label;
+        }
+        return hasGroup;
+      });
+
+      if (!latestLibraryInfo) return;
+
+      const {
+        collected: { metadata: { version, date, license, links } }
+      } = latestLibraryInfo;
+
+      latestLibraries[libraryName].url = links.repository;
+      latestLibraries[libraryName].version = version;
+      latestLibraries[libraryName].versionMeta = getVersionMeta(version);
+      latestLibraries[libraryName].updatedAt = date;
+      latestLibraries[libraryName].licence = license;
     });
-    return acc;
-  }, []);
+
+    return latestLibraries;
+  } catch (error) {
+    return getLatestLibraries(usedLibraries);
+  }
 };
 
-const makeLibraryList = () => {
-  const addedLibs = {};
-  const libs = [];
+const getLatestLibraries = async (
+  usedLibraries: string[]
+): Promise<Libraries | {}> => {
+  const promises = usedLibraries.map(async libraryName => {
+    try {
+      return await axios
+        .get(
+          `http://cors-proxy.htmldriven.com/?url=https://registry.npmjs.org/${libraryName}`
+        )
+        .then(({ data }) => {
+          const body = JSON.parse(data.body);
+          const version = body["dist-tags"].latest;
 
-  groupInfo.forEach(group => {
-    group.libs.forEach(libName => {
-      const usedLibraryInfo = usedLibraryList[libName];
-      if (!usedLibraryInfo) return;
+          const latestLibrary = {
+            name: body._id,
+            url: body.repository.url,
+            licence: body.license,
+            version: version,
+            versionMeta: getVersionMeta(version),
+            updatedAt: body.time[version],
+            group: getGroupInfo(body._id)
+          };
 
-      const version = usedLibraryInfo.version || "-";
-      addedLibs[libName] = true;
-      libs.push({ name: libName, version });
-    });
-  });
-  const libNames = Object.keys(usedLibraryList);
-  const etcLibs = libNames
-    .filter(libName => !addedLibs[libName])
-    .map(libName => ({
-      name: libName,
-      version: usedLibraryList[libName].version || "-"
-    }));
-  return libs.concat(etcLibs);
-};
-
-const makeRepoList = libs => {
-  const repoNames = Object.keys(repositoryInfo);
-
-  const result = repoNames.reduce(
-    (acc, repoName) => {
-      let usedLibraryCount = 0;
-
-      const versions = libs.reduce((a, lib) => {
-        const libraryVersion = repositoryInfo[repoName][lib.name];
-        if (libraryVersion) usedLibraryCount++;
-        const version = libraryVersion || "-";
-        const versionMeta = getVersionMeta(version);
-        let status = version === "-" ? "notUsed" : "ok";
-        if (versionMeta.patch < usedLibraryList[lib.name].versionMeta.patch) {
-          status = "patch";
-        }
-        if (versionMeta.minor < usedLibraryList[lib.name].versionMeta.minor) {
-          status = "minor";
-        }
-        if (versionMeta.major < usedLibraryList[lib.name].versionMeta.major) {
-          status = "major";
-        }
-
-        return a.concat({
-          version,
-          status
+          return latestLibrary;
         });
-      }, []);
+    } catch (error) {
+      return null;
+    }
+  });
 
-      acc.repoNames.push({ name: repoName, usedLibraryCount });
-      acc.versions.push(versions);
-
-      return acc;
-    },
-    { repoNames: [], versions: [] }
-  );
-  return result;
+  const datas = await Promise.all(promises);
+  return datas.reduce((acc, lib) => {
+    if (!lib) return acc;
+    acc[lib.name] = lib;
+    return acc;
+  }, {});
 };
 
-const refineData = async (data: any) => {
-  usedLibraryList = {};
-  repositoryInfo = {};
+const createLibraryRelation = (
+  projectLibraryRelation,
+  projectName,
+  dependencies = {},
+  devDependencies = {}
+) => {
+  Object.keys(dependencies).forEach(libraryName => {
+    const currentVersion = dependencies[libraryName];
+    projectLibraryRelation.push({
+      projectName,
+      libraryName,
+      currentVersion,
+      currentVersionMeta: getVersionMeta(currentVersion),
+      licence: "unknown",
+      status: "upToDate"
+    });
+  });
+  Object.keys(devDependencies).forEach(libraryName => {
+    const currentVersion = devDependencies[libraryName];
+    projectLibraryRelation.push({
+      projectName,
+      libraryName,
+      currentVersion,
+      currentVersionMeta: getVersionMeta(currentVersion),
+      licence: "unknown",
+      status: "upToDate"
+    });
+  });
+};
+
+const updateLibraryRelation = (projectLibraryRelation, latestLibraries) => {
+  Object.keys(latestLibraries).forEach(libraryName => {
+    const latestLibrary = latestLibraries[libraryName];
+    projectLibraryRelation
+      .filter(relation => relation.libraryName === libraryName)
+      .forEach(relation => {
+        relation.status = getVersionStatus(
+          latestLibrary.versionMeta,
+          relation.currentVersionMeta
+        );
+        relation.licence = latestLibrary.licence;
+        relation.latestVersion = latestLibrary.version;
+        relation.latestVersionMeta = latestLibrary.versionMeta;
+      });
+  });
+};
+
+const reformatData = async (
+  data: any
+): Promise<{
+  projects: Projects,
+  latestLibraries: Libraries,
+  projectLibraryRelation: ProjectLibraryRelation[]
+}> => {
   const { search } = data;
   if (!search) return {};
 
   const { nodes } = search;
 
-  for (const node of nodes) {
-    const packageJSON = parsePackageJSON(node.object);
-    createUsedLibraryList(node.name, packageJSON);
-  }
+  const projectLibraryRelation: ProjectLibraryRelation[] = [];
 
-  await getLibraryLatestVersion();
+  const projects = nodes.reduce((acc, node) => {
+    const projectName = node.name;
+    const packageJSON = node.object ? JSON.parse(node.object.text) : {};
+    const { dependencies, devDependencies } = packageJSON;
 
-  const groups = makeGroupList();
-  const libs = makeLibraryList();
-  const repos = makeRepoList(libs);
+    createLibraryRelation(
+      projectLibraryRelation,
+      projectName,
+      dependencies,
+      devDependencies
+    );
 
-  const refined = {
-    groups,
-    libs,
-    repoNames: repos.repoNames,
-    versions: repos.versions
+    acc[projectName] = {
+      name: projectName,
+      url: node.url,
+      lastActive: node.pushedAt
+    };
+
+    return acc;
+  }, {});
+
+  const allUsedLibraryNames = Array.from(
+    projectLibraryRelation.reduce((acc, relation) => {
+      acc.add(relation.libraryName);
+      return acc;
+    }, new Set())
+  );
+
+  // const latestLibraries = await getLatestLibraries(allUsedLibraryNames);
+  const latestLibraries = await getLatestLibrariesBatch(allUsedLibraryNames);
+
+  updateLibraryRelation(projectLibraryRelation, latestLibraries);
+
+  return {
+    projects,
+    latestLibraries,
+    projectLibraryRelation
   };
-
-  return refined;
 };
 
-export default refineData;
+export default reformatData;
