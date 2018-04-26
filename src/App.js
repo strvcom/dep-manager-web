@@ -11,9 +11,6 @@ import Dashboard from "./containers/Dashboard";
 
 import Loading from "./components/Loading";
 import Nav from "./components/Nav";
-import SubNav from "./components/SubNav";
-// import Header from "./components/Header";
-// import DependencyTable from "./containers/DependencyTable";
 
 const Container = styled.div`
   display: flex;
@@ -49,8 +46,6 @@ const App = ({ token, setToken }: { token: String, setToken: Function }) => {
               <Container>
                 <Nav />
                 <Dashboard />
-                {/* <Header viewer={viewer} onLogout={clearState} /> */}
-                {/* <DependencyTable /> */}
               </Container>
             </Router>
           );
