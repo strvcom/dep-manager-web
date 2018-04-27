@@ -33,7 +33,7 @@ export default ({ history, match: { params }, libraries }) => (
           <Column width={180} label="Total Used On" dataKey="totalUsed" />
           <Column
             width={360}
-            label="Outdated"
+            label="Outdated Projects"
             dataKey="status"
             cellRenderer={StatusCell}
           />

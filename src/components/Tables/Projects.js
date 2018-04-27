@@ -26,7 +26,7 @@ export default ({ history, match: { params }, projects }) => (
           <Column width={180} label="Last Active" dataKey="lastActive" />
           <Column
             width={200}
-            label="Outdated"
+            label="Outdated Libraries"
             dataKey="status"
             cellRenderer={StatusCell}
           />
