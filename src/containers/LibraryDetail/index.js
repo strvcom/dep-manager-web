@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import RelatedProjects from "../../components/Tables/RelatedProjects";
-import { Overview, Status, RecentUpdates } from "../../components/Widgets";
+import { OutdatedProjects, Status } from "../../components/Widgets";
 
 const Wrapper = styled.section`
   margin-top: 60px;
@@ -21,7 +21,7 @@ const Sidebar = styled.div`
   margin-left: 35px;
 `;
 
-export default ({ relatedProjects, history, match, recentLibraries }) => {
+export default ({ relatedProjects, history, match }) => {
   return (
     <Wrapper>
       <Content>
@@ -37,6 +37,12 @@ export default ({ relatedProjects, history, match, recentLibraries }) => {
         />
       </Content>
       <Sidebar>
+        <OutdatedProjects
+          match={match}
+          outDatedProjects={relatedProjects.filter(
+            rel => rel.status !== "upToDate"
+          )}
+        />
         <Status
           mt={20}
           title="Related Project Status"

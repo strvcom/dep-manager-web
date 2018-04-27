@@ -1,6 +1,6 @@
 // @flow
 import styled from "styled-components";
-import { width, space } from "styled-system";
+import { width, height, space } from "styled-system";
 
 export const WidgetContainer = styled.div`
   display: flex;
@@ -14,6 +14,7 @@ export const WidgetContainer = styled.div`
 
   ${space};
   ${width};
+  ${height};
 `;
 
 export const WidgetTitle = styled.h1`
