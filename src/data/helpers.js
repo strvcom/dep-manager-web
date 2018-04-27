@@ -253,7 +253,8 @@ const reformatData = async (
   projectLibraryRelation: ProjectLibraryRelation[]
 }> => {
   const { search } = data;
-  if (!search) return {};
+  if (!search)
+    return { projects: {}, latestLibraries: {}, projectLibraryRelation: [] };
 
   const { nodes } = search;
 
