@@ -1,6 +1,6 @@
 // @flow
 import React from "react";
-import { AutoSizer, Table, Column, SortDirection } from "react-virtualized";
+import { AutoSizer, Table, Column } from "react-virtualized";
 
 import StatusCell from "./StatusCell";
 import { Wrapper } from "./styled";

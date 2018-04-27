@@ -1,8 +1,6 @@
 // @flow
 import React from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { AutoSizer, Table, Column, SortDirection } from "react-virtualized";
+import { AutoSizer, Table, Column } from "react-virtualized";
 
 import StatusCell from "./StatusCell";
 import { Wrapper } from "./styled";

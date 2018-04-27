@@ -2,7 +2,6 @@
 import React from "react";
 import styled, { keyframes } from "styled-components";
 
-import { Consumer } from "../../containers/Dashboard";
 import { WidgetContainer, WidgetTitle } from "./styled";
 
 const grow = width => keyframes`

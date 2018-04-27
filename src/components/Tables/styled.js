@@ -33,3 +33,27 @@ export const Alerts = Status.extend`
     color: #c2950b;
   `};
 `;
+
+export const CurrentVersion = styled.span`
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 2px;
+  line-height: 20px;
+
+  ${({ status }) => {
+    switch (status) {
+      case "major":
+        return `
+        background-color: #ffd1d9;
+        color: #ef0d33;
+      `;
+      case "minor":
+        return `
+        background-color: #ffefbb;
+        color: #c2950b;
+      `;
+      default:
+        return "color: inherit";
+    }
+  }};
+`;
