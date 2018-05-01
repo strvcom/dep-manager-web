@@ -7,11 +7,11 @@ import { Wrapper } from "./styled";
 
 export default ({ history, match: { params }, libraries }) => (
   <Wrapper>
-    <AutoSizer>
-      {({ width, height }) => (
+    <AutoSizer disableHeight>
+      {({ width }) => (
         <Table
           width={width}
-          height={height}
+          height={50 + 75 * libraries.length}
           headerHeight={50}
           rowHeight={75}
           rowClassName={({ index }) => index >= 0 && "row"}

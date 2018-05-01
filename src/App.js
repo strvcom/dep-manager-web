@@ -1,9 +1,8 @@
 // @flow
-import React from "react";
+import React, { Fragment } from "react";
 import { withState } from "recompose";
 import { Query } from "react-apollo";
 import { BrowserRouter as Router } from "react-router-dom";
-import styled from "styled-components";
 
 import { ME_QUERY } from "./data/queries";
 import Login from "./containers/Login";
@@ -11,12 +10,6 @@ import Dashboard from "./containers/Dashboard";
 
 import Loading from "./components/Loading";
 import Nav from "./components/Nav";
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-`;
 
 const App = ({ token, setToken }: { token: String, setToken: Function }) => {
   if (!token) {
@@ -43,10 +36,10 @@ const App = ({ token, setToken }: { token: String, setToken: Function }) => {
         if (viewer) {
           return (
             <Router>
-              <Container>
+              <Fragment>
                 <Nav />
                 <Dashboard />
-              </Container>
+              </Fragment>
             </Router>
           );
         }

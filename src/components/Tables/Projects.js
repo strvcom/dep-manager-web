@@ -8,11 +8,11 @@ import "./Table.css";
 
 export default ({ history, match: { params }, projects }) => (
   <Wrapper>
-    <AutoSizer>
-      {({ width, height }) => (
+    <AutoSizer disableHeight>
+      {({ width }) => (
         <Table
           width={width}
-          height={height}
+          height={50 + 75 * projects.length}
           headerHeight={50}
           rowHeight={75}
           rowClassName={({ index }) => index >= 0 && "row"}

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 import RelatedLibraries from "../../components/Tables/RelatedLibraries";
-import { Overview, Status, RecentUpdates } from "../../components/Widgets";
+import { Status, RecentUpdates } from "../../components/Widgets";
 
 const Wrapper = styled.section`
   margin-top: 60px;
