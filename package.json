@@ -6,19 +6,25 @@
     "apollo-client-preset": "^1.0.8",
     "apollo-link-context": "^1.0.7",
     "axios": "^0.18.0",
-    "classnames": "^2.2.5",
+    "date-fns": "^1.29.0",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.8.0",
     "netlify-auth-providers": "^1.0.0-alpha5",
+    "ramda": "^0.25.0",
     "react": "^16.3.1",
     "react-apollo": "^2.1.2",
     "react-dom": "^16.3.1",
+    "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
     "react-virtualized": "^9.18.5",
     "recompose": "^0.26.0",
-    "styled-components": "^3.2.5"
+    "styled-components": "^3.2.5",
+    "styled-system": "^2.2.1"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.4.2",
+    "@storybook/addon-links": "^3.4.2",
+    "@storybook/react": "^3.4.2",
     "flow-bin": "^0.69.0",
     "husky": "^0.14.3",
     "lint-staged": "^7.0.3",
@@ -29,6 +35,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "flow": "flow"
+    "flow": "flow",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
   }
 }

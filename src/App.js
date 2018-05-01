@@ -2,12 +2,14 @@
 import React, { Fragment } from "react";
 import { withState } from "recompose";
 import { Query } from "react-apollo";
+import { BrowserRouter as Router } from "react-router-dom";
 
 import { ME_QUERY } from "./data/queries";
 import Login from "./containers/Login";
+import Dashboard from "./containers/Dashboard";
+
 import Loading from "./components/Loading";
-import Header from "./components/Header";
-import DependencyTable from "./containers/DependencyTable";
+import Nav from "./components/Nav";
 
 const App = ({ token, setToken }: { token: String, setToken: Function }) => {
   if (!token) {
@@ -33,10 +35,12 @@ const App = ({ token, setToken }: { token: String, setToken: Function }) => {
 
         if (viewer) {
           return (
-            <Fragment>
-              <Header viewer={viewer} onLogout={clearState} />
-              <DependencyTable />
-            </Fragment>
+            <Router>
+              <Fragment>
+                <Nav />
+                <Dashboard />
+              </Fragment>
+            </Router>
           );
         }
 

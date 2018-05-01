@@ -1,7 +1,7 @@
 // @flow
 import client from "../apolloClient";
 import { REPOSITORIES_QUERY } from "./queries";
-import refineData from "./helpers";
+import reformatData from "./helpers";
 
 export const getRepositories = (query: string) =>
   client
@@ -11,4 +11,4 @@ export const getRepositories = (query: string) =>
         query
       }
     })
-    .then(({ data }) => refineData(data));
+    .then(({ data }) => reformatData(data));
