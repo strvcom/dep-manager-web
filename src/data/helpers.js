@@ -63,22 +63,22 @@ const getVersionStatus = (
 ): LibraryStatus => {
   let status = "upToDate";
   if (
-    currentVersionMeta.patch &&
-    latestVersionMeta.patch &&
+    currentVersionMeta.patch !== undefined &&
+    latestVersionMeta.patch !== undefined &&
     currentVersionMeta.patch < latestVersionMeta.patch
   ) {
     status = "patch";
   }
   if (
-    currentVersionMeta.minor &&
-    latestVersionMeta.minor &&
+    currentVersionMeta.minor !== undefined &&
+    latestVersionMeta.minor !== undefined &&
     currentVersionMeta.minor < latestVersionMeta.minor
   ) {
     status = "minor";
   }
   if (
-    currentVersionMeta.major &&
-    latestVersionMeta.major &&
+    currentVersionMeta.major !== undefined &&
+    latestVersionMeta.major !== undefined &&
     currentVersionMeta.major < latestVersionMeta.major
   ) {
     status = "major";
