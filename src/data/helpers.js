@@ -190,8 +190,8 @@ const getLatestLibraries = async (
     }
   });
 
-  const datas = await Promise.all(promises);
-  return datas.reduce((acc, lib) => {
+  const data = await Promise.all(promises);
+  return data.reduce((acc, lib) => {
     if (!lib) return acc;
     acc[lib.name] = lib;
     return acc;
