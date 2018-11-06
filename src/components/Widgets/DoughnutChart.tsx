@@ -1,23 +1,18 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
+import React from 'react'
+import styled, { keyframes } from 'styled-components'
 
 const draw = (percent: number) => keyframes`
   to {
     stroke-dasharray: ${percent} ${100 - percent};
     stroke-dashoffset: ${25 + percent};
   }
-`;
+`
 
-const Circle = styled<{percent: number}, 'circle'>('circle')`
+const Circle = styled<{ percent: number }, 'circle'>('circle')`
   animation: ${({ percent }) => draw(percent)} 1s ease forwards;
-`;
+`
 
-export interface DoughnutChartProps {
-  size?: number,
-  percent?: number
-};
-
-export default ({ size = 64, percent = 0 }: DoughnutChartProps) => (
+const DoughnutChart = ({ size = 64, percent = 0 }: DoughnutChartProps) => (
   <svg width={size} viewBox="0 0 42 42">
     <circle cx="21" cy="21" r="15.91549430918954" fill="#fff" />
     <circle
@@ -40,4 +35,11 @@ export default ({ size = 64, percent = 0 }: DoughnutChartProps) => (
       strokeDashoffset="25"
     />
   </svg>
-);
+)
+
+export interface DoughnutChartProps {
+  size?: number
+  percent?: number
+}
+
+export default DoughnutChart

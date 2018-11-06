@@ -1,5 +1,5 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
+import React from 'react'
+import styled, { keyframes } from 'styled-components'
 
 const loading = keyframes`
   0%,
@@ -12,12 +12,7 @@ const loading = keyframes`
     box-shadow: 0 -2em;
     height: 5em;
   }
-`;
-
-export interface BarLoaderProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  duration?: number
-  size?: number
-}
+`
 
 const BarLoader = styled<BarLoaderProps, 'div'>('div')`
   animation: ${props => `${loading} ${props.duration}s infinite ease-in-out`};
@@ -33,7 +28,7 @@ const BarLoader = styled<BarLoaderProps, 'div'>('div')`
   width: 1em;
   &:before {
     animation: ${props =>
-      `${loading} ${props.duration}s infinite ease-in-out;`};
+    `${loading} ${props.duration}s infinite ease-in-out;`};
     animation-delay: ${props => `${props.duration! * -0.32}s`};
     background: ${props => props.color};
     content: "";
@@ -54,11 +49,20 @@ const BarLoader = styled<BarLoaderProps, 'div'>('div')`
     top: 0;
     width: 1em;
   }
-`;
+`
 BarLoader.defaultProps = {
   color: '#000',
   duration: 1,
-  size: 11
+  size: 11,
 }
 
-export default BarLoader;
+export interface BarLoaderProps
+  extends React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLDivElement>,
+      HTMLDivElement
+    > {
+  duration?: number
+  size?: number
+}
+
+export default BarLoader

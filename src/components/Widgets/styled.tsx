@@ -1,7 +1,17 @@
-import styled from "styled-components";
-import { width, height, space, WidthProps, HeightProps, SpaceProps } from "styled-system";
+import styled from 'styled-components'
+import {
+  width,
+  height,
+  space,
+  WidthProps,
+  HeightProps,
+  SpaceProps,
+} from 'styled-system'
 
-export const WidgetContainer = styled<WidthProps & HeightProps & SpaceProps, 'div'>('div')`
+export const WidgetContainer = styled<
+  WidthProps & HeightProps & SpaceProps,
+  'div'
+>('div')`
   display: flex;
   flex-direction: column;
   padding: 25px 30px;
@@ -13,11 +23,11 @@ export const WidgetContainer = styled<WidthProps & HeightProps & SpaceProps, 'di
   ${space};
   ${width};
   ${height};
-`;
+`
 
 export const WidgetTitle = styled.h1`
   font-family: "Maison Neue";
   font-size: 16px;
   font-weight: 400;
   line-height: 19px;
-`;
+`

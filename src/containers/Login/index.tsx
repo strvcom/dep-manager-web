@@ -1,8 +1,7 @@
-import React from "react"
-import { withHandlers } from "recompose"
-import styled from "styled-components"
-
-import Logo from "../../assets/Icons/Logo"
+import React from 'react'
+import { withHandlers } from 'recompose'
+import styled from 'styled-components'
+import Logo from '../../assets/Icons/Logo'
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,9 +26,7 @@ const LoginButton = styled.button`
   text-transform: uppercase;
 `
 
-export interface LoginProps {
-  onLogin?: (evt: React.MouseEvent) => void
-}
+
 const Login = (props: LoginProps) => (
   <Wrapper>
     <Logo />
@@ -37,7 +34,14 @@ const Login = (props: LoginProps) => (
   </Wrapper>
 )
 
+const githubUrl = `https://github.com/login/oauth/authorize?client_id=${
+  process.env.GITHUB_CLIENT_ID
+}`
+
+export interface LoginProps {
+  onLogin?: (evt: React.MouseEvent) => void
+}
+
 export default withHandlers({
-  onLogin: (props: LoginProps) => (evt: React.MouseEvent) =>
-  location.replace(`https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}`)
+  onLogin: (props: LoginProps) => (evt: React.MouseEvent) => location.replace(githubUrl),
 })(Login)

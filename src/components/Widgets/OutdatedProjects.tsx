@@ -1,9 +1,8 @@
-import React from "react";
-import styled from "styled-components";
-import { Link, RouteComponentProps } from "react-router-dom";
-
-import { WidgetContainer, WidgetTitle } from "./styled";
-import { ProjectLibraryRelation } from "../../data/helpers";
+import React from 'react'
+import styled from 'styled-components'
+import { Link, RouteComponentProps } from 'react-router-dom'
+import { ProjectLibraryRelation } from '../../data/helpers'
+import { WidgetContainer, WidgetTitle } from './styled'
 
 const LibraryLink = styled(Link)`
   display: block;
@@ -15,12 +14,12 @@ const LibraryLink = styled(Link)`
   &:hover {
     background: rgba(0, 0, 0, 0.1);
   }
-`;
+`
 
 const Libraries = styled.div`
   overflow: auto;
   margin-right: -30px;
-`;
+`
 
 const NameAndVersion = styled.div`
   font-family: "Maison Neue";
@@ -28,18 +27,13 @@ const NameAndVersion = styled.div`
   line-height: 17px;
   display: flex;
   justify-content: space-between;
-`;
+`
 
-export interface OutdatedProjectsProps extends RouteComponentProps<{department: string}> {
-  width?: string,
-  height?: string,
-  outDatedProjects: ProjectLibraryRelation[]
-}
-export default ({
+const OutdatedProjects = ({
   width,
   height,
   match: { params },
-  outDatedProjects
+  outDatedProjects,
 }: OutdatedProjectsProps) => (
   <WidgetContainer height={height} width={width}>
     <WidgetTitle>Outdated on</WidgetTitle>
@@ -57,4 +51,13 @@ export default ({
       ))}
     </Libraries>
   </WidgetContainer>
-);
+)
+
+export interface OutdatedProjectsProps
+  extends RouteComponentProps<{ department: string }> {
+  width?: string
+  height?: string
+  outDatedProjects: ProjectLibraryRelation[]
+}
+
+export default OutdatedProjects

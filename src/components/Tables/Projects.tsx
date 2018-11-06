@@ -1,28 +1,25 @@
-import React from "react";
-import { AutoSizer, Table, Column } from "react-virtualized";
+import React from 'react'
+import { AutoSizer, Table, Column } from 'react-virtualized'
+import { RouteComponentProps } from 'react-router-dom'
+import StatusCell from './StatusCell'
+import { Wrapper } from './styled'
+import './Table.css'
 
-import StatusCell from "./StatusCell";
-import { Wrapper } from "./styled";
-import "./Table.css";
-import { RouteComponentProps } from "react-router";
-
-export interface ProjectsProps extends RouteComponentProps<{department: string}> {
-  projects: any
-}
-export default ({ history, match: { params }, projects }: ProjectsProps) => (
+const Projects = ({ history, match: { params }, projects }: ProjectsProps) => (
   <Wrapper>
     <AutoSizer disableHeight>
       {({ width }) => (
         <Table
           width={width}
+          // eslint-disable-next-line no-mixed-operators
           height={50 + 75 * projects.length}
           headerHeight={50}
           rowHeight={75}
-          rowClassName={({ index }) => index >= 0 ? "row" : ''}
+          rowClassName={({ index }) => index >= 0 ? 'row' : ''}
           rowCount={projects.length}
           rowGetter={({ index }) => projects[index]}
           onRowClick={({ rowData }: any) => {
-            history.push(`/${params.department}/project/${rowData.name}`);
+            history.push(`/${params.department}/project/${rowData.name}`)
           }}
         >
           <Column width={380} label="Name" dataKey="name" />
@@ -38,4 +35,11 @@ export default ({ history, match: { params }, projects }: ProjectsProps) => (
       )}
     </AutoSizer>
   </Wrapper>
-);
+)
+
+export interface ProjectsProps
+  extends RouteComponentProps<{ department: string }> {
+  projects: any
+}
+
+export default Projects

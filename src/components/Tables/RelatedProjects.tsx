@@ -1,28 +1,27 @@
-import React from "react";
-import { AutoSizer, Table, Column } from "react-virtualized";
-
-import { Wrapper, CurrentVersion } from "./styled";
+import React from 'react'
+import { AutoSizer, Table, Column } from 'react-virtualized'
 import { RouteComponentProps } from 'react-router-dom'
+import { Wrapper, CurrentVersion } from './styled'
 
-export interface RelatedProjectsProps extends RouteComponentProps<{department: string}> {
-  relatedProjects: any
-}
-export default ({ history, match: { params }, relatedProjects }: RelatedProjectsProps) => (
+const RelatedProjects = ({
+  history,
+  match: { params },
+  relatedProjects,
+}: RelatedProjectsProps) => (
   <Wrapper>
     <AutoSizer disableHeight>
       {({ width }) => (
         <Table
           width={width}
+          // eslint-disable-next-line no-mixed-operators
           height={50 + 75 * relatedProjects.length}
           headerHeight={50}
           rowHeight={75}
-          rowClassName={({ index }) => index >= 0 ? "row" : ''}
+          rowClassName={({ index }) => index >= 0 ? 'row' : ''}
           rowCount={relatedProjects.length}
           rowGetter={({ index }) => relatedProjects[index]}
           onRowClick={({ rowData }: any) => {
-            history.push(
-              `/${params.department}/project/${rowData.projectName}`
-            );
+            history.push(`/${params.department}/project/${rowData.projectName}`)
           }}
         >
           <Column width={280} label="Project Name" dataKey="projectName" />
@@ -41,4 +40,11 @@ export default ({ history, match: { params }, relatedProjects }: RelatedProjects
       )}
     </AutoSizer>
   </Wrapper>
-);
+)
+
+export interface RelatedProjectsProps
+  extends RouteComponentProps<{ department: string }> {
+  relatedProjects: any
+}
+
+export default RelatedProjects

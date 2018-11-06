@@ -1,32 +1,27 @@
-import React from "react";
-import { AutoSizer, Table, Column } from "react-virtualized";
+import React from 'react'
+import { AutoSizer, Table, Column } from 'react-virtualized'
+import { RouteComponentProps } from 'react-router-dom'
+import StatusCell from './StatusCell'
+import { Wrapper } from './styled'
 
-import StatusCell from "./StatusCell";
-import { Wrapper } from "./styled";
-import { RouteComponentProps } from "react-router";
-
-export interface LibrariesProps extends RouteComponentProps<{department: string}> {
-  libraries: any
-}
-export default ({ history, match: { params }, libraries }: LibrariesProps) => (
+const Libraries = ({ history, match: { params }, libraries }: LibrariesProps) => (
   <Wrapper>
     <AutoSizer disableHeight>
       {({ width }) => (
         <Table
           width={width}
+          // eslint-disable-next-line no-mixed-operators
           height={50 + 75 * libraries.length}
           headerHeight={50}
           rowHeight={75}
-          rowClassName={({ index }) => index >= 0 ? "row" : ''}
+          rowClassName={({ index }) => index >= 0 ? 'row' : ''}
           rowCount={libraries.length}
           rowGetter={({ index }) => libraries[index]}
           onRowClick={({ rowData }: any) => {
-            history.push(
-              `/${params.department}/library/${rowData.name.replace(
-                "/",
-                "%2f"
-              )}`
-            );
+            history.push(`/${params.department}/library/${rowData.name.replace(
+              '/',
+              '%2f',
+            )}`)
           }}
         >
           <Column width={380} label="Name" dataKey="name" />
@@ -42,4 +37,11 @@ export default ({ history, match: { params }, libraries }: LibrariesProps) => (
       )}
     </AutoSizer>
   </Wrapper>
-);
+)
+
+export interface LibrariesProps
+  extends RouteComponentProps<{ department: string }> {
+  libraries: any
+}
+
+export default Libraries

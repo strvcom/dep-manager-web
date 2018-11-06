@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag'
 
 export const ME_QUERY = gql`
   query Me {
@@ -8,7 +8,7 @@ export const ME_QUERY = gql`
       avatarUrl
     }
   }
-`;
+`
 
 export const REPOSITORIES_QUERY = gql`
   query Repositories($query: String!, $after: String) {
@@ -43,9 +43,9 @@ export const REPOSITORIES_QUERY = gql`
       resetAt
     }
   }
-`;
+`
 
 export default {
   ME_QUERY,
-  REPOSITORIES_QUERY
-};
+  REPOSITORIES_QUERY,
+}

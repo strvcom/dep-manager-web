@@ -1,11 +1,11 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const Wrapper = styled.section`
   margin-top: 60px;
   flex: 1 1 auto;
-`;
+`
 
-export const Status = styled<{count: number}, 'span'>('span')`
+export const Status = styled<{ count: number }, 'span'>('span')`
   display: inline-block;
   padding: 4px 10px;
   border-radius: 2px;
@@ -13,46 +13,46 @@ export const Status = styled<{count: number}, 'span'>('span')`
   font-size: 14px;
   font-weight: 500;
   line-height: 14px;
-  ${({ count }) => !count && "text-decoration: line-through"};
-`;
+  ${({ count }) => !count && 'text-decoration: line-through'};
+`
 
 export const Outdated = styled(Status)`
   ${({ count }) =>
-    count &&
-    `
+    count
+    && `
     background-color: #ffd1d9;
     color: #ef0d33;
   `};
-`;
+`
 
 export const Alerts = styled(Status)`
   ${({ count }) =>
-    count &&
-    `
+    count
+    && `
     background-color: #ffefbb;
     color: #c2950b;
   `};
-`;
+`
 
-export const CurrentVersion = styled<{status: 'major' | 'minor'}, 'span'>('span')`
+export const CurrentVersion = styled<{ status: 'major' | 'minor' }, 'span'>('span')`
   display: inline-block;
   padding: 4px 8px;
   border-radius: 2px;
   line-height: 20px;
   ${({ status }) => {
     switch (status) {
-      case "major":
+      case 'major':
         return `
         background-color: #ffd1d9;
         color: #ef0d33;
-      `;
-      case "minor":
+      `
+      case 'minor':
         return `
         background-color: #ffefbb;
         color: #c2950b;
-      `;
+      `
       default:
-        return "color: inherit";
+        return 'color: inherit'
     }
   }};
-`;
+`

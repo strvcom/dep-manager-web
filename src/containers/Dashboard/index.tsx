@@ -1,39 +1,36 @@
 // @flow
-import React, { Fragment, Component } from "react";
-import styled from "styled-components";
-import { Route, Switch, Redirect } from "react-router-dom";
-import { sort, descend, prop } from "ramda";
-import { format, isAfter, addMonths } from "date-fns";
-
-import { getRepositories } from "../../data/apis";
-
-import LibraryDetail from "../../containers/LibraryDetail";
-import ProjectDetail from "../../containers/ProjectDetail";
-
-import SubNav from "../../components/SubNav";
-import Libraries from "../../components/Tables/Libraries";
-import Projects from "../../components/Tables/Projects";
-import { Overview, Status, RecentUpdates } from "../../components/Widgets";
-import Loading from "../../components/Loading";
-import * as helpers from "../../data/helpers";
+import React, { Fragment, Component } from 'react'
+import styled from 'styled-components'
+import { Route, Switch, Redirect } from 'react-router-dom'
+import { sort, prop, descend } from 'ramda'
+import { format, isAfter, addMonths } from 'date-fns'
+import { getRepositories } from '../../data/apis'
+import LibraryDetail from '../../containers/LibraryDetail'
+import ProjectDetail from '../../containers/ProjectDetail'
+import SubNav from '../../components/SubNav'
+import Libraries from '../../components/Tables/Libraries'
+import Projects from '../../components/Tables/Projects'
+import { Overview, Status, RecentUpdates } from '../../components/Widgets'
+import Loading from '../../components/Loading'
+import * as helpers from '../../data/helpers'
 
 const StyledDashboard = styled.main`
   flex: 1 1 auto;
   display: flex;
   justify-content: center;
-`;
+`
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 1140px;
-`;
+`
 
 const WidgetContainer = styled.section`
   display: flex;
   justify-content: space-between;
   margin-top: 40px;
-`;
+`
 
 interface DashboardState {
   projects: helpers.Projects
@@ -52,18 +49,19 @@ interface DashboardState {
     upToDate: number
   }
 }
+
 export default class Dashboard extends Component<any, DashboardState> {
-  state: DashboardState = {
+  public readonly state: DashboardState = {
     projects: {},
     latestLibraries: {},
     projectLibraryRelation: [],
     filteredProjects: [],
     filteredLibraries: [],
     isLoading: true,
-    recentLibraries: [],
-  };
+    recentLibraries: []
+  }
 
-  componentDidMount = async () => {
+  public componentDidMount = async () => {
     const {
       projects,
       latestLibraries,
@@ -91,7 +89,9 @@ export default class Dashboard extends Component<any, DashboardState> {
     const libraryNameList = Object.keys(latestLibraries);
     const filteredLibraries = libraryNameList.map(libraryName => {
       const library = latestLibraries[libraryName];
-      const relatedProjects = projectLibraryRelation.filter(relation => relation.libraryName === libraryName);
+      const relatedProjects = projectLibraryRelation.filter(
+        relation => relation.libraryName === libraryName
+      );
       return {
         name: library.name,
         url: library.url,
@@ -147,7 +147,7 @@ export default class Dashboard extends Component<any, DashboardState> {
     });
   };
 
-  render() {
+  public render() {
     const {
       filteredProjects,
       filteredLibraries,
@@ -157,9 +157,11 @@ export default class Dashboard extends Component<any, DashboardState> {
       projects,
       latestLibraries,
       projectLibraryRelation,
-      isLoading
-    } = this.state;
-    if (isLoading) return <Loading />;
+      isLoading,
+    } = this.state
+    if (isLoading) {
+      return <Loading />
+    }
     return (
       <Fragment>
         <SubNav projects={projects} libraries={latestLibraries} />
@@ -168,7 +170,7 @@ export default class Dashboard extends Component<any, DashboardState> {
             <Route
               path="/:department/:category"
               exact
-              render={(props) => (
+              render={props => (
                 <WidgetContainer>
                   <Overview width="32%" projectOverview={projectOverview!} />
                   <Status width="32%" librariesStatus={librariesStatus!} />
@@ -183,24 +185,20 @@ export default class Dashboard extends Component<any, DashboardState> {
             <Switch>
               <Route
                 path="/:department/library/:name"
-                render={(props) => (
+                render={props => (
                   <LibraryDetail
-                    relatedProjects={projectLibraryRelation.filter(
-                      relation =>
-                        relation.libraryName ===
-                        decodeURIComponent(props.match.params.name)
-                    )}
+                    relatedProjects={projectLibraryRelation.filter(relation =>
+                      relation.libraryName === decodeURIComponent(props.match.params.name))}
                     {...props}
                   />
                 )}
               />
               <Route
                 path="/:department/project/:name"
-                render={(props) => (
+                render={props => (
                   <ProjectDetail
-                    relatedLibraries={projectLibraryRelation.filter(
-                      relation => relation.projectName === props.match.params.name
-                    )}
+                    relatedLibraries={projectLibraryRelation.filter(relation =>
+                      relation.projectName === props.match.params.name)}
                     {...props}
                     recentLibraries={recentLibraries}
                   />
@@ -208,27 +206,17 @@ export default class Dashboard extends Component<any, DashboardState> {
               />
               <Route
                 path="/:department/libraries"
-                render={(props) => (
-                  <Libraries
-                    {...props}
-                    libraries={filteredLibraries}
-                  />
-                )}
+                render={props => <Libraries {...props} libraries={filteredLibraries} />}
               />
               <Route
                 path="/:department/projects"
-                render={(props) => (
-                  <Projects
-                    {...props}
-                    projects={filteredProjects}
-                  />
-                )}
+                render={props => <Projects {...props} projects={filteredProjects} />}
               />
               <Redirect to="/frontend/libraries" />
             </Switch>
           </Container>
         </StyledDashboard>
       </Fragment>
-    );
+    )
   }
 }
