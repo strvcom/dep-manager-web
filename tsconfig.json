@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "declaration": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "esnext",
+    "jsx": "preserve",
+    "lib": [
+      "es5",
+      "es6",
+      "es2017",
+      "dom"
+    ],
+    "skipLibCheck": true,
+    "strictFunctionTypes": true,
+    "allowUnreachableCode": true,
+    "allowUnusedLabels": true,
+    "allowSyntheticDefaultImports": true,
+    "diagnostics": false,
+    "esModuleInterop": true,
+    "listEmittedFiles": false,
+    "noUnusedLocals": true,
+    "strict": true,
+    "stripInternal": true,
+    "resolveJsonModule": true,
+    "pretty": true,
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
