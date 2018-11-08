@@ -28,7 +28,7 @@ const Projects = ({ history, match: { params }, projects }: ProjectsProps) => (
             width={200}
             label="Outdated Libraries"
             dataKey="status"
-            cellRenderer={StatusCell}
+            cellRenderer={(props) => <StatusCell {...props}/>}
           />
           <Column width={360} label="Github Username" dataKey="contributors" />
         </Table>
@@ -42,4 +42,4 @@ export interface ProjectsProps
   projects: any
 }
 
-export default Projects
+export default React.memo(Projects)

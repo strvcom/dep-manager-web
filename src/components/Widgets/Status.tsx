@@ -1,24 +1,7 @@
 import React from 'react'
-import styled from 'styled-components'
 import { WidgetContainer, WidgetTitle } from './styled'
 import DoughnutChart from './DoughnutChart'
-
-const StatusWrapper = styled.section`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-`
-
-const StatusContainer = styled.div`
-  font-family: "Maison Neue";
-  font-size: 14px;
-  line-height: 17px;
-`
-
-const Percent = styled.p`
-  opacity: 0.5;
-`
+import {StatusWrapper, StatusContainer, Percent} from './styled'
 
 const Status = ({
   width,
@@ -57,4 +40,4 @@ export interface StatusProps {
   }
 }
 
-export default Status
+export default React.memo(Status)

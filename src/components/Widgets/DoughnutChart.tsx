@@ -1,16 +1,5 @@
 import React from 'react'
-import styled, { keyframes } from 'styled-components'
-
-const draw = (percent: number) => keyframes`
-  to {
-    stroke-dasharray: ${percent} ${100 - percent};
-    stroke-dashoffset: ${25 + percent};
-  }
-`
-
-const Circle = styled<{ percent: number }, 'circle'>('circle')`
-  animation: ${({ percent }) => draw(percent)} 1s ease forwards;
-`
+import {Circle} from './styled'
 
 const DoughnutChart = ({ size = 64, percent = 0 }: DoughnutChartProps) => (
   <svg width={size} viewBox="0 0 42 42">
@@ -42,4 +31,4 @@ export interface DoughnutChartProps {
   percent?: number
 }
 
-export default DoughnutChart
+export default React.memo(DoughnutChart)

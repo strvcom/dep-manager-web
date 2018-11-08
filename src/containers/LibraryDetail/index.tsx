@@ -1,26 +1,10 @@
 import React from 'react'
-import styled from 'styled-components'
+import {Wrapper, Content, Sidebar} from './styled'
 import { RouteComponentProps } from 'react-router-dom'
 import RelatedProjects from '../../components/Tables/RelatedProjects'
 import { OutdatedProjects, Status } from '../../components/Widgets'
 import { ProjectLibraryRelation } from '../../data/helpers'
 
-const Wrapper = styled.section`
-  margin-top: 60px;
-  display: flex;
-  flex: 1 1 auto;
-`
-
-const Content = styled.div`
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-`
-
-const Sidebar = styled.div`
-  flex: 0 1 360px;
-  margin-left: 35px;
-`
 
 const LibraryDetail = ({ relatedProjects, ...routeProps }: LibraryDetailProps) => (
   <Wrapper>
@@ -54,4 +38,4 @@ export interface LibraryDetailProps
   relatedProjects: ProjectLibraryRelation[]
 }
 
-export default LibraryDetail
+export default React.memo(LibraryDetail)

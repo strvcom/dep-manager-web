@@ -125,4 +125,4 @@ export interface SubNavProps {
   libraries: any
 }
 
-export default SubNav
+export default React.memo(SubNav)

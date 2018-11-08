@@ -35,7 +35,11 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    "typeRoots": [
+      "node_module/@types",
+      "types"
+    ]
   },
   "include": [
     "src"

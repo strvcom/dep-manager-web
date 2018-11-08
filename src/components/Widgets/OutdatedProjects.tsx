@@ -1,33 +1,8 @@
 import React from 'react'
-import styled from 'styled-components'
-import { Link, RouteComponentProps } from 'react-router-dom'
+import { RouteComponentProps } from 'react-router-dom'
 import { ProjectLibraryRelation } from '../../data/helpers'
 import { WidgetContainer, WidgetTitle } from './styled'
-
-const LibraryLink = styled(Link)`
-  display: block;
-  margin-top: 20px;
-  padding-right: 20px;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  &:hover {
-    background: rgba(0, 0, 0, 0.1);
-  }
-`
-
-const Libraries = styled.div`
-  overflow: auto;
-  margin-right: -30px;
-`
-
-const NameAndVersion = styled.div`
-  font-family: "Maison Neue";
-  font-size: 14px;
-  line-height: 17px;
-  display: flex;
-  justify-content: space-between;
-`
+import {Libraries, LibraryLink, NameAndVersion} from './styled'
 
 const OutdatedProjects = ({
   width,
@@ -60,4 +35,4 @@ export interface OutdatedProjectsProps
   outDatedProjects: ProjectLibraryRelation[]
 }
 
-export default OutdatedProjects
+export default React.memo(OutdatedProjects)

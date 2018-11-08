@@ -31,7 +31,7 @@ const Libraries = ({ history, match: { params }, libraries }: LibrariesProps) =>
             width={360}
             label="Outdated Projects"
             dataKey="status"
-            cellRenderer={StatusCell}
+            cellRenderer={(props) => <StatusCell {...props}/>}
           />
         </Table>
       )}
@@ -44,4 +44,4 @@ export interface LibrariesProps
   libraries: any
 }
 
-export default Libraries
+export default React.memo(Libraries)

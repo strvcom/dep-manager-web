@@ -15,7 +15,7 @@ const loading = keyframes`
 `
 
 const BarLoader = styled<BarLoaderProps, 'div'>('div')`
-  animation: ${props => `${loading} ${props.duration}s infinite ease-in-out`};
+  animation: ${loading} 1s infinite ease-in-out;
   animation-delay: ${props => `${props.duration! * -0.16}s`};
   background: ${props => props.color};
   color: ${props => props.color};
@@ -27,8 +27,7 @@ const BarLoader = styled<BarLoaderProps, 'div'>('div')`
   transform: translateZ(0);
   width: 1em;
   &:before {
-    animation: ${props =>
-    `${loading} ${props.duration}s infinite ease-in-out;`};
+    animation: ${loading} 1s infinite ease-in-out;
     animation-delay: ${props => `${props.duration! * -0.32}s`};
     background: ${props => props.color};
     content: "";
@@ -39,7 +38,7 @@ const BarLoader = styled<BarLoaderProps, 'div'>('div')`
     width: 1em;
   }
   &:after {
-    animation: ${props => `${loading} ${props.duration}s infinite ease-in-out`};
+    animation: ${loading} 1s infinite ease-in-out;
     animation-delay: ${props => `${props.duration! * 0.08}s`};
     background: ${props => props.color};
     content: "";

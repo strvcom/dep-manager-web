@@ -51,4 +51,4 @@ export interface RelatedLibrariesProps
   relatedLibraries: any
 }
 
-export default RelatedLibraries
+export default React.memo(RelatedLibraries)

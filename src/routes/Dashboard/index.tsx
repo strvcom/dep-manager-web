@@ -1,36 +1,17 @@
-// @flow
 import React, { Fragment, Component } from 'react'
-import styled from 'styled-components'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import { sort, prop, descend } from 'ramda'
 import { format, isAfter, addMonths } from 'date-fns'
 import { getRepositories } from '../../data/apis'
 import LibraryDetail from '../../containers/LibraryDetail'
 import ProjectDetail from '../../containers/ProjectDetail'
-import SubNav from '../../components/SubNav'
+import SubNav from './SubNav'
 import Libraries from '../../components/Tables/Libraries'
 import Projects from '../../components/Tables/Projects'
 import { Overview, Status, RecentUpdates } from '../../components/Widgets'
 import Loading from '../../components/Loading'
 import * as helpers from '../../data/helpers'
-
-const StyledDashboard = styled.main`
-  flex: 1 1 auto;
-  display: flex;
-  justify-content: center;
-`
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 1140px;
-`
-
-const WidgetContainer = styled.section`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 40px;
-`
+import {Container, StyledDashboard, WidgetContainer} from './styled'
 
 interface DashboardState {
   projects: helpers.Projects

@@ -47,4 +47,4 @@ export interface RelatedProjectsProps
   relatedProjects: any
 }
 
-export default RelatedProjects
+export default React.memo(RelatedProjects)

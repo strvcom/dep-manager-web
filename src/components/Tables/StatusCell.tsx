@@ -16,4 +16,4 @@ export interface StatusCellProps extends TableCellProps {
   }
 }
 
-export default StatusCell
+export default React.memo(StatusCell)
