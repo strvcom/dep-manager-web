@@ -2,7 +2,7 @@ import axios from 'axios'
 import groupInfo from './groups'
 
 const getVersionMeta = (version: string): VersionMeta => {
-  const match = version.match(/[0-9]+\.[0-9]+(\.[0-9]+)?/u)
+  const match = version.match(/[0-9]+\.[0-9]+(\.[0-9]+)?/)
   if (!match) {
     return {}
   }
@@ -11,33 +11,33 @@ const getVersionMeta = (version: string): VersionMeta => {
   return {
     major: Number(meta[0]),
     minor: Number(meta[1]),
-    patch: Number(meta[2]),
+    patch: Number(meta[2])
   }
 }
 
 const getVersionStatus = (
   latestVersionMeta: VersionMeta,
-  currentVersionMeta: VersionMeta,
+  currentVersionMeta: VersionMeta
 ): LibraryStatus => {
   let libraryStatus: LibraryStatus = 'upToDate'
   if (
-    currentVersionMeta.patch !== undefined
-    && latestVersionMeta.patch !== undefined
-    && currentVersionMeta.patch < latestVersionMeta.patch
+    currentVersionMeta.patch !== undefined &&
+    latestVersionMeta.patch !== undefined &&
+    currentVersionMeta.patch < latestVersionMeta.patch
   ) {
     libraryStatus = 'patch'
   }
   if (
-    currentVersionMeta.minor !== undefined
-    && latestVersionMeta.minor !== undefined
-    && currentVersionMeta.minor < latestVersionMeta.minor
+    currentVersionMeta.minor !== undefined &&
+    latestVersionMeta.minor !== undefined &&
+    currentVersionMeta.minor < latestVersionMeta.minor
   ) {
     libraryStatus = 'minor'
   }
   if (
-    currentVersionMeta.major !== undefined
-    && latestVersionMeta.major !== undefined
-    && currentVersionMeta.major < latestVersionMeta.major
+    currentVersionMeta.major !== undefined &&
+    latestVersionMeta.major !== undefined &&
+    currentVersionMeta.major < latestVersionMeta.major
   ) {
     libraryStatus = 'major'
   }
@@ -57,12 +57,15 @@ const getGroupInfo = (libraryName: string): string => {
 }
 
 const getLatestLibraries = async (
-  usedLibraries: string[],
+  usedLibraries: string[]
 ): Promise<Libraries | {}> => {
   const promises = usedLibraries.map(async libraryName => {
     try {
       return await axios
-        .get(`http://cors-proxy.htmldriven.com/?url=https://registry.npmjs.org/${libraryName}`)
+        .get(
+          `http://cors-proxy.htmldriven.com/?url=https://registry.npmjs.org/${libraryName}`
+        )
+        // tslint:disable-next-line:no-shadowed-variable
         .then(({ data }) => {
           const body = JSON.parse(data.body)
           const version = body['dist-tags'].latest
@@ -74,7 +77,7 @@ const getLatestLibraries = async (
             version,
             versionMeta: getVersionMeta(version),
             updatedAt: body.time[version],
-            group: getGroupInfo(body._id),
+            group: getGroupInfo(body._id)
           }
 
           return latestLibrary
@@ -86,14 +89,16 @@ const getLatestLibraries = async (
 
   const data = await Promise.all(promises)
   return data.reduce((acc, lib) => {
-    if (!lib) { return acc }
+    if (!lib) {
+      return acc
+    }
     acc[lib.name] = lib
     return acc
   }, {})
 }
 
 const getLatestLibrariesBatch = async (
-  usedLibraries: string[],
+  usedLibraries: string[]
 ): Promise<Libraries | {}> => {
   try {
     const result = {}
@@ -105,9 +110,9 @@ const getLatestLibrariesBatch = async (
         chunkData,
         {
           headers: {
-            'content-type': 'application/json',
-          },
-        },
+            'content-type': 'application/json'
+          }
+        }
       )
       Object.assign(result, response.data)
     }
@@ -124,7 +129,7 @@ const getLatestLibrariesBatch = async (
         version: 'unknown',
         versionMeta: {},
         updatedAt: 'unknown',
-        group: 'Etc',
+        group: 'Etc'
       }
 
       groupInfo.some(info => {
@@ -140,8 +145,8 @@ const getLatestLibrariesBatch = async (
 
       const {
         collected: {
-          metadata: { version, date, license, links },
-        },
+          metadata: { version, date, license, links }
+        }
       } = latestLibraryInfo
 
       latestLibraries[libraryName].url = links.repository
@@ -160,7 +165,7 @@ const createLibraryRelation = (
   projectLibraryRelation: any,
   projectName: string,
   dependencies = {},
-  devDependencies = {},
+  devDependencies = {}
 ) => {
   Object.keys(dependencies).forEach(libraryName => {
     const currentVersion = dependencies[libraryName]
@@ -170,7 +175,7 @@ const createLibraryRelation = (
       currentVersion,
       currentVersionMeta: getVersionMeta(currentVersion),
       licence: 'unknown',
-      status: 'upToDate',
+      status: 'upToDate'
     })
   })
   Object.keys(devDependencies).forEach(libraryName => {
@@ -181,14 +186,14 @@ const createLibraryRelation = (
       currentVersion,
       currentVersionMeta: getVersionMeta(currentVersion),
       licence: 'unknown',
-      status: 'upToDate',
+      status: 'upToDate'
     })
   })
 }
 
 const updateLibraryRelation = (
   projectLibraryRelations: ProjectLibraryRelation[],
-  latestLibraries: Libraries,
+  latestLibraries: Libraries
 ) => {
   Object.keys(latestLibraries).forEach(libraryName => {
     const latestLibrary = latestLibraries[libraryName]
@@ -197,7 +202,7 @@ const updateLibraryRelation = (
       .forEach(relation => {
         relation.status = getVersionStatus(
           latestLibrary.versionMeta,
-          relation.currentVersionMeta,
+          relation.currentVersionMeta
         )
         relation.licence = latestLibrary.licence
         relation.latestVersion = latestLibrary.version
@@ -207,14 +212,16 @@ const updateLibraryRelation = (
 }
 
 const reformatData = async (
-  data: any,
+  data: any
 ): Promise<{
-  projects: Projects
-  latestLibraries: Libraries
-  projectLibraryRelation: ProjectLibraryRelation[]
+projects: Projects
+latestLibraries: Libraries
+projectLibraryRelation: ProjectLibraryRelation[]
 }> => {
   const { search } = data
-  if (!search) { return { projects: {}, latestLibraries: {}, projectLibraryRelation: [] } }
+  if (!search) {
+    return { projects: {}, latestLibraries: {}, projectLibraryRelation: [] }
+  }
 
   const { nodes } = search
 
@@ -229,22 +236,24 @@ const reformatData = async (
       projectLibraryRelation,
       projectName,
       dependencies,
-      devDependencies,
+      devDependencies
     )
 
     acc[projectName] = {
       name: projectName,
       url: node.url,
-      lastActive: node.pushedAt,
+      lastActive: node.pushedAt
     }
 
     return acc
   }, {})
 
-  const allUsedLibraryNames = Array.from(projectLibraryRelation.reduce((acc, relation) => {
-    acc.add(relation.libraryName)
-    return acc
-  }, new Set()))
+  const allUsedLibraryNames = Array.from(
+    projectLibraryRelation.reduce((acc, relation) => {
+      acc.add(relation.libraryName)
+      return acc
+    }, new Set())
+  )
 
   // const latestLibraries = await getLatestLibraries(allUsedLibraryNames);
   const latestLibraries = await getLatestLibrariesBatch(allUsedLibraryNames)
@@ -254,11 +263,11 @@ const reformatData = async (
   return {
     projects,
     latestLibraries,
-    projectLibraryRelation,
+    projectLibraryRelation
   }
 }
 
-export type VersionMeta = {
+export interface VersionMeta {
   major?: number
   minor?: number
   patch?: number
@@ -266,17 +275,17 @@ export type VersionMeta = {
 
 export type LibraryStatus = 'upToDate' | 'major' | 'minor' | 'patch'
 
-export type Project = {
+export interface Project {
   name: string
   url: string
   lastActive: string
 }
 
-export type Projects = {
+export interface Projects {
   [prop: string]: Project
 }
 
-export type Library = {
+export interface Library {
   name: string
   url: string
   licence: string
@@ -286,11 +295,11 @@ export type Library = {
   group: string
 }
 
-export type Libraries = {
+export interface Libraries {
   [prop: string]: Library
 }
 
-export type ProjectLibraryRelation = {
+export interface ProjectLibraryRelation {
   projectName: string
   libraryName: string
   licence: string
@@ -300,6 +309,5 @@ export type ProjectLibraryRelation = {
   latestVersionMeta?: VersionMeta
   status: LibraryStatus
 }
-
 
 export default reformatData

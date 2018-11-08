@@ -1,5 +1,5 @@
-export const root = "/"
-export const login = "/login"
+export const root = '/'
+export const login = '/login'
 
 export const frontend = '/frontend'
 export const frontendLibraries = '/frontend/libraries'
