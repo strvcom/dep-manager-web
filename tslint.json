@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "tslint:latest",
+    "tslint-react",
+    "tslint-config-standard",
+    "tslint-config-prettier"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "node_modules/**",
+      "./**/*.test.ts",
+      "./**/*.d.ts"
+    ]
+  },
+  "rules": {
+    "no-unused-variable": false,
+    "ordered-imports": false,
+    "interface-name": false,
+    "no-submodule-imports": false,
+    "no-reference": false,
+    "no-console": false,
+    "no-namespace": false,
+    "object-literal-sort-keys": false,
+    "max-classes-per-file": false,
+    "jsx-boolean-value": false,
+    "jsx-no-multiline-js": false,
+    "jsx-no-lambda": false,
+    "no-empty-interface": false,
+    "no-implicit-dependencies": false
+  }
+}
