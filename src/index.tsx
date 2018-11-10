@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { ApolloProvider, Query } from 'react-apollo'
-import GlobalStyles from './styles/globalStyles'
+import CSSReset from './styles/reset'
 import 'react-virtualized/styles.css'
 import App from './routes'
 import registerServiceWorker from './registerServiceWorker'
@@ -18,7 +18,7 @@ ReactDOM.render(
         </Query>
       </Router>
     </ApolloProvider>
-    <GlobalStyles />
+    <CSSReset />
   </React.Fragment>,
   document.getElementById('root')
 )

@@ -1,10 +1,12 @@
 import React from 'react'
-import { QueryViewer } from '../data/Viewer'
 import Login from './Login'
 import Loading from '../components/Loading'
 import Nav from './Nav'
 import { Redirect, Switch, Route } from 'react-router-dom'
 import * as routes from './routes'
+import { Query } from 'react-apollo'
+import { VIEWER_QUERY } from '../data/Viewer'
+import { Me } from '../data/types'
 
 const Dashboard = React.lazy(() => import('./Dashboard'))
 
@@ -21,18 +23,19 @@ export default function App ({ token }: AppProps) {
         <Route
           path={routes.root}
           render={() => (
-            <>'              \' '<Nav />' '
+            <React.Fragment>
+              <Nav />
               <React.Suspense fallback={<Loading />}>
-                <QueryViewer fetchPolicy='network-only'>
+                <Query<Me> query={VIEWER_QUERY} fetchPolicy='network-only'>
                   {({ loading, error, data }) => {
                     if (error) return error.stack || error.message
                     if (loading) return <Loading />
                     if (data && data.viewer) return <Dashboard />
                     return <Redirect to={routes.login} />
                   }}
-                </QueryViewer>
-              </React.Suspense>'              \' \'
-           '</>
+                </Query>
+              </React.Suspense>
+            </React.Fragment>
           )}
         />
       )}

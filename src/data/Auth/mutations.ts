@@ -1,8 +1,8 @@
 import MutationFunction from '../../utils/MutationFunction'
-import gql from 'graphql-tag'
+import gqlLocal from 'graphql-tag'
 import { Auth } from './types'
 
-export const CHANGE_TOKEN = gql`
+export const CHANGE_TOKEN = gqlLocal`
   mutation ChangeToken($token: String!) {
     changeToken(token: $token) @client
   }

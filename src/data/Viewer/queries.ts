@@ -9,12 +9,3 @@ export const VIEWER_QUERY = gql`
     }
   }
 `
-export interface Viewer {
-  login: string
-  name: string
-  avatarUrl: string
-}
-
-export interface ViewerResponse {
-  viewer: Viewer
-}
