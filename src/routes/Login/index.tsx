@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { ReactComponent as Logo } from '../../assets/logo.svg'
 import Netlify from 'netlify-auth-providers'
 import { RouteComponentProps } from 'react-router-dom'
@@ -8,7 +8,7 @@ import {
   AuthQueryResponse,
   ChangeTokenVariables
 } from '../../data/Auth'
-import { Mutation } from 'react-apollo'
+import { useMutation } from '../../utils/hooks'
 
 const options =
   process.env.NODE_ENV === 'production'
@@ -23,27 +23,27 @@ interface NetlifyResponse {
   scope: string
 }
 
-const Login = (props: RouteComponentProps) => (
-  <Container>
-    <Logo />
-    <Mutation<AuthQueryResponse, ChangeTokenVariables> mutation={CHANGE_TOKEN}>
-      {changeAuth => (
-        <LoginButton
-          onClick={() =>
-            authenticator.authenticate(
-              { provider: 'github', scope: 'read:user, repo' },
-              (err, data: NetlifyResponse) => {
-                if (err) return alert(`LOGIN ERROR: ${err}`)
-                changeAuth({ variables: { token: data.token } })
-              }
-            )
-          }
-        >
-          Login with github
-        </LoginButton>
-      )}
-    </Mutation>
-  </Container>
-)
+const Login = (props: RouteComponentProps) => {
+  const changeAuth = useMutation<AuthQueryResponse, ChangeTokenVariables>({
+    mutation: CHANGE_TOKEN
+  })
+  const handleClick = useCallback(
+    () =>
+      authenticator.authenticate(
+        { provider: 'github', scope: 'read:user, repo' },
+        (err, data: NetlifyResponse) => {
+          if (err) return alert(`LOGIN ERROR: ${err}`)
+          changeAuth({ variables: { token: data.token } })
+        }
+      ),
+    [changeAuth]
+  )
+  return (
+    <Container>
+      <Logo />
+      <LoginButton onClick={handleClick}>Login with github</LoginButton>
+    </Container>
+  )
+}
 
-export default Login
+export default React.memo(Login)

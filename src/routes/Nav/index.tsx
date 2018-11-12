@@ -1,19 +1,20 @@
 import React from 'react'
 import { match } from 'react-router-dom'
 import { Location } from 'history'
-import {ReactComponent as Logo} from '../../assets/logo.svg'
-import {Container,StyledLogoLink,StyledNav,StyledNavLink} from './styled'
+import { ReactComponent as Logo } from '../../assets/logo.svg'
+import { Container, StyledLogoLink, StyledNav, StyledNavLink } from './styled'
 import * as routes from '../routes'
 
 const activeStyle = { borderBottom: '2px solid white' }
 
+// tslint:disable-next-line:no-shadowed-variable
 const startsWith = (url: string) => (match: match, location: Location) =>
   location.pathname.startsWith(url)
 
 const Nav = () => (
   <StyledNav>
     <StyledLogoLink to={routes.root}>
-      <Logo height="16" />
+      <Logo height='16' />
     </StyledLogoLink>
     <Container>
       <StyledNavLink
