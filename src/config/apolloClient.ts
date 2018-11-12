@@ -1,26 +1,47 @@
-import { ApolloClient } from 'apollo-client'
-import { HttpLink } from 'apollo-link-http'
-import { from } from 'apollo-link'
-import { setContext } from 'apollo-link-context'
-import { cache, stateLink } from './state'
-import { AuthQueryResponse, AUTH_QUERY } from '../data/Auth'
+import ApolloClient from 'apollo-boost'
+import { AUTH_QUERY, AuthQueryResponse, changeToken } from '../data/Auth'
 
-const httpLink = new HttpLink({ uri: 'https://api.github.com/graphql' })
-const authLink = setContext(async (request, context) => {
-  const { data } = await client.query<AuthQueryResponse>({ query: AUTH_QUERY })
-  return {
-    ...context,
-    headers: {
-      ...context.headers,
-      authorization:
-        data && data.auth.token ? `bearer ${data.auth.token}` : null
+export const GITHUB_TOKEN_KEY = 'Bida-App-Github-Token'
+
+export const defaultState = {
+  auth: {
+    __typename: 'Auth',
+    token: localStorage.getItem(GITHUB_TOKEN_KEY)
+  }
+}
+const client = new ApolloClient({
+  uri: 'https://api.github.com/graphql',
+  fetchOptions: { credentials: 'include' },
+  request: async operation => {
+    const { data } = await client.query<AuthQueryResponse>({
+      query: AUTH_QUERY
+    })
+    operation.setContext({
+      headers: {
+        authorization:
+          data && data.auth.token ? `bearer ${data.auth.token}` : null
+      }
+    })
+  },
+  onError: ({ graphQLErrors, networkError }) => {
+    if (graphQLErrors) console.log(graphQLErrors)
+    if (networkError) console.log(networkError)
+  },
+  clientState: {
+    defaults: defaultState,
+    resolvers: {
+      Mutation: {
+        changeToken
+      }
     }
   }
 })
 
-const client = new ApolloClient({
-  cache,
-  link: from([stateLink, authLink, httpLink])
-})
+client
+  .watchQuery<AuthQueryResponse>({ query: AUTH_QUERY })
+  .subscribe(({ data: { auth } }) => {
+    if (auth && auth.token) localStorage.setItem(GITHUB_TOKEN_KEY, auth.token)
+    else localStorage.removeItem(GITHUB_TOKEN_KEY)
+  })
 
 export default client
