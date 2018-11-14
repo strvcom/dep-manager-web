@@ -1,36 +1,50 @@
 import gql from 'graphql-tag'
 
-export const REPOSITORIES_QUERY = gql`
-  query Repositories($query: String!, $after: String) {
-    search(type: REPOSITORY, query: $query, first: 50, after: $after) {
-      repositoryCount
-      pageInfo {
-        endCursor
-        hasNextPage
-        hasPreviousPage
-        startCursor
-      }
-      nodes {
-        ... on Repository {
-          id
-          name
-          nameWithOwner
-          url
-          pushedAt
-          object(expression: "HEAD:package.json") {
-            ... on Blob {
-              byteSize
-              text
-            }
-          }
-        }
+const Project = gql`
+  fragment Project on Repository {
+    id
+    name
+    nameWithOwner
+    url
+    pushedAt
+    package: object(expression: "HEAD:package.json") {
+      ... on Blob {
+        text
       }
     }
+  }
+`
+
+export const REPOSITORIES_QUERY = gql`
+  query RepositoriesSearch {
     rateLimit {
       limit
       cost
       remaining
       resetAt
+    }
+    organization(login: "strvcom") {
+      repositories(first: 50) {
+        totalCount
+        pageInfo {
+          endCursor
+          hasNextPage
+          hasPreviousPage
+          startCursor
+        }
+        nodes {
+          ...Project
+        }
+      }
+    }
+  }
+  ${Project}
+`
+
+export const REPOSITORY_URL_QUERY = gql`
+  query RepositoryUrlSearch($name: String!) {
+    repository(owner: "strvcom", name: $name) @client {
+      url
     }
   }
 `

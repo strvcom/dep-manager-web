@@ -1,14 +1,19 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { ProjectLibraryRelation } from '../../data/helpers'
-import { WidgetContainer, WidgetTitle } from './styled'
-import {Libraries, LibraryLink, NameAndVersion} from './styled'
+import {
+  WidgetContainer,
+  WidgetTitle,
+  Libraries,
+  LibraryLink,
+  NameAndVersion
+} from './styled'
 
 const OutdatedProjects = ({
   width,
   height,
   match: { params },
-  outDatedProjects,
+  outDatedProjects
 }: OutdatedProjectsProps) => (
   <WidgetContainer height={height} width={width}>
     <WidgetTitle>Outdated on</WidgetTitle>

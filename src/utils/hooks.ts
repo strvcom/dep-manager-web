@@ -8,30 +8,32 @@ import {
 } from 'apollo-client'
 import { MutationFn } from 'react-apollo'
 
-export function useMutation<T, TVariables = any> (
+export const useMutation = <T, TVariables = any>(
   options: MutationOptions<T, TVariables>,
   inputs: ReadonlyArray<any> = []
-): MutationFn<T, TVariables> {
-  const mutate = useCallback<MutationFn<T, TVariables>>(
+): MutationFn<T, TVariables> =>
+  useCallback<MutationFn<T, TVariables>>(
     o => client.mutate<T, TVariables>({ ...options, ...o }),
     inputs
   )
-  return mutate
-}
 
-export function useQuery<T, TVariables = any> (
-  options: WatchQueryOptions<TVariables> & { cached?: boolean },
+export const useQuery = <T, TVariables = any>(
+  options: WatchQueryOptions<TVariables>,
   inputs: ReadonlyArray<any> = []
-): ApolloQueryResult<T | null> {
+): ApolloQueryResult<T | null> => {
   const [state, setState] = useState<ApolloQueryResult<T | null>>({
     stale: false,
     networkStatus: NetworkStatus.ready,
-    loading: true,
-    data: options.cached ? client.readQuery<T>(options) : null
+    loading:
+      !(options.fetchPolicy && options.fetchPolicy === 'cache-only'),
+    data:
+      options.fetchPolicy && options.fetchPolicy === 'cache-only'
+        ? client.readQuery<T>(options)
+        : null
   })
   useEffect(() => {
     const subscription = client.watchQuery<T>(options).subscribe(setState)
-    return subscription.unsubscribe
+    return () => subscription.unsubscribe()
   }, inputs)
   return state
 }

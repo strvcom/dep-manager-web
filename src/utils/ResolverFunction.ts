@@ -1,8 +1,7 @@
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
-type MutationFunction < Variables = any > = (
-  obj: any,
+export type ResolverFunction < Variables extends {} = {} , Obj = any > = (
+  obj: Obj,
   variables: Variables,
   context: { cache: InMemoryCache }
 ) => null
-export default MutationFunction

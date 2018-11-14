@@ -1,14 +1,16 @@
 import ApolloClient from 'apollo-boost'
-import { AUTH_QUERY, AuthQueryResponse, changeToken } from '../data/Auth'
+import { AUTH_QUERY, AuthQueryResponse } from '../data/Auth'
+import Mutation from '../data/Mutation/resolvers'
 
 export const GITHUB_TOKEN_KEY = 'Bida-App-Github-Token'
 
-export const defaultState = {
+const defaultState = {
   auth: {
     __typename: 'Auth',
     token: localStorage.getItem(GITHUB_TOKEN_KEY)
   }
 }
+
 const client = new ApolloClient({
   uri: 'https://api.github.com/graphql',
   fetchOptions: { credentials: 'include' },
@@ -30,8 +32,12 @@ const client = new ApolloClient({
   clientState: {
     defaults: defaultState,
     resolvers: {
-      Mutation: {
-        changeToken
+      Mutation,
+      Query: {
+        repository: () => console.log('oi')
+      },
+      Repository: {
+        url: () => console.log('oi')
       }
     }
   }

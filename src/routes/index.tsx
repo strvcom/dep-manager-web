@@ -2,16 +2,8 @@ import React from 'react'
 import Login from './Login'
 import Loading from '../components/Loading'
 import Nav from './Nav'
-import {
-  Redirect,
-  Switch,
-  Route,
-  withRouter,
-  RouteComponentProps
-} from 'react-router-dom'
+import { Redirect, Switch, Route } from 'react-router-dom'
 import * as routes from './routes'
-import { VIEWER_QUERY } from '../data/Viewer'
-import { Me } from '../data/types'
 import { useQuery } from '../utils/hooks'
 import { AUTH_QUERY, AuthQueryResponse } from '../data/Auth'
 
@@ -20,7 +12,7 @@ const Dashboard = React.lazy(() => import('./Dashboard'))
 const App = () => {
   const { data } = useQuery<AuthQueryResponse>({
     query: AUTH_QUERY,
-    cached: true
+    fetchPolicy: 'cache-only'
   })
   const { auth } = data || { auth: null }
   return (
@@ -31,27 +23,18 @@ const App = () => {
       {auth && auth.token && (
         <Route
           path={routes.root}
-          render={props => <AuthorizedRoutes {...props} />}
+          render={() => {
+            return (
+              <React.Suspense fallback={<Loading />}>
+                <Nav />
+                <Dashboard />
+              </React.Suspense>
+            )
+          }}
         />
       )}
     </Switch>
   )
 }
 
-const AuthorizedRoutes = React.memo((props: RouteComponentProps) => {
-  const { data, loading } = useQuery<Me>({
-    query: VIEWER_QUERY,
-    fetchPolicy: 'network-only'
-  })
-  return (
-    <React.Fragment>
-      <Nav />
-      <React.Suspense fallback={<Loading />}>
-        {loading && <Loading />}
-        {data && data.viewer && <Dashboard />}
-      </React.Suspense>
-    </React.Fragment>
-  )
-})
-
-export default withRouter(React.memo(App))
+export default App
