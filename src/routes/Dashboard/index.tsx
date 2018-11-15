@@ -1,21 +1,21 @@
 import React, { Fragment, Component } from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom'
 import { sort, prop, descend } from 'ramda'
 import { format, isAfter, addMonths } from 'date-fns'
 import { getRepositories } from '../../data/Repository/methods'
 import LibraryDetail from '../../containers/LibraryDetail'
 import ProjectDetail from '../../containers/ProjectDetail'
-import SubNav from './SubNav'
 import Libraries from '../../components/Tables/Libraries'
 import Projects from '../../components/Tables/Projects'
 import { Overview, Status, RecentUpdates } from '../../components/Widgets'
 import Loading from '../../components/Loading'
 import * as helpers from '../../data/helpers'
-import { Container, StyledDashboard, WidgetContainer } from './styled'
-import { REPOSITORIES_QUERY } from '../../data/Repository'
-import { RepositoriesSearch } from '../../data/types'
-import { useQuery } from '../../utils/hooks'
-import SubNav2 from './SubNav2'
+import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
+import { DashboardToolBar, DashboardNameToolBar } from './ToolBar'
+// import StatusCell from '../../components/Tables/StatusCell'
+import * as routes from '../routes'
+import { ProjectTable } from './Tables'
+import { Project } from '../../data/types'
 
 interface DashboardState {
   projects: helpers.Projects
@@ -35,81 +35,47 @@ interface DashboardState {
   }
 }
 
-export const DashboardNew = () => {
-  const { loading } = useQuery<RepositoriesSearch>({
-    query: REPOSITORIES_QUERY
-  })
-  if (loading) return <Loading />
-  return (
-    <Fragment>
-      <SubNav2 />
-      {/* <StyledDashboard>
-        <Container>
-          <Route
-            path="/:department/:category"
-            exact
-            render={props => (
-              <WidgetContainer>
-                <Overview width="32%" projectOverview={projectOverview!} />
-                <Status width="32%" librariesStatus={librariesStatus!} />
-                <RecentUpdates
-                  width="32%"
-                  {...props}
-                  recentLibraries={recentLibraries}
-                />
-              </WidgetContainer>
-            )}
-          />
-          <Switch>
-            <Route
-              path='/:department/library/:name'
-              render={props => (
-                <LibraryDetail
-                  relatedProjects={projectLibraryRelation.filter(
-                    relation =>
-                      relation.libraryName ===
-                      decodeURIComponent(props.match.params.name)
-                  )}
-                  {...props}
-                />
-              )}
-            />
-            <Route
-              path='/:department/project/:name'
-              render={props => (
-                <ProjectDetail
-                  relatedLibraries={projectLibraryRelation.filter(
-                    relation =>
-                      relation.projectName === props.match.params.name
-                  )}
-                  {...props}
-                  recentLibraries={recentLibraries}
-                />
-              )}
-            />
-            <Route
-              path='/:department/libraries'
-              render={props => (
-                <Libraries {...props} libraries={filteredLibraries} />
-              )}
-            />
-            <Route
-              path='/:department/projects'
-              render={props => (
-                <Projects {...props} projects={filteredProjects} />
-              )}
-            />
-            <Redirect to='/frontend/libraries' />
-          </Switch>
-        </Container>
-      </StyledDashboard> */}
-    </Fragment>
+export type DashboardProps = RouteComponentProps<{
+  department: routes.Department
+  category: routes.Category
+}>
+
+export const DashboardNew = React.memo((props: DashboardProps) => {
+  const {
+    match: {
+      params: { category, department }
+    }
+  } = props
+  const handleRowClick = React.useCallback(
+    (project: Project) =>
+      props.history.push(`/${department}/${category}/${project.name}`),
+    []
   )
-}
+  return (
+    <React.Fragment>
+      <Switch>
+        <Route path={routes.dashboardItem} component={DashboardNameToolBar} />
+        <Route path={routes.dashboardItems} component={DashboardToolBar} />
+      </Switch>
+      <StyledDashboard>
+        <TableContainer>
+          <React.Suspense fallback={<Loading />}>
+            {category === routes.Category.PROJECTS && (
+              <ProjectTable
+                onRowClick={handleRowClick}
+                department={department}
+              />
+            )}
+          </React.Suspense>
+        </TableContainer>
+      </StyledDashboard>
+    </React.Fragment>
+  )
+})
 
 export default DashboardNew
 
-export class Dashboard extends Component<{}, DashboardState> {
+export class Dashboard extends Component<RouteComponentProps, DashboardState> {
   public readonly state: DashboardState = {
     projects: {},
     latestLibraries: {},
@@ -213,17 +179,17 @@ export class Dashboard extends Component<{}, DashboardState> {
       recentLibraries,
       projectOverview,
       librariesStatus,
-      projects,
-      latestLibraries,
+      // projects,
+      // latestLibraries,
       projectLibraryRelation,
       isLoading
     } = this.state
     if (isLoading) return <Loading />
     return (
       <Fragment>
-        <SubNav projects={projects} libraries={latestLibraries} />
+        {/* <SubNav projects={projects} libraries={latestLibraries} /> */}
         <StyledDashboard>
-          <Container>
+          <TableContainer>
             <Route
               path='/:department/:category'
               exact
@@ -280,7 +246,7 @@ export class Dashboard extends Component<{}, DashboardState> {
               />
               <Redirect to='/frontend/libraries' />
             </Switch>
-          </Container>
+          </TableContainer>
         </StyledDashboard>
       </Fragment>
     )

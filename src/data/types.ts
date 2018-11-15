@@ -32,7 +32,6 @@ export type RepositoriesSearch_organization_repositories_nodes_package =
 export interface RepositoriesSearch_organization_repositories_nodes {
   id: string
   name: string // The name of the repository.
-  nameWithOwner: string // The repository's name with owner.
   url: any // The HTTP URL for this repository
   pushedAt: any | null // Identifies when the repository was last pushed to.
   package: RepositoriesSearch_organization_repositories_nodes_package | null // A Git object in the repository
@@ -62,6 +61,7 @@ export interface RepositoriesSearch {
 
 export interface RepositorySearch_repository {
   url: any // The HTTP URL for this repository
+  name: string // The name of the repository.
 }
 
 export interface RepositorySearch {
@@ -107,7 +107,6 @@ export type Project_package = Project_package_Commit | Project_package_Blob
 export interface Project {
   id: string
   name: string // The name of the repository.
-  nameWithOwner: string // The repository's name with owner.
   url: any // The HTTP URL for this repository
   pushedAt: any | null // Identifies when the repository was last pushed to.
   package: Project_package | null // A Git object in the repository

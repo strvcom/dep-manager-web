@@ -4,7 +4,6 @@ const Project = gql`
   fragment Project on Repository {
     id
     name
-    nameWithOwner
     url
     pushedAt
     package: object(expression: "HEAD:package.json") {
@@ -41,10 +40,11 @@ export const REPOSITORIES_QUERY = gql`
   ${Project}
 `
 
-export const REPOSITORY_URL_QUERY = gql`
-  query RepositoryUrlSearch($name: String!) {
-    repository(owner: "strvcom", name: $name) @client {
+export const REPOSITORY_QUERY = gql`
+  query RepositorySearch($name: String!) {
+    repository(owner: "strvcom", name: $name) {
       url
+      name
     }
   }
 `

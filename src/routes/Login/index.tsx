@@ -8,7 +8,7 @@ import {
   AuthQueryResponse,
   ChangeTokenVariables
 } from '../../data/Auth'
-import { useMutation } from '../../utils/hooks'
+import { useMutation } from '../../utils/apollo-hooks'
 
 const options =
   process.env.NODE_ENV === 'production'
@@ -24,13 +24,13 @@ interface NetlifyResponse {
 }
 
 const Login = (props: RouteComponentProps) => {
-  const changeAuth = useMutation<AuthQueryResponse, ChangeTokenVariables>({
-    mutation: CHANGE_TOKEN
-  })
+  const changeAuth = useMutation<AuthQueryResponse, ChangeTokenVariables>(
+    CHANGE_TOKEN
+  )
   const handleClick = useCallback(
     () =>
       authenticator.authenticate(
-        { provider: 'github', scope: 'read:user, repo' },
+        { provider: 'github', scope: 'read:user,repo' },
         (err, data: NetlifyResponse) => {
           if (err) return alert(`LOGIN ERROR: ${err}`)
           changeAuth({ variables: { token: data.token } })
