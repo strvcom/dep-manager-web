@@ -1,19 +1,45 @@
-import styled, {keyframes} from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import {
   width,
   height,
   space,
   WidthProps,
   HeightProps,
-  SpaceProps,
+  SpaceProps
 } from 'styled-system'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
+export interface WidgetContainerProps
+  extends WidthProps,
+    HeightProps,
+    SpaceProps,
+    React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLDivElement>,
+      HTMLDivElement
+    > {}
 
-export const WidgetContainer = styled<
-  WidthProps & HeightProps & SpaceProps,
-  'div'
->('div')`
+const WidgetContainerCmp = ({
+  // tslint:disable-next-line:no-shadowed-variable
+  width,
+  // tslint:disable-next-line:no-shadowed-variable
+  height,
+  m,
+  mt,
+  mr,
+  mb,
+  ml,
+  mx,
+  my,
+  p,
+  pt,
+  pr,
+  pb,
+  pl,
+  px,
+  py,
+  ...props
+}: WidgetContainerProps) => <div {...props} />
+export const WidgetContainer = styled(WidgetContainerCmp)`
   display: flex;
   flex-direction: column;
   padding: 25px 30px;
@@ -28,12 +54,11 @@ export const WidgetContainer = styled<
 `
 
 export const WidgetTitle = styled.h1`
-  font-family: "Maison Neue";
+  font-family: 'Maison Neue';
   font-size: 16px;
   font-weight: 400;
   line-height: 19px;
 `
-
 
 const draw = (percent: number) => keyframes`
   to {
@@ -42,10 +67,13 @@ const draw = (percent: number) => keyframes`
   }
 `
 
-export const Circle = styled<{ percent: number }, 'circle'>('circle')`
+export interface CircleProps extends React.SVGProps<SVGCircleElement> {
+  percent: number
+}
+const CircleCmp = ({ percent, ...props }: CircleProps) => <circle {...props} />
+export const Circle = styled(CircleCmp)`
   animation: ${({ percent }) => draw(percent)} 1s ease forwards;
 `
-
 
 export const LibraryLink = styled(Link)`
   display: block;
@@ -65,29 +93,37 @@ export const Libraries = styled.div`
 `
 
 export const NameAndVersion = styled.div`
-  font-family: "Maison Neue";
+  font-family: 'Maison Neue';
   font-size: 14px;
   line-height: 17px;
   display: flex;
   justify-content: space-between;
 `
 
-const grow = (width: number) => keyframes`
+const grow = (maxWidth: number) => keyframes`
   from {
     width: 0%;
   }
   to {
-    width: ${width}%;
+    width: ${maxWidth}%;
   }
 `
 
-export const BarChart = styled<{ fill: number }, 'div'>('div')`
+export interface BarChartProps
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  > {
+  fill: number
+}
+const BarChartCmp = ({ fill, ...props }: BarChartProps) => <div {...props} />
+export const BarChart = styled(BarChartCmp)`
   position: relative;
   margin: 48px 0 24px;
   height: 4px;
   background-color: rgba(17, 21, 23, 0.15);
   &::after {
-    content: "";
+    content: '';
     display: block;
     position: absolute;
     background-color: #111517;
@@ -101,7 +137,7 @@ export const BarChart = styled<{ fill: number }, 'div'>('div')`
 export const Status = styled.section`
   display: flex;
   justify-content: space-between;
-  font-family: "Maison Neue";
+  font-family: 'Maison Neue';
   font-size: 14px;
   line-height: 17px;
 `
@@ -109,10 +145,9 @@ export const Status = styled.section`
 export const Count = styled.span`
   opacity: 0.5;
   color: #000000;
-  font-family: "Microsoft Sans Serif";
+  font-family: 'Microsoft Sans Serif';
   line-height: 16px;
 `
-
 
 export const StatusWrapper = styled.section`
   display: flex;
@@ -122,7 +157,7 @@ export const StatusWrapper = styled.section`
 `
 
 export const StatusContainer = styled.div`
-  font-family: "Maison Neue";
+  font-family: 'Maison Neue';
   font-size: 14px;
   line-height: 17px;
 `

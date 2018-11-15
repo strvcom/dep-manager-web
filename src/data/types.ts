@@ -57,18 +57,18 @@ export interface RepositoriesSearch {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: RepositorySearch
+// GraphQL query operation: Url
 // ====================================================
 
-export interface RepositorySearch_repository {
+export interface Url_repository {
   url: any // The HTTP URL for this repository
 }
 
-export interface RepositorySearch {
-  repository: RepositorySearch_repository | null // Lookup a given repository by the owner and repository name.
+export interface Url {
+  repository: Url_repository | null // Lookup a given repository by the owner and repository name.
 }
 
-export interface RepositorySearchVariables {
+export interface UrlVariables {
   name: string
 }
 

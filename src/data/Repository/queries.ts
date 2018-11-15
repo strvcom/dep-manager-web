@@ -42,8 +42,8 @@ export const REPOSITORIES_QUERY = gql`
 `
 
 export const REPOSITORY_URL_QUERY = gql`
-  query RepositoryUrlSearch($name: String!) {
-    repository(owner: "strvcom", name: $name) @client {
+  query Url($name: String!) {
+    repository(owner: "strvcom", name: $name) {
       url
     }
   }

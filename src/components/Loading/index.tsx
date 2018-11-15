@@ -13,8 +13,8 @@ const loading = keyframes`
     height: 5em;
   }
 `
-
-const BarLoader = styled<BarLoaderProps, 'div'>('div')`
+const BarLoaderCmp = (props: BarLoaderProps) => <div {...props} />
+const BarLoader = styled(BarLoaderCmp)`
   animation: ${loading} 1s infinite ease-in-out;
   animation-delay: ${props => `${props.duration! * -0.16}s`};
   background: ${props => props.color};
@@ -30,7 +30,7 @@ const BarLoader = styled<BarLoaderProps, 'div'>('div')`
     animation: ${loading} 1s infinite ease-in-out;
     animation-delay: ${props => `${props.duration! * -0.32}s`};
     background: ${props => props.color};
-    content: "";
+    content: '';
     height: 4em;
     left: -1.5em;
     position: absolute;
@@ -41,7 +41,7 @@ const BarLoader = styled<BarLoaderProps, 'div'>('div')`
     animation: ${loading} 1s infinite ease-in-out;
     animation-delay: ${props => `${props.duration! * 0.08}s`};
     background: ${props => props.color};
-    content: "";
+    content: '';
     height: 4em;
     left: 1.5em;
     position: absolute;
@@ -52,14 +52,14 @@ const BarLoader = styled<BarLoaderProps, 'div'>('div')`
 BarLoader.defaultProps = {
   color: '#000',
   duration: 1,
-  size: 11,
+  size: 11
 }
 
 export interface BarLoaderProps
   extends React.DetailedHTMLProps<
-      React.HTMLAttributes<HTMLDivElement>,
-      HTMLDivElement
-    > {
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  > {
   duration?: number
   size?: number
 }
