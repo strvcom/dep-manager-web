@@ -73,7 +73,7 @@ export const DashboardNew = React.memo((props: DashboardProps) => {
   )
 })
 
-export default DashboardNew
+export default React.memo(DashboardNew)
 
 export class Dashboard extends Component<RouteComponentProps, DashboardState> {
   public readonly state: DashboardState = {

@@ -13,6 +13,7 @@ const departments = Object.values(Department).join('|')
 const categories = Object.values(Category).join('|')
 
 export const root = '/'
+
 export const login = '/login'
 export const dashboardItems = `/:department(${departments})/:category(${categories})`
 export const dashboardItem = `/:department(${departments})/:category(${categories})/:name`
