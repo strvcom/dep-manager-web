@@ -4,8 +4,8 @@ import { onError } from 'apollo-link-error'
 import { withClientState } from 'apollo-link-state'
 import { ApolloLink } from 'apollo-link'
 import resolvers from './resolvers'
-import { AuthQuery } from './types'
 import { AUTH_QUERY } from '../data/Auth'
+import { AuthQuery } from '../data/Auth/__generated-types/AuthQuery'
 
 export const GITHUB_TOKEN_KEY = 'Bida-App-Github-Token'
 
@@ -23,7 +23,7 @@ export const cache = new InMemoryCache({
 const stateLink = withClientState({
   defaults: {
     auth: {
-      __typename: 'Auth',
+      __typename: 'Authentication',
       token: localStorage.getItem(GITHUB_TOKEN_KEY)
     },
     libraries: {

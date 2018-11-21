@@ -1,6 +1,6 @@
 import { ResolverFunction } from '../../utils/ResolverFunction'
-import { NodePackage } from '../types'
 import PackageJSON from '../../utils/package-json'
+import { NodePackage } from '../../data/Repository/__generated-types/NodePackage'
 
 const name: ResolverFunction<null, string | null, NodePackage> = (
   blob,

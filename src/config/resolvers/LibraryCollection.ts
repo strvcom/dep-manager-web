@@ -1,9 +1,13 @@
 import { ResolverFunction } from '../../utils/ResolverFunction'
-import { TNodeLibrary, Repository, Repositories, NodePackage } from '../types'
 import PackageJSON from '../../utils/package-json'
 import { REPOSITORIES_FRAGMENT } from '../../data/Repository'
 import prop from 'ramda/es/prop'
 import compose from 'ramda/es/compose'
+import {
+  Repositories,
+  Repositories_nodes
+} from '../../data/Repository/__generated-types/Repositories'
+import { NodePackage } from '../../data/Repository/__generated-types/NodePackage'
 
 const nodes: ResolverFunction = async (_, __, { cache }) => {
   const data = cache.readFragment<Repositories>({
@@ -12,11 +16,11 @@ const nodes: ResolverFunction = async (_, __, { cache }) => {
     id: 'RepositoryConnection'
   })
   if (!data || !data.nodes) return null
-  const names = extractDependencies(data.nodes as Repository[])
+  const names = extractDependencies(data.nodes as Repositories_nodes[])
   const response = await fetchLibraries(Array.from(names))
   if (!response.ok) throw new Error(response.status.toString())
   const record: Record<any, Package> = await response.json()
-  const libraries = Object.values(record).map<TNodeLibrary>(
+  const libraries = Object.values(record).map(
     ({ collected: { metadata } }) => ({
       ...metadata,
       id: metadata.name,
@@ -87,7 +91,7 @@ export interface Repository {
   url: string
 }
 
-function extractDependencies (data: Repository[]) {
+function extractDependencies (data: Repositories_nodes[]) {
   return extractPackages(data || []).reduce((set, pack) => {
     Object.keys(pack.dependencies || {}).forEach(set.add.bind(set))
     return set
@@ -98,7 +102,7 @@ function parse (json: string | null) {
   if (json) return JSON.parse(json)
   return null
 }
-function extractPackages (projects: Repository[]): PackageJSON[] {
+function extractPackages (projects: Repositories_nodes[]): PackageJSON[] {
   return (projects.map(prop('object')).filter(Boolean) as NodePackage[]).map(
     compose(
       parse,
