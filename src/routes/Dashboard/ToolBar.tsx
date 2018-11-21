@@ -10,8 +10,8 @@ import {
   Wrapper,
   Input
 } from './styled'
-import * as routes from '../routes'
 import { useProject } from '../../data/Repository'
+import { Department, Category } from '../../config/types'
 import Anchor from '../../components/Anchor'
 
 const activeStyle = { borderBottom: '2px solid black' }
@@ -45,16 +45,12 @@ const ToolBar = React.memo((props: NavBarProps) => (
 export default ToolBar
 
 export type DashboardToolBarProps = RouteComponentProps<{
-  department: routes.Department
-  category: routes.Category
+  department: Department
+  category: Category
 }>
 
 export const DashboardToolBar = React.memo<DashboardToolBarProps>(props => {
-  const {
-    match: {
-      params: { category, department }
-    }
-  } = props
+  const { category, department } = props.match.params
   return (
     <ToolBar
       title='Dashboard'
@@ -69,19 +65,11 @@ export const DashboardToolBar = React.memo<DashboardToolBarProps>(props => {
   )
 })
 
-export type DashboardNameToolBarProps = RouteComponentProps<{
-  department: routes.Department
-  category: routes.Category
-  name: string
-}>
-export const DashboardNameToolBar = React.memo<DashboardNameToolBarProps>(
-  props => {
-    const {
-      match: {
-        params: { name }
-      }
-    } = props
-    const { data: project } = useProject(decodeURIComponent(name))
+export const ProjectToolBar = React.memo(
+  (props: RouteComponentProps<{ name: string }>) => {
+    const { data: project } = useProject(
+      decodeURIComponent(props.match.params.name)
+    )
     if (!project) return null
     return (
       <ToolBar
@@ -93,5 +81,11 @@ export const DashboardNameToolBar = React.memo<DashboardNameToolBarProps>(
         }
       />
     )
+  }
+)
+
+export const LibraryToolBar = React.memo(
+  (props: RouteComponentProps<{ name: string }>) => {
+    return null
   }
 )

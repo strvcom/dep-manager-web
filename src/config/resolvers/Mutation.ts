@@ -1,5 +1,4 @@
-import { ChangeTokenVariables } from '../Auth/mutations'
-import { Auth } from '../Auth/types'
+import { ChangeTokenVariables, ChangeToken } from '../types'
 import { ResolverFunction } from '../../utils/ResolverFunction'
 
 const changeToken: ResolverFunction<ChangeTokenVariables> = (
@@ -7,7 +6,7 @@ const changeToken: ResolverFunction<ChangeTokenVariables> = (
   variables,
   { cache }
 ) => {
-  cache.writeData<{ auth: Auth }>({
+  cache.writeData<ChangeToken>({
     data: {
       auth: { __typename: 'Auth', token: variables.token }
     }

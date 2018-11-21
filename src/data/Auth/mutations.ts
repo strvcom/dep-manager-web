@@ -5,7 +5,3 @@ export const CHANGE_TOKEN = gqlLocal`
     changeToken(token: $token) @client
   }
 `
-
-export interface ChangeTokenVariables {
-  token: string
-}

@@ -12,7 +12,7 @@ const Dashboard = React.lazy(() =>
   import(/* webpackChunkName: 'Dashboard' */ './Dashboard')
 )
 
-const MainPage = () => (
+const PrivatePage = () => (
   <React.Fragment>
     <NavBar logo={<Logo height='16' />}>
       <NavBarLink to={routes.frontendLibraries}>Frontend</NavBarLink>
@@ -21,23 +21,19 @@ const MainPage = () => (
       <NavBarLink to={routes.androidLibraries}>Android</NavBarLink>
     </NavBar>
     <React.Suspense fallback={<Loading />}>
-      <Route path={routes.dashboardItems} component={Dashboard} />
+      <Route path={routes.dashboard} component={Dashboard} />
     </React.Suspense>
   </React.Fragment>
 )
 
 const App = () => (
   <Switch>
-    <PublicRoute
-      redirect={routes.root}
-      path={routes.login}
-      render={props => <Login {...props} />}
-    />
+    <PublicRoute redirect={routes.root} path={routes.login} component={Login} />
     <Redirect exact from={routes.root} to={routes.frontendLibraries} />
     <PrivateRoute
       redirect={routes.login}
       path={routes.root}
-      render={MainPage}
+      render={PrivatePage}
     />
   </Switch>
 )

@@ -5,13 +5,6 @@
 // GraphQL query operation: RepositoriesSearch
 // ====================================================
 
-export interface RepositoriesSearch_rateLimit {
-  limit: number // The maximum number of points the client is permitted to consume in a 60 minute window.
-  cost: number // The point cost for the current query counting against the rate limit.
-  remaining: number // The number of points remaining in the current rate limit window.
-  resetAt: any // The time at which the current rate limit window resets in UTC epoch seconds.
-}
-
 export interface RepositoriesSearch_organization_repositories_pageInfo {
   endCursor: string | null // When paginating forwards, the cursor to continue.
   hasNextPage: boolean // When paginating forwards, are there more items?
@@ -22,6 +15,7 @@ export interface RepositoriesSearch_organization_repositories_pageInfo {
 export interface RepositoriesSearch_organization_repositories_nodes_package_Commit {}
 
 export interface RepositoriesSearch_organization_repositories_nodes_package_Blob {
+  id: string
   text: string | null // UTF8 text data or null if the Blob is binary
 }
 
@@ -34,6 +28,7 @@ export interface RepositoriesSearch_organization_repositories_nodes {
   name: string // The name of the repository.
   url: any // The HTTP URL for this repository
   pushedAt: any | null // Identifies when the repository was last pushed to.
+  isArchived: boolean // Indicates if the repository is unmaintained.
   package: RepositoriesSearch_organization_repositories_nodes_package | null // A Git object in the repository
 }
 
@@ -44,12 +39,19 @@ export interface RepositoriesSearch_organization_repositories {
 }
 
 export interface RepositoriesSearch_organization {
+  id: string
   repositories: RepositoriesSearch_organization_repositories // A list of repositories that the user owns.
 }
 
 export interface RepositoriesSearch {
-  rateLimit: RepositoriesSearch_rateLimit | null // The client's rate limit information.
   organization: RepositoriesSearch_organization | null // Lookup a organization by login.
+}
+
+export interface RepositoriesSearchVariables {
+  after?: string | null
+  before?: string | null
+  first?: number | null
+  last?: number | null
 }
 
 /* tslint:disable */
@@ -99,6 +101,7 @@ export interface Me {
 export interface Project_package_Commit {}
 
 export interface Project_package_Blob {
+  id: string
   text: string | null // UTF8 text data or null if the Blob is binary
 }
 
@@ -109,7 +112,40 @@ export interface Project {
   name: string // The name of the repository.
   url: any // The HTTP URL for this repository
   pushedAt: any | null // Identifies when the repository was last pushed to.
+  isArchived: boolean // Indicates if the repository is unmaintained.
   package: Project_package | null // A Git object in the repository
+}
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL fragment: Projects
+// ====================================================
+
+export interface Projects_nodes_package_Commit {}
+
+export interface Projects_nodes_package_Blob {
+  id: string
+  text: string | null // UTF8 text data or null if the Blob is binary
+}
+
+export type Projects_nodes_package =
+  | Projects_nodes_package_Commit
+  | Projects_nodes_package_Blob
+
+export interface Projects_nodes {
+  id: string
+  name: string // The name of the repository.
+  url: any // The HTTP URL for this repository
+  pushedAt: any | null // Identifies when the repository was last pushed to.
+  isArchived: boolean // Indicates if the repository is unmaintained.
+  package: Projects_nodes_package | null // A Git object in the repository
+}
+
+export interface Projects {
+  nodes: (Projects_nodes | null)[] | null // A list of nodes.
+  totalCount: number // Identifies the total count of items in the connection.
 }
 
 /* tslint:disable */
