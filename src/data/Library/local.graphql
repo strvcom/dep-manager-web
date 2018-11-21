@@ -1,0 +1,15 @@
+extend type Query {
+  libraries: LibraryCollection!
+}
+
+type NodeLibrary {
+  name: String!
+  version: String!
+  id: String!
+}
+
+union Library = NodeLibrary
+
+type LibraryCollection {
+  nodes: [Library!]!
+}

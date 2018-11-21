@@ -1,18 +1,18 @@
 import { ResolverFunction } from '../../utils/ResolverFunction'
-import { TNodeLibrary, Project, Project_package_Blob, Projects } from '../types'
-import { PROJECTS_FRAGMENT } from '../../data/Repository'
-import NodePackage from '../../utils/package-json'
+import { TNodeLibrary, Repository, Repositories, NodePackage } from '../types'
+import PackageJSON from '../../utils/package-json'
+import { REPOSITORIES_FRAGMENT } from '../../data/Repository'
 import prop from 'ramda/es/prop'
 import compose from 'ramda/es/compose'
 
 const nodes: ResolverFunction = async (_, __, { cache }) => {
-  const data = cache.readFragment<Projects>({
-    fragment: PROJECTS_FRAGMENT,
-    fragmentName: 'Projects',
+  const data = cache.readFragment<Repositories>({
+    fragment: REPOSITORIES_FRAGMENT,
+    fragmentName: 'Repositories',
     id: 'RepositoryConnection'
   })
   if (!data || !data.nodes) return null
-  const names = extractDependencies(data.nodes as Project[])
+  const names = extractDependencies(data.nodes as Repository[])
   const response = await fetchLibraries(Array.from(names))
   if (!response.ok) throw new Error(response.status.toString())
   const record: Record<any, Package> = await response.json()
@@ -87,7 +87,7 @@ export interface Repository {
   url: string
 }
 
-function extractDependencies (data: Project[]) {
+function extractDependencies (data: Repository[]) {
   return extractPackages(data || []).reduce((set, pack) => {
     Object.keys(pack.dependencies || {}).forEach(set.add.bind(set))
     return set
@@ -98,10 +98,8 @@ function parse (json: string | null) {
   if (json) return JSON.parse(json)
   return null
 }
-function extractPackages (projects: Project[]): NodePackage[] {
-  return (projects
-    .map(prop('package'))
-    .filter(Boolean) as Project_package_Blob[]).map(
+function extractPackages (projects: Repository[]): PackageJSON[] {
+  return (projects.map(prop('object')).filter(Boolean) as NodePackage[]).map(
     compose(
       parse,
       prop('text')

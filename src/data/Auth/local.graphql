@@ -1,0 +1,11 @@
+extend type Query {
+  auth: Authentication!
+}
+
+extend type Mutation {
+  changeToken(token: String!): Authentication!
+}
+
+type Authentication {
+  token: String
+}

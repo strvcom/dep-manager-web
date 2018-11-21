@@ -1,14 +1,16 @@
 import React from 'react'
 import { REPOSITORIES_QUERY, REPOSITORY_QUERY } from './queries'
+import { useQuery } from '../../utils/apollo-hooks'
 import {
   RepositoriesSearch,
-  RepositorySearch,
-  RepositorySearchVariables,
-  Project,
-  Department,
   RepositoriesSearchVariables
-} from '../../config/types'
-import { useQuery } from '../../utils/apollo-hooks'
+} from './__generated-types/RepositoriesSearch'
+import { Department } from '../../config/types'
+import { Repository } from './__generated-types/Repository'
+import {
+  RepositorySearch,
+  RepositorySearchVariables
+} from './__generated-types/RepositorySearch'
 // import compose from 'ramda/es/compose';
 // import prop from 'ramda/es/prop';
 // import PackageJSON from '../../utils/package-json'
@@ -24,9 +26,9 @@ function extractNodes (
   if (!nodes) return null
   return nodes.filter(node => {
     if (!node) return false
-    if (department === Department.FRONTEND) return Boolean(node.package)
+    if (department === Department.FRONTEND) return Boolean(node.object)
     return false
-  }) as Project[]
+  }) as Repository[]
 }
 
 export function useProjects (department: Department) {
