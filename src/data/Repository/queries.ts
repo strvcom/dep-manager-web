@@ -1,29 +1,35 @@
 import gql from 'graphql-tag'
 
-const PROJECT_FRAGMENT = gql`
-  fragment Project on Repository {
+const NODE_PACKAGE_FRAGMENT = gql`
+  fragment NodePackage on Blob {
+    id
+    text
+    name @client
+  }
+`
+
+const REPOSITORY_FRAGMENT = gql`
+  fragment Repository on Repository {
     id
     name
     url
     pushedAt
     isArchived
-    package: object(expression: "HEAD:package.json") {
-      ... on Blob {
-        id
-        text
-      }
+    object(expression: "HEAD:package.json") {
+      ...NodePackage
     }
   }
+  ${NODE_PACKAGE_FRAGMENT}
 `
 
-export const PROJECTS_FRAGMENT = gql`
-  fragment Projects on RepositoryConnection {
-    nodes {
-      ...Project
-    }
+export const REPOSITORIES_FRAGMENT = gql`
+  fragment Repositories on RepositoryConnection {
     totalCount
+    nodes {
+      ...Repository
+    }
   }
-  ${PROJECT_FRAGMENT}
+  ${REPOSITORY_FRAGMENT}
 `
 
 export const REPOSITORIES_QUERY = gql`
@@ -36,20 +42,11 @@ export const REPOSITORIES_QUERY = gql`
     organization(login: "strvcom") {
       id
       repositories(first: $first, after: $after, before: $before, last: $last) {
-        totalCount
-        pageInfo {
-          endCursor
-          hasNextPage
-          hasPreviousPage
-          startCursor
-        }
-        nodes {
-          ...Project
-        }
+        ...Repositories
       }
     }
   }
-  ${PROJECT_FRAGMENT}
+  ${REPOSITORIES_FRAGMENT}
 `
 
 export const REPOSITORY_QUERY = gql`

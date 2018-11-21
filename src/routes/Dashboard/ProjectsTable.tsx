@@ -2,11 +2,12 @@ import React from 'react'
 import { useProjects } from '../../data/Repository'
 import Table, { Column, Index } from '../../components/Table'
 // import StatusCell from '../../components/Tables/StatusCell'
-import { Project, Department } from '../../config/types'
+import { Department } from '../../config/types'
+import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
 
 export interface ProjectTableProps {
   department: Department
-  onRowClick?: (project: Project) => void
+  onRowClick?: (project: Repositories_nodes) => void
 }
 
 export const ProjectsTable = React.memo<ProjectTableProps>(props => {

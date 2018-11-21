@@ -1,10 +1,10 @@
-import gqlLocal from 'graphql-tag'
+import gql from 'graphql-tag'
 
-export const LIBRARIES_QUERY = gqlLocal`
+export const LIBRARIES_QUERY = gql`
   query LibrariesQuery {
     libraries @client {
       nodes {
-        ...on NodeLibrary {
+        ... on NodeLibrary {
           id
           name
           version

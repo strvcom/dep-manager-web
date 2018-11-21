@@ -6,7 +6,8 @@ import { DashboardToolBar, LibraryToolBar, ProjectToolBar } from './ToolBar'
 import * as routes from '../routes'
 import { LibrariesTable } from './LibrariesTable'
 import { ProjectsTable } from './ProjectsTable'
-import { Project, Category, Department } from '../../config/types'
+import { Category, Department } from '../../config/types'
+import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
 
 export type DashboardProps = RouteComponentProps<{
   department: Department
@@ -16,7 +17,7 @@ export type DashboardProps = RouteComponentProps<{
 function Dashboard ({ match: { params }, history }: DashboardProps) {
   const { category, department } = params
   const handleRowClick = React.useCallback(
-    (project: Project) =>
+    (project: Repositories_nodes) =>
       history.push(`/${department}/${category}/${project.name}`),
     [department, category]
   )

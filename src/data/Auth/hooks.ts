@@ -1,13 +1,12 @@
 import { useQuery, useMutation } from '../../utils/apollo-hooks'
-import { AUTH_QUERY } from './queries'
-import { CHANGE_TOKEN } from './mutations'
+import { AUTH_QUERY, CHANGE_TOKEN } from './queries'
 import { useMemo, useCallback } from 'react'
-import {
-  AuthQuery,
-  ChangeTokenVariables,
-  ChangeToken
-} from '../../config/types'
 import Netlify from 'netlify-auth-providers'
+import { AuthQuery } from './__generated-types/AuthQuery'
+import {
+  ChangeToken,
+  ChangeTokenVariables
+} from './__generated-types/ChangeToken'
 
 const options =
   process.env.NODE_ENV === 'production'

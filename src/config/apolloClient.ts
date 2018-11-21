@@ -1,7 +1,7 @@
 import { ApolloClient } from 'apollo-client'
-import { AuthQuery } from './types'
 import { AUTH_QUERY } from '../data/Auth'
 import link, { cache, GITHUB_TOKEN_KEY } from './link'
+import { AuthQuery } from '../data/Auth/__generated-types/AuthQuery'
 
 const client = new ApolloClient({
   link,
