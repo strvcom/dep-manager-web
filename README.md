@@ -1,6 +1,5 @@
 # Bida App [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/) ![Dependencies](https://david-dm.org/strvcom/dep-manager-web.svg) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-
 As you make and maintain more projects on github, there is a need for a way to track each project and their dependencies on external libraries. This app aims to create a dashboard where you can check the status of projects and libraries with ease.
 
 ## Current stack
@@ -26,4 +25,3 @@ By utilizing GraphQL endpoint we can do this in one network call with no over fe
 The environment variables that should be available for this project to work properly
 
 * REACT_APP_SITE_ID (The netlify ID)
-
