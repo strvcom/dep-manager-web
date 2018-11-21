@@ -1,4 +1,5 @@
-# Bida App
+# Bida App [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/) ![Dependencies](https://david-dm.org/strvcom/dep-manager-web.svg) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 
 As you make and maintain more projects on github, there is a need for a way to track each project and their dependencies on external libraries. This app aims to create a dashboard where you can check the status of projects and libraries with ease.
 
@@ -26,16 +27,3 @@ The environment variables that should be available for this project to work prop
 
 * REACT_APP_SITE_ID (The netlify ID)
 
-## Roadmap
-
-This repository has been inactive for quite a while. The main focus will be in getting it back up and running with a new refreshed face! 💪🏻
-
-* Upgrade all possible dependencies
-* Convert to Typescript
-* Add TSLint and prettier
-* Add husky and hooks on commit
-* Discuss and fix things that were in the [last code review](https://github.com/strvcom/dep-manager-web/issues/12)
-* Fix scrolling
-* Review design compliance
-* Review old issues
-* Find a new host (perhaps Heroku)
