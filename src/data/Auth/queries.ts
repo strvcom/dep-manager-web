@@ -1,14 +1,9 @@
 import gqlLocal from 'graphql-tag'
-import { Auth } from './types'
 
 export const AUTH_QUERY = gqlLocal`
-  query Auth {
+  query AuthQuery {
     auth @client {
       token
     }
   }
 `
-
-export interface AuthQueryResponse {
-  auth: Auth
-}

@@ -1,13 +1,17 @@
 import React from 'react'
-import { REPOSITORIES_QUERY, REPOSITORY_QUERY } from '../../data/Repository'
+import { REPOSITORIES_QUERY, REPOSITORY_QUERY } from './queries'
 import {
   RepositoriesSearch,
   RepositorySearch,
   RepositorySearchVariables,
-  Project
-} from '../types'
+  Project,
+  Department,
+  RepositoriesSearchVariables
+} from '../../config/types'
 import { useQuery } from '../../utils/apollo-hooks'
-import { Department } from '../../routes/routes'
+// import compose from 'ramda/es/compose';
+// import prop from 'ramda/es/prop';
+// import PackageJSON from '../../utils/package-json'
 
 function extractNodes (
   { organization }: RepositoriesSearch,
@@ -26,7 +30,12 @@ function extractNodes (
 }
 
 export function useProjects (department: Department) {
-  const result = useQuery<RepositoriesSearch>(REPOSITORIES_QUERY)
+  const result = useQuery<RepositoriesSearch, RepositoriesSearchVariables>(
+    REPOSITORIES_QUERY,
+    {
+      variables: { first: 100 }
+    }
+  )
   return React.useMemo(
     () => ({ ...result, data: extractNodes(result.data, department) }),
     [result.data, result.errors, result.loading, department]
