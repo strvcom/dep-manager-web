@@ -5,6 +5,7 @@ export const NODE_LIBRARY_FRAGMENT = gql`
     id
     name
     version
+    date
     dependents {
       id
       name
@@ -17,6 +18,7 @@ export const ANDROID_LIBRARY_FRAGMENT = gql`
     id
     name
     version
+    date
     dependents {
       id
       name
@@ -29,6 +31,7 @@ export const IOS_LIBRARY_FRAGMENT = gql`
     id
     name
     version
+    date
     dependents {
       id
       name

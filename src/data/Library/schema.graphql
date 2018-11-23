@@ -7,24 +7,27 @@ type NodeLibrary {
   name: String!
   version: String!
   dependents: [NodeLibraryDependent!]!
+  date: String!
 }
 type AndroidLibrary {
   id: String!
   name: String!
   version: String!
   dependents: [NodeLibraryDependent!]!
+  date: String!
 }
 type IOSLibrary {
   id: String!
   name: String!
   version: String!
   dependents: [NodeLibraryDependent!]!
+  date: String!
 }
 
 union Library = NodeLibrary | AndroidLibrary | IOSLibrary 
 
 type LibraryCollection {
-  id: String!
+  id: Department!
   nodes: [Library!]!
 }
 

@@ -1,25 +1,17 @@
 import { ResolverFunction } from '../../utils/ResolverFunction'
 import {
   LibrariesQueryVariables,
-  LibrariesQuery
+  LibrariesQuery_libraries
 } from '../../data/Library/__generated-types/LibrariesQuery'
-import { Department } from '../../data/__generated-types'
+import { Omit } from 'utility-types'
 
-type LibraryCollection = LibrariesQuery['libraries']
-
-// tslint:disable-next-line:variable-name
-const __typename = 'LibraryCollection'
-
-const libraries: ResolverFunction<LibrariesQueryVariables> = (
+const libraries: ResolverFunction<LibrariesQueryVariables> = async (
   _,
-  { department },
-  { cache }
-): Partial<LibraryCollection> => {
-  switch (department) {
-    case Department.FRONTEND:
-      return { __typename, id: department }
-    default:
-      return { __typename, id: department, nodes: [] }
+  { department }
+): Promise<Omit<LibrariesQuery_libraries, 'nodes'>> => {
+  return {
+    __typename: 'LibraryCollection',
+    id: department
   }
 }
 

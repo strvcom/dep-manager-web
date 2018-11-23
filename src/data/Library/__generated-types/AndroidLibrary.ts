@@ -17,5 +17,6 @@ export interface AndroidLibrary {
   id: string
   name: string
   version: string
+  date: string
   dependents: AndroidLibrary_dependents[]
 }

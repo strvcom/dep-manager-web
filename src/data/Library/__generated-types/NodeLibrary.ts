@@ -17,5 +17,6 @@ export interface NodeLibrary {
   id: string
   name: string
   version: string
+  date: string
   dependents: NodeLibrary_dependents[]
 }

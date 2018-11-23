@@ -17,5 +17,6 @@ export interface IOSLibrary {
   id: string
   name: string
   version: string
+  date: string
   dependents: IOSLibrary_dependents[]
 }

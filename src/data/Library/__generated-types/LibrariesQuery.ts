@@ -19,6 +19,7 @@ export interface LibrariesQuery_libraries_nodes_NodeLibrary {
   id: string
   name: string
   version: string
+  date: string
   dependents: LibrariesQuery_libraries_nodes_NodeLibrary_dependents[]
 }
 
@@ -34,6 +35,7 @@ export interface LibrariesQuery_libraries_nodes_AndroidLibrary {
   id: string
   name: string
   version: string
+  date: string
   dependents: LibrariesQuery_libraries_nodes_AndroidLibrary_dependents[]
 }
 
@@ -49,6 +51,7 @@ export interface LibrariesQuery_libraries_nodes_IOSLibrary {
   id: string
   name: string
   version: string
+  date: string
   dependents: LibrariesQuery_libraries_nodes_IOSLibrary_dependents[]
 }
 
@@ -59,7 +62,7 @@ export type LibrariesQuery_libraries_nodes =
 
 export interface LibrariesQuery_libraries {
   __typename: 'LibraryCollection'
-  id: string
+  id: Department
   nodes: LibrariesQuery_libraries_nodes[]
 }
 
