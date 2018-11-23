@@ -2,8 +2,8 @@ import React from 'react'
 import { useProjects } from '../../data/Repository'
 import Table, { Column, Index } from '../../components/Table'
 // import StatusCell from '../../components/Tables/StatusCell'
-import { Department } from '../../config/types'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
+import { Department } from '../../data/__generated-types'
 
 export interface ProjectTableProps {
   department: Department

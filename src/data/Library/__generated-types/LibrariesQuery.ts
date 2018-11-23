@@ -1,6 +1,8 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
+import { Department } from './../../__generated-types'
+
 // ====================================================
 // GraphQL query operation: LibrariesQuery
 // ====================================================
@@ -57,9 +59,14 @@ export type LibrariesQuery_libraries_nodes =
 
 export interface LibrariesQuery_libraries {
   __typename: 'LibraryCollection'
+  id: string
   nodes: LibrariesQuery_libraries_nodes[]
 }
 
 export interface LibrariesQuery {
   libraries: LibrariesQuery_libraries
+}
+
+export interface LibrariesQueryVariables {
+  department: Department
 }

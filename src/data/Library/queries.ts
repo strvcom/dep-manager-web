@@ -38,8 +38,9 @@ export const IOS_LIBRARY_FRAGMENT = gql`
 `
 
 export const LIBRARIES_QUERY = gql`
-  query LibrariesQuery {
-    libraries @client {
+  query LibrariesQuery($department: Department!) {
+    libraries(department: $department) @client {
+      id
       nodes {
         ...NodeLibrary
         ...AndroidLibrary

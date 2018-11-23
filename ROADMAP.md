@@ -10,5 +10,7 @@ This repository has been inactive for quite a while. The main focus will be in g
 * [ ] Fix scrolling
 * [ ] Review design compliance
 * [x] Review old issues
-* [ ] Migrate data filtering to GraphQL queries
+* [x] Migrate data filtering to GraphQL queries
 * [ ] Improves tables performance with lazy loading
+* [ ] Create empty state for tables and widgets
+* [ ] Create meaningful error boundaries

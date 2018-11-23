@@ -2,11 +2,11 @@ import React from 'react'
 import { useLibraries } from '../../data/Library'
 import Table, { Column, TableCellProps } from '../../components/Table'
 import StatusColumn from './StatusColumn'
-import { Department } from '../../config/types'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
 import { NodeLibrary } from '../../data/Library/__generated-types/NodeLibrary'
 import semverDiff from 'semver-diff'
 import semverRegex from 'semver-regex'
+import { Department } from '../../data/__generated-types'
 
 export interface LibrariesTableProps {
   department: Department

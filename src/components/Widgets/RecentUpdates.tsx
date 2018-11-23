@@ -1,5 +1,4 @@
 import React from 'react'
-import { format } from 'date-fns'
 import {
   WidgetContainer,
   WidgetTitle,
@@ -9,8 +8,8 @@ import {
   UpdatedTime,
   WidgetContainerProps
 } from './styled'
-import { Department } from '../../config/types'
 import { useLibraries } from '../../data/Library'
+import { Department } from '../../data/__generated-types'
 
 export interface RecentUpdatesProps
   extends Pick<WidgetContainerProps, 'width'> {
@@ -30,12 +29,18 @@ const RecentUpdates = ({ width, department }: RecentUpdatesProps) => {
               <span>{lib.name}</span>
               <span>{lib.version}</span>
             </NameAndVersion>
-            <UpdatedTime>{format(Date.now(), 'MMM D, YYYY')}</UpdatedTime>
+            <UpdatedTime>{dateFormatter.format(Date.now())}</UpdatedTime>
           </LibraryLink>
         ))}
       </Libraries>
     </WidgetContainer>
   )
 }
+
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric'
+})
 
 export default RecentUpdates

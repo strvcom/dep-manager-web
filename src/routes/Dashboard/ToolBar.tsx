@@ -11,8 +11,9 @@ import {
   Input
 } from './styled'
 import { useProject } from '../../data/Repository'
-import { Department, Category } from '../../config/types'
+import { Category } from '../../config/types'
 import Anchor from '../../components/Anchor'
+import { Department } from '../../data/__generated-types'
 
 const activeStyle = { borderBottom: '2px solid black' }
 

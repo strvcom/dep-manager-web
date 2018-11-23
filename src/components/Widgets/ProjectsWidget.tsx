@@ -8,7 +8,7 @@ import {
   WidgetContainerProps
 } from './styled'
 import { useProjects } from '../../data/Repository'
-import { Department } from '../../config/types'
+import { Department } from '../../data/__generated-types'
 
 export interface OverviewProps extends Pick<WidgetContainerProps, 'width'> {
   department: Department

@@ -5,12 +5,12 @@ import {
   RepositoriesSearch,
   RepositoriesSearchVariables
 } from './__generated-types/RepositoriesSearch'
-import { Department } from '../../config/types'
 import { Repository } from './__generated-types/Repository'
 import {
   RepositorySearch,
   RepositorySearchVariables
 } from './__generated-types/RepositorySearch'
+import { Department } from '../__generated-types'
 // import compose from 'ramda/es/compose';
 // import prop from 'ramda/es/prop';
 // import PackageJSON from '../../utils/package-json'

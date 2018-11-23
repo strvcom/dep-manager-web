@@ -6,21 +6,24 @@ import { DashboardToolBar, LibraryToolBar, ProjectToolBar } from './ToolBar'
 import * as routes from '../routes'
 import { LibrariesTable } from './LibrariesTable'
 import { ProjectsTable } from './ProjectsTable'
-import { Category, Department } from '../../config/types'
+import { Category } from '../../config/types'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
 import {
   ProjectsOverviewWidget,
   LibraryActualityWidget,
   RecentUpdates
 } from '../../components/Widgets'
+import { Department } from '../../data/__generated-types'
+import { toUpper } from 'ramda'
 
 export type DashboardProps = RouteComponentProps<{
-  department: Department
+  department: string
   category: Category
 }>
 
 function Dashboard ({ match: { params }, history }: DashboardProps) {
-  const { category, department } = params
+  const { category } = params
+  const department = toUpper(params.department) as Department
   const handleRowClick = React.useCallback(
     (project: Repositories_nodes) =>
       history.push(`/${department}/${category}/${project.name}`),

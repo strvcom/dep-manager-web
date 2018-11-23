@@ -8,10 +8,10 @@ import {
 } from './styled'
 import DoughnutChart from './DoughnutChart'
 import { useLibraries } from '../../data/Library'
-import { Department } from '../../config/types'
 import { SpaceProps } from 'styled-system'
 import semverRegex from 'semver-regex'
 import semverDiff from 'semver-diff'
+import { Department } from '../../data/__generated-types'
 
 const LibraryActualityWidget = ({
   width,

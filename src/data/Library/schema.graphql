@@ -1,5 +1,5 @@
 extend type Query {
-  libraries: LibraryCollection!
+  libraries(department: Department!): LibraryCollection!
 }
 
 type NodeLibrary {
@@ -24,6 +24,7 @@ type IOSLibrary {
 union Library = NodeLibrary | AndroidLibrary | IOSLibrary 
 
 type LibraryCollection {
+  id: String!
   nodes: [Library!]!
 }
 
@@ -31,4 +32,11 @@ type NodeLibraryDependent {
   id: String!
   name: String!
   version: String!
+}
+
+enum Department {
+  FRONTEND
+  BACKEND
+  ANDROID
+  IOS
 }
