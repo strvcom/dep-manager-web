@@ -29,6 +29,8 @@
     "react-scripts": "^2.1.1",
     "react-virtualized": "^9.21.0",
     "recompose": "^0.30.0",
+    "semver-diff": "^2.1.0",
+    "semver-regex": "^2.0.0",
     "shallow-equal": "^1.0.0",
     "styled-components": "^4.1.1",
     "styled-system": "^2.2.1",
@@ -48,10 +50,11 @@
     "@types/react-router-dom": "^4.3.1",
     "@types/react-virtualized": "^9.18.7",
     "@types/recompose": "^0.27.0",
+    "@types/semver-diff": "^2.1.1",
     "@types/styled-components": "^4.1.0",
     "@types/styled-system": "^3.0.6",
     "@types/uuid": "^3.4.4",
-    "apollo": "^2.1.2",
+    "apollo": "^2.1.3",
     "husky": "^1.1.3",
     "lint-staged": "^8.0.4",
     "prettier": "^1.15.1",
@@ -72,8 +75,7 @@
     "heroku-postbuild": "npm run build",
     "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
     "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
-    "codegen": "apollo codegen:generate __generated-types --target typescript --queries=src/data/**/*.ts --globalTypesFile src/data/__generated-types.ts",
-    "codegen:watch": "apollo codegen:generate __generated-types --target typescript --queries=src/data/**/*.ts --globalTypesFile src/data/__global-generated-types.ts --watch"
+    "codegen": "apollo codegen:generate __generated-types --target typescript --includes=src/data/**/* --globalTypesFile src/data/__generated-types.d.ts"
   },
   "browserslist": [
     ">0.2%",

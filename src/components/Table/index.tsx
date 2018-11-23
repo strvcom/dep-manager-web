@@ -5,6 +5,7 @@ import './Table.css'
 import cn from 'classnames'
 import { OverscanIndicesGetter } from 'react-virtualized/dist/es/Grid'
 
+export * from 'react-virtualized'
 export interface TableProps {
   'aria-readonly'?: boolean
   /**
@@ -256,7 +257,10 @@ const Table = (props: TableProps) => {
   )
 }
 
-export const Column = Virtual.Column
-export type Index = Virtual.Index
+export interface TableCellProps<T extends keyof RowData, RowData = {}>
+  extends Virtual.TableCellProps {
+  cellData?: RowData[T]
+  rowData: RowData
+}
 
 export default React.memo(Table)

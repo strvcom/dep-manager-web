@@ -166,3 +166,11 @@ export const StatusContainer = styled.div`
 export const Percent = styled.p`
   opacity: 0.5;
 `
+
+export const UpdatedTime = styled.span`
+  opacity: 0.25;
+  font-family: 'Maison Neue';
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 13px;
+`

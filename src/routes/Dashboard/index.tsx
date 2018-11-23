@@ -1,13 +1,18 @@
 import React from 'react'
 import { Route, Switch, RouteComponentProps } from 'react-router-dom'
 import Loading from '../../components/Loading'
-import { TableContainer, StyledDashboard } from './styled'
+import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
 import { DashboardToolBar, LibraryToolBar, ProjectToolBar } from './ToolBar'
 import * as routes from '../routes'
 import { LibrariesTable } from './LibrariesTable'
 import { ProjectsTable } from './ProjectsTable'
 import { Category, Department } from '../../config/types'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
+import {
+  ProjectsOverviewWidget,
+  LibraryActualityWidget,
+  RecentUpdates
+} from '../../components/Widgets'
 
 export type DashboardProps = RouteComponentProps<{
   department: Department
@@ -31,6 +36,16 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
     ),
     [department, handleRowClick]
   )
+  const renderWidgets = React.useCallback(
+    () => (
+      <WidgetContainer>
+        <ProjectsOverviewWidget department={department} width='32%' />
+        <LibraryActualityWidget width='32%' department={department} />
+        <RecentUpdates department={department} width='32%' />
+      </WidgetContainer>
+    ),
+    [department]
+  )
   return (
     <React.Fragment>
       <Switch>
@@ -39,8 +54,9 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
         <Route path={routes.dashboard} component={DashboardToolBar} />
       </Switch>
       <StyledDashboard>
-        <TableContainer>
-          <React.Suspense fallback={<Loading />}>
+        <React.Suspense fallback={<Loading />}>
+          <TableContainer>
+            <Route exact path={routes.dashboard} render={renderWidgets} />
             <Switch>
               <Route
                 exact
@@ -53,8 +69,8 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
                 render={renderLibrariesTable}
               />
             </Switch>
-          </React.Suspense>
-        </TableContainer>
+          </TableContainer>
+        </React.Suspense>
       </StyledDashboard>
     </React.Fragment>
   )

@@ -9,6 +9,9 @@ import {
   LibrariesQuery
 } from './__generated-types/LibrariesQuery'
 import { Department } from '../../config/types'
+import { NodeLibrary } from './__generated-types/NodeLibrary'
+import { AndroidLibrary } from './__generated-types/AndroidLibrary'
+import { IOSLibrary } from './__generated-types/IOSLibrary'
 
 export function useLibraries (
   department: Department
@@ -18,8 +21,36 @@ export function useLibraries (
     return projectsResult as ApolloQueryResult<null>
   }
   const { data, ...rest } = useQuery<LibrariesQuery>(LIBRARIES_QUERY)
-  return React.useMemo(() => ({ ...rest, data: data.libraries.nodes }), [
-    data,
-    rest.errors
-  ])
+  return React.useMemo(
+    () => ({
+      ...rest,
+      data: data.libraries.nodes.filter(departmentFilter(department))
+    }),
+    [data, rest.errors, department]
+  )
 }
+
+const departmentFilter = (department: Department) => (
+  node: LibrariesQuery_libraries_nodes
+) => {
+  switch (department) {
+    case Department.FRONTEND:
+      return isNodeLibrary(node)
+    case Department.ANDROID:
+      return isAndroidLibrary(node)
+    case Department.IOS:
+      return isIOSLibrary(node)
+    default:
+      return false
+  }
+}
+
+const isNodeLibrary = (
+  node: LibrariesQuery_libraries_nodes
+): node is NodeLibrary => node.__typename === 'NodeLibrary'
+const isAndroidLibrary = (
+  node: LibrariesQuery_libraries_nodes
+): node is AndroidLibrary => node.__typename === 'AndroidLibrary'
+const isIOSLibrary = (
+  node: LibrariesQuery_libraries_nodes
+): node is IOSLibrary => node.__typename === 'IOSLibrary'

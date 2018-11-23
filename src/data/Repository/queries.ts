@@ -1,10 +1,19 @@
 import gql from 'graphql-tag'
 
 const NODE_PACKAGE_FRAGMENT = gql`
-  fragment NodePackage on Blob {
+  fragment NodePackageBlob on Blob {
     id
     text
-    name @client
+    package @client {
+      id
+      name
+      version
+      dependencies {
+        id
+        name
+        version
+      }
+    }
   }
 `
 
@@ -16,7 +25,7 @@ const REPOSITORY_FRAGMENT = gql`
     pushedAt
     isArchived
     object(expression: "HEAD:package.json") {
-      ...NodePackage
+      ...NodePackageBlob
     }
   }
   ${NODE_PACKAGE_FRAGMENT}

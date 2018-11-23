@@ -1,0 +1,34 @@
+extend type Query {
+  libraries: LibraryCollection!
+}
+
+type NodeLibrary {
+  id: String!
+  name: String!
+  version: String!
+  dependents: [NodeLibraryDependent!]!
+}
+type AndroidLibrary {
+  id: String!
+  name: String!
+  version: String!
+  dependents: [NodeLibraryDependent!]!
+}
+type IOSLibrary {
+  id: String!
+  name: String!
+  version: String!
+  dependents: [NodeLibraryDependent!]!
+}
+
+union Library = NodeLibrary | AndroidLibrary | IOSLibrary 
+
+type LibraryCollection {
+  nodes: [Library!]!
+}
+
+type NodeLibraryDependent {
+  id: String!
+  name: String!
+  version: String!
+}

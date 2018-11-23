@@ -1,11 +1,7 @@
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
-export type ResolverFunction <
-Variables = null ,
-Response = null | Promise < any >,
-Obj = any
-> = (
-  obj: Obj,
+export type ResolverFunction < Variables = null > = (
+  obj: any,
   variables: Variables,
   context: { cache: InMemoryCache }
-) => Response
+) => any
