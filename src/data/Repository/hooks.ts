@@ -34,13 +34,17 @@ function extractNodes (
 export function useProjects (department: Department) {
   const result = useQuery<RepositoriesSearch, RepositoriesSearchVariables>(
     REPOSITORIES_QUERY,
-    {
-      variables: { first: 100 }
-    }
+    { variables: { first: 100 } },
+    [department]
   )
   return React.useMemo(
-    () => ({ ...result, data: extractNodes(result.data, department) }),
-    [result.data, result.errors, result.loading, department]
+    () => {
+      return {
+        ...result,
+        data: extractNodes(result.data, department)
+      }
+    },
+    [result.errors, result.loading, department, result.data]
   )
 }
 
@@ -50,10 +54,11 @@ export function useProject (name: string) {
     { variables: { name } },
     [name]
   )
-  return React.useMemo(() => ({ ...result, data: result.data.repository }), [
-    result.data,
-    result.errors,
-    result.loading,
-    name
-  ])
+  return React.useMemo(
+    () => ({
+      ...result,
+      data: result.data.repository
+    }),
+    [result.data, result.errors, result.loading, name]
+  )
 }
