@@ -9,6 +9,7 @@ import { ApolloLink } from 'apollo-link'
 import resolvers from './resolvers'
 import { AUTH_QUERY } from '../data/Auth'
 import { AuthQuery } from '../data/Auth/__generated-types/AuthQuery'
+import typeDefs from '../data/typeDefs'
 
 export const GITHUB_TOKEN_KEY = 'Bida-App-Github-Token'
 
@@ -38,7 +39,8 @@ const stateLink = withClientState({
     }
   },
   resolvers,
-  cache
+  cache,
+  typeDefs
 })
 
 const authLink = new ApolloLink((operation, forward) => {

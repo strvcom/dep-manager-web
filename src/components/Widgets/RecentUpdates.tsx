@@ -8,23 +8,19 @@ import {
   UpdatedTime,
   WidgetContainerProps
 } from './styled'
-import { useLibraries } from '../../data/Library'
-import { Department } from '../../data/__generated-types'
 import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
 
 export interface RecentUpdatesProps
   extends Pick<WidgetContainerProps, 'width'> {
-  department: Department
+  libraries: LibrariesQuery_libraries_nodes[]
 }
 
-const RecentUpdates = ({ width, department }: RecentUpdatesProps) => {
+const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
   const now = new Date()
   const firstDayOfMonth = React.useMemo(
     () => new Date(now.getFullYear(), now.getMonth(), 1),
     [now.getFullYear(), now.getMonth()]
   )
-  const { data: libraries } = useLibraries(department)
-  if (!libraries) return null
   const libsFilter = React.useCallback(
     (lib: LibrariesQuery_libraries_nodes) =>
       new Date(lib.date) > firstDayOfMonth,

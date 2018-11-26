@@ -1,29 +1,39 @@
 import React from 'react'
-import { useProjects } from '../../data/Repository'
-import Table, { Column, Index } from '../../components/Table'
+import Table, { Column, Index, TableCellProps } from '../../components/Table'
 // import StatusCell from '../../components/Tables/StatusCell'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
-import { Department } from '../../data/__generated-types'
+import StatusColumn from './StatusColumn'
+import {
+  Repository,
+  Repository_object,
+  Repository_object_Blob
+} from '../../data/Repository/__generated-types/Repository'
+import { RepositoriesQuery_organization_repositories_nodes } from '../../data/Repository/__generated-types/RepositoriesQuery'
 
-export interface ProjectTableProps {
-  department: Department
+export interface ProjectsTableProps {
+  projects: RepositoriesQuery_organization_repositories_nodes[]
   onRowClick?: (project: Repositories_nodes) => void
 }
 
-export const ProjectsTable = React.memo<ProjectTableProps>(props => {
-  const { data: projects, errors } = useProjects(props.department)
-  if (errors) return null
-  if (!projects) return null
+const ProjectsTable = React.memo<ProjectsTableProps>(props => {
   const handleRowClick = React.useCallback(
-    ({ index }: Index) => props.onRowClick!(projects[index]),
-    [projects]
+    ({ index }: Index) => props.onRowClick!(props.projects[index]),
+    [props.projects]
   )
-  const rowGetter = React.useCallback(({ index }: Index) => projects[index], [
-    projects
-  ])
+  const rowGetter = React.useCallback(
+    ({ index }: Index) => props.projects[index],
+    [props.projects]
+  )
+  const renderOutdated = React.useCallback(
+    ({ cellData }: TableCellProps<'object', Repository>) => {
+      if (!cellData || !isBlob(cellData) || !cellData.package) return null
+      return <StatusColumn outDated={0} alerts={0} />
+    },
+    [props.projects]
+  )
   return (
     <Table
-      rowCount={projects.length}
+      rowCount={props.projects.length}
       rowGetter={rowGetter}
       onRowClick={props.onRowClick && handleRowClick}
     >
@@ -34,12 +44,12 @@ export const ProjectsTable = React.memo<ProjectTableProps>(props => {
         dataKey='pushedAt'
         cellRenderer={renderDate}
       />
-      {/* <Column
+      <Column
         width={200}
         label='Outdated Libraries'
-        dataKey='status'
-        cellRenderer={cellProps => <StatusCell {...cellProps} />}
-      /> */}
+        dataKey='object'
+        cellRenderer={renderOutdated}
+      />
       {/* <Column width={360} label='Github Username' dataKey='collaborators' /> */}
     </Table>
   )
@@ -53,3 +63,9 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   year: 'numeric'
 })
+
+function isBlob (object: Repository_object): object is Repository_object_Blob {
+  return object.__typename === 'Blob'
+}
+
+export default ProjectsTable

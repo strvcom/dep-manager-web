@@ -2,7 +2,6 @@ import React from 'react'
 import { Sidebar, Content, Wrapper } from './styled'
 import { RouteComponentProps } from 'react-router-dom'
 import RelatedLibraries from '../../components/Table/RelatedLibraries'
-import { Library, ProjectLibraryRelation } from '../../data/helpers'
 
 const ProjectDetail = ({
   relatedLibraries,
@@ -38,8 +37,8 @@ const ProjectDetail = ({
 
 export interface ProjectDetailProps
   extends RouteComponentProps<{ department: string }> {
-  relatedLibraries: ProjectLibraryRelation[]
-  recentLibraries: Library[]
+  relatedLibraries: any[]
+  recentLibraries: any[]
 }
 
 export default ProjectDetail

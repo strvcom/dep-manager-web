@@ -1,6 +1,6 @@
 export { default as ProjectsOverviewWidget } from './ProjectsWidget'
 
-export { default as LibraryActualityWidget } from './LibraryActualityWidget'
+export { default as LibrariesActualityWidget } from './LibrariesActualityWidget'
 
 export { default as OutdatedProjects } from './OutdatedProjects'
 

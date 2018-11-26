@@ -3,7 +3,6 @@ import { Wrapper, Content, Sidebar } from './styled'
 import { RouteComponentProps } from 'react-router-dom'
 import RelatedProjects from '../../components/Table/RelatedProjects'
 import { OutdatedProjects } from '../../components/Widgets'
-import { ProjectLibraryRelation } from '../../data/helpers'
 
 const LibraryDetail = ({
   relatedProjects,
@@ -39,7 +38,7 @@ const LibraryDetail = ({
 
 export interface LibraryDetailProps
   extends RouteComponentProps<{ department: string }> {
-  relatedProjects: ProjectLibraryRelation[]
+  relatedProjects: any[]
 }
 
 export default React.memo(LibraryDetail)

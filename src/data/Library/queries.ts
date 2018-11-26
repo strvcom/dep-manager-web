@@ -1,44 +1,5 @@
 import gql from 'graphql-tag'
-
-export const NODE_LIBRARY_FRAGMENT = gql`
-  fragment NodeLibrary on NodeLibrary {
-    id
-    name
-    version
-    date
-    dependents {
-      id
-      name
-      version
-    }
-  }
-`
-export const ANDROID_LIBRARY_FRAGMENT = gql`
-  fragment AndroidLibrary on AndroidLibrary {
-    id
-    name
-    version
-    date
-    dependents {
-      id
-      name
-      version
-    }
-  }
-`
-export const IOS_LIBRARY_FRAGMENT = gql`
-  fragment IOSLibrary on IOSLibrary {
-    id
-    name
-    version
-    date
-    dependents {
-      id
-      name
-      version
-    }
-  }
-`
+import { NODE_LIBRARY_FRAGMENT } from './fragments'
 
 export const LIBRARIES_QUERY = gql`
   query LibrariesQuery($department: Department!) {
@@ -46,12 +7,8 @@ export const LIBRARIES_QUERY = gql`
       id
       nodes {
         ...NodeLibrary
-        ...AndroidLibrary
-        ...IOSLibrary
       }
     }
   }
   ${NODE_LIBRARY_FRAGMENT}
-  ${ANDROID_LIBRARY_FRAGMENT}
-  ${IOS_LIBRARY_FRAGMENT}
 `

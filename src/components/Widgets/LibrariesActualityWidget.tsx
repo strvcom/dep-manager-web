@@ -7,19 +7,16 @@ import {
   Percent
 } from './styled'
 import DoughnutChart from './DoughnutChart'
-import { useLibraries } from '../../data/Library'
 import { SpaceProps } from 'styled-system'
 import semverRegex from 'semver-regex'
 import semverDiff from 'semver-diff'
-import { Department } from '../../data/__generated-types'
+import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
 
-const LibraryActualityWidget = ({
+const LibrariesActualityWidget = ({
   width,
   mt,
-  department
+  libraries
 }: LibraryActualityWidgetProps) => {
-  const { data: libraries } = useLibraries(department)
-  if (!libraries) return null
   const { outDated, upToDate } = libraries.reduce(
     (acc, { dependents, version }) => {
       const libraryVersion = semverRegex().exec(version)![0]
@@ -58,7 +55,7 @@ const LibraryActualityWidget = ({
 
 export interface LibraryActualityWidgetProps extends SpaceProps {
   width?: string
-  department: Department
+  libraries: LibrariesQuery_libraries_nodes[]
 }
 
-export default React.memo(LibraryActualityWidget)
+export default React.memo(LibrariesActualityWidget)

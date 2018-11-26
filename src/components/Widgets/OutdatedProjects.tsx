@@ -1,6 +1,5 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { ProjectLibraryRelation } from '../../data/helpers'
 import {
   WidgetContainer,
   WidgetTitle,
@@ -37,7 +36,7 @@ export interface OutdatedProjectsProps
   extends RouteComponentProps<{ department: string }> {
   width?: string
   height?: string
-  outDatedProjects: ProjectLibraryRelation[]
+  outDatedProjects: any[]
 }
 
 export default React.memo(OutdatedProjects)

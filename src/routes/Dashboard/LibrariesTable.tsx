@@ -1,49 +1,39 @@
 import React from 'react'
-import { useLibraries } from '../../data/Library'
 import Table, { Column, TableCellProps } from '../../components/Table'
-import StatusColumn from './StatusColumn'
+import StatusColumn, {
+  reduceStatusColumnProps,
+  StatusColumnProps
+} from './StatusColumn'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
 import { NodeLibrary } from '../../data/Library/__generated-types/NodeLibrary'
-import semverDiff from 'semver-diff'
-import semverRegex from 'semver-regex'
-import { Department } from '../../data/__generated-types'
+import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
 
 export interface LibrariesTableProps {
-  department: Department
+  libraries: LibrariesQuery_libraries_nodes[]
   onRowClick?: (project: Repositories_nodes) => void
 }
 
-export const LibrariesTable = React.memo<LibrariesTableProps>(props => {
-  const { errors, data: libraries } = useLibraries(props.department)
-  if (errors) return null
-  if (!libraries) return null
+const LibrariesTable = React.memo<LibrariesTableProps>(props => {
   const handleTotalRender = React.useCallback(
     ({ rowData }: TableCellProps<'dependents', NodeLibrary>) =>
       rowData.dependents.length,
-    [libraries]
+    [props.libraries]
   )
   const handleOutdatedRender = React.useCallback(
     ({ rowData }: TableCellProps<'dependents', NodeLibrary>) => {
-      const statusColumnProps = rowData.dependents.reduce(
-        (acc, dependent) => {
-          const libraryVersion = semverRegex().exec(rowData.version)![0]
-          const dependentVersion = semverRegex().exec(dependent.version)![0]
-          const diff = semverDiff(dependentVersion, libraryVersion)
-          if (diff === 'major') acc.outDated++
-          else if (diff === 'minor') acc.alerts++
-          return acc
-        },
+      const statusColumnProps = rowData.dependents.reduce<StatusColumnProps>(
+        (acc, dependent) =>
+          reduceStatusColumnProps(acc, rowData.version, dependent.version),
         { outDated: 0, alerts: 0 }
       )
       return <StatusColumn {...statusColumnProps} />
     },
-    [libraries]
+    [props.libraries]
   )
   return (
     <Table
-      rowCount={libraries.length}
-      rowGetter={({ index }) => libraries[index]}
-      // onRowClick={props.onRowClick && handleRowClick}
+      rowCount={props.libraries.length}
+      rowGetter={({ index }) => props.libraries[index]}
     >
       <Column width={380} label='Library Name' dataKey='name' />
       <Column
@@ -61,3 +51,5 @@ export const LibrariesTable = React.memo<LibrariesTableProps>(props => {
     </Table>
   )
 })
+
+export default LibrariesTable

@@ -1,22 +1,25 @@
 import React from 'react'
-import { REPOSITORIES_QUERY, REPOSITORY_QUERY } from './queries'
 import { useQuery } from '../../utils/apollo-hooks'
 import {
-  RepositoriesSearch,
-  RepositoriesSearchVariables
-} from './__generated-types/RepositoriesSearch'
-import { Repository } from './__generated-types/Repository'
-import {
-  RepositorySearch,
-  RepositorySearchVariables
-} from './__generated-types/RepositorySearch'
+  RepositoriesQuery,
+  RepositoriesQuery_organization_repositories_nodes,
+  RepositoriesQuery_organization
+} from './__generated-types/RepositoriesQuery'
+import { REPOSITORIES_QUERY } from './queries'
 import { Department } from '../__generated-types'
-// import compose from 'ramda/es/compose';
-// import prop from 'ramda/es/prop';
-// import PackageJSON from '../../utils/package-json'
+
+export function useRepositories (department: Department) {
+  const {
+    data: { organization }
+  } = useQuery<RepositoriesQuery>(REPOSITORIES_QUERY)
+  return React.useMemo(() => extractNodes(organization, department), [
+    organization,
+    department
+  ])
+}
 
 function extractNodes (
-  { organization }: RepositoriesSearch,
+  organization: RepositoriesQuery_organization | null,
   department: Department
 ) {
   if (!organization) return null
@@ -28,37 +31,5 @@ function extractNodes (
     if (!node) return false
     if (department === Department.FRONTEND) return Boolean(node.object)
     return false
-  }) as Repository[]
-}
-
-export function useProjects (department: Department) {
-  const result = useQuery<RepositoriesSearch, RepositoriesSearchVariables>(
-    REPOSITORIES_QUERY,
-    { variables: { first: 100 } },
-    [department]
-  )
-  return React.useMemo(
-    () => {
-      return {
-        ...result,
-        data: extractNodes(result.data, department)
-      }
-    },
-    [result.errors, result.loading, department, result.data]
-  )
-}
-
-export function useProject (name: string) {
-  const result = useQuery<RepositorySearch, RepositorySearchVariables>(
-    REPOSITORY_QUERY,
-    { variables: { name } },
-    [name]
-  )
-  return React.useMemo(
-    () => ({
-      ...result,
-      data: result.data.repository
-    }),
-    [result.data, result.errors, result.loading, name]
-  )
+  }) as RepositoriesQuery_organization_repositories_nodes[]
 }

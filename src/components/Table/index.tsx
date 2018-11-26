@@ -141,7 +141,7 @@ export interface TableProps {
   /** Optional id */
   id?: string
   /** Optional renderer to be used in place of table body rows when rowCount is 0 */
-  noRowsRenderer?: () => void
+  noRowsRenderer?: () => any
   /**
    * Optional callback when a column's header is clicked.
    * ({ columnData: any, dataKey: string }): void
@@ -239,6 +239,7 @@ const Table = (props: TableProps) => {
     ({ index }: Virtual.Index) => cn(index >= 0 && 'row', props.rowClassName),
     [props.rowClassName]
   )
+  if (props.rowCount === 0) return props.noRowsRenderer!()
   return (
     <Wrapper>
       <Virtual.AutoSizer disableHeight>
@@ -255,6 +256,9 @@ const Table = (props: TableProps) => {
       </Virtual.AutoSizer>
     </Wrapper>
   )
+}
+Table.defaultProps = {
+  noRowsRenderer: () => null
 }
 
 export interface TableCellProps<T extends keyof RowData, RowData = {}>

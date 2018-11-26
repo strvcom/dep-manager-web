@@ -7,16 +7,13 @@ import {
   Count,
   WidgetContainerProps
 } from './styled'
-import { useProjects } from '../../data/Repository'
-import { Department } from '../../data/__generated-types'
+import { Repository } from '../../data/Repository/__generated-types/Repository'
 
 export interface OverviewProps extends Pick<WidgetContainerProps, 'width'> {
-  department: Department
+  projects: Repository[]
 }
 
-const ProjectsOverviewWidget = ({ width, department }: OverviewProps) => {
-  const { data: projects } = useProjects(department)
-  if (!projects) return null
+const ProjectsOverviewWidget = ({ width, projects }: OverviewProps) => {
   const archived = React.useMemo(
     () =>
       projects.reduce((acc, project) => (project.isArchived ? acc++ : acc), 0),

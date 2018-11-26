@@ -1,4 +1,3 @@
-import { ResolverFunction } from '../../utils/ResolverFunction'
 import {
   NodePackageBlob,
   NodePackageBlob_package,
@@ -6,27 +5,26 @@ import {
 } from '../../data/Repository/__generated-types/NodePackageBlob'
 import PackageJSON from '../../utils/package-json'
 
-const pack: ResolverFunction = (
-  blob: NodePackageBlob
-): NodePackageBlob_package | null => {
-  if (!blob.text) return null
-  const { name, version, dependencies }: PackageJSON = JSON.parse(blob.text)
-  return {
-    id: blob.id,
-    name: name || null,
-    version: version || null,
-    dependencies: Object.entries(dependencies || {}).map<
-    NodePackageBlob_package_dependencies
+type Dependencies = NodePackageBlob_package_dependencies
+
+export default {
+  package: (blob: NodePackageBlob): NodePackageBlob_package | null => {
+    if (!blob.text) return null
+    const packageJSON: PackageJSON = JSON.parse(blob.text)
+    const dependencies = Object.entries(packageJSON.dependencies || {}).map<
+    Dependencies
     >(([key, value]) => ({
       __typename: 'NodePackageDependency',
       version: value,
       name: key,
       id: `${key}:${value}`
-    })),
-    __typename: 'NodePackage'
+    }))
+    return {
+      id: blob.id,
+      name: packageJSON.name || null,
+      version: packageJSON.version || null,
+      dependencies,
+      __typename: 'NodePackage'
+    }
   }
-}
-
-export default {
-  package: pack
 }
