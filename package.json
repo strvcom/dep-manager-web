@@ -59,6 +59,7 @@
     "lint-staged": "^8.0.4",
     "prettier": "^1.15.1",
     "prettier-standard": "^8.0.1",
+    "rimraf": "^2.6.2",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "tslint-config-standard": "^8.0.1",
@@ -75,7 +76,7 @@
     "heroku-postbuild": "npm run build",
     "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
     "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
-    "codegen": "apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts"
+    "codegen": "rimraf src/data/__generated-types* && apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts"
   },
   "browserslist": [
     ">0.2%",

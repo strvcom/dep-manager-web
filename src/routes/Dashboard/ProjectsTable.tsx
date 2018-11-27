@@ -2,20 +2,36 @@ import React from 'react'
 import Table, { Column, Index, TableCellProps } from '../../components/Table'
 // import StatusCell from '../../components/Tables/StatusCell'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
-import StatusColumn from './StatusColumn'
+import StatusColumn, {
+  StatusColumnProps,
+  reduceStatusColumnProps
+} from './StatusColumn'
 import {
   Repository,
   Repository_object,
   Repository_object_Blob
 } from '../../data/Repository/__generated-types/Repository'
 import { RepositoriesQuery_organization_repositories_nodes } from '../../data/Repository/__generated-types/RepositoriesQuery'
+import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
 
 export interface ProjectsTableProps {
   projects: RepositoriesQuery_organization_repositories_nodes[]
+  libraries: LibrariesQuery_libraries_nodes[]
   onRowClick?: (project: Repositories_nodes) => void
 }
 
 const ProjectsTable = React.memo<ProjectsTableProps>(props => {
+  const librariesMap = React.useMemo(
+    () =>
+      props.libraries.reduce<Record<any, LibrariesQuery_libraries_nodes>>(
+        (acc, library) => {
+          acc[library.name] = library
+          return acc
+        },
+        {}
+      ),
+    [props.libraries]
+  )
   const handleRowClick = React.useCallback(
     ({ index }: Index) => props.onRowClick!(props.projects[index]),
     [props.projects]
@@ -27,7 +43,18 @@ const ProjectsTable = React.memo<ProjectsTableProps>(props => {
   const renderOutdated = React.useCallback(
     ({ cellData }: TableCellProps<'object', Repository>) => {
       if (!cellData || !isBlob(cellData) || !cellData.package) return null
-      return <StatusColumn outDated={0} alerts={0} />
+      const statusProps = cellData.package.dependencies.reduce<
+      StatusColumnProps
+      >(
+        (acc, dependency) =>
+          reduceStatusColumnProps(
+            acc,
+            librariesMap[dependency.name].version,
+            dependency.version
+          ),
+        { outDated: 0, alerts: 0 }
+      )
+      return <StatusColumn {...statusProps} />
     },
     [props.projects]
   )

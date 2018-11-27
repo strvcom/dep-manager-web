@@ -38,9 +38,13 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
   )
   const renderProjectsTable = React.useCallback(
     () => (
-      <ProjectsTable onRowClick={handleRowClick} projects={repositories!} />
+      <ProjectsTable
+        libraries={libraries.nodes}
+        onRowClick={handleRowClick}
+        projects={repositories!}
+      />
     ),
-    [repositories, handleRowClick]
+    [repositories, libraries.nodes, handleRowClick]
   )
   const renderLibrariesTable = React.useCallback(
     () => (
