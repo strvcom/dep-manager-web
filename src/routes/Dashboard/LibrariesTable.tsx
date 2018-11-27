@@ -1,44 +1,55 @@
 import React from 'react'
-import { useLibraries } from '../../data/Library'
-import Table, { Column } from '../../components/Table'
-// import StatusCell from '../../components/Tables/StatusCell'
-import { Department } from '../../config/types'
+import Table, { Column, TableCellProps } from '../../components/Table'
+import StatusColumn, {
+  reduceStatusColumnProps,
+  StatusColumnProps
+} from './StatusColumn'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
+import { NodeLibrary } from '../../data/Library/__generated-types/NodeLibrary'
+import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
 
 export interface LibrariesTableProps {
-  department: Department
+  libraries: LibrariesQuery_libraries_nodes[]
   onRowClick?: (project: Repositories_nodes) => void
 }
 
-export const LibrariesTable = React.memo<LibrariesTableProps>(props => {
-  const { errors, data: libraries } = useLibraries(props.department)
-  if (errors) return null
-  if (!libraries) return null
-  // const handleRowClick = React.useCallback(
-  //   ({ index }: Index) => props.onRowClick!(projects[index]),
-  //   [projects]
-  // )
-  // const rowGetter = React.useCallback(
-  //   ({ index }: Index) => projects[index],
-  //   [projects]
-  // )
+const LibrariesTable = React.memo<LibrariesTableProps>(props => {
+  const handleTotalRender = React.useCallback(
+    ({ rowData }: TableCellProps<'dependents', NodeLibrary>) =>
+      rowData.dependents.length,
+    [props.libraries]
+  )
+  const handleOutdatedRender = React.useCallback(
+    ({ rowData }: TableCellProps<'dependents', NodeLibrary>) => {
+      const statusColumnProps = rowData.dependents.reduce<StatusColumnProps>(
+        (acc, dependent) =>
+          reduceStatusColumnProps(acc, rowData.version, dependent.version),
+        { outDated: 0, alerts: 0 }
+      )
+      return <StatusColumn {...statusColumnProps} />
+    },
+    [props.libraries]
+  )
   return (
     <Table
-      rowCount={libraries.length}
-      rowGetter={({ index }) => libraries[index]}
-      // onRowClick={props.onRowClick && handleRowClick}
+      rowCount={props.libraries.length}
+      rowGetter={({ index }) => props.libraries[index]}
     >
       <Column width={380} label='Library Name' dataKey='name' />
+      <Column
+        width={380}
+        label='Total Used On'
+        dataKey='dependents'
+        cellRenderer={handleTotalRender}
+      />
+      <Column
+        width={380}
+        label='Outdated'
+        dataKey='dependents'
+        cellRenderer={handleOutdatedRender}
+      />
     </Table>
   )
 })
 
-// const renderDate = ({cellData}: {cellData?: string}) => cellData
-// ? dateFormatter.format(Date.parse(cellData))
-// : null
-
-// const dateFormatter = new Intl.DateTimeFormat('en-US', {
-//   month: 'short',
-//   day: 'numeric',
-//   year: 'numeric'
-// })
+export default LibrariesTable

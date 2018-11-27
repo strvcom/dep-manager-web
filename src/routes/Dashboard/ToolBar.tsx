@@ -10,9 +10,9 @@ import {
   Wrapper,
   Input
 } from './styled'
-import { useProject } from '../../data/Repository'
-import { Department, Category } from '../../config/types'
-import Anchor from '../../components/Anchor'
+import { Category } from '../../config/types'
+// import Anchor from '../../components/Anchor'
+import { Department } from '../../data/__generated-types'
 
 const activeStyle = { borderBottom: '2px solid black' }
 
@@ -67,20 +67,17 @@ export const DashboardToolBar = React.memo<DashboardToolBarProps>(props => {
 
 export const ProjectToolBar = React.memo(
   (props: RouteComponentProps<{ name: string }>) => {
-    const { data: project } = useProject(
-      decodeURIComponent(props.match.params.name)
-    )
-    if (!project) return null
-    return (
-      <ToolBar
-        title={project.name}
-        subtitle={
-          <Anchor href={project.url} target='__blank'>
-            {project.url}
-          </Anchor>
-        }
-      />
-    )
+    return null
+    // return (
+    //   <ToolBar
+    //     title={project.name}
+    //     subtitle={
+    //       <Anchor href={project.url} target='__blank'>
+    //         {project.url}
+    //       </Anchor>
+    //     }
+    //   />
+    // )
   }
 )
 

@@ -1,67 +1,63 @@
 import React from 'react'
-import styled from 'styled-components'
-import { Link, RouteComponentProps } from 'react-router-dom'
-import { format } from 'date-fns'
-import { Library } from '../../data/helpers'
-import { WidgetContainer, WidgetTitle } from './styled'
+import {
+  WidgetContainer,
+  WidgetTitle,
+  Libraries,
+  LibraryLink,
+  NameAndVersion,
+  UpdatedTime,
+  WidgetContainerProps
+} from './styled'
+import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
 
-const LibraryLink = styled(Link)`
-  display: block;
-  margin-top: 20px;
-  padding-right: 20px;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  &:hover {
-    background: rgba(0, 0, 0, 0.1);
-  }
-`
+export interface RecentUpdatesProps
+  extends Pick<WidgetContainerProps, 'width'> {
+  libraries: LibrariesQuery_libraries_nodes[]
+}
 
-const Libraries = styled.div`
-  overflow: auto;
-  margin-right: -30px;
-`
+const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
+  const now = new Date()
+  const firstDayOfMonth = React.useMemo(
+    () => new Date(now.getFullYear(), now.getMonth(), 1),
+    [now.getFullYear(), now.getMonth()]
+  )
+  const libsFilter = React.useCallback(
+    (lib: LibrariesQuery_libraries_nodes) =>
+      new Date(lib.date) > firstDayOfMonth,
+    [firstDayOfMonth]
+  )
+  const filteredLibraries = React.useMemo(
+    () =>
+      libraries.reduce<JSX.Element[]>((acc, lib) => {
+        if (libsFilter(lib)) {
+          acc.push(
+            <LibraryLink to='#' key={lib.id}>
+              <NameAndVersion>
+                <span>{lib.name}</span>
+                <span>{lib.version}</span>
+              </NameAndVersion>
+              <UpdatedTime>
+                {dateFormatter.format(new Date(lib.date))}
+              </UpdatedTime>
+            </LibraryLink>
+          )
+        }
+        return acc
+      }, []),
+    [libraries, libsFilter]
+  )
+  return (
+    <WidgetContainer width={width}>
+      <WidgetTitle>Recent Updates</WidgetTitle>
+      <Libraries>{filteredLibraries}</Libraries>
+    </WidgetContainer>
+  )
+}
 
-const NameAndVersion = styled.div`
-  font-family: "Maison Neue";
-  font-size: 14px;
-  line-height: 17px;
-  display: flex;
-  justify-content: space-between;
-`
-const UpdatedTime = styled.span`
-  opacity: 0.25;
-  font-family: "Maison Neue";
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 13px;
-`
-
-const RecentUpdates = ({
-  width,
-  match: { params },
-  recentLibraries,
-}: {
-  width?: string
-  recentLibraries: Library[]
-} & RouteComponentProps<{ department: string }>) => (
-  <WidgetContainer width={width}>
-    <WidgetTitle>Recent Updates</WidgetTitle>
-    <Libraries>
-      {recentLibraries.map(lib => (
-        <LibraryLink
-          to={`/${params.department}/library/${lib.name.replace('/', '%2f')}`}
-          key={lib.name}
-        >
-          <NameAndVersion>
-            <span>{lib.name}</span>
-            <span>{lib.version}</span>
-          </NameAndVersion>
-          <UpdatedTime>{format(lib.updatedAt, 'MMM D, YYYY')}</UpdatedTime>
-        </LibraryLink>
-      ))}
-    </Libraries>
-  </WidgetContainer>
-)
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric'
+})
 
 export default RecentUpdates

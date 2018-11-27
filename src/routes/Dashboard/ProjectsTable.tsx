@@ -1,29 +1,66 @@
 import React from 'react'
-import { useProjects } from '../../data/Repository'
-import Table, { Column, Index } from '../../components/Table'
+import Table, { Column, Index, TableCellProps } from '../../components/Table'
 // import StatusCell from '../../components/Tables/StatusCell'
-import { Department } from '../../config/types'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
+import StatusColumn, {
+  StatusColumnProps,
+  reduceStatusColumnProps
+} from './StatusColumn'
+import {
+  Repository,
+  Repository_object,
+  Repository_object_Blob
+} from '../../data/Repository/__generated-types/Repository'
+import { RepositoriesQuery_organization_repositories_nodes } from '../../data/Repository/__generated-types/RepositoriesQuery'
+import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
 
-export interface ProjectTableProps {
-  department: Department
+export interface ProjectsTableProps {
+  projects: RepositoriesQuery_organization_repositories_nodes[]
+  libraries: LibrariesQuery_libraries_nodes[]
   onRowClick?: (project: Repositories_nodes) => void
 }
 
-export const ProjectsTable = React.memo<ProjectTableProps>(props => {
-  const { data: projects, errors } = useProjects(props.department)
-  if (errors) return null
-  if (!projects) return null
-  const handleRowClick = React.useCallback(
-    ({ index }: Index) => props.onRowClick!(projects[index]),
-    [projects]
+const ProjectsTable = React.memo<ProjectsTableProps>(props => {
+  const librariesMap = React.useMemo(
+    () =>
+      props.libraries.reduce<Record<any, LibrariesQuery_libraries_nodes>>(
+        (acc, library) => {
+          acc[library.name] = library
+          return acc
+        },
+        {}
+      ),
+    [props.libraries]
   )
-  const rowGetter = React.useCallback(({ index }: Index) => projects[index], [
-    projects
-  ])
+  const handleRowClick = React.useCallback(
+    ({ index }: Index) => props.onRowClick!(props.projects[index]),
+    [props.projects]
+  )
+  const rowGetter = React.useCallback(
+    ({ index }: Index) => props.projects[index],
+    [props.projects]
+  )
+  const renderOutdated = React.useCallback(
+    ({ cellData }: TableCellProps<'object', Repository>) => {
+      if (!cellData || !isBlob(cellData) || !cellData.package) return null
+      const statusProps = cellData.package.dependencies.reduce<
+      StatusColumnProps
+      >(
+        (acc, dependency) =>
+          reduceStatusColumnProps(
+            acc,
+            librariesMap[dependency.name].version,
+            dependency.version
+          ),
+        { outDated: 0, alerts: 0 }
+      )
+      return <StatusColumn {...statusProps} />
+    },
+    [props.projects]
+  )
   return (
     <Table
-      rowCount={projects.length}
+      rowCount={props.projects.length}
       rowGetter={rowGetter}
       onRowClick={props.onRowClick && handleRowClick}
     >
@@ -34,12 +71,12 @@ export const ProjectsTable = React.memo<ProjectTableProps>(props => {
         dataKey='pushedAt'
         cellRenderer={renderDate}
       />
-      {/* <Column
+      <Column
         width={200}
         label='Outdated Libraries'
-        dataKey='status'
-        cellRenderer={cellProps => <StatusCell {...cellProps} />}
-      /> */}
+        dataKey='object'
+        cellRenderer={renderOutdated}
+      />
       {/* <Column width={360} label='Github Username' dataKey='collaborators' /> */}
     </Table>
   )
@@ -53,3 +90,9 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
   year: 'numeric'
 })
+
+function isBlob (object: Repository_object): object is Repository_object_Blob {
+  return object.__typename === 'Blob'
+}
+
+export default ProjectsTable

@@ -1,112 +1,57 @@
 import { ResolverFunction } from '../../utils/ResolverFunction'
-import PackageJSON from '../../utils/package-json'
-import { REPOSITORIES_FRAGMENT } from '../../data/Repository'
-import prop from 'ramda/es/prop'
-import compose from 'ramda/es/compose'
+import {
+  LibrariesQueryVariables,
+  LibrariesQuery_libraries
+} from '../../data/Library/__generated-types/LibrariesQuery'
+import { fetchLibraries } from '../../utils/libraries'
+import { InMemoryCache } from 'apollo-boost'
 import {
   Repositories,
   Repositories_nodes
 } from '../../data/Repository/__generated-types/Repositories'
-import { NodePackage } from '../../data/Repository/__generated-types/NodePackage'
+import {
+  REPOSITORIES_FRAGMENT,
+  REPOSITORIES_QUERY
+} from '../../data/Repository'
 
-const nodes: ResolverFunction = async (_, __, { cache }) => {
-  const data = cache.readFragment<Repositories>({
-    fragment: REPOSITORIES_FRAGMENT,
-    fragmentName: 'Repositories',
-    id: 'RepositoryConnection'
-  })
-  if (!data || !data.nodes) return null
-  const names = extractDependencies(data.nodes as Repositories_nodes[])
-  const response = await fetchLibraries(Array.from(names))
-  if (!response.ok) throw new Error(response.status.toString())
-  const record: Record<any, Package> = await response.json()
-  const libraries = Object.values(record).map(
-    ({ collected: { metadata } }) => ({
-      ...metadata,
-      id: metadata.name,
-      __typename: 'NodeLibrary'
-    })
-  )
-  return libraries
+const nodes: ResolverFunction<LibrariesQueryVariables> = async (
+  { id: department }: LibrariesQuery_libraries,
+  variables,
+  { cache }
+) => {
+  const repositories = await getRepositories(cache)
+  return repositories.length ? fetchLibraries(department, repositories) : []
 }
 
 export default {
   nodes
 }
 
-const fetchLibraries = (names: string[]) =>
-  fetch('https://api.npms.io/v2/package/mget', {
-    method: 'POST',
-    body: JSON.stringify(names),
-    headers: { 'Content-Type': 'application/json' }
+function getRepositories (cache: InMemoryCache) {
+  const id: Repositories['__typename'] = 'RepositoryConnection'
+  const data = cache.readFragment<Repositories>({
+    fragment: REPOSITORIES_FRAGMENT,
+    fragmentName: 'Repositories',
+    id
   })
-
-export interface Package {
-  analyzedAt: string
-  collected: {
-    metadata: Metadata
+  if (!data) {
+    return new Promise<Repositories_nodes[]>((resolve, reject) => {
+      const unsubscribe = cache.watch({
+        query: REPOSITORIES_QUERY,
+        optimistic: true,
+        callback: () => {
+          const repositories = cache.readFragment<Repositories>({
+            fragment: REPOSITORIES_FRAGMENT,
+            fragmentName: 'Repositories',
+            id
+          })
+          if (repositories) {
+            resolve(repositories.nodes as Repositories_nodes[])
+            unsubscribe()
+          }
+        }
+      })
+    })
   }
-}
-export interface Metadata {
-  name: string
-  scope: string
-  version: string
-  description: string
-  keywords: string[]
-  date: string
-  publisher: User
-  maintainers: User[]
-  repository: Repository
-  links: Links
-  license: string
-  dependencies: Dependencies
-  releases: Release[]
-  hasSelectiveFiles: boolean
-}
-
-export interface Dependencies {
-  [dependency: string]: string
-}
-
-export interface Links {
-  npm: string
-  homepage: string
-  repository: string
-  bugs: string
-}
-
-export interface User {
-  username: string
-  email: string
-}
-
-export interface Release {
-  from: string
-  to: string
-  count: number
-}
-
-export interface Repository {
-  type: string
-  url: string
-}
-
-function extractDependencies (data: Repositories_nodes[]) {
-  return extractPackages(data || []).reduce((set, pack) => {
-    Object.keys(pack.dependencies || {}).forEach(set.add.bind(set))
-    return set
-  }, new Set<string>())
-}
-
-function parse (json: string | null) {
-  if (json) return JSON.parse(json)
-  return null
-}
-function extractPackages (projects: Repositories_nodes[]): PackageJSON[] {
-  return (projects.map(prop('object')).filter(Boolean) as NodePackage[]).map(
-    compose(
-      parse,
-      prop('text')
-    )
-  )
+  return data && 'nodes' in data ? (data.nodes as Repositories_nodes[]) : []
 }

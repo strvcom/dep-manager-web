@@ -1,4 +1,7 @@
-import { InMemoryCache } from 'apollo-cache-inmemory'
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher
+} from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import { onError } from 'apollo-link-error'
 import { withClientState } from 'apollo-link-state'
@@ -6,10 +9,18 @@ import { ApolloLink } from 'apollo-link'
 import resolvers from './resolvers'
 import { AUTH_QUERY } from '../data/Auth'
 import { AuthQuery } from '../data/Auth/__generated-types/AuthQuery'
+import typeDefs from '../data/typeDefs'
 
 export const GITHUB_TOKEN_KEY = 'Bida-App-Github-Token'
 
 export const cache = new InMemoryCache({
+  fragmentMatcher: new IntrospectionFragmentMatcher({
+    introspectionQueryResultData: {
+      __schema: {
+        types: []
+      }
+    }
+  }),
   dataIdFromObject (result) {
     if (result.__typename) {
       return result.id !== undefined
@@ -25,13 +36,11 @@ const stateLink = withClientState({
     auth: {
       __typename: 'Authentication',
       token: localStorage.getItem(GITHUB_TOKEN_KEY)
-    },
-    libraries: {
-      __typename: 'LibraryCollection'
     }
   },
   resolvers,
-  cache
+  cache,
+  typeDefs
 })
 
 const authLink = new ApolloLink((operation, forward) => {

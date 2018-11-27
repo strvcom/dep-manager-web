@@ -1,15 +1,14 @@
 import gql from 'graphql-tag'
+import { NODE_LIBRARY_FRAGMENT } from './fragments'
 
 export const LIBRARIES_QUERY = gql`
-  query LibrariesQuery {
-    libraries @client {
+  query LibrariesQuery($department: Department!) {
+    libraries(department: $department) @client {
+      id
       nodes {
-        ... on NodeLibrary {
-          id
-          name
-          version
-        }
+        ...NodeLibrary
       }
     }
   }
+  ${NODE_LIBRARY_FRAGMENT}
 `

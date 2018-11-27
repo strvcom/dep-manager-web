@@ -9,4 +9,8 @@ This repository has been inactive for quite a while. The main focus will be in g
 * [ ] Discuss and fix things that were in the [last code review](https://github.com/strvcom/dep-manager-web/issues/12)
 * [ ] Fix scrolling
 * [ ] Review design compliance
-* [ ] Review old issues
+* [x] Review old issues
+* [x] Migrate data filtering to GraphQL queries
+* [ ] Improves tables performance with lazy loading
+* [ ] Create empty state for tables and widgets
+* [ ] Create meaningful error boundaries

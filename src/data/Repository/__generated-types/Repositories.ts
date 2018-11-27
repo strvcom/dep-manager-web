@@ -9,6 +9,21 @@ export interface Repositories_nodes_object_Commit {
   __typename: 'Commit' | 'Tree' | 'Tag'
 }
 
+export interface Repositories_nodes_object_Blob_package_dependencies {
+  __typename: 'NodePackageDependency'
+  id: string
+  name: string
+  version: string
+}
+
+export interface Repositories_nodes_object_Blob_package {
+  __typename: 'NodePackage'
+  id: string
+  name: string | null
+  version: string | null
+  dependencies: Repositories_nodes_object_Blob_package_dependencies[]
+}
+
 export interface Repositories_nodes_object_Blob {
   __typename: 'Blob'
   id: string
@@ -16,7 +31,7 @@ export interface Repositories_nodes_object_Blob {
    * UTF8 text data or null if the Blob is binary
    */
   text: string | null
-  name: string | null
+  package: Repositories_nodes_object_Blob_package | null
 }
 
 export type Repositories_nodes_object =

@@ -49,9 +49,7 @@ export function useQuery<D = any, V = OperationVariables> (
   if (
     currentResult.partial &&
     (suspend && options.fetchPolicy !== 'cache-only')
-  ) {
-    throw watchQuery.result()
-  }
+  ) { throw watchQuery.result() }
   React.useEffect(() => {
     const subscription = watchQuery.subscribe(next => {
       if (

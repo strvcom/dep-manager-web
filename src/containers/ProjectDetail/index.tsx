@@ -1,11 +1,7 @@
 import React from 'react'
-import {Sidebar,Content,Wrapper} from './styled'
+import { Sidebar, Content, Wrapper } from './styled'
 import { RouteComponentProps } from 'react-router-dom'
-import RelatedLibraries from '../../components/Tables/RelatedLibraries'
-import { Status, RecentUpdates } from '../../components/Widgets'
-import { Library, ProjectLibraryRelation } from '../../data/helpers'
-
-
+import RelatedLibraries from '../../components/Table/RelatedLibraries'
 
 const ProjectDetail = ({
   relatedLibraries,
@@ -18,31 +14,31 @@ const ProjectDetail = ({
       <div>
         <span>All</span>
         <span>Outdated</span>
-        <input placeholder="Search for libraries" />
+        <input placeholder='Search for libraries' />
       </div>
       <RelatedLibraries relatedLibraries={relatedLibraries} {...routeProps} />
     </Content>
     <Sidebar>
-      <RecentUpdates
+      {/* <RecentUpdates
         {...routeProps}
         recentLibraries={recentLibraries.filter(lib =>
           relatedLibraries.filter(rel => rel.libraryName === lib.name).length)}
-      />
-      <Status
+      /> */}
+      {/* <LibraryActualityWidget
         mt={20}
         librariesStatus={{
           totalUsed: relatedLibraries.length,
           upToDate: relatedLibraries.filter(lib => lib.status === 'upToDate').length,
         }}
-      />
+      /> */}
     </Sidebar>
   </Wrapper>
 )
 
 export interface ProjectDetailProps
   extends RouteComponentProps<{ department: string }> {
-  relatedLibraries: ProjectLibraryRelation[]
-  recentLibraries: Library[]
+  relatedLibraries: any[]
+  recentLibraries: any[]
 }
 
 export default ProjectDetail
