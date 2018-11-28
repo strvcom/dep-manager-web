@@ -1,9 +1,6 @@
 import React from 'react'
 import Table, { Column, TableCellProps } from '../../components/Table'
-import StatusColumn, {
-  reduceStatusColumnProps,
-  StatusColumnProps
-} from './StatusColumn'
+import StatusColumn from './StatusColumn'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
 import { NodeLibrary } from '../../data/Library/__generated-types/NodeLibrary'
 import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
@@ -19,14 +16,14 @@ const LibrariesTable = React.memo<LibrariesTableProps>(props => {
       rowData.dependents.length,
     [props.libraries]
   )
-  const handleOutdatedRender = React.useCallback(
+  const renderOutdated = React.useCallback(
     ({ rowData }: TableCellProps<'dependents', NodeLibrary>) => {
-      const statusColumnProps = rowData.dependents.reduce<StatusColumnProps>(
-        (acc, dependent) =>
-          reduceStatusColumnProps(acc, rowData.version, dependent.version),
-        { outDated: 0, alerts: 0 }
+      return (
+        <StatusColumn
+          outDated={rowData.outdatedDependents}
+          alerts={rowData.alertedDependents}
+        />
       )
-      return <StatusColumn {...statusColumnProps} />
     },
     [props.libraries]
   )
@@ -44,9 +41,9 @@ const LibrariesTable = React.memo<LibrariesTableProps>(props => {
       />
       <Column
         width={380}
-        label='Outdated'
+        label='Outdated Projects'
         dataKey='dependents'
-        cellRenderer={handleOutdatedRender}
+        cellRenderer={renderOutdated}
       />
     </Table>
   )

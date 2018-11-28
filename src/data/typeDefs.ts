@@ -23,6 +23,8 @@ export default gql`
     id: String!
     name: String!
     version: String!
+    outdatedDependents: Int!
+    alertedDependents: Int!
     dependents: [NodeLibraryDependent!]!
     date: String!
   }

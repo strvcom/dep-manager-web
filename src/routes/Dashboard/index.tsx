@@ -30,7 +30,6 @@ export type DashboardProps = RouteComponentProps<{
 function Dashboard ({ match: { params }, history }: DashboardProps) {
   const department = toUpper(params.department) as Department
   const repositories = useRepositories(department)
-  const libraries = useLibraries(department)
   const handleRowClick = React.useCallback(
     (project: Repositories_nodes) =>
       history.push(`/${params.department}/${params.category}/${project.name}`),
@@ -38,24 +37,21 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
   )
   const renderProjectsTable = React.useCallback(
     () => (
-      <ProjectsTable
-        libraries={libraries}
-        onRowClick={handleRowClick}
-        projects={repositories!}
-      />
+      <ProjectsTable onRowClick={handleRowClick} projects={repositories!} />
     ),
-    [repositories, libraries, handleRowClick]
+    [repositories, handleRowClick]
   )
-  const renderLibrariesTable = React.useCallback(
-    () => <LibrariesTable onRowClick={handleRowClick} libraries={libraries} />,
-    [libraries, handleRowClick]
-  )
+  const libraries = useLibraries(department)
   const now = new Date()
   const firstDayOfMonth = React.useMemo(
     () => new Date(now.getFullYear(), now.getMonth(), 1),
     [now.getFullYear(), now.getMonth()]
   )
   const recentLibraries = useLibraries(department, { from: firstDayOfMonth })
+  const renderLibrariesTable = React.useCallback(
+    () => <LibrariesTable onRowClick={handleRowClick} libraries={libraries} />,
+    [libraries, handleRowClick]
+  )
   const renderWidgets = React.useCallback(
     () => (
       <WidgetContainer>

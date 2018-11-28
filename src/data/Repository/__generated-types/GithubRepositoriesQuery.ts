@@ -11,12 +11,14 @@ export interface GithubRepositoriesQuery_organization_repositories_nodes_object_
 
 export interface GithubRepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies {
   __typename: 'NodePackageDependency'
+  id: string
   name: string
   version: string
 }
 
 export interface GithubRepositoriesQuery_organization_repositories_nodes_object_Blob_package {
   __typename: 'NodePackage'
+  id: string
   dependencies: GithubRepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies[]
 }
 

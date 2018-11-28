@@ -20,6 +20,8 @@ export interface LibrariesQuery_libraries {
   name: string
   version: string
   date: string
+  outdatedDependents: number
+  alertedDependents: number
   dependents: LibrariesQuery_libraries_dependents[]
 }
 

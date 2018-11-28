@@ -11,6 +11,7 @@ import {
   GithubRepositoriesQuery_organization_repositories_nodes,
   GithubRepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies
 } from '../Repository/__generated-types/GithubRepositoriesQuery'
+import { Omit } from 'utility-types'
 
 export function fetchLibraries (
   department: Department,
@@ -30,14 +31,14 @@ async function fetchFrontendLibraries (
 ) {
   const dependentsMap = createDependentsMap(repositories)
   const packages = await fetchPackages(Array.from(dependentsMap.keys()))
-  return Object.values(packages).map<NodeLibrary>(
-    ({ collected: { metadata } }) => ({
-      id: metadata.name,
-      ...metadata,
-      dependents: dependentsMap.get(metadata.name) || [],
-      __typename: 'NodeLibrary'
-    })
-  )
+  return Object.values(packages).map<
+  Omit<NodeLibrary, 'alertedDependents' | 'outdatedDependents'>
+  >(({ collected: { metadata } }) => ({
+    id: metadata.name,
+    ...metadata,
+    dependents: dependentsMap.get(metadata.name) || [],
+    __typename: 'NodeLibrary'
+  }))
 }
 
 type Dependencies = GithubRepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies[]
