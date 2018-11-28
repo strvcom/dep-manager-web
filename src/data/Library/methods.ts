@@ -2,20 +2,21 @@ import defaultTo from 'ramda/es/defaultTo'
 import path from 'ramda/es/path'
 import compose from 'ramda/es/compose'
 import { Department } from '../__generated-types'
-import {
-  Repositories_nodes,
-  Repositories_nodes_object_Blob_package_dependencies
-} from '../Repository/__generated-types/Repositories'
 import { fetchPackages } from '../../utils/npms'
 import {
   NodeLibrary,
   NodeLibrary_dependents
 } from './__generated-types/NodeLibrary'
+import {
+  GithubRepositoriesQuery_organization_repositories_nodes,
+  GithubRepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies
+} from '../Repository/__generated-types/GithubRepositoriesQuery'
 
 export function fetchLibraries (
   department: Department,
-  repositories: Repositories_nodes[]
+  repositories: GithubRepositoriesQuery_organization_repositories_nodes[]
 ) {
+  if (!repositories.length) return []
   switch (department) {
     case Department.FRONTEND:
       return fetchFrontendLibraries(repositories)
@@ -24,7 +25,9 @@ export function fetchLibraries (
   }
 }
 
-async function fetchFrontendLibraries (repositories: Repositories_nodes[]) {
+async function fetchFrontendLibraries (
+  repositories: GithubRepositoriesQuery_organization_repositories_nodes[]
+) {
   const dependentsMap = createDependentsMap(repositories)
   const packages = await fetchPackages(Array.from(dependentsMap.keys()))
   return Object.values(packages).map<NodeLibrary>(
@@ -37,9 +40,9 @@ async function fetchFrontendLibraries (repositories: Repositories_nodes[]) {
   )
 }
 
-type Dependencies = Repositories_nodes_object_Blob_package_dependencies[]
+type Dependencies = GithubRepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies[]
 const extractRepositoryDependencies = compose<
-Repositories_nodes,
+GithubRepositoriesQuery_organization_repositories_nodes,
 Dependencies | undefined,
 Dependencies
 >(
@@ -47,7 +50,9 @@ Dependencies
   path(['object', 'package', 'dependencies'])
 )
 
-function createDependentsMap (repositories: Repositories_nodes[]) {
+function createDependentsMap (
+  repositories: GithubRepositoriesQuery_organization_repositories_nodes[]
+) {
   const map = new Map<string, NodeLibrary_dependents[]>()
   repositories.forEach(repository => {
     const dependencies = extractRepositoryDependencies(repository)

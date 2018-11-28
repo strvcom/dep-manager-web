@@ -49,6 +49,8 @@ export default gql`
     id: String!
     name: String
     version: String
+    outdatedLibraries: Int!
+    alertedLibraries: Int!
     dependencies: [NodePackageDependency!]!
   }
 

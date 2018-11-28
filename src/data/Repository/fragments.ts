@@ -8,6 +8,8 @@ export const NODE_PACKAGE_FRAGMENT = gql`
       id
       name
       version
+      outdatedLibraries
+      alertedLibraries
       dependencies {
         id
         name
@@ -33,7 +35,6 @@ export const REPOSITORY_FRAGMENT = gql`
 
 export const REPOSITORIES_FRAGMENT = gql`
   fragment Repositories on RepositoryConnection {
-    totalCount
     nodes {
       ...Repository
     }

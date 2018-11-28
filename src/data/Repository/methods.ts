@@ -1,36 +1,32 @@
-import { InMemoryCache } from 'apollo-boost'
+import { Repositories_nodes } from './__generated-types/Repositories'
+import { REPOSITORIES_QUERY, GITHUB_REPOSITORIES_QUERY } from './queries'
+import { RepositoriesQuery } from './__generated-types/RepositoriesQuery'
 import {
-  Repositories,
-  Repositories_nodes
-} from './__generated-types/Repositories'
-import { REPOSITORIES_FRAGMENT } from './fragments'
-import { REPOSITORIES_QUERY } from './queries'
+  GithubRepositoriesQuery,
+  GithubRepositoriesQuery_organization_repositories_nodes
+} from './__generated-types/GithubRepositoriesQuery'
 
-export function getRepositories (cache: InMemoryCache) {
-  const id: Repositories['__typename'] = 'RepositoryConnection'
-  const data = cache.readFragment<Repositories>({
-    fragment: REPOSITORIES_FRAGMENT,
-    fragmentName: 'Repositories',
-    id
+export async function getRepositories () {
+  const { default: client } = await import('../../config/apolloClient')
+  const {
+    data: { organization }
+  } = await client.query<RepositoriesQuery>({
+    query: REPOSITORIES_QUERY
   })
-  if (!data) {
-    return new Promise<Repositories_nodes[]>((resolve, reject) => {
-      const unsubscribe = cache.watch({
-        query: REPOSITORIES_QUERY,
-        optimistic: true,
-        callback: () => {
-          const repositories = cache.readFragment<Repositories>({
-            fragment: REPOSITORIES_FRAGMENT,
-            fragmentName: 'Repositories',
-            id
-          })
-          if (repositories) {
-            resolve(repositories.nodes as Repositories_nodes[])
-            unsubscribe()
-          }
-        }
-      })
-    })
-  }
-  return data && 'nodes' in data ? (data.nodes as Repositories_nodes[]) : []
+  return organization && organization.repositories.nodes
+    ? (organization.repositories.nodes as Repositories_nodes[])
+    : []
+}
+
+export async function getGithubRepositories () {
+  const { default: client } = await import('../../config/apolloClient')
+  const {
+    data: { organization }
+  } = await client.query<GithubRepositoriesQuery>({
+    query: GITHUB_REPOSITORIES_QUERY
+  })
+  return organization && organization.repositories.nodes
+    ? (organization.repositories
+      .nodes as GithubRepositoriesQuery_organization_repositories_nodes[])
+    : []
 }

@@ -21,6 +21,8 @@ export interface RepositoriesQuery_organization_repositories_nodes_object_Blob_p
   id: string
   name: string | null
   version: string | null
+  outdatedLibraries: number
+  alertedLibraries: number
   dependencies: RepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies[]
 }
 
@@ -65,10 +67,6 @@ export interface RepositoriesQuery_organization_repositories_nodes {
 
 export interface RepositoriesQuery_organization_repositories {
   __typename: 'RepositoryConnection'
-  /**
-   * Identifies the total count of items in the connection.
-   */
-  totalCount: number
   /**
    * A list of nodes.
    */

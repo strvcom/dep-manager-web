@@ -22,20 +22,24 @@ const LibrariesActualityWidget = ({
   mt,
   libraries
 }: LibraryActualityWidgetProps) => {
-  const { outDated, upToDate } = libraries.reduce(
-    (acc, { dependents, version }) => {
-      const libraryVersion = semverRegex().exec(version)![0]
-      const outDatedDependents = dependents.reduce((acc1, dependent) => {
-        const dependentVersion = semverRegex().exec(dependent.version)![0]
-        const diff = semverDiff(dependentVersion, libraryVersion)
-        return diff === 'major' ? acc1 + 1 : acc1
-      }, 0)
-      return {
-        outDated: acc.outDated + outDatedDependents,
-        upToDate: acc.upToDate + (dependents.length - outDatedDependents)
-      }
-    },
-    { outDated: 0, upToDate: 0 }
+  const { outDated, upToDate } = React.useMemo(
+    () =>
+      libraries.reduce(
+        (acc, { dependents, version }) => {
+          const libraryVersion = semverRegex().exec(version)![0]
+          const outDatedDependents = dependents.reduce((acc1, dependent) => {
+            const dependentVersion = semverRegex().exec(dependent.version)![0]
+            const diff = semverDiff(dependentVersion, libraryVersion)
+            return diff === 'major' ? acc1 + 1 : acc1
+          }, 0)
+          return {
+            outDated: acc.outDated + outDatedDependents,
+            upToDate: acc.upToDate + (dependents.length - outDatedDependents)
+          }
+        },
+        { outDated: 0, upToDate: 0 }
+      ),
+    [libraries]
   )
   const totalUsed = outDated + upToDate
   const outDatedPercent = Math.round((outDated / totalUsed) * 100 * 10) / 10
