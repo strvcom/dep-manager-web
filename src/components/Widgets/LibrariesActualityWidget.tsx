@@ -10,7 +10,12 @@ import DoughnutChart from './DoughnutChart'
 import { SpaceProps } from 'styled-system'
 import semverRegex from 'semver-regex'
 import semverDiff from 'semver-diff'
-import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
+import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
+
+export interface LibraryActualityWidgetProps extends SpaceProps {
+  width?: string
+  libraries: LibrariesQuery_libraries[]
+}
 
 const LibrariesActualityWidget = ({
   width,
@@ -51,11 +56,6 @@ const LibrariesActualityWidget = ({
       </StatusWrapper>
     </WidgetContainer>
   )
-}
-
-export interface LibraryActualityWidgetProps extends SpaceProps {
-  width?: string
-  libraries: LibrariesQuery_libraries_nodes[]
 }
 
 export default React.memo(LibrariesActualityWidget)

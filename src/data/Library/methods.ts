@@ -1,16 +1,16 @@
 import defaultTo from 'ramda/es/defaultTo'
 import path from 'ramda/es/path'
 import compose from 'ramda/es/compose'
-import { Department } from '../data/__generated-types'
+import { Department } from '../__generated-types'
 import {
   Repositories_nodes,
   Repositories_nodes_object_Blob_package_dependencies
-} from '../data/Repository/__generated-types/Repositories'
-import { fetchPackages } from './npms'
+} from '../Repository/__generated-types/Repositories'
+import { fetchPackages } from '../../utils/npms'
 import {
   NodeLibrary,
   NodeLibrary_dependents
-} from '../data/Library/__generated-types/NodeLibrary'
+} from './__generated-types/NodeLibrary'
 
 export function fetchLibraries (
   department: Department,

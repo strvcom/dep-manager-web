@@ -39,28 +39,32 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
   const renderProjectsTable = React.useCallback(
     () => (
       <ProjectsTable
-        libraries={libraries.nodes}
+        libraries={libraries}
         onRowClick={handleRowClick}
         projects={repositories!}
       />
     ),
-    [repositories, libraries.nodes, handleRowClick]
+    [repositories, libraries, handleRowClick]
   )
   const renderLibrariesTable = React.useCallback(
-    () => (
-      <LibrariesTable onRowClick={handleRowClick} libraries={libraries.nodes} />
-    ),
-    [libraries.nodes, handleRowClick]
+    () => <LibrariesTable onRowClick={handleRowClick} libraries={libraries} />,
+    [libraries, handleRowClick]
   )
+  const now = new Date()
+  const firstDayOfMonth = React.useMemo(
+    () => new Date(now.getFullYear(), now.getMonth(), 1),
+    [now.getFullYear(), now.getMonth()]
+  )
+  const recentLibraries = useLibraries(department, { from: firstDayOfMonth })
   const renderWidgets = React.useCallback(
     () => (
       <WidgetContainer>
         <ProjectsOverviewWidget projects={repositories!} width='32%' />
-        <LibrariesActualityWidget width='32%' libraries={libraries.nodes} />
-        <RecentUpdates libraries={libraries.nodes} width='32%' />
+        <LibrariesActualityWidget width='32%' libraries={libraries} />
+        <RecentUpdates libraries={recentLibraries} width='32%' />
       </WidgetContainer>
     ),
-    [libraries.nodes, repositories]
+    [libraries, repositories]
   )
   return (
     <React.Fragment>

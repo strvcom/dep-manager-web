@@ -6,10 +6,10 @@ import StatusColumn, {
 } from './StatusColumn'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
 import { NodeLibrary } from '../../data/Library/__generated-types/NodeLibrary'
-import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
+import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
 
 export interface LibrariesTableProps {
-  libraries: LibrariesQuery_libraries_nodes[]
+  libraries: LibrariesQuery_libraries[]
   onRowClick?: (project: Repositories_nodes) => void
 }
 

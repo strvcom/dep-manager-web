@@ -8,48 +8,30 @@ import {
   UpdatedTime,
   WidgetContainerProps
 } from './styled'
-import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
+import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
 
 export interface RecentUpdatesProps
   extends Pick<WidgetContainerProps, 'width'> {
-  libraries: LibrariesQuery_libraries_nodes[]
+  libraries: LibrariesQuery_libraries[]
 }
 
 const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
-  const now = new Date()
-  const firstDayOfMonth = React.useMemo(
-    () => new Date(now.getFullYear(), now.getMonth(), 1),
-    [now.getFullYear(), now.getMonth()]
-  )
-  const libsFilter = React.useCallback(
-    (lib: LibrariesQuery_libraries_nodes) =>
-      new Date(lib.date) > firstDayOfMonth,
-    [firstDayOfMonth]
-  )
-  const filteredLibraries = React.useMemo(
-    () =>
-      libraries.reduce<JSX.Element[]>((acc, lib) => {
-        if (libsFilter(lib)) {
-          acc.push(
-            <LibraryLink to='#' key={lib.id}>
-              <NameAndVersion>
-                <span>{lib.name}</span>
-                <span>{lib.version}</span>
-              </NameAndVersion>
-              <UpdatedTime>
-                {dateFormatter.format(new Date(lib.date))}
-              </UpdatedTime>
-            </LibraryLink>
-          )
-        }
-        return acc
-      }, []),
-    [libraries, libsFilter]
-  )
   return (
     <WidgetContainer width={width}>
       <WidgetTitle>Recent Updates</WidgetTitle>
-      <Libraries>{filteredLibraries}</Libraries>
+      <Libraries>
+        {libraries.map(lib => (
+          <LibraryLink to='#' key={lib.id}>
+            <NameAndVersion>
+              <span>{lib.name}</span>
+              <span>{lib.version}</span>
+            </NameAndVersion>
+            <UpdatedTime>
+              {dateFormatter.format(new Date(lib.date))}
+            </UpdatedTime>
+          </LibraryLink>
+        ))}
+      </Libraries>
     </WidgetContainer>
   )
 }

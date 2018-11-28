@@ -12,6 +12,11 @@ export enum Department {
   IOS = 'IOS'
 }
 
+export interface RangeInput {
+  from?: any | null
+  to?: any | null
+}
+
 //= =============================================================
 // END Enums and Input Objects
 //= =============================================================

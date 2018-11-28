@@ -1,4 +1,4 @@
-import { Department } from '../__generated-types'
+import { Department, RangeInput } from '../__generated-types'
 import { useQuery } from '../../utils/apollo-hooks'
 import {
   LibrariesQueryVariables,
@@ -6,13 +6,13 @@ import {
 } from './__generated-types/LibrariesQuery'
 import { LIBRARIES_QUERY } from './queries'
 
-export function useLibraries (department: Department) {
+export function useLibraries (department: Department, range?: RangeInput) {
   const {
     data: { libraries }
   } = useQuery<LibrariesQuery, LibrariesQueryVariables>(
     LIBRARIES_QUERY,
     {
-      variables: { department }
+      variables: { department, range }
     },
     [department]
   )

@@ -3,7 +3,12 @@ import gql from 'graphql-tag'
 export default gql`
   extend type Query {
     auth: Authentication!
-    libraries(department: Department!): LibraryCollection!
+    libraries(department: Department!, range: RangeInput): [Library!]!
+  }
+
+  input RangeInput {
+    from: Date
+    to: Date
   }
 
   extend type Mutation {
@@ -23,11 +28,6 @@ export default gql`
   }
 
   union Library = NodeLibrary
-
-  type LibraryCollection {
-    id: Department!
-    nodes: [Library!]!
-  }
 
   type NodeLibraryDependent {
     id: String!

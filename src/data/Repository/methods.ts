@@ -1,33 +1,12 @@
-import { ResolverFunction } from '../../utils/ResolverFunction'
-import {
-  LibrariesQueryVariables,
-  LibrariesQuery_libraries
-} from '../../data/Library/__generated-types/LibrariesQuery'
-import { fetchLibraries } from '../../utils/libraries'
 import { InMemoryCache } from 'apollo-boost'
 import {
   Repositories,
   Repositories_nodes
-} from '../../data/Repository/__generated-types/Repositories'
-import {
-  REPOSITORIES_FRAGMENT,
-  REPOSITORIES_QUERY
-} from '../../data/Repository'
+} from './__generated-types/Repositories'
+import { REPOSITORIES_FRAGMENT } from './fragments'
+import { REPOSITORIES_QUERY } from './queries'
 
-const nodes: ResolverFunction<LibrariesQueryVariables> = async (
-  { id: department }: LibrariesQuery_libraries,
-  variables,
-  { cache }
-) => {
-  const repositories = await getRepositories(cache)
-  return repositories.length ? fetchLibraries(department, repositories) : []
-}
-
-export default {
-  nodes
-}
-
-function getRepositories (cache: InMemoryCache) {
+export function getRepositories (cache: InMemoryCache) {
   const id: Repositories['__typename'] = 'RepositoryConnection'
   const data = cache.readFragment<Repositories>({
     fragment: REPOSITORIES_FRAGMENT,

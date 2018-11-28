@@ -12,18 +12,18 @@ import {
   Repository_object_Blob
 } from '../../data/Repository/__generated-types/Repository'
 import { RepositoriesQuery_organization_repositories_nodes } from '../../data/Repository/__generated-types/RepositoriesQuery'
-import { LibrariesQuery_libraries_nodes } from '../../data/Library/__generated-types/LibrariesQuery'
+import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
 
 export interface ProjectsTableProps {
   projects: RepositoriesQuery_organization_repositories_nodes[]
-  libraries: LibrariesQuery_libraries_nodes[]
+  libraries: LibrariesQuery_libraries[]
   onRowClick?: (project: Repositories_nodes) => void
 }
 
 const ProjectsTable = React.memo<ProjectsTableProps>(props => {
   const librariesMap = React.useMemo(
     () =>
-      props.libraries.reduce<Record<any, LibrariesQuery_libraries_nodes>>(
+      props.libraries.reduce<Record<any, LibrariesQuery_libraries>>(
         (acc, library) => {
           acc[library.name] = library
           return acc
