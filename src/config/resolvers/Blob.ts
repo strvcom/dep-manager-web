@@ -8,7 +8,7 @@ import PackageJSON from '../../utils/package-json'
 type Dependencies = NodePackageBlob_package_dependencies
 
 export default {
-  package: (blob: NodePackageBlob): NodePackageBlob_package | null => {
+  package: (blob: NodePackageBlob): Partial<NodePackageBlob_package> | null => {
     if (!blob.text) return null
     const packageJSON: PackageJSON = JSON.parse(blob.text)
     const dependencies = Object.entries(packageJSON.dependencies || {}).map<

@@ -6,6 +6,8 @@ export const NODE_LIBRARY_FRAGMENT = gql`
     name
     version
     date
+    outdatedDependents
+    alertedDependents
     dependents {
       id
       name

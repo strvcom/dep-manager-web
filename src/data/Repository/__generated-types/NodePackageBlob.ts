@@ -17,6 +17,8 @@ export interface NodePackageBlob_package {
   id: string
   name: string | null
   version: string | null
+  outdatedLibraries: number
+  alertedLibraries: number
   dependencies: NodePackageBlob_package_dependencies[]
 }
 

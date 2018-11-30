@@ -8,8 +8,7 @@ export interface PublicRouteProps extends RouteProps {
 }
 
 const PublicRoute = React.memo(({ redirect, ...rest }: PublicRouteProps) => {
-  const { data: auth } = useAuth()
-  return auth.token && redirect ? (
+  return useAuth().token && redirect ? (
     <Redirect to={redirect} />
   ) : (
     <Route {...rest} />

@@ -76,7 +76,7 @@ export const Circle = styled(CircleCmp)`
   animation: ${({ percent }) => draw(percent)} 1s ease forwards;
 `
 
-export const LibraryLink = styled(Link)`
+export const ItemLink = styled(Link)`
   display: block;
   margin-top: 20px;
   padding-right: 20px;
@@ -88,12 +88,12 @@ export const LibraryLink = styled(Link)`
   }
 `
 
-export const Libraries = styled.div`
+export const Items = styled.div`
   overflow: auto;
   margin-right: -30px;
 `
 
-export const NameAndVersion = styled.div`
+export const TitleContainer = styled.div`
   font-family: 'Maison Neue';
   font-size: 14px;
   line-height: 17px;

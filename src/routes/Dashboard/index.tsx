@@ -29,8 +29,9 @@ export type DashboardProps = RouteComponentProps<{
 }>
 function Dashboard ({ match: { params }, history }: DashboardProps) {
   const department = toUpper(params.department) as Department
-  const repositories = useRepositories(department)
-  const libraries = useLibraries(department)
+  const { data: repositories, loading: loadingRepositories } = useRepositories(
+    department
+  )
   const handleRowClick = React.useCallback(
     (project: Repositories_nodes) =>
       history.push(`/${params.department}/${params.category}/${project.name}`),
@@ -38,30 +39,37 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
   )
   const renderProjectsTable = React.useCallback(
     () => (
-      <ProjectsTable
-        libraries={libraries.nodes}
-        onRowClick={handleRowClick}
-        projects={repositories!}
-      />
+      <ProjectsTable onRowClick={handleRowClick} projects={repositories!} />
     ),
-    [repositories, libraries.nodes, handleRowClick]
+    [repositories, handleRowClick]
+  )
+  const { data: libraries, loading: loadingLibraries } = useLibraries(
+    department
+  )
+  const now = new Date()
+  const firstDayOfMonth = React.useMemo(
+    () => new Date(now.getFullYear(), now.getMonth(), 1),
+    [now.getFullYear(), now.getMonth()]
   )
   const renderLibrariesTable = React.useCallback(
-    () => (
-      <LibrariesTable onRowClick={handleRowClick} libraries={libraries.nodes} />
-    ),
-    [libraries.nodes, handleRowClick]
+    () => <LibrariesTable onRowClick={handleRowClick} libraries={libraries} />,
+    [libraries, handleRowClick]
   )
+  const {
+    data: recentLibraries,
+    loading: loadingRecentLibraries
+  } = useLibraries(department, { from: firstDayOfMonth })
   const renderWidgets = React.useCallback(
     () => (
       <WidgetContainer>
         <ProjectsOverviewWidget projects={repositories!} width='32%' />
-        <LibrariesActualityWidget width='32%' libraries={libraries.nodes} />
-        <RecentUpdates libraries={libraries.nodes} width='32%' />
+        <LibrariesActualityWidget width='32%' libraries={libraries} />
+        <RecentUpdates libraries={recentLibraries} width='32%' />
       </WidgetContainer>
     ),
-    [libraries.nodes, repositories]
+    [libraries, repositories, recentLibraries]
   )
+  if (loadingRepositories || loadingLibraries || loadingRecentLibraries) { return <Loading /> }
   return (
     <React.Fragment>
       <Switch>

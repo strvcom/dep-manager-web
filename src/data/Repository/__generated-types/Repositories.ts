@@ -21,6 +21,8 @@ export interface Repositories_nodes_object_Blob_package {
   id: string
   name: string | null
   version: string | null
+  outdatedLibraries: number
+  alertedLibraries: number
   dependencies: Repositories_nodes_object_Blob_package_dependencies[]
 }
 
@@ -65,10 +67,6 @@ export interface Repositories_nodes {
 
 export interface Repositories {
   __typename: 'RepositoryConnection'
-  /**
-   * Identifies the total count of items in the connection.
-   */
-  totalCount: number
   /**
    * A list of nodes.
    */

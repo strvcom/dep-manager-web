@@ -21,6 +21,8 @@ export interface Repository_object_Blob_package {
   id: string
   name: string | null
   version: string | null
+  outdatedLibraries: number
+  alertedLibraries: number
   dependencies: Repository_object_Blob_package_dependencies[]
 }
 

@@ -8,8 +8,7 @@ export interface PrivateRouteProps extends RouteProps {
 }
 
 const PrivateRoute = React.memo(({ redirect, ...rest }: PrivateRouteProps) => {
-  const { data: auth } = useAuth()
-  return auth.token ? <Route {...rest} /> : <Redirect to={redirect} />
+  return useAuth().token ? <Route {...rest} /> : <Redirect to={redirect} />
 })
 
 export default PrivateRoute

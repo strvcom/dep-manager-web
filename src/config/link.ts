@@ -58,13 +58,16 @@ const httpLink = new HttpLink({
   uri: 'https://api.github.com/graphql'
 })
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors) {
-    graphQLErrors.forEach(error => {
-      console.error('[GraphQL Error]', error.message)
-    })
+const errorLink = onError(
+  ({ graphQLErrors, networkError, forward, operation }) => {
+    if (graphQLErrors) {
+      graphQLErrors.forEach(error => {
+        console.error('[GraphQL Error]', error.message)
+      })
+    }
+    if (networkError) console.error('[Network Error]', networkError.message)
+    return forward(operation)
   }
-  if (networkError) console.error('[Network Error]', networkError.message)
-})
+)
 
-export default ApolloLink.from([errorLink, stateLink, authLink, httpLink])
+export default ApolloLink.from([stateLink, authLink, errorLink, httpLink])
