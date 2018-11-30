@@ -21,7 +21,7 @@ export const GITHUB_REPOSITORIES_QUERY = gql`
       id
       repositories(first: 100) {
         nodes {
-          id
+          id: name
           name
           url
           pushedAt

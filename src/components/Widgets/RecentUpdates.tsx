@@ -2,9 +2,9 @@ import React from 'react'
 import {
   WidgetContainer,
   WidgetTitle,
-  Libraries,
-  LibraryLink,
-  NameAndVersion,
+  Items,
+  ItemLink,
+  TitleContainer,
   UpdatedTime,
   WidgetContainerProps
 } from './styled'
@@ -19,19 +19,19 @@ const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
   return (
     <WidgetContainer width={width}>
       <WidgetTitle>Recent Updates</WidgetTitle>
-      <Libraries>
+      <Items>
         {libraries.map(lib => (
-          <LibraryLink to='#' key={lib.id}>
-            <NameAndVersion>
+          <ItemLink to='#' key={lib.id}>
+            <TitleContainer>
               <span>{lib.name}</span>
               <span>{lib.version}</span>
-            </NameAndVersion>
+            </TitleContainer>
             <UpdatedTime>
               {dateFormatter.format(new Date(lib.date))}
             </UpdatedTime>
-          </LibraryLink>
+          </ItemLink>
         ))}
-      </Libraries>
+      </Items>
     </WidgetContainer>
   )
 }

@@ -10,12 +10,20 @@ import { Department } from '../__generated-types'
 
 export function useRepositories (department: Department) {
   const {
-    data: { organization }
+    data: { organization },
+    ...rest
   } = useQuery<RepositoriesQuery>(REPOSITORIES_QUERY)
-  return React.useMemo(() => extractNodes(organization, department), [
-    organization,
-    department
-  ])
+  return React.useMemo(
+    () => ({ ...rest, data: extractNodes(organization, department) }),
+    [
+      organization,
+      department,
+      rest.loading,
+      rest.errors,
+      rest.networkStatus,
+      rest.stale
+    ]
+  )
 }
 
 function extractNodes (

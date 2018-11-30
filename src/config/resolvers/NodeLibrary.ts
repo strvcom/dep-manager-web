@@ -1,8 +1,6 @@
 import { ResolverFunction } from '../../utils/ResolverFunction'
 import { NodeLibrary } from '../../data/Library/__generated-types/NodeLibrary'
-import semverDiff from 'semver-diff'
-import semverRegex from 'semver-regex'
-
+import versionDiff from '../../utils/version-diff'
 const outdatedDependents: ResolverFunction = (
   nodeLibrary: NodeLibrary,
   variables,
@@ -10,7 +8,7 @@ const outdatedDependents: ResolverFunction = (
 ) => {
   return nodeLibrary.dependents.reduce(
     (acc, dependent) =>
-      diffVersions(nodeLibrary.version, dependent.version) === 'major'
+      versionDiff(nodeLibrary.version, dependent.version) === 'major'
         ? acc + 1
         : acc,
     0
@@ -24,7 +22,7 @@ const alertedDependents: ResolverFunction = (
 ) => {
   return nodeLibrary.dependents.reduce(
     (acc, dependent) =>
-      diffVersions(nodeLibrary.version, dependent.version) === 'minor'
+      versionDiff(nodeLibrary.version, dependent.version) === 'minor'
         ? acc + 1
         : acc,
     0
@@ -34,13 +32,4 @@ const alertedDependents: ResolverFunction = (
 export default {
   outdatedDependents,
   alertedDependents
-}
-
-function diffVersions (v1: string, v2: string) {
-  const [libraryVersion] = semverRegex().exec(v1) || [null]
-  const [dependentVersion] = semverRegex().exec(v2) || [null]
-  if (!libraryVersion || !dependentVersion) return null
-  const diff = semverDiff(dependentVersion, libraryVersion)
-  if (diff === 'major' || diff === 'minor') return diff
-  return null
 }

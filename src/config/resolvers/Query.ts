@@ -5,7 +5,7 @@ import {
 } from '../../data/Library/__generated-types/LibrariesQuery'
 import { fetchLibraries, LIBRARIES_QUERY } from '../../data/Library'
 import { Department, RangeInput } from '../../data/__generated-types'
-import { getGithubRepositories } from '../../data/Repository'
+import { getRepositories } from '../../data/Repository'
 
 const libraries: ResolverFunction<LibrariesQueryVariables> = async (
   _,
@@ -14,7 +14,7 @@ const libraries: ResolverFunction<LibrariesQueryVariables> = async (
 ) =>
   range
     ? getFilteredLibraries(department, range)
-    : fetchLibraries(department, await getGithubRepositories())
+    : fetchLibraries(department, await getRepositories())
 
 export default {
   libraries

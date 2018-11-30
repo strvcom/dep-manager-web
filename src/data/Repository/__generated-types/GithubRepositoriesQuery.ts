@@ -38,6 +38,9 @@ export type GithubRepositoriesQuery_organization_repositories_nodes_object =
 
 export interface GithubRepositoriesQuery_organization_repositories_nodes {
   __typename: 'Repository'
+  /**
+   * The name of the repository.
+   */
   id: string
   /**
    * The name of the repository.

@@ -4,9 +4,9 @@ import {
   MutationOptions,
   QueryOptions,
   ApolloClient,
-  ApolloQueryResult,
   WatchQueryOptions,
-  OperationVariables
+  OperationVariables,
+  ApolloQueryResult
 } from 'apollo-client'
 import { DocumentNode } from 'graphql'
 
@@ -27,13 +27,11 @@ export function useClient<C = any> () {
   return React.useContext(ApolloContext) as ApolloClient<C>
 }
 
-export type QueryHookOptions < V > = Omit<QueryOptions<V>, 'query'> & {
-  suspend?: boolean
-}
+export type QueryHookOptions < V > = Omit<QueryOptions<V>, 'query'>
 
 export function useQuery<D = any, V = OperationVariables> (
   query: DocumentNode,
-  { suspend = true, ...options }: QueryHookOptions<V> = {},
+  options: QueryHookOptions<V> = {},
   inputs: ReadonlyArray<any> = []
 ) {
   const watchQueryOptions: WatchQueryOptions<V> = { query, ...options }
@@ -42,25 +40,27 @@ export function useQuery<D = any, V = OperationVariables> (
     () => client.watchQuery<D, V>(watchQueryOptions),
     inputs
   )
-  const currentResult = watchQuery.currentResult()
-  const [result, setResult] = React.useState<ApolloQueryResult<D>>(
-    currentResult as ApolloQueryResult<D>
+  const initialResult = React.useMemo(
+    () => watchQuery.currentResult() as ApolloQueryResult<D>,
+    [watchQuery]
   )
-  if (
-    currentResult.partial &&
-    (suspend && options.fetchPolicy !== 'cache-only')
-  ) { throw watchQuery.result() }
+  const [result, setResult] = React.useState(initialResult)
+  const [error, setError] = React.useState<Error>(undefined!)
   React.useEffect(() => {
-    const subscription = watchQuery.subscribe(next => {
-      if (
-        watchQuery.isDifferentFromLastResult(next) ||
-        next.data !== result.data
-      ) {
-        setResult(next)
-      }
+    const subscription = watchQuery.subscribe({
+      next (nextResult) {
+        if (
+          watchQuery.isDifferentFromLastResult(nextResult) ||
+          nextResult.data !== result.data
+        ) {
+          setResult(nextResult)
+        }
+      },
+      error: setError
     })
     return () => subscription.unsubscribe()
   }, inputs)
+  if (error) throw error
   return result
 }
 

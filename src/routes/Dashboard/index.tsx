@@ -29,7 +29,9 @@ export type DashboardProps = RouteComponentProps<{
 }>
 function Dashboard ({ match: { params }, history }: DashboardProps) {
   const department = toUpper(params.department) as Department
-  const repositories = useRepositories(department)
+  const { data: repositories, loading: loadingRepositories } = useRepositories(
+    department
+  )
   const handleRowClick = React.useCallback(
     (project: Repositories_nodes) =>
       history.push(`/${params.department}/${params.category}/${project.name}`),
@@ -41,17 +43,22 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
     ),
     [repositories, handleRowClick]
   )
-  const libraries = useLibraries(department)
+  const { data: libraries, loading: loadingLibraries } = useLibraries(
+    department
+  )
   const now = new Date()
   const firstDayOfMonth = React.useMemo(
     () => new Date(now.getFullYear(), now.getMonth(), 1),
     [now.getFullYear(), now.getMonth()]
   )
-  const recentLibraries = useLibraries(department, { from: firstDayOfMonth })
   const renderLibrariesTable = React.useCallback(
     () => <LibrariesTable onRowClick={handleRowClick} libraries={libraries} />,
     [libraries, handleRowClick]
   )
+  const {
+    data: recentLibraries,
+    loading: loadingRecentLibraries
+  } = useLibraries(department, { from: firstDayOfMonth })
   const renderWidgets = React.useCallback(
     () => (
       <WidgetContainer>
@@ -60,8 +67,9 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
         <RecentUpdates libraries={recentLibraries} width='32%' />
       </WidgetContainer>
     ),
-    [libraries, repositories]
+    [libraries, repositories, recentLibraries]
   )
+  if (loadingRepositories || loadingLibraries || loadingRecentLibraries) { return <Loading /> }
   return (
     <React.Fragment>
       <Switch>

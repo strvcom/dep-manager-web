@@ -1,3 +1,4 @@
+import React from 'react'
 import { Department, RangeInput } from '../__generated-types'
 import { useQuery } from '../../utils/apollo-hooks'
 import {
@@ -8,7 +9,8 @@ import { LIBRARIES_QUERY } from './queries'
 
 export function useLibraries (department: Department, range?: RangeInput) {
   const {
-    data: { libraries }
+    data: { libraries },
+    ...rest
   } = useQuery<LibrariesQuery, LibrariesQueryVariables>(
     LIBRARIES_QUERY,
     {
@@ -16,5 +18,13 @@ export function useLibraries (department: Department, range?: RangeInput) {
     },
     [department]
   )
-  return libraries
+  return React.useMemo(() => ({ ...rest, data: libraries }), [
+    department,
+    range && range.from,
+    range && range.to,
+    rest.loading,
+    rest.errors,
+    rest.networkStatus,
+    rest.stale
+  ])
 }
