@@ -6,11 +6,11 @@ This repository has been inactive for quite a while. The main focus will be in g
 * [x] Convert to Typescript
 * [x] Add TSLint and prettier
 * [x] Add husky and hooks on commit
-* [ ] Discuss and fix things that were in the [last code review](https://github.com/strvcom/dep-manager-web/issues/12)
-* [ ] Fix scrolling
-* [ ] Review design compliance
+* [X] Discuss and fix things that were in the [last code review](https://github.com/strvcom/dep-manager-web/issues/12)
+* [X] Fix scrolling
+* [X] Review design compliance
 * [x] Review old issues
 * [x] Migrate data filtering to GraphQL queries
-* [ ] Improves tables performance with lazy loading
-* [ ] Create empty state for tables and widgets
+* [ ] Improves tables performance with lazy loading #23
+* [ ] Create empty state for tables and widgets #22
 * [ ] Create meaningful error boundaries
