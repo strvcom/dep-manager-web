@@ -1,25 +1,17 @@
 import React from 'react'
-import {
-  WidgetContainer,
-  WidgetTitle,
-  StatusWrapper,
-  StatusContainer,
-  Percent
-} from './styled'
-import DoughnutChart from './DoughnutChart'
+import { StatusWrapper, StatusContainer, Percent } from './widget-styled'
+import Doughnut from '../../components/Charts/Doughnut'
 import { SpaceProps } from 'styled-system'
 import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
+import WidgetContainer, { WidgetTitle } from '../../components/Charts/Container'
 
 export interface LibraryActualityWidgetProps extends SpaceProps {
   width?: string
   libraries: LibrariesQuery_libraries[]
 }
 
-const LibrariesActualityWidget = ({
-  width,
-  mt,
-  libraries
-}: LibraryActualityWidgetProps) => {
+const LibrariesActualityWidget = (props: LibraryActualityWidgetProps) => {
+  const { libraries, mt, width } = props
   const { outDated, upToDate } = React.useMemo(
     () =>
       libraries.reduce(
@@ -42,7 +34,7 @@ const LibrariesActualityWidget = ({
           Outdated
           <Percent>{outDatedPercent}%</Percent>
         </StatusContainer>
-        <DoughnutChart percent={outDatedPercent} />
+        <Doughnut percent={outDatedPercent} />
         <StatusContainer>
           Up to Date
           <Percent>{upToDatePercent}%</Percent>

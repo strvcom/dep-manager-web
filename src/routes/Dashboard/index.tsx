@@ -6,11 +6,9 @@ import { DashboardToolBar, LibraryToolBar, ProjectToolBar } from './ToolBar'
 import * as routes from '../routes'
 import { Category } from '../../config/types'
 import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
-import {
-  ProjectsOverviewWidget,
-  LibrariesActualityWidget,
-  RecentUpdates
-} from '../../components/Widgets'
+import ProjectsOverviewWidget from './ProjectsOverviewWidget'
+import LibrariesActualityWidget from './LibrariesActualityWidget'
+import RecentUpdates from './RecentUpdates'
 import { Department } from '../../data/__generated-types'
 import { toUpper } from 'ramda'
 import { useLibraries } from '../../data/Library'
@@ -69,7 +67,9 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
     ),
     [libraries, repositories, recentLibraries]
   )
-  if (loadingRepositories || loadingLibraries || loadingRecentLibraries) { return <Loading /> }
+  if (loadingRepositories || loadingLibraries || loadingRecentLibraries) {
+    return <Loading />
+  }
   return (
     <React.Fragment>
       <Switch>

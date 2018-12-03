@@ -1,12 +1,7 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import {
-  WidgetContainer,
-  WidgetTitle,
-  Items,
-  ItemLink,
-  TitleContainer
-} from './styled'
+import { Items, ItemLink, TitleContainer } from './widget-styled'
+import WidgetContainer, { WidgetTitle } from '../../components/Charts/Container'
 
 const OutdatedProjects = ({
   width,

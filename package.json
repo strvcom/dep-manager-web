@@ -79,7 +79,7 @@
     "heroku-postbuild": "npm run build",
     "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
     "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
-    "codegen": "rimraf src/data/__generated-types* && apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts"
+    "codegen": "rimraf src/__generated-types* && apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts"
   },
   "browserslist": [
     ">0.2%",

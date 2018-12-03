@@ -1,14 +1,10 @@
 import React from 'react'
-import {
-  WidgetContainer,
-  WidgetTitle,
-  Items,
-  ItemLink,
-  TitleContainer,
-  UpdatedTime,
-  WidgetContainerProps
-} from './styled'
+import { Items, ItemLink, TitleContainer, UpdatedTime } from './widget-styled'
 import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
+import WidgetContainer, {
+  WidgetContainerProps,
+  WidgetTitle
+} from '../../components/Charts/Container'
 
 export interface RecentUpdatesProps
   extends Pick<WidgetContainerProps, 'width'> {

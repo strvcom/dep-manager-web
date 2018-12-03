@@ -1,19 +1,21 @@
 import React from 'react'
-import {
-  WidgetContainer,
-  WidgetTitle,
-  Status,
-  BarChart,
-  Count,
-  WidgetContainerProps
-} from './styled'
+import { Status, Count } from './widget-styled'
 import { Repository } from '../../data/Repository/__generated-types/Repository'
+import Bar from '../../components/Charts/Bar'
+import WidgetContainer, {
+  WidgetContainerProps,
+  WidgetTitle
+} from '../../components/Charts/Container'
 
-export interface OverviewProps extends Pick<WidgetContainerProps, 'width'> {
+export interface ProjectsOverviewWidgetProps
+  extends Pick<WidgetContainerProps, 'width'> {
   projects: Repository[]
 }
 
-const ProjectsOverviewWidget = ({ width, projects }: OverviewProps) => {
+const ProjectsOverviewWidget = ({
+  width,
+  projects
+}: ProjectsOverviewWidgetProps) => {
   const archived = React.useMemo(
     () =>
       projects.reduce((acc, project) => (project.isArchived ? acc++ : acc), 0),
@@ -24,7 +26,7 @@ const ProjectsOverviewWidget = ({ width, projects }: OverviewProps) => {
   return (
     <WidgetContainer width={width}>
       <WidgetTitle>Projects Overview</WidgetTitle>
-      <BarChart fill={(active / total) * 100} />
+      <Bar fill={(active / total) * 100} />
       <Status>
         <div>
           Active <Count>{active}</Count>

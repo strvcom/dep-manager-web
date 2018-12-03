@@ -7,15 +7,15 @@ import {
   NodeLibrary,
   NodeLibrary_dependents
 } from './__generated-types/NodeLibrary'
-import {
-  GithubRepositoriesQuery_organization_repositories_nodes,
-  GithubRepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies
-} from '../Repository/__generated-types/GithubRepositoriesQuery'
 import { Omit } from 'utility-types'
+import {
+  RepositoriesQuery_organization_repositories_nodes,
+  RepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies
+} from '../Repository/__generated-types/RepositoriesQuery'
 
 export function fetchLibraries (
   department: Department,
-  repositories: GithubRepositoriesQuery_organization_repositories_nodes[]
+  repositories: RepositoriesQuery_organization_repositories_nodes[]
 ) {
   if (!repositories.length) return []
   switch (department) {
@@ -27,7 +27,7 @@ export function fetchLibraries (
 }
 
 async function fetchFrontendLibraries (
-  repositories: GithubRepositoriesQuery_organization_repositories_nodes[]
+  repositories: RepositoriesQuery_organization_repositories_nodes[]
 ) {
   const dependentsMap = createDependentsMap(repositories)
   const packages = await fetchPackages(Array.from(dependentsMap.keys()))
@@ -41,9 +41,9 @@ async function fetchFrontendLibraries (
   }))
 }
 
-type Dependencies = GithubRepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies[]
+type Dependencies = RepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies[]
 const extractRepositoryDependencies = compose<
-GithubRepositoriesQuery_organization_repositories_nodes,
+RepositoriesQuery_organization_repositories_nodes,
 Dependencies | undefined,
 Dependencies
 >(
@@ -52,7 +52,7 @@ Dependencies
 )
 
 function createDependentsMap (
-  repositories: GithubRepositoriesQuery_organization_repositories_nodes[]
+  repositories: RepositoriesQuery_organization_repositories_nodes[]
 ) {
   const map = new Map<string, NodeLibrary_dependents[]>()
   repositories.forEach(repository => {

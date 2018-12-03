@@ -19,9 +19,7 @@ export function useLibraries (department: Department, range?: RangeInput) {
     [department]
   )
   return React.useMemo(() => ({ ...rest, data: libraries }), [
-    department,
-    range && range.from,
-    range && range.to,
+    libraries,
     rest.loading,
     rest.errors,
     rest.networkStatus,

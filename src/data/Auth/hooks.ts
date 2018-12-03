@@ -8,11 +8,7 @@ import {
   ChangeTokenVariables
 } from './__generated-types/ChangeToken'
 
-const options =
-  process.env.NODE_ENV === 'production'
-    ? {}
-    : // eslint-disable-next-line camelcase
-    { site_id: process.env.REACT_APP_SITE_ID }
+const options = { site_id: process.env.REACT_APP_SITE_ID }
 
 const authenticator = new Netlify(options)
 
