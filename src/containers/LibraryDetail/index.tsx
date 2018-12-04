@@ -1,7 +1,7 @@
 import React from 'react'
 import { Wrapper, Content, Sidebar } from './styled'
 import { RouteComponentProps } from 'react-router-dom'
-import RelatedProjects from '../../components/Table/RelatedProjects'
+import RelatedProjects from '../../routes/LibrariesDetails/RelatedProjects'
 import OutdatedProjects from '../../routes/Dashboard/OutdatedProjects'
 
 const LibraryDetail = ({

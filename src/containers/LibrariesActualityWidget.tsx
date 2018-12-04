@@ -1,13 +1,19 @@
 import React from 'react'
-import { StatusWrapper, StatusContainer, Percent } from './widget-styled'
-import Doughnut from '../../components/Charts/Doughnut'
+import {
+  StatusWrapper,
+  StatusContainer,
+  Percent
+} from '../routes/Dashboard/widget-styled'
+import Doughnut from '../components/Charts/Doughnut'
 import { SpaceProps } from 'styled-system'
-import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
-import WidgetContainer, { WidgetTitle } from '../../components/Charts/Container'
+import { LibrariesQuery_libraries } from '../data/Library/__generated-types/LibrariesQuery'
+import WidgetContainer, { WidgetTitle } from '../components/Charts/Container'
 
 export interface LibraryActualityWidgetProps extends SpaceProps {
   width?: string
-  libraries: LibrariesQuery_libraries[]
+  libraries: Array<
+    Pick<LibrariesQuery_libraries, 'totalDependents' | 'outdatedDependents'>
+  >
 }
 
 const LibrariesActualityWidget = (props: LibraryActualityWidgetProps) => {
@@ -15,9 +21,9 @@ const LibrariesActualityWidget = (props: LibraryActualityWidgetProps) => {
   const { outDated, upToDate } = React.useMemo(
     () =>
       libraries.reduce(
-        (acc, { dependents, outdatedDependents }) => ({
+        (acc, { totalDependents, outdatedDependents }) => ({
           outDated: acc.outDated + outdatedDependents,
-          upToDate: acc.upToDate + (dependents.length - outdatedDependents)
+          upToDate: acc.upToDate + (totalDependents - outdatedDependents)
         }),
         { outDated: 0, upToDate: 0 }
       ),

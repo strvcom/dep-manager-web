@@ -26,19 +26,29 @@ export function fetchLibraries (
   }
 }
 
+type PartialNodeLibrary = Omit<
+  NodeLibrary,
+  'alertedDependents' | 'outdatedDependents'
+>
+
 async function fetchFrontendLibraries (
   repositories: RepositoriesQuery_organization_repositories_nodes[]
 ) {
   const dependentsMap = createDependentsMap(repositories)
   const packages = await fetchPackages(Array.from(dependentsMap.keys()))
-  return Object.values(packages).map<
-  Omit<NodeLibrary, 'alertedDependents' | 'outdatedDependents'>
-  >(({ collected: { metadata } }) => ({
-    id: metadata.name,
-    ...metadata,
-    dependents: dependentsMap.get(metadata.name) || [],
-    __typename: 'NodeLibrary'
-  }))
+  return Object.values(packages).map<PartialNodeLibrary>(
+    ({ collected: { metadata } }) => {
+      const dependents = dependentsMap.get(metadata.name) || []
+      return {
+        id: metadata.name,
+        license: metadata.license || null,
+        ...metadata,
+        dependents,
+        totalDependents: dependents.length,
+        __typename: 'NodeLibrary'
+      }
+    }
+  )
 }
 
 type Dependencies = RepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies[]

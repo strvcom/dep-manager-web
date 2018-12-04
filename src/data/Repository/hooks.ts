@@ -5,8 +5,12 @@ import {
   RepositoriesQuery_organization_repositories_nodes,
   RepositoriesQuery_organization
 } from './__generated-types/RepositoriesQuery'
-import { REPOSITORIES_QUERY } from './queries'
+import { REPOSITORIES_QUERY, REPOSITORY_QUERY } from './queries'
 import { Department } from '../__generated-types'
+import {
+  RepositoryQuery,
+  RepositoryQueryVariables
+} from './__generated-types/RepositoryQuery'
 
 export function useRepositories (department: Department) {
   const {
@@ -24,6 +28,12 @@ export function useRepositories (department: Department) {
       rest.stale
     ]
   )
+}
+
+export function useRepository (name: string) {
+  return useQuery<RepositoryQuery, RepositoryQueryVariables>(REPOSITORY_QUERY, {
+    variables: { name }
+  })
 }
 
 function extractNodes (

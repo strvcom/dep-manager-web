@@ -4,11 +4,12 @@ import {
   MutationOptions,
   QueryOptions,
   ApolloClient,
-  WatchQueryOptions,
   OperationVariables,
-  ApolloQueryResult
+  ApolloQueryResult,
+  ObservableQuery
 } from 'apollo-client'
 import { DocumentNode } from 'graphql'
+import deepEqual from 'deep-equal'
 
 const ApolloContext = React.createContext<ApolloClient<any>>(undefined!)
 
@@ -29,28 +30,54 @@ export function useClient<C = any> () {
 
 export type QueryHookOptions < V > = Omit<QueryOptions<V>, 'query'>
 
+interface ObservableQueryCache<D = any> {
+  observable: ObservableQuery<D>
+  query: DocumentNode
+  options: QueryHookOptions<any>
+}
+
+const caches: ObservableQueryCache[] = []
+
+function useObservableQueryCache<D> (
+  query: DocumentNode,
+  options: QueryHookOptions<any>
+) {
+  const client = useClient()
+  // tslint:disable-next-line:no-shadowed-variable
+  for (const cache of caches) {
+    if (
+      deepEqual(cache.query.loc, query.loc) &&
+      deepEqual(cache.options, options)
+    ) { return cache as ObservableQueryCache<D> }
+  }
+  const cache: ObservableQueryCache<D> = {
+    observable: client.watchQuery<D>({ ...options, query }),
+    query,
+    options
+  }
+  caches.push(cache)
+  return cache
+}
+
 export function useQuery<D = any, V = OperationVariables> (
   query: DocumentNode,
   options: QueryHookOptions<V> = {},
   inputs: ReadonlyArray<any> = []
 ) {
-  const watchQueryOptions: WatchQueryOptions<V> = { query, ...options }
-  const client = useClient()
-  const watchQuery = React.useMemo(
-    () => client.watchQuery<D, V>(watchQueryOptions),
-    inputs
-  )
+  const { observable } = useObservableQueryCache<D>(query, options)
   const initialResult = React.useMemo(
-    () => watchQuery.currentResult() as ApolloQueryResult<D>,
-    [watchQuery]
+    () =>
+      observable.getLastResult() ||
+      (observable.currentResult() as ApolloQueryResult<D>),
+    [observable]
   )
   const [result, setResult] = React.useState(initialResult)
   const [error, setError] = React.useState<Error>(undefined!)
   React.useEffect(() => {
-    const subscription = watchQuery.subscribe({
+    const subscription = observable.subscribe({
       next (nextResult) {
         if (
-          watchQuery.isDifferentFromLastResult(nextResult) ||
+          observable.isDifferentFromLastResult(nextResult) ||
           nextResult.data !== result.data
         ) {
           setResult(nextResult)

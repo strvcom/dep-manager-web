@@ -1,11 +1,6 @@
-import semverRegex from 'semver-regex'
-import semverDiff from 'semver-diff'
+import semver, { SemVer } from 'semver'
 
-export default function versionDiff (v1: string, v2: string) {
-  const [libraryVersion] = semverRegex().exec(v1) || [null]
-  const [dependentVersion] = semverRegex().exec(v2) || [null]
-  if (!libraryVersion || !dependentVersion) return null
-  const diff = semverDiff(dependentVersion, libraryVersion)
-  if (diff === 'major' || diff === 'minor') return diff
-  return null
+export default function versionDiff (version: string | SemVer, range: string) {
+  const coercedRange = semver.coerce(range)
+  return coercedRange && semver.diff(version, coercedRange)
 }

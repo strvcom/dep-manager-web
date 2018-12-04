@@ -12,11 +12,13 @@ const categories = Object.values(Category)
 export const root = '/'
 
 export const login = '/login'
-export const dashboard = `/:department(${departments})/:category(${categories})`
-export const libraries = `/:department(${departments})/${Category.LIBRARIES}`
-export const projects = `/:department(${departments})/${Category.PROJECTS}`
-export const library = `${libraries}/:name`
-export const project = `${projects}/:name`
+export const department = `/:department(${departments})`
+export const dashboard = `${department}/:category(${categories})`
+export const details = `${dashboard}/:id`
+export const libraries = `${department}/${Category.LIBRARIES}`
+export const librariesDetails = `${department}/${Category.LIBRARIES}/:id`
+export const projects = `${department}/${Category.PROJECTS}`
+export const projectsDetails = `${department}/${Category.PROJECTS}/:id`
 
 export const frontend = `/${toLower(Department.FRONTEND)}`
 export const frontendLibraries = `${frontend}/${Category.LIBRARIES}`

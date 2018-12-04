@@ -1,35 +1,30 @@
 import React from 'react'
 import { AutoSizer, Table, Column } from 'react-virtualized'
 import { RouteComponentProps } from 'react-router-dom'
-import { Wrapper, CurrentVersion } from './styled'
+import { Wrapper, CurrentVersion } from '../ProjectDetails/styled'
 
-const RelatedLibraries = ({
+const RelatedProjects = ({
   history,
   match: { params },
-  relatedLibraries
-}: RelatedLibrariesProps) => (
+  relatedProjects
+}: RelatedProjectsProps) => (
   <Wrapper>
     <AutoSizer disableHeight>
       {({ width }) => (
         <Table
           width={width}
           // eslint-disable-next-line no-mixed-operators
-          height={50 + 75 * relatedLibraries.length}
+          height={50 + 75 * relatedProjects.length}
           headerHeight={50}
           rowHeight={75}
           rowClassName={({ index }) => (index >= 0 ? 'row' : '')}
-          rowCount={relatedLibraries.length}
-          rowGetter={({ index }) => relatedLibraries[index]}
+          rowCount={relatedProjects.length}
+          rowGetter={({ index }) => relatedProjects[index]}
           onRowClick={({ rowData }: any) => {
-            history.push(
-              `/${params.department}/library/${rowData.libraryName.replace(
-                '/',
-                '%2f'
-              )}`
-            )
+            history.push(`/${params.department}/project/${rowData.projectName}`)
           }}
         >
-          <Column width={280} label='Library Name' dataKey='libraryName' />
+          <Column width={280} label='Project Name' dataKey='projectName' />
           <Column width={180} label='Latest version' dataKey='latestVersion' />
           <Column
             width={180}
@@ -41,16 +36,15 @@ const RelatedLibraries = ({
               </CurrentVersion>
             )}
           />
-          <Column width={100} label='Licence' dataKey='licence' />
         </Table>
       )}
     </AutoSizer>
   </Wrapper>
 )
 
-export interface RelatedLibrariesProps
+export interface RelatedProjectsProps
   extends RouteComponentProps<{ department: string }> {
-  relatedLibraries: any
+  relatedProjects: any
 }
 
-export default React.memo(RelatedLibraries)
+export default React.memo(RelatedProjects)

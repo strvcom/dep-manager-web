@@ -1441,11 +1441,6 @@
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.42.tgz#bec6e54e168409f120a753621edf20cf4d1a4c08"
   integrity sha512-m8IcEWgJZTb47UARqp2d58f+C8yDxpTC6ElU/muO0z1bYhdgf6LHcO2SE9f1Mt3SJnKCh6GtjKEC99hq6vPnDA==
 
-"@types/react-cache@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@types/react-cache/-/react-cache-2.0.0.tgz#591dccb95dbe98f9cbb3309ee65f7eba8c2c6f02"
-  integrity sha512-cH0wn8yra09EkAq/IKGLQksoyeEozLpJx6rBQh5bKCvTlPwg+MYCTj8sywpyVsfIxPNYB5Yd+S3d7F6ypmxtqQ==
-
 "@types/react-dom@^16.0.9":
   version "16.0.10"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.0.10.tgz#0c8980a639fa1d92a8547c8b6d0cf47af96c8966"
@@ -1498,6 +1493,11 @@
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@types/semver-diff/-/semver-diff-2.1.1.tgz#5c20fe86c889246907cbba1f1647633ed16d085c"
   integrity sha1-XCD+hsiJJGkHy7ofFkdjPtFtCFw=
+
+"@types/semver@^5.5.0":
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/@types/semver/-/semver-5.5.0.tgz#146c2a29ee7d3bae4bf2fcb274636e264c813c45"
+  integrity sha512-41qEJgBH/TWgo5NFSvBCJ1qkoi3Q6ONSF2avrHq1LVEZfYpdHmj0y9SuTK+u9ZhG1sYQKBL1AWXKyLWP4RaUoQ==
 
 "@types/styled-components@^4.1.0":
   version "4.1.1"

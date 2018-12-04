@@ -20,8 +20,10 @@ export interface LibrariesQuery_libraries {
   name: string
   version: string
   date: string
+  license: string
   outdatedDependents: number
   alertedDependents: number
+  totalDependents: number
   dependents: LibrariesQuery_libraries_dependents[]
 }
 
@@ -32,4 +34,5 @@ export interface LibrariesQuery {
 export interface LibrariesQueryVariables {
   department: Department
   range?: RangeInput | null
+  repository?: string | null
 }
