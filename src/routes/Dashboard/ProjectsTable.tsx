@@ -17,7 +17,7 @@ const ProjectsTable = React.memo<ProjectsTableProps>(
     const rowGetter = React.useCallback(({ index }: Index) => projects[index], [
       projects
     ])
-    const rowRenderer = React.useMemo(() => anchorRowRenderer(baseUrl), [
+    const rowRenderer = React.useMemo(() => anchorRowRenderer(baseUrl, 'id'), [
       baseUrl
     ])
     return (

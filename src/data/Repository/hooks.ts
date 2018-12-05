@@ -30,9 +30,9 @@ export function useRepositories (department: Department) {
   )
 }
 
-export function useRepository (name: string) {
+export function useRepository (variables: RepositoryQueryVariables) {
   return useQuery<RepositoryQuery, RepositoryQueryVariables>(REPOSITORY_QUERY, {
-    variables: { name }
+    variables
   })
 }
 

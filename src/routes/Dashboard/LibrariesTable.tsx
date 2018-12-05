@@ -28,7 +28,7 @@ const LibrariesTable = React.memo<LibrariesTableProps>(
       },
       [libraries]
     )
-    const rowRenderer = React.useMemo(() => anchorRowRenderer(baseUrl), [
+    const rowRenderer = React.useMemo(() => anchorRowRenderer(baseUrl, 'id'), [
       baseUrl
     ])
     return (

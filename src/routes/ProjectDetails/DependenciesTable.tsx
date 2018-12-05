@@ -28,7 +28,7 @@ const DependenciesTable = ({
     <Table
       rowCount={dependencies.length}
       rowGetter={handleRowGetter}
-      rowRenderer={anchorRowRenderer(baseUrl)}
+      rowRenderer={anchorRowRenderer(baseUrl, getLibraryId)}
     >
       <Column width={380} label='Library Name' dataKey='name' />
       <Column
@@ -53,9 +53,12 @@ const DependenciesTable = ({
   )
 }
 
+const getLibraryId = (dependency: Dependency) => dependency.id.split(':')[0]
+
 const renderLibraryVersion = ({
   rowData
 }: TableCellDataGetterParams<'library', Dependency>) => rowData.library.version
+
 const renderDependencyVersion = ({
   cellData,
   rowData
@@ -65,6 +68,7 @@ const renderDependencyVersion = ({
       {cellData}
     </CurrentVersion>
   )
+
 const renderLicense = ({
   rowData
 }: TableCellDataGetterParams<'library', Dependency>) => rowData.library.license

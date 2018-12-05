@@ -8,6 +8,7 @@ export default gql`
       range: RangeInput
       repository: String
     ): [Library!]!
+    library(id: String!, department: Department!): Library
   }
 
   input RangeInput {

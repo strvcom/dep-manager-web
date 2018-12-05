@@ -70,10 +70,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public",
-    "heroku-postbuild": "npm run build",
     "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
     "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
     "codegen": "rimraf src/__generated-types* && apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts"

@@ -4,7 +4,11 @@ import {
   LibrariesQueryVariables,
   LibrariesQuery
 } from './__generated-types/LibrariesQuery'
-import { LIBRARIES_QUERY } from './queries'
+import { LIBRARIES_QUERY, LIBRARY_QUERY } from './queries'
+import {
+  LibraryQueryVariables,
+  LibraryQuery
+} from './__generated-types/LibraryQuery'
 
 export function useLibraries (variables: LibrariesQueryVariables) {
   const {
@@ -22,4 +26,14 @@ export function useLibraries (variables: LibrariesQueryVariables) {
     rest.networkStatus,
     rest.stale
   ])
+}
+
+export function useLibrary (variables: LibraryQueryVariables) {
+  return useQuery<LibraryQuery, LibraryQueryVariables>(
+    LIBRARY_QUERY,
+    {
+      variables
+    },
+    [variables.department, variables.id]
+  )
 }

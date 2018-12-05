@@ -5,36 +5,24 @@ import {
   Percent
 } from '../routes/Dashboard/widget-styled'
 import Doughnut from '../components/Charts/Doughnut'
-import { SpaceProps } from 'styled-system'
-import { LibrariesQuery_libraries } from '../data/Library/__generated-types/LibrariesQuery'
-import WidgetContainer, { WidgetTitle } from '../components/Charts/Container'
+import WidgetContainer, {
+  WidgetTitle,
+  WidgetContainerProps
+} from '../components/Charts/Container'
 
-export interface LibraryActualityWidgetProps extends SpaceProps {
-  width?: string
-  libraries: Array<
-    Pick<LibrariesQuery_libraries, 'totalDependents' | 'outdatedDependents'>
-  >
+export interface ActualityWidgetProps extends WidgetContainerProps {
+  outdated: number
+  total: number
 }
 
-const LibrariesActualityWidget = (props: LibraryActualityWidgetProps) => {
-  const { libraries, mt, width } = props
-  const { outDated, upToDate } = React.useMemo(
-    () =>
-      libraries.reduce(
-        (acc, { totalDependents, outdatedDependents }) => ({
-          outDated: acc.outDated + outdatedDependents,
-          upToDate: acc.upToDate + (totalDependents - outdatedDependents)
-        }),
-        { outDated: 0, upToDate: 0 }
-      ),
-    [libraries]
-  )
-  const totalUsed = outDated + upToDate
-  const outDatedPercent = Math.round((outDated / totalUsed) * 100 * 10) / 10
-  const upToDatePercent = Math.round((upToDate / totalUsed) * 100 * 10) / 10
+const ActualityWidget = (props: ActualityWidgetProps) => {
+  const { outdated, total, title, ref, ...rest } = props
+  const outDatedPercent = Math.round((outdated / total) * 100 * 10) / 10
+  const upToDatePercent =
+    Math.round(((total - outdated) / total) * 100 * 10) / 10
   return (
-    <WidgetContainer mt={mt} width={width}>
-      <WidgetTitle>Libraries Status</WidgetTitle>
+    <WidgetContainer {...rest}>
+      <WidgetTitle>{title}</WidgetTitle>
       <StatusWrapper>
         <StatusContainer>
           Outdated
@@ -50,4 +38,4 @@ const LibrariesActualityWidget = (props: LibraryActualityWidgetProps) => {
   )
 }
 
-export default React.memo(LibrariesActualityWidget)
+export default React.memo(ActualityWidget)

@@ -9,7 +9,7 @@ import DependenciesTable from './DependenciesTable'
 import { useLibraries } from '../../data/Library'
 import toUpper from 'ramda/es/toUpper'
 import { Department } from '../../data/__generated-types'
-import LibrariesActualityWidget from '../../containers/LibrariesActualityWidget'
+import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from '../Dashboard/RecentUpdates'
 // import toUpper from 'ramda/es/toUpper';
 // import { useRepositories } from '../../data/Repository';
@@ -30,8 +30,10 @@ const ProjectDetails = (props: ProjectDetailsProps) => {
   const department = toUpper(props.match.params.department) as Department
   const {
     data: { repository }
-  } = useRepository(id)
-  if (!repository || !repository.object || !isBlob(repository.object)) { return null }
+  } = useRepository({ name: id })
+  if (!repository || !repository.object || !isBlob(repository.object)) {
+    return null
+  }
   const { data: libraries } = useLibraries({
     department,
     repository: repository && repository.id
@@ -47,6 +49,17 @@ const ProjectDetails = (props: ProjectDetailsProps) => {
     range: { from: firstDayOfMonth }
   })
   if (!libraries || !recentLibraries) return null
+  const { outdated, total } = React.useMemo(
+    () =>
+      libraries.reduce(
+        (acc, { totalDependents, outdatedDependents }) => ({
+          outdated: acc.outdated + outdatedDependents,
+          total: acc.total + totalDependents
+        }),
+        { outdated: 0, total: 0 }
+      ),
+    [libraries]
+  )
   return (
     <React.Fragment>
       <ToolBar
@@ -64,13 +77,18 @@ const ProjectDetails = (props: ProjectDetailsProps) => {
             <Input placeholder='Search for libraries' />
           </div>
           <DependenciesTable
-            baseUrl={`/${props.match.params.department}/libraries`}
+            baseUrl={`/${props.match.params.department}/${Category.LIBRARIES}`}
             dependencies={repository.object.package!.dependencies}
           />
         </Content>
         <Sidebar>
           <RecentUpdates libraries={recentLibraries} />
-          <LibrariesActualityWidget mt={20} libraries={libraries} />
+          <ActualityWidget
+            title='Libraries Actuality'
+            mt={20}
+            outdated={outdated}
+            total={total}
+          />
         </Sidebar>
       </Wrapper>
     </React.Fragment>

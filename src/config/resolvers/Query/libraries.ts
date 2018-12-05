@@ -2,52 +2,41 @@ import {
   LibrariesQueryVariables,
   LibrariesQuery,
   LibrariesQuery_libraries
-} from '../../data/Library/__generated-types/LibrariesQuery'
+} from '../../../data/Library/__generated-types/LibrariesQuery'
 import {
   fetchLibraries,
   LIBRARIES_QUERY,
   NODE_LIBRARY_FRAGMENT
-} from '../../data/Library'
-import { Department, RangeInput } from '../../data/__generated-types'
-import { getRepositories, REPOSITORY_FRAGMENT } from '../../data/Repository'
+} from '../../../data/Library'
+import { Department, RangeInput } from '../../../data/__generated-types'
+import { getRepositories, REPOSITORY_FRAGMENT } from '../../../data/Repository'
 import {
   Repository,
   Repository_object_Blob_package_dependencies
-} from '../../data/Repository/__generated-types/Repository'
+} from '../../../data/Repository/__generated-types/Repository'
 import identity from 'ramda/es/identity'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import compose from 'ramda/es/compose'
 import defaultTo from 'ramda/es/defaultTo'
 import path from 'ramda/es/path'
-import { NodeLibrary } from '../../data/Library/__generated-types/NodeLibrary'
+import { NodeLibrary } from '../../../data/Library/__generated-types/NodeLibrary'
 
-export default {
-  libraries: async (
-    _: any,
-    {
-      department,
-      range,
-      repository
-    }: { department: Department; range?: RangeInput; repository?: string },
-    { cache }: { cache: InMemoryCache }
-  ) => {
-    if (!range && !repository) { return fetchLibraries(department, await getRepositories()) }
-    return (repository
-      ? getLibrariesByRepository(cache, repository)
-      : getLibraries(department)
-    ).then(librariesRangeFilter(range))
-  },
-  repository: (
-    _: any,
-    { name }: { name: string },
-    { cache }: { cache: InMemoryCache }
-  ) => {
-    return cache.readFragment<Repository>({
-      fragment: REPOSITORY_FRAGMENT,
-      fragmentName: 'Repository',
-      id: `Repository:${name}`
-    })
+export default async (
+  _: any,
+  {
+    department,
+    range,
+    repository
+  }: { department: Department; range?: RangeInput; repository?: string },
+  { cache }: { cache: InMemoryCache }
+) => {
+  if (!range && !repository) {
+    return fetchLibraries(department, await getRepositories())
   }
+  return (repository
+    ? getLibrariesByRepository(cache, repository)
+    : getLibraries(department)
+  ).then(librariesRangeFilter(range))
 }
 
 const librariesRangeFilter = (range?: RangeInput) =>
@@ -73,7 +62,7 @@ Dependencies
 )
 
 const getLibraries = async (department: Department) => {
-  const { default: client } = await import('../apolloClient')
+  const { default: client } = await import('../../apolloClient')
   const {
     data: { libraries }
   } = await client.query<LibrariesQuery, LibrariesQueryVariables>({

@@ -10,7 +10,7 @@ import {
 import * as routes from '../routes'
 import { Category } from '../../config/types'
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
-import LibrariesActualityWidget from '../../containers/LibrariesActualityWidget'
+import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from './RecentUpdates'
 import { Department } from '../../data/__generated-types'
 import { toUpper } from 'ramda'
@@ -105,10 +105,26 @@ const Widgets = React.memo(
       range: { from: firstDayOfMonth }
     })
     if (L1 || L2 || L3) return null
+    const { outdated, total } = React.useMemo(
+      () =>
+        libraries.reduce(
+          (acc, { totalDependents, outdatedDependents }) => ({
+            outdated: acc.outdated + outdatedDependents,
+            total: acc.total + totalDependents
+          }),
+          { outdated: 0, total: 0 }
+        ),
+      [libraries]
+    )
     return (
       <WidgetContainer>
         <ProjectsOverviewWidget projects={repositories!} width='32%' />
-        <LibrariesActualityWidget width='32%' libraries={libraries} />
+        <ActualityWidget
+          title='Libraries Actuality'
+          width='32%'
+          outdated={outdated}
+          total={total}
+        />
         <RecentUpdates libraries={recentLibraries} width='32%' />
       </WidgetContainer>
     )

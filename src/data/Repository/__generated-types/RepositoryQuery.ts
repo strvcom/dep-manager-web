@@ -34,6 +34,7 @@ export interface RepositoryQuery_repository_object_Blob_package {
 
 export interface RepositoryQuery_repository_object_Blob {
   __typename: 'Blob'
+  id: string
   package: RepositoryQuery_repository_object_Blob_package | null
 }
 
