@@ -3,7 +3,12 @@ import gql from 'graphql-tag'
 export default gql`
   extend type Query {
     auth: Authentication!
-    libraries(department: Department!, range: RangeInput): [Library!]!
+    libraries(
+      department: Department!
+      range: RangeInput
+      repository: String
+    ): [Library!]!
+    library(id: String!, department: Department!): Library
   }
 
   input RangeInput {
@@ -23,8 +28,10 @@ export default gql`
     id: String!
     name: String!
     version: String!
+    license: String!
     outdatedDependents: Int!
     alertedDependents: Int!
+    totalDependents: Int!
     dependents: [NodeLibraryDependent!]!
     date: String!
   }

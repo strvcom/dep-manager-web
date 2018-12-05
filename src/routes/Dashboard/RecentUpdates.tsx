@@ -8,7 +8,9 @@ import WidgetContainer, {
 
 export interface RecentUpdatesProps
   extends Pick<WidgetContainerProps, 'width'> {
-  libraries: LibrariesQuery_libraries[]
+  libraries: Array<
+    Pick<LibrariesQuery_libraries, 'id' | 'name' | 'version' | 'date'>
+  >
 }
 
 const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {

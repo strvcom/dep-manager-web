@@ -207,7 +207,7 @@ export interface TableProps {
    *   style: any
    * }): PropTypes.node
    */
-  rowRenderer?: Virtual.TableRowRenderer
+  rowRenderer?: TableRowRenderer
   rowClassName?: string
   /** Optional custom inline style to attach to table rows. */
   rowStyle?:
@@ -264,6 +264,32 @@ Table.defaultProps = {
 export interface TableCellProps<T extends keyof RowData, RowData = {}>
   extends Virtual.TableCellProps {
   cellData?: RowData[T]
+  rowData: RowData
+}
+
+export interface TableRowProps<RowData = any> {
+  className: string
+  columns: React.ReactNode[]
+  index: number
+  key?: string
+  isScrolling: boolean
+  onRowClick?: (params: Virtual.RowMouseEventHandlerParams) => void
+  onRowDoubleClick?: (params: Virtual.RowMouseEventHandlerParams) => void
+  onRowMouseOver?: (params: Virtual.RowMouseEventHandlerParams) => void
+  onRowMouseOut?: (params: Virtual.RowMouseEventHandlerParams) => void
+  onRowRightClick?: (params: Virtual.RowMouseEventHandlerParams) => void
+  rowData: RowData
+  style: any
+}
+
+export type TableRowRenderer = (props: TableRowProps) => React.ReactNode
+
+export interface TableCellDataGetterParams<
+  T extends keyof RowData,
+  RowData = {}
+> {
+  columnData?: RowData[T]
+  dataKey: string
   rowData: RowData
 }
 

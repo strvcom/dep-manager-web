@@ -36,4 +36,4 @@ const NavBar = (props: NavBarProps) => (
   </StyledNav>
 )
 
-export default NavBar
+export default React.memo(NavBar)

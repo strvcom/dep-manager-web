@@ -19,6 +19,34 @@ export const NODE_PACKAGE_FRAGMENT = gql`
   }
 `
 
+export const REPOSITORY_DETAILS_FRAGMENT = gql`
+  fragment RepositoryDetails on Repository {
+    id
+    name
+    url
+    object(expression: "HEAD:package.json") {
+      ... on Blob {
+        id
+        package @client {
+          id
+          name
+          version
+          dependencies {
+            id
+            name
+            version
+            library {
+              id
+              version
+              license
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
 export const REPOSITORY_FRAGMENT = gql`
   fragment Repository on Repository {
     id

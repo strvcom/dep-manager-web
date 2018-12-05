@@ -1,18 +1,22 @@
 import React from 'react'
 import { Route, Switch, RouteComponentProps } from 'react-router-dom'
 import Loading from '../../components/Loading'
-import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
-import { DashboardToolBar, LibraryToolBar, ProjectToolBar } from './ToolBar'
+import {
+  TableContainer,
+  StyledDashboard,
+  WidgetContainer,
+  Input
+} from './styled'
 import * as routes from '../routes'
 import { Category } from '../../config/types'
-import { Repositories_nodes } from '../../data/Repository/__generated-types/Repositories'
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
-import LibrariesActualityWidget from './LibrariesActualityWidget'
+import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from './RecentUpdates'
 import { Department } from '../../data/__generated-types'
 import { toUpper } from 'ramda'
 import { useLibraries } from '../../data/Library'
 import { useRepositories } from '../../data/Repository'
+import ToolBar, { ToolBarLink } from '../../components/ToolBar'
 
 const LibrariesTable = React.lazy(() =>
   import(/* webpackChunkName: 'LibrariesTable' */ './LibrariesTable')
@@ -25,72 +29,38 @@ export type DashboardProps = RouteComponentProps<{
   department: string
   category: Category
 }>
-function Dashboard ({ match: { params }, history }: DashboardProps) {
-  const department = toUpper(params.department) as Department
-  const { data: repositories, loading: loadingRepositories } = useRepositories(
-    department
-  )
-  const handleRowClick = React.useCallback(
-    (project: Repositories_nodes) =>
-      history.push(`/${params.department}/${params.category}/${project.name}`),
-    [params.department, params.category]
-  )
-  const renderProjectsTable = React.useCallback(
-    () => (
-      <ProjectsTable onRowClick={handleRowClick} projects={repositories!} />
-    ),
-    [repositories, handleRowClick]
-  )
-  const { data: libraries, loading: loadingLibraries } = useLibraries(
-    department
-  )
-  const now = new Date()
-  const firstDayOfMonth = React.useMemo(
-    () => new Date(now.getFullYear(), now.getMonth(), 1),
-    [now.getFullYear(), now.getMonth()]
-  )
-  const renderLibrariesTable = React.useCallback(
-    () => <LibrariesTable onRowClick={handleRowClick} libraries={libraries} />,
-    [libraries, handleRowClick]
-  )
-  const {
-    data: recentLibraries,
-    loading: loadingRecentLibraries
-  } = useLibraries(department, { from: firstDayOfMonth })
-  const renderWidgets = React.useCallback(
-    () => (
-      <WidgetContainer>
-        <ProjectsOverviewWidget projects={repositories!} width='32%' />
-        <LibrariesActualityWidget width='32%' libraries={libraries} />
-        <RecentUpdates libraries={recentLibraries} width='32%' />
-      </WidgetContainer>
-    ),
-    [libraries, repositories, recentLibraries]
-  )
-  if (loadingRepositories || loadingLibraries || loadingRecentLibraries) {
-    return <Loading />
-  }
+
+function Dashboard ({ match: { params } }: DashboardProps) {
   return (
     <React.Fragment>
-      <Switch>
-        <Route path={routes.project} component={ProjectToolBar} />
-        <Route path={routes.library} component={LibraryToolBar} />
-        <Route path={routes.dashboard} component={DashboardToolBar} />
-      </Switch>
+      <ToolBar
+        title='Dashboard'
+        links={
+          <React.Fragment>
+            <ToolBarLink to={`/${params.department}/libraries`}>
+              Libraries
+            </ToolBarLink>
+            <ToolBarLink to={`/${params.department}/projects`}>
+              Projects
+            </ToolBarLink>
+          </React.Fragment>
+        }
+        children={<Input placeholder={`Search ${params.category}`} />}
+      />
       <StyledDashboard>
         <React.Suspense fallback={<Loading />}>
           <TableContainer>
-            <Route exact path={routes.dashboard} render={renderWidgets} />
+            <Route exact path={routes.dashboard} component={Widgets} />
             <Switch>
               <Route
                 exact
                 path={routes.projects}
-                render={renderProjectsTable}
+                component={AllProjectsTable}
               />
               <Route
                 exact
                 path={routes.libraries}
-                render={renderLibrariesTable}
+                component={AllLibrariesTable}
               />
             </Switch>
           </TableContainer>
@@ -101,3 +71,62 @@ function Dashboard ({ match: { params }, history }: DashboardProps) {
 }
 
 export default React.memo(Dashboard)
+
+const AllProjectsTable = React.memo(
+  (props: RouteComponentProps<{ department: string }>) => {
+    const department = toUpper(props.match.params.department) as Department
+    const { data, loading } = useRepositories(department)
+    if (loading) return null
+    return <ProjectsTable baseUrl={props.match.url} projects={data!} />
+  }
+)
+
+const AllLibrariesTable = React.memo(
+  (props: RouteComponentProps<{ department: string }>) => {
+    const department = toUpper(props.match.params.department) as Department
+    const { data, loading } = useLibraries({ department })
+    if (loading) return null
+    return <LibrariesTable baseUrl={props.match.url} libraries={data} />
+  }
+)
+
+const Widgets = React.memo(
+  (props: RouteComponentProps<{ department: string }>) => {
+    const department = toUpper(props.match.params.department) as Department
+    const now = new Date()
+    const firstDayOfMonth = React.useMemo(
+      () => new Date(now.getFullYear(), now.getMonth(), 1),
+      [now.getFullYear(), now.getMonth()]
+    )
+    const { data: repositories, loading: L1 } = useRepositories(department)
+    const { data: libraries, loading: L2 } = useLibraries({ department })
+    const { data: recentLibraries, loading: L3 } = useLibraries({
+      department,
+      range: { from: firstDayOfMonth }
+    })
+    if (L1 || L2 || L3) return null
+    const { outdated, total } = React.useMemo(
+      () =>
+        libraries.reduce(
+          (acc, { totalDependents, outdatedDependents }) => ({
+            outdated: acc.outdated + outdatedDependents,
+            total: acc.total + totalDependents
+          }),
+          { outdated: 0, total: 0 }
+        ),
+      [libraries]
+    )
+    return (
+      <WidgetContainer>
+        <ProjectsOverviewWidget projects={repositories!} width='32%' />
+        <ActualityWidget
+          title='Libraries Actuality'
+          width='32%'
+          outdated={outdated}
+          total={total}
+        />
+        <RecentUpdates libraries={recentLibraries} width='32%' />
+      </WidgetContainer>
+    )
+  }
+)

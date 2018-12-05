@@ -1,18 +1,20 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
+import { Department } from './../../__generated-types'
+
 // ====================================================
-// GraphQL fragment: NodeLibrary
+// GraphQL query operation: LibraryQuery
 // ====================================================
 
-export interface NodeLibrary_dependents {
+export interface LibraryQuery_library_dependents {
   __typename: 'NodeLibraryDependent'
   id: string
   name: string
   version: string
 }
 
-export interface NodeLibrary {
+export interface LibraryQuery_library {
   __typename: 'NodeLibrary'
   id: string
   name: string
@@ -22,5 +24,14 @@ export interface NodeLibrary {
   outdatedDependents: number
   alertedDependents: number
   totalDependents: number
-  dependents: NodeLibrary_dependents[]
+  dependents: LibraryQuery_library_dependents[]
+}
+
+export interface LibraryQuery {
+  library: LibraryQuery_library | null
+}
+
+export interface LibraryQueryVariables {
+  id: string
+  department: Department
 }
