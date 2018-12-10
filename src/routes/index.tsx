@@ -7,8 +7,9 @@ import Loading from '../components/Loading'
 import PrivateRoute from '../containers/PrivateRoute'
 import PublicRoute from '../containers/PublicRoute'
 import { ReactComponent as Logo } from '../assets/logo.svg'
-import toUpper from 'ramda/es/toUpper'
-import { Department } from '../data/__generated-types'
+// import { useRepositories } from '../data/Repository'
+// import { useLibraries } from '../data/Library'
+import toDepartment from '../utils/toDepartment'
 import { useRepositories } from '../data/Repository'
 import { useLibraries } from '../data/Library'
 
@@ -40,7 +41,7 @@ const PrivatePage = () => (
 
 const Departments = React.memo(
   (props: RouteComponentProps<{ department: string }>) => {
-    const department = toUpper(props.match.params.department) as Department
+    const department = toDepartment(props.match.params.department)
     const { loading: L1 } = useRepositories(department)
     const { loading: L2 } = useLibraries({ department })
     if (L1 || L2) return <Loading />
@@ -54,16 +55,22 @@ const Departments = React.memo(
   }
 )
 
-const App = () => (
-  <Switch>
-    <PublicRoute redirect={routes.root} path={routes.login} component={Login} />
-    <Redirect exact from={routes.root} to={routes.frontendLibraries} />
-    <PrivateRoute
-      redirect={routes.login}
-      path={routes.root}
-      render={PrivatePage}
-    />
-  </Switch>
-)
+const App = () => {
+  return (
+    <Switch>
+      <PublicRoute
+        redirect={routes.root}
+        path={routes.login}
+        component={Login}
+      />
+      <Redirect exact from={routes.root} to={routes.frontendLibraries} />
+      <PrivateRoute
+        redirect={routes.login}
+        path={routes.root}
+        render={PrivatePage}
+      />
+    </Switch>
+  )
+}
 
 export default App

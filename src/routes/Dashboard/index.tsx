@@ -12,11 +12,10 @@ import { Category } from '../../config/types'
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from './RecentUpdates'
-import { Department } from '../../data/__generated-types'
-import { toUpper } from 'ramda'
 import { useLibraries } from '../../data/Library'
 import { useRepositories } from '../../data/Repository'
 import ToolBar, { ToolBarLink } from '../../components/ToolBar'
+import toDepartment from '../../utils/toDepartment'
 
 const LibrariesTable = React.lazy(() =>
   import(/* webpackChunkName: 'LibrariesTable' */ './LibrariesTable')
@@ -74,7 +73,7 @@ export default React.memo(Dashboard)
 
 const AllProjectsTable = React.memo(
   (props: RouteComponentProps<{ department: string }>) => {
-    const department = toUpper(props.match.params.department) as Department
+    const department = toDepartment(props.match.params.department)
     const { data, loading } = useRepositories(department)
     if (loading) return null
     return <ProjectsTable baseUrl={props.match.url} projects={data!} />
@@ -83,7 +82,7 @@ const AllProjectsTable = React.memo(
 
 const AllLibrariesTable = React.memo(
   (props: RouteComponentProps<{ department: string }>) => {
-    const department = toUpper(props.match.params.department) as Department
+    const department = toDepartment(props.match.params.department)
     const { data, loading } = useLibraries({ department })
     if (loading) return null
     return <LibrariesTable baseUrl={props.match.url} libraries={data} />
@@ -92,7 +91,7 @@ const AllLibrariesTable = React.memo(
 
 const Widgets = React.memo(
   (props: RouteComponentProps<{ department: string }>) => {
-    const department = toUpper(props.match.params.department) as Department
+    const department = toDepartment(props.match.params.department)
     const now = new Date()
     const firstDayOfMonth = React.useMemo(
       () => new Date(now.getFullYear(), now.getMonth(), 1),

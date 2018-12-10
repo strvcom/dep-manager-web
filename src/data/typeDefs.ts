@@ -1,6 +1,7 @@
 import gql from 'graphql-tag'
 
 export default gql`
+  scalar Any
   extend type Query {
     auth: Authentication!
     libraries(

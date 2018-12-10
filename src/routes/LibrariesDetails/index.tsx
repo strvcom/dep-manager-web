@@ -4,10 +4,9 @@ import { Category } from '../../config/types'
 import ToolBar from '../../components/ToolBar'
 import { Wrapper, Content, Sidebar, Input } from './styled'
 import { useLibrary } from '../../data/Library'
-import toUpper from 'ramda/es/toUpper'
-import { Department } from '../../data/__generated-types'
 import DependentsTable from './DependentsTable'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
+import toDepartment from '../../utils/toDepartment'
 
 export type ProjectDetailsProps = RouteComponentProps<{
   department: string
@@ -21,7 +20,7 @@ const ProjectDetails = (props: ProjectDetailsProps) => {
       params: { id }
     }
   } = props
-  const department = toUpper(props.match.params.department) as Department
+  const department = toDepartment(props.match.params.department)
   const {
     data: { library }
   } = useLibrary({ id, department })

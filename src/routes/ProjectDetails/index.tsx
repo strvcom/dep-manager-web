@@ -7,11 +7,9 @@ import Anchor from '../../components/Anchor'
 import { Wrapper, Content, Sidebar, Input } from './styled'
 import DependenciesTable from './DependenciesTable'
 import { useLibraries } from '../../data/Library'
-import toUpper from 'ramda/es/toUpper'
-import { Department } from '../../data/__generated-types'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from '../Dashboard/RecentUpdates'
-// import toUpper from 'ramda/es/toUpper';
+import toDepartment from '../../utils/toDepartment'
 // import { useRepositories } from '../../data/Repository';
 // import { Department } from '../../data/__generated-types';
 
@@ -27,7 +25,7 @@ const ProjectDetails = (props: ProjectDetailsProps) => {
       params: { id }
     }
   } = props
-  const department = toUpper(props.match.params.department) as Department
+  const department = toDepartment(props.match.params.department)
   const {
     data: { repository }
   } = useRepository({ name: id })
