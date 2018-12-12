@@ -1,13 +1,15 @@
-import styled from 'styled-components'
+import styled from '../../styles/styled'
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { space, SpaceProps } from 'styled-system'
+import { typography } from '../../styles/themes/mixins'
 
 export const StyledNavBar = styled.section`
-  background: white;
+  background: ${props => props.theme.backgroundColor};
   display: flex;
   justify-content: center;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  ${typography.body}
 `
 
 export const NavBarContainer = styled.div`
@@ -20,27 +22,26 @@ export interface TitleProps
       HTMLHeadingElement
     >,
     SpaceProps {}
-const TitleCmp = ({
-  m,
-  mt,
-  mr,
-  mb,
-  ml,
-  mx,
-  my,
-  p,
-  pt,
-  pr,
-  pb,
-  pl,
-  px,
-  py,
-  ...props
-}: TitleProps) => <h1 {...props} />
-export const Title = styled(TitleCmp)`
-  font-family: 'Microsoft Sans Serif';
-  font-size: 26px;
-  line-height: 29px;
+export const Title = styled(
+  ({
+    m,
+    mt,
+    mr,
+    mb,
+    ml,
+    mx,
+    my,
+    p,
+    pt,
+    pr,
+    pb,
+    pl,
+    px,
+    py,
+    ...props
+  }: TitleProps) => <h1 {...props} />
+)`
+  ${typography.title}
   margin: 40px 0 20px;
   ${space};
 `

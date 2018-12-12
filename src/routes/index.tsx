@@ -12,6 +12,8 @@ import { ReactComponent as Logo } from '../assets/logo.svg'
 import toDepartment from '../utils/toDepartment'
 import { useRepositories } from '../data/Repository'
 import { useLibraries } from '../data/Library'
+import { ThemeProvider } from '../styles/styled'
+import lightTheme from '../styles/themes/light'
 
 const Dashboard = React.lazy(() =>
   import(/* webpackChunkName: 'Dashboard' */ './Dashboard')
@@ -26,22 +28,24 @@ const LibrariesDetails = React.lazy(() =>
 )
 
 const PrivatePage = () => (
-  <React.Fragment>
-    <NavBar logo={<Logo height='16' />}>
-      <NavBarLink to={routes.frontendLibraries}>Frontend</NavBarLink>
-      <NavBarLink to={routes.backendLibraries}>Backend</NavBarLink>
-      <NavBarLink to={routes.iosLibraries}>iOS</NavBarLink>
-      <NavBarLink to={routes.androidLibraries}>Android</NavBarLink>
-    </NavBar>
-    <React.Suspense fallback={<Loading />}>
-      <Route path={routes.department} component={Departments} />
-    </React.Suspense>
-  </React.Fragment>
+  <ThemeProvider theme={lightTheme}>
+    <React.Fragment>
+      <NavBar logo={<Logo height='16' />}>
+        <NavBarLink to={routes.frontendLibraries}>Frontend</NavBarLink>
+        <NavBarLink to={routes.backendLibraries}>Backend</NavBarLink>
+        <NavBarLink to={routes.iosLibraries}>iOS</NavBarLink>
+        <NavBarLink to={routes.androidLibraries}>Android</NavBarLink>
+      </NavBar>
+      <React.Suspense fallback={<Loading />}>
+        <Route path={routes.department} component={Departments} />
+      </React.Suspense>
+    </React.Fragment>
+  </ThemeProvider>
 )
 
 const Departments = React.memo(
   (props: RouteComponentProps<{ department: string }>) => {
-    const department = toDepartment(props.match.params.department)
+    const department = toDepartment(props.match!.params.department)
     const { loading: L1 } = useRepositories(department)
     const { loading: L2 } = useLibraries({ department })
     if (L1 || L2) return <Loading />

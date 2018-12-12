@@ -3,8 +3,8 @@ import { Outdated, Alerts } from './styled'
 
 const StatusColumn = ({ alerts = 0, outDated = 0 }: StatusColumnProps) => (
   <div>
-    <Outdated count={outDated}>{outDated} Outdated</Outdated>{' '}
-    <Alerts count={alerts}>{alerts} Alerts</Alerts>
+    {outDated > 0 && <Outdated count={outDated}>{outDated} Outdated</Outdated>}{' '}
+    {alerts > 0 && <Alerts count={alerts}>{alerts} Alerts</Alerts>}
   </div>
 )
 

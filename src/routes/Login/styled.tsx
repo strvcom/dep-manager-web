@@ -1,24 +1,15 @@
-import styled from 'styled-components'
+import styled from '../../styles/styled'
+import Button from '../../components/Button'
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   height: 100vh;
-  background: #111517;
-  padding: 310px 0;
+  background: ${props => props.theme.backgroundColor};
 `
 
-export const LoginButton = styled.button`
-  height: 70px;
-  width: 550px;
+export const LoginButton = styled(Button)`
   margin-top: 150px;
-  background: white;
-  color: #111517;
-  font-family: "Maison Neue";
-  font-size: 16px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  line-height: 19px;
-  text-transform: uppercase;
 `

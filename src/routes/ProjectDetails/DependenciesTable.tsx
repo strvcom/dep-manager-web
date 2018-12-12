@@ -1,5 +1,5 @@
 import React from 'react'
-import { CurrentVersion } from './styled'
+import VersionTag from '../../components/VersionTag'
 import Table, {
   Column,
   TableCellDataGetterParams,
@@ -64,9 +64,9 @@ const renderDependencyVersion = ({
   rowData
 }: TableCellProps<'version', Dependency>) =>
   cellData && (
-    <CurrentVersion status={versionDiff(rowData.library.version, cellData)}>
+    <VersionTag status={versionDiff(rowData.library.version, cellData)}>
       {cellData}
-    </CurrentVersion>
+    </VersionTag>
   )
 
 const renderLicense = ({

@@ -39,6 +39,15 @@
     "typeRoots": [
       "node_module/@types",
       "types"
+    ],
+    "plugins": [
+      {
+        "name": "typescript-styled-plugin"
+      }
+    ],
+    "rootDirs": [
+      "src",
+      "stories"
     ]
   },
   "include": [

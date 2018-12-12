@@ -29,22 +29,19 @@ export type DashboardProps = RouteComponentProps<{
   category: Category
 }>
 
-function Dashboard ({ match: { params } }: DashboardProps) {
+function Dashboard ({ match }: DashboardProps) {
+  const { category, department } = match!.params
   return (
     <React.Fragment>
       <ToolBar
         title='Dashboard'
         links={
           <React.Fragment>
-            <ToolBarLink to={`/${params.department}/libraries`}>
-              Libraries
-            </ToolBarLink>
-            <ToolBarLink to={`/${params.department}/projects`}>
-              Projects
-            </ToolBarLink>
+            <ToolBarLink to={`/${department}/libraries`}>Libraries</ToolBarLink>
+            <ToolBarLink to={`/${department}/projects`}>Projects</ToolBarLink>
           </React.Fragment>
         }
-        children={<Input placeholder={`Search ${params.category}`} />}
+        children={<Input placeholder={`Search ${category}`} />}
       />
       <StyledDashboard>
         <React.Suspense fallback={<Loading />}>
@@ -73,25 +70,25 @@ export default React.memo(Dashboard)
 
 const AllProjectsTable = React.memo(
   (props: RouteComponentProps<{ department: string }>) => {
-    const department = toDepartment(props.match.params.department)
+    const department = toDepartment(props.match!.params.department)
     const { data, loading } = useRepositories(department)
     if (loading) return null
-    return <ProjectsTable baseUrl={props.match.url} projects={data!} />
+    return <ProjectsTable baseUrl={props.match!.url} projects={data!} />
   }
 )
 
 const AllLibrariesTable = React.memo(
   (props: RouteComponentProps<{ department: string }>) => {
-    const department = toDepartment(props.match.params.department)
+    const department = toDepartment(props.match!.params.department)
     const { data, loading } = useLibraries({ department })
     if (loading) return null
-    return <LibrariesTable baseUrl={props.match.url} libraries={data} />
+    return <LibrariesTable baseUrl={props.match!.url} libraries={data} />
   }
 )
 
 const Widgets = React.memo(
   (props: RouteComponentProps<{ department: string }>) => {
-    const department = toDepartment(props.match.params.department)
+    const department = toDepartment(props.match!.params.department)
     const now = new Date()
     const firstDayOfMonth = React.useMemo(
       () => new Date(now.getFullYear(), now.getMonth(), 1),

@@ -2,7 +2,6 @@ import './utils/react-router-fix'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { ApolloProvider } from './utils/apollo-hooks'
-import CSSReset from './styles/reset'
 import GlobalStyle from './styles/global'
 import 'react-virtualized/styles.css'
 import App from './routes'
@@ -18,7 +17,6 @@ ReactDOM.render(
         <App />
       </Router>
     </ApolloProvider>
-    <CSSReset />
     <GlobalStyle />
   </React.Suspense>,
   document.getElementById('root')
