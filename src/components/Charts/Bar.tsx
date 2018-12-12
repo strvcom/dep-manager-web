@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled, { keyframes } from '../../styles/styled'
 
 const grow = (maxWidth: number) => keyframes`
   from {
@@ -17,8 +17,8 @@ export interface BarProps
   > {
   fill: number
 }
-const BarCmp = ({ fill, ...props }: BarProps) => <div {...props} />
-const Bar = styled(BarCmp)`
+
+const Bar = styled(({ fill, ...props }: BarProps) => <div {...props} />)`
   position: relative;
   margin: 48px 0 24px;
   height: 4px;

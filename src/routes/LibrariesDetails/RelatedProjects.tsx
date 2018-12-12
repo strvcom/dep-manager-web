@@ -1,11 +1,12 @@
 import React from 'react'
 import { AutoSizer, Table, Column } from 'react-virtualized'
 import { RouteComponentProps } from 'react-router-dom'
-import { Wrapper, CurrentVersion } from '../ProjectDetails/styled'
+import { Wrapper } from '../ProjectDetails/styled'
+import VersionTag from '../../components/VersionTag'
 
 const RelatedProjects = ({
   history,
-  match: { params },
+  match,
   relatedProjects
 }: RelatedProjectsProps) => (
   <Wrapper>
@@ -21,7 +22,9 @@ const RelatedProjects = ({
           rowCount={relatedProjects.length}
           rowGetter={({ index }) => relatedProjects[index]}
           onRowClick={({ rowData }: any) => {
-            history.push(`/${params.department}/project/${rowData.projectName}`)
+            history.push(
+              `/${match!.params.department}/project/${rowData.projectName}`
+            )
           }}
         >
           <Column width={280} label='Project Name' dataKey='projectName' />
@@ -29,11 +32,9 @@ const RelatedProjects = ({
           <Column
             width={180}
             label='Current version'
-            dataKey='currentVersion'
+            dataKey='VersionTag'
             cellRenderer={({ cellData, rowData }) => (
-              <CurrentVersion status={rowData.status}>
-                {cellData}
-              </CurrentVersion>
+              <VersionTag status={rowData.status}>{cellData}</VersionTag>
             )}
           />
         </Table>

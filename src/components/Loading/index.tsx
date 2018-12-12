@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled, { keyframes } from '../../styles/styled'
 
 const loading = keyframes`
   0%,
@@ -13,8 +13,17 @@ const loading = keyframes`
     height: 5em;
   }
 `
-const BarLoaderCmp = (props: BarLoaderProps) => <div {...props} />
-const BarLoader = styled(BarLoaderCmp)`
+
+export interface BarLoaderProps
+  extends React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  > {
+  duration?: number
+  size?: number
+}
+
+const BarLoader = styled.div<BarLoaderProps>`
   animation: ${loading} 1s infinite ease-in-out;
   animation-delay: ${props => `${props.duration! * -0.16}s`};
   background: ${props => props.color};
@@ -53,15 +62,6 @@ BarLoader.defaultProps = {
   color: '#000',
   duration: 1,
   size: 11
-}
-
-export interface BarLoaderProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {
-  duration?: number
-  size?: number
 }
 
 export default BarLoader

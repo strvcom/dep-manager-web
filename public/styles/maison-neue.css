@@ -1,0 +1,54 @@
+/* @font-face {
+  font-family: 'MaisonNeue';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Maison Neue Medium'), url(../fonts/Maison\ Neue\ Medium.otf) format('opentype');
+} */
+@font-face {
+  font-family: 'MaisonNeue';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Maison Neue Bold'), url(../fonts/Maison\ Neue\ Bold.otf) format('opentype');
+}
+/* @font-face {
+  font-family: 'MaisonNeue';
+  font-style: italic;
+  font-weight: bold;
+  src: local('Maison Neue Bold Italic'), url(../fonts/Maison\ Neue\ Bold\ Italic.otf) format('opentype');
+} */
+@font-face {
+  font-family: 'MaisonNeue-Book';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Maison Neue Book Italic'), url(../fonts/Maison\ Neue\ Book\ Italic.otf) format('opentype');
+}
+@font-face {
+  font-family: 'MaisonNeue-Book';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Maison Neue Book'), url(../fonts/Maison\ Neue\ Book.otf) format('opentype');
+}
+/* @font-face {
+  font-family: 'MaisonNeue-Demi';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Maison Neue Demi Italic'), url(../fonts/Maison\ Neue\ Demi\ Italic.otf) format('opentype');
+} */
+@font-face {
+  font-family: 'MaisonNeue-Demi';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Maison Neue Demi'), url(../fonts/Maison\ Neue\ Demi.otf) format('opentype');
+}
+/* @font-face {
+  font-family: 'MaisonNeue-Light';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Maison Neue Light Italic'), url(../fonts/Maison\ Neue\ Light\ Italic.otf) format('opentype');
+}
+@font-face {
+  font-family: 'MaisonNeue-Light';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Maison Neue Light Italic'), url(../fonts/Maison\ Neue\ Light.otf) format('opentype');
+} */

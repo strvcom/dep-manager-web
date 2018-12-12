@@ -15,15 +15,10 @@ export type ProjectDetailsProps = RouteComponentProps<{
 }>
 
 const ProjectDetails = (props: ProjectDetailsProps) => {
-  const {
-    match: {
-      params: { id }
-    }
-  } = props
-  const department = toDepartment(props.match.params.department)
+  const department = toDepartment(props.match!.params.department)
   const {
     data: { library }
-  } = useLibrary({ id, department })
+  } = useLibrary({ id: props.match!.params.id, department })
   if (!library) return null
   return (
     <React.Fragment>
@@ -35,7 +30,7 @@ const ProjectDetails = (props: ProjectDetailsProps) => {
             <Input placeholder='Search for projects' />
           </div>
           <DependentsTable
-            baseUrl={`/${props.match.params.department}/${Category.PROJECTS}`}
+            baseUrl={`/${props.match!.params.department}/${Category.PROJECTS}`}
             libraryVersion={library.version}
             dependents={library.dependents}
           />

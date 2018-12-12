@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled, { keyframes } from '../../styles/styled'
 
 const draw = (percent: number) => keyframes`
   to {
@@ -11,8 +11,9 @@ const draw = (percent: number) => keyframes`
 export interface CircleProps extends React.SVGProps<SVGCircleElement> {
   percent: number
 }
-const CircleCmp = ({ percent, ...props }: CircleProps) => <circle {...props} />
-export const Circle = styled(CircleCmp)`
+export const Circle = styled(({ percent, ...props }: CircleProps) => (
+  <circle {...props} />
+))`
   animation: ${({ percent }) => draw(percent)} 1s ease forwards;
 `
 

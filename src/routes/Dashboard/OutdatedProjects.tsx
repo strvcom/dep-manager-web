@@ -6,7 +6,7 @@ import WidgetContainer, { WidgetTitle } from '../../components/Charts/Container'
 const OutdatedProjects = ({
   width,
   height,
-  match: { params },
+  match,
   outDatedProjects
 }: OutdatedProjectsProps) => (
   <WidgetContainer height={height} width={width}>
@@ -14,7 +14,7 @@ const OutdatedProjects = ({
     <Items>
       {outDatedProjects.map(prj => (
         <ItemLink
-          to={`/${params.department}/project/${prj.projectName}`}
+          to={`/${match!.params.department}/project/${prj.projectName}`}
           key={prj.projectName}
         >
           <TitleContainer>

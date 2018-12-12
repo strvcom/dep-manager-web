@@ -1,8 +1,6 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import * as Virtual from 'react-virtualized'
-import { Wrapper } from './styled'
-import './Table.css'
-import cn from 'classnames'
+import { Wrapper, StyledTable } from './styled'
 import { OverscanIndicesGetter } from 'react-virtualized/dist/es/Grid'
 
 export * from 'react-virtualized'
@@ -235,21 +233,20 @@ export interface TableProps {
 }
 
 const Table = (props: TableProps) => {
-  const rowClassName = useCallback(
-    ({ index }: Virtual.Index) => cn(index >= 0 && 'row', props.rowClassName),
-    [props.rowClassName]
-  )
+  // const rowClassName = useCallback(
+  //   ({ index }: Virtual.Index) => cn(index >= 0 && 'row', props.rowClassName),
+  //   [props.rowClassName]
+  // )
   if (props.rowCount === 0) return props.noRowsRenderer!()
   return (
     <Wrapper>
       <Virtual.AutoSizer disableHeight>
         {({ width }) => (
-          <Virtual.Table
+          <StyledTable
             width={width}
             height={50 + 75 * props.rowCount}
             headerHeight={50}
             rowHeight={75}
-            rowClassName={rowClassName}
             {...props}
           />
         )}

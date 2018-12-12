@@ -1,6 +1,6 @@
 import React from 'react'
 import Table, { Column, TableCellProps } from '../../components/Table'
-import StatusColumn from './StatusColumn'
+import StatusColumn from '../../components/Table/StatusColumn'
 import { NodeLibrary } from '../../data/Library/__generated-types/NodeLibrary'
 import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'

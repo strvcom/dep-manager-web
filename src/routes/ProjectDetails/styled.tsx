@@ -1,6 +1,4 @@
-import React from 'react'
-import styled from 'styled-components'
-import versionDiff from '../../utils/version-diff'
+import styled from '../../styles/styled'
 
 export const Wrapper = styled.section`
   width: 1140px;
@@ -32,37 +30,4 @@ export const Input = styled.input`
   &::placeholder {
     opacity: 0.25;
   }
-`
-
-export interface CurrentVersionProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLSpanElement>,
-    HTMLSpanElement
-  > {
-  status: ReturnType<typeof versionDiff>
-}
-const CurrentVersionCmp = ({ status, ...props }: CurrentVersionProps) => (
-  <span {...props} />
-)
-export const CurrentVersion = styled(CurrentVersionCmp)`
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 2px;
-  line-height: 20px;
-  ${({ status }) => {
-    switch (status) {
-      case 'major':
-        return `
-        background-color: #ffd1d9;
-        color: #ef0d33;
-      `
-      case 'minor':
-        return `
-        background-color: #ffefbb;
-        color: #c2950b;
-      `
-      default:
-        return 'color: inherit'
-    }
-  }};
 `

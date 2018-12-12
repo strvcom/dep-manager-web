@@ -3,8 +3,6 @@ import { match } from 'react-router-dom'
 import { Location, LocationDescriptor } from 'history'
 import { Container, StyledLogoLink, StyledNav, StyledNavLink } from './styled'
 
-const activeStyle = { borderBottom: '2px solid white' }
-
 export interface NavBarLinkProps {
   to: LocationDescriptor
   children?: React.ReactNode
@@ -23,7 +21,7 @@ export const NavBarLink = (props: NavBarLinkProps) => {
     <StyledNavLink
       to={props.to}
       isActive={handleIsActive}
-      activeStyle={activeStyle}
+      activeClassName='active'
       children={props.children}
     />
   )

@@ -1,5 +1,6 @@
-import styled from 'styled-components'
+import styled from '../../styles/styled'
 import { Link } from 'react-router-dom'
+import { typography } from '../../styles/themes/mixins'
 
 export const ItemLink = styled(Link)`
   display: block;
@@ -19,8 +20,7 @@ export const Items = styled.div`
 `
 
 export const TitleContainer = styled.div`
-  font-family: 'Maison Neue';
-  font-size: 14px;
+  ${typography.subtitle}
   line-height: 17px;
   display: flex;
   justify-content: space-between;
@@ -29,16 +29,15 @@ export const TitleContainer = styled.div`
 export const Status = styled.section`
   display: flex;
   justify-content: space-between;
-  font-family: 'Maison Neue';
-  font-size: 14px;
-  line-height: 17px;
-`
+  ${typography.subtitle}
+  color: ${props => props.theme.primaryColor};
+  `
 
 export const Count = styled.span`
   opacity: 0.5;
-  color: #000000;
-  font-family: 'Microsoft Sans Serif';
-  line-height: 16px;
+  ${typography.body}
+  font-size: 14px;
+  color: ${props => props.theme.primaryColor};
 `
 
 export const StatusWrapper = styled.section`
@@ -49,19 +48,18 @@ export const StatusWrapper = styled.section`
 `
 
 export const StatusContainer = styled.div`
-  font-family: 'Maison Neue';
-  font-size: 14px;
+  ${typography.subtitle}
   line-height: 17px;
 `
 
 export const Percent = styled.p`
+  ${typography.subtitle}
   opacity: 0.5;
 `
 
 export const UpdatedTime = styled.span`
   opacity: 0.25;
-  font-family: 'Maison Neue';
+  ${typography.caption}
   font-size: 11px;
-  font-weight: 500;
-  line-height: 13px;
+  color: ${props => props.theme.primaryColor};
 `

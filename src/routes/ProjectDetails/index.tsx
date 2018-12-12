@@ -10,6 +10,7 @@ import { useLibraries } from '../../data/Library'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from '../Dashboard/RecentUpdates'
 import toDepartment from '../../utils/toDepartment'
+import { Body } from '../../components/Typography'
 // import { useRepositories } from '../../data/Repository';
 // import { Department } from '../../data/__generated-types';
 
@@ -20,15 +21,10 @@ export type ProjectDetailsProps = RouteComponentProps<{
 }>
 
 const ProjectDetails = (props: ProjectDetailsProps) => {
-  const {
-    match: {
-      params: { id }
-    }
-  } = props
-  const department = toDepartment(props.match.params.department)
+  const department = toDepartment(props.match!.params.department)
   const {
     data: { repository }
-  } = useRepository({ name: id })
+  } = useRepository({ name: props.match!.params.id })
   if (!repository || !repository.object || !isBlob(repository.object)) {
     return null
   }
@@ -70,12 +66,12 @@ const ProjectDetails = (props: ProjectDetailsProps) => {
       />
       <Wrapper>
         <Content>
-          <h2>Project libraries</h2>
+          <Body>Project libraries</Body>
           <div>
             <Input placeholder='Search for libraries' />
           </div>
           <DependenciesTable
-            baseUrl={`/${props.match.params.department}/${Category.LIBRARIES}`}
+            baseUrl={`/${props.match!.params.department}/${Category.LIBRARIES}`}
             dependencies={repository.object.package!.dependencies}
           />
         </Content>

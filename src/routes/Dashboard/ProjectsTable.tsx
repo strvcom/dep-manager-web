@@ -1,7 +1,7 @@
 import React from 'react'
 import Table, { Column, Index, TableCellProps } from '../../components/Table'
 // import StatusCell from '../../components/Tables/StatusCell'
-import StatusColumn from './StatusColumn'
+import StatusColumn from '../../components/Table/StatusColumn'
 import { Repository } from '../../data/Repository/__generated-types/Repository'
 import { RepositoriesQuery_organization_repositories_nodes } from '../../data/Repository/__generated-types/RepositoriesQuery'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
