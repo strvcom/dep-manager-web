@@ -8,7 +8,7 @@ import {
 } from 'graphql'
 
 import { cloneDeep, getOperationDefinitionOrDie } from 'apollo-utilities'
-import prop from 'ramda/es/prop'
+import { prop } from 'ramda'
 
 export default function removeUnusedArguments (
   query: DocumentNode
@@ -23,7 +23,7 @@ export default function removeUnusedArguments (
     const nextVariablesDefinitions = definitions.variableDefinitions.filter(
       ({ variable }) => variables.has(variable.name.value)
     )
-    // readonly shit
+      // readonly shit
     ;(definitions.variableDefinitions as any) = nextVariablesDefinitions
   }
 

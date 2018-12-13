@@ -1,5 +1,5 @@
 import { Department } from '../data/__generated-types'
-import toUpper from 'ramda/es/toUpper'
+import { toUpper } from 'ramda'
 
 const toDepartment = (str: string) => {
   if (typeof str !== 'string') throw new TypeError(`${str} is not a string`)

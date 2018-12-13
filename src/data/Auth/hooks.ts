@@ -7,11 +7,10 @@ import {
   ChangeToken,
   ChangeTokenVariables
 } from './__generated-types/ChangeToken'
+import { REACT_APP_SITE_ID } from '../../config/env'
 
 const options =
-  process.env.NODE_ENV === 'development'
-    ? { site_id: process.env.REACT_APP_SITE_ID }
-    : {}
+  process.env.NODE_ENV === 'development' ? { site_id: REACT_APP_SITE_ID } : {}
 
 const authenticator = new Netlify(options)
 
