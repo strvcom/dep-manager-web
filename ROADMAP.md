@@ -14,3 +14,5 @@ This repository has been inactive for quite a while. The main focus will be in g
 * [ ] Improves tables performance with lazy loading #23
 * [ ] Create empty state for tables and widgets #22
 * [ ] Create meaningful error boundaries
+* [ ] Add search feature into application #8
+* [ ] Add sort by field in the tables #9
