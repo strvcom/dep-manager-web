@@ -98,12 +98,10 @@
     }
   },
   "lint-staged": {
-    "*.ts": [
+    "*.{ts,tsx}": [
       "prettier-standard",
-      "git add"
-    ],
-    "*.tsx": [
-      "prettier-standard",
+      "tslint --fix",
+      "stylelint --fix",
       "git add"
     ]
   },
