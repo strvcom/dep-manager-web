@@ -10,6 +10,7 @@ import {
   RepositoriesQuery_organization_repositories_nodes,
   RepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies
 } from '../Repository/__generated-types/RepositoriesQuery'
+import { License } from '../../config/types'
 
 export function fetchLibraries (
   department: Department,
@@ -89,4 +90,12 @@ function mapGet<Key, Value> (
     return initialValue
   }
   return value
+}
+
+const licenses = Object.keys(License)
+export function isValidLicense (license: string) {
+  for (const currentLicense of licenses) {
+    if (license.includes(currentLicense)) return true
+  }
+  return false
 }

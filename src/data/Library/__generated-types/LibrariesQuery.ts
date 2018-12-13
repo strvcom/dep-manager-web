@@ -1,7 +1,7 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { Department, RangeInput } from '../../__generated-types'
+import { Department, RangeInput } from './../../__generated-types'
 
 // ====================================================
 // GraphQL query operation: LibrariesQuery

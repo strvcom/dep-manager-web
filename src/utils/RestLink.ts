@@ -6,7 +6,7 @@ import {
   FetchResult
 } from 'apollo-link'
 import { hasDirectives, addTypenameToDocument } from 'apollo-utilities'
-import removeRestDirective from '../utils/removeRestDirective'
+import removeRestDirective from './removeRestDirective'
 
 import { graphql } from 'graphql-anywhere/lib/async'
 import { Resolver } from 'graphql-anywhere'

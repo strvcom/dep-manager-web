@@ -1,5 +1,5 @@
 import libraries from './libraries'
-import { ResolverMap } from '../RestLink'
+import { ResolverMap } from '../../utils/RestLink'
 
 const resolverMap: ResolverMap = {
   libraries
