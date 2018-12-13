@@ -1,6 +1,4 @@
-import defaultTo from 'ramda/es/defaultTo'
-import path from 'ramda/es/path'
-import compose from 'ramda/es/compose'
+import { defaultTo, path, compose } from 'ramda'
 import { Department } from '../__generated-types'
 import { fetchPackages } from '../../utils/npms'
 import {

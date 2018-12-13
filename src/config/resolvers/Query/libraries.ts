@@ -14,11 +14,8 @@ import {
   Repository,
   Repository_object_Blob_package_dependencies
 } from '../../../data/Repository/__generated-types/Repository'
-import identity from 'ramda/es/identity'
+import { identity, defaultTo, compose, path } from 'ramda'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import compose from 'ramda/es/compose'
-import defaultTo from 'ramda/es/defaultTo'
-import path from 'ramda/es/path'
 import { NodeLibrary } from '../../../data/Library/__generated-types/NodeLibrary'
 
 export default async (

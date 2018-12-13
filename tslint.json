@@ -13,7 +13,6 @@
     ]
   },
   "rules": {
-    "no-unused-variable": false,
     "ordered-imports": false,
     "interface-name": false,
     "no-submodule-imports": false,
@@ -26,6 +25,6 @@
     "jsx-no-multiline-js": false,
     "jsx-no-lambda": false,
     "no-empty-interface": false,
-    "no-implicit-dependencies": false
+    "no-implicit-dependencies": [true, ["~"]]
   }
 }
