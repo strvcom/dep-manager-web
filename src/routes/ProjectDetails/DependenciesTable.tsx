@@ -1,5 +1,5 @@
 import React from 'react'
-import VersionTag from '../../components/VersionTag'
+import Tag from '../../components/Tag'
 import Table, {
   Column,
   TableCellDataGetterParams,
@@ -9,6 +9,7 @@ import Table, {
 import { RepositoryQuery_repository_object_Blob_package_dependencies } from '../../data/Repository/__generated-types/RepositoryQuery'
 import versionDiff from '../../utils/version-diff'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
+import { isValidLicense } from '../../data/Library/index'
 
 type Dependency = RepositoryQuery_repository_object_Blob_package_dependencies
 
@@ -44,7 +45,7 @@ const DependenciesTable = ({
         cellRenderer={renderDependencyVersion}
       />
       <Column
-        cellDataGetter={renderLicense}
+        cellRenderer={renderLicense}
         width={150}
         label='License'
         dataKey='license'
@@ -62,15 +63,24 @@ const renderLibraryVersion = ({
 const renderDependencyVersion = ({
   cellData,
   rowData
-}: TableCellProps<'version', Dependency>) =>
-  cellData && (
-    <VersionTag status={versionDiff(rowData.library.version, cellData)}>
-      {cellData}
-    </VersionTag>
-  )
+}: TableCellProps<'version', Dependency>) => {
+  if (!cellData) return null
+  switch (versionDiff(rowData.library.version, cellData)) {
+    case 'major':
+      return <Tag critical>{cellData}</Tag>
+    case 'minor':
+      return <Tag warning>{cellData}</Tag>
+    default:
+      return <Tag>{cellData}</Tag>
+  }
+}
 
 const renderLicense = ({
   rowData
-}: TableCellDataGetterParams<'library', Dependency>) => rowData.library.license
+}: TableCellDataGetterParams<'library', Dependency>) => (
+  <Tag critical={!isValidLicense(rowData.library.license)}>
+    {rowData.library.license}
+  </Tag>
+)
 
 export default React.memo(DependenciesTable)

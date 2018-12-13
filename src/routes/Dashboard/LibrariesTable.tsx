@@ -1,9 +1,15 @@
 import React from 'react'
-import Table, { Column, TableCellProps } from '../../components/Table'
+import Table, {
+  Column,
+  TableCellProps,
+  TableCellDataGetterParams
+} from '../../components/Table'
 import StatusColumn from '../../components/Table/StatusColumn'
 import { NodeLibrary } from '../../data/Library/__generated-types/NodeLibrary'
 import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
+import Tag from '../../components/Tag'
+import { isValidLicense } from '../../data/Library/index'
 
 export interface LibrariesTableProps {
   libraries: LibrariesQuery_libraries[]
@@ -37,22 +43,36 @@ const LibrariesTable = React.memo<LibrariesTableProps>(
         rowGetter={({ index }) => libraries[index]}
         rowRenderer={rowRenderer}
       >
-        <Column width={380} label='Library Name' dataKey='name' />
+        <Column width={380} flexGrow={1} label='Library Name' dataKey='name' />
         <Column
-          width={380}
+          width={80}
           label='Total Used On'
           dataKey='dependents'
           cellRenderer={handleTotalRender}
         />
         <Column
-          width={380}
+          width={180}
           label='Outdated Projects'
           dataKey='dependents'
           cellRenderer={renderOutdated}
+        />
+        <Column
+          flexGrow={1}
+          width={100}
+          label='License'
+          dataKey='license'
+          cellRenderer={renderLicense}
         />
       </Table>
     )
   }
 )
+
+const renderLicense = ({
+  rowData
+}: TableCellDataGetterParams<'license', LibrariesQuery_libraries>) =>
+  rowData.license && (
+    <Tag critical={!isValidLicense(rowData.license)}>{rowData.license}</Tag>
+  )
 
 export default LibrariesTable

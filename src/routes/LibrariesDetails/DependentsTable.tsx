@@ -1,5 +1,5 @@
 import React from 'react'
-import VersionTag from '../../components/VersionTag'
+import Tag from '../../components/Tag'
 import Table, { Column, Index, TableCellProps } from '../../components/Table'
 import versionDiff from '../../utils/version-diff'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
@@ -22,12 +22,17 @@ const DependentsTable = ({
     [dependents]
   )
   const renderVersion = React.useCallback(
-    ({ cellData }: TableCellProps<'version', Dependent>) =>
-      cellData && (
-        <VersionTag status={versionDiff(libraryVersion, cellData)}>
-          {cellData}
-        </VersionTag>
-      ),
+    ({ cellData }: TableCellProps<'version', Dependent>) => {
+      if (!cellData) return null
+      switch (versionDiff(libraryVersion, cellData)) {
+        case 'major':
+          return <Tag critical>{cellData}</Tag>
+        case 'minor':
+          return <Tag warning>{cellData}</Tag>
+        default:
+          return <Tag>{cellData}</Tag>
+      }
+    },
     [libraryVersion]
   )
   return (
