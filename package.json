@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "apollo-cache": "^1.1.21",
     "apollo-cache-inmemory": "^1.3.10",
     "apollo-client": "^2.4.6",
     "apollo-client-preset": "^1.0.8",
@@ -23,6 +24,7 @@
     "react": "^16.7.0-alpha.2",
     "react-apollo": "^2.1.2",
     "react-dom": "^16.7.0-alpha.2",
+    "react-error-boundary": "^1.2.3",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.1",
     "react-virtualized": "^9.21.0",
@@ -51,7 +53,7 @@
     "@types/storybook__react": "^4.0.0",
     "@types/styled-components": "^4.1.0",
     "@types/styled-system": "^3.0.6",
-    "apollo": "^2.1.3",
+    "apollo": "^2.1.8",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.4",
     "babel-plugin-ramda": "^1.6.3",
@@ -82,7 +84,7 @@
     "test": "react-scripts test --env=jsdom",
     "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
     "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
-    "codegen": "rimraf src/__generated-types* && apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts",
+    "codegen": "apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
   },
@@ -104,14 +106,5 @@
       "stylelint --fix",
       "git add"
     ]
-  },
-  "apollo": {
-    "client": {
-      "name": "bida-app",
-      "service": {
-        "name": "github-service",
-        "localSchemaFile": "src/config/github-schema.json"
-      }
-    }
   }
 }

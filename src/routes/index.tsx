@@ -1,19 +1,15 @@
 import React from 'react'
 import Login from './Login'
 import NavBar, { NavBarLink } from '../containers/NavBar'
-import { Redirect, Switch, Route, RouteComponentProps } from 'react-router-dom'
+import { Redirect, Switch, Route } from 'react-router-dom'
 import * as routes from './routes'
 import Loading from '../components/Loading'
 import PrivateRoute from '../containers/PrivateRoute'
 import PublicRoute from '../containers/PublicRoute'
 import { ReactComponent as Logo } from '../assets/logo.svg'
-// import { useRepositories } from '../data/Repository'
-// import { useLibraries } from '../data/Library'
-import toDepartment from '../utils/toDepartment'
-import { useRepositories } from '../data/Repository'
-import { useLibraries } from '../data/Library'
 import { ThemeProvider } from '../styles/styled'
 import lightTheme from '../styles/themes/light'
+import ErrorBoundary from 'react-error-boundary'
 
 const Dashboard = React.lazy(() =>
   import(/* webpackChunkName: 'Dashboard' */ './Dashboard')
@@ -23,11 +19,11 @@ const ProjectDetails = React.lazy(() =>
   import(/* webpackChunkName: 'ProjectDetails' */ './ProjectDetails')
 )
 
-const LibrariesDetails = React.lazy(() =>
-  import(/* webpackChunkName: 'LibrariesDetails' */ './LibrariesDetails')
-)
+// const LibrariesDetails = React.lazy(() =>
+//   import(/* webpackChunkName: 'LibrariesDetails' */ './LibrariesDetails')
+// )
 
-const PrivatePage = () => (
+const PrivatePage = React.memo(() => (
   <ThemeProvider theme={lightTheme}>
     <React.Fragment>
       <NavBar logo={<Logo height='16' />}>
@@ -37,44 +33,28 @@ const PrivatePage = () => (
         <NavBarLink to={routes.androidLibraries}>Android</NavBarLink>
       </NavBar>
       <React.Suspense fallback={<Loading />}>
-        <Route path={routes.department} component={Departments} />
+        <ErrorBoundary>
+          <Switch>
+            <Route path={routes.projectDetails} component={ProjectDetails} />
+            {/* <Route path={routes.librariesDetails} component={LibrariesDetails} /> */}
+            <Route path={routes.dashboard} component={Dashboard} />
+          </Switch>
+        </ErrorBoundary>
       </React.Suspense>
     </React.Fragment>
   </ThemeProvider>
-)
+))
 
-const Departments = React.memo(
-  (props: RouteComponentProps<{ department: string }>) => {
-    const department = toDepartment(props.match!.params.department)
-    const { loading: L1 } = useRepositories(department)
-    const { loading: L2 } = useLibraries({ department })
-    if (L1 || L2) return <Loading />
-    return (
-      <Switch>
-        <Route path={routes.projectsDetails} component={ProjectDetails} />
-        <Route path={routes.librariesDetails} component={LibrariesDetails} />
-        <Route path={routes.dashboard} component={Dashboard} />
-      </Switch>
-    )
-  }
+const App = () => (
+  <Switch>
+    <PublicRoute redirect={routes.root} path={routes.login} component={Login} />
+    <Redirect exact from={routes.root} to={routes.frontendLibraries} />
+    <PrivateRoute
+      redirect={routes.login}
+      path={routes.root}
+      component={PrivatePage}
+    />
+  </Switch>
 )
-
-const App = () => {
-  return (
-    <Switch>
-      <PublicRoute
-        redirect={routes.root}
-        path={routes.login}
-        component={Login}
-      />
-      <Redirect exact from={routes.root} to={routes.frontendLibraries} />
-      <PrivateRoute
-        redirect={routes.login}
-        path={routes.root}
-        render={PrivatePage}
-      />
-    </Switch>
-  )
-}
 
 export default App

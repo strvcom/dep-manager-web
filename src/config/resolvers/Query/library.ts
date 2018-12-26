@@ -1,16 +1,33 @@
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { Department } from '../../../data/__generated-types'
-import { LibraryQuery_library } from '../../../data/Library/__generated-types/LibraryQuery'
-import { NODE_LIBRARY_FRAGMENT } from '../../../data/Library'
+import { BidaDepartment } from '../../../data/__generated-types'
+import gql from 'graphql-tag'
+import { createResolver } from '../../../utils/ResolverFunction'
+import {
+  LibraryRoot,
+  LibraryRootVariables,
+  LibraryRoot_library
+} from './__generated-types/LibraryRoot'
 
-export default (
-  _: any,
-  { id, department }: { id: string; department: Department },
-  { cache }: { cache: InMemoryCache }
-) => {
-  if (department !== Department.FRONTEND) return null
-  return cache.readFragment<LibraryQuery_library>({
-    fragment: NODE_LIBRARY_FRAGMENT,
-    id: `NodeLibrary:${id}`
-  })
+gql`
+  query LibraryRoot($id: String!, $department: BidaDepartment!) {
+    library(id: $id, department: $department) {
+      id
+    }
+  }
+`
+
+export default createResolver<LibraryRoot, LibraryRootVariables>(
+  ({ variables: { department, id }, getCacheKey }) =>
+    getCacheKey({ __typename: toTypename(department), id })
+)
+
+function toTypename (
+  department: BidaDepartment
+): LibraryRoot_library['__typename'] {
+  switch (department) {
+    case BidaDepartment.FRONTEND:
+    case BidaDepartment.BACKEND:
+      return 'BidaNodeLibrary'
+    default:
+      return 'BidaNodeLibrary'
+  }
 }

@@ -32,7 +32,7 @@ export const cache = new InMemoryCache({
 
 const stateLink = withClientState({
   defaults: {
-    auth: {
+    authentication: {
       __typename: 'Authentication',
       token: localStorage.getItem(GITHUB_TOKEN_KEY)
     }
@@ -43,12 +43,11 @@ const stateLink = withClientState({
 })
 
 const authLink = new ApolloLink((operation, forward) => {
-  const data = cache.readQuery<AuthQuery>({ query: AUTH_QUERY })
+  const {
+    authentication: { token }
+  } = cache.readQuery<AuthQuery>({ query: AUTH_QUERY })
   operation.setContext({
-    headers: {
-      authorization:
-        data && data.auth.token ? `bearer ${data.auth.token}` : null
-    }
+    headers: { authorization: token ? `bearer ${token}` : null }
   })
   return forward!(operation)
 })

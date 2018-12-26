@@ -2554,7 +2554,7 @@ apollo-utilities@1.0.26, apollo-utilities@^1.0.0, apollo-utilities@^1.0.26, apol
   dependencies:
     fast-json-stable-stringify "^2.0.0"
 
-apollo@^2.1.3:
+apollo@^2.1.8:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/apollo/-/apollo-2.1.8.tgz#2ef092e0c99fd434e4a3ffea15dae342e7a7feec"
   integrity sha512-Q5LWcdxB9FwkveGGEndF9slCA+/KAWpnv3H5BKXXoLVV+4yZapKx6A3F3HaKwqpiWoWsnbZlVO9t9T6kZOhywA==
@@ -12349,6 +12349,11 @@ react-dom@^16.7.0-alpha.2:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.12.0-alpha.2"
+
+react-error-boundary@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-1.2.3.tgz#2b9eb8fbd4b1d90656fe769d9bad9f69a2b7b529"
+  integrity sha512-3naGugvlzwcYjiqPr8o89oYHe2R5QxK6ysCQj/GvyenBvruVHu2hRsuWvjQcNbNiiOkEPYKfcMm7tV/Tfle5rA==
 
 react-error-overlay@^5.1.0:
   version "5.1.0"

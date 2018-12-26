@@ -1,91 +1,119 @@
+import { BidaDepartment } from '../../../data/__generated-types'
+import { createResolver } from '../../../utils/ResolverFunction'
 import {
-  LibrariesQueryVariables,
-  LibrariesQuery,
-  LibrariesQuery_libraries
-} from '../../../data/Library/__generated-types/LibrariesQuery'
+  LibrariesRootVariables,
+  LibrariesRoot
+} from './__generated-types/LibrariesRoot'
+import gql from 'graphql-tag'
+import { LibraryCollectionResult } from './__generated-types/LibraryCollectionResult'
 import {
-  fetchLibraries,
-  LIBRARIES_QUERY,
-  NODE_LIBRARY_FRAGMENT
-} from '../../../data/Library'
-import { Department, RangeInput } from '../../../data/__generated-types'
-import { getRepositories, REPOSITORY_FRAGMENT } from '../../../data/Repository'
-import {
-  Repository,
-  Repository_object_Blob_package_dependencies
-} from '../../../data/Repository/__generated-types/Repository'
-import { identity, defaultTo, compose, path } from 'ramda'
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { NodeLibrary } from '../../../data/Library/__generated-types/NodeLibrary'
+  ProjectsDependencies,
+  ProjectsDependenciesVariables
+} from './__generated-types/ProjectsDependencies'
+import { fetchLibraries } from '../../../data/Library/index'
+import { LibraryResult } from './__generated-types/LibraryResult'
+import { identity } from 'ramda'
 
-export default async (
-  _: any,
-  {
-    department,
-    range,
-    repository
-  }: { department: Department; range?: RangeInput; repository?: string },
-  { cache }: { cache: InMemoryCache }
-) => {
-  if (!range && !repository) {
-    return fetchLibraries(department, await getRepositories())
+gql`
+  query LibrariesRoot(
+    $department: BidaDepartment!
+    $from: Date
+    $to: Date
+    $projectName: String
+  ) {
+    libraries(
+      department: $department
+      from: $from
+      to: $to
+      projectId: $projectName
+    ) {
+      ...LibraryCollectionResult
+    }
   }
-  return (repository
-    ? getLibrariesByRepository(cache, repository)
-    : getLibraries(department)
-  ).then(librariesRangeFilter(range))
+  fragment LibraryCollectionResult on BidaLibraryCollection {
+    id
+    department
+    nodes {
+      ...LibraryResult
+    }
+  }
+  fragment LibraryResult on BidaLibrary {
+    id
+    date
+  }
+`
+
+const PROJECTS_QUERY = gql`
+  query ProjectsDependencies($department: BidaDepartment!) {
+    projects(department: $department) @client {
+      id
+      nodes {
+        id
+        name
+        ... on BidaNodeProject {
+          dependencies {
+            id
+            name
+            version
+          }
+        }
+      }
+    }
+  }
+`
+
+async function queryProjects (department: BidaDepartment) {
+  const { default: client } = await import('../../apolloClient')
+  await client.query<ProjectsDependencies, ProjectsDependenciesVariables>({
+    query: PROJECTS_QUERY,
+    variables: { department },
+    fetchPolicy: 'cache-first'
+  })
 }
 
-const librariesRangeFilter = (range?: RangeInput) =>
-  range
-    ? (libraries: LibrariesQuery_libraries[]) =>
-      libraries.filter(lib => {
-        const libDate = new Date(lib.date)
-        return (
-          libDate >= (range.from || 0) &&
-            libDate <= (range.to || Number.MAX_SAFE_INTEGER)
-        )
-      })
-    : identity
+export default createResolver<
+LibrariesRoot,
+LibrariesRootVariables,
+Promise<LibraryCollectionResult>
+>(async ({ variables }) => {
+  await queryProjects(variables.department)
+  const data: LibraryCollectionResult = {
+    __typename: 'BidaLibraryCollection',
+    id: createId(variables),
+    department: variables.department,
+    nodes: await getLibraries(variables)
+  }
+  return data
+})
 
-type Dependencies = Repository_object_Blob_package_dependencies[]
-const extractRepositoryDependencies = compose<
-Repository,
-Dependencies | undefined,
-Dependencies
->(
-  defaultTo([]),
-  path(['object', 'package', 'dependencies'])
-)
+function createId ({
+  department,
+  projectName,
+  from,
+  to
+}: LibrariesRootVariables) {
+  let id: string = department
+  if (projectName) id += `:${projectName}`
+  if (to) id += `:${(to as Date).valueOf()}`
+  if (from) id += `:${(from as Date).valueOf()}`
+  return id
+}
 
-const getLibraries = async (department: Department) => {
-  const { default: client } = await import('../../apolloClient')
-  const {
-    data: { libraries }
-  } = await client.query<LibrariesQuery, LibrariesQueryVariables>({
-    query: LIBRARIES_QUERY,
-    variables: { department }
-  })
+async function getLibraries ({ department, from, to }: LibrariesRootVariables) {
+  const libraries = libraryRangeFilter(from, to)(
+    await fetchLibraries(department)
+  )
   return libraries
 }
 
-const getLibrariesByRepository = async (
-  cache: InMemoryCache,
-  repositoryId?: string
-) => {
-  const repository = cache.readFragment<Repository>({
-    fragment: REPOSITORY_FRAGMENT,
-    fragmentName: 'Repository',
-    id: `Repository:${repositoryId}`
-  })
-  if (!repository) return []
-  const dependencies = extractRepositoryDependencies(repository)
-  return dependencies.reduce<NodeLibrary[]>((acc, dep) => {
-    const library = cache.readFragment<NodeLibrary>({
-      fragment: NODE_LIBRARY_FRAGMENT,
-      id: `NodeLibrary:${dep.name}`
-    })
-    if (library) acc.push(library)
-    return acc
-  }, [])
-}
+const libraryRangeFilter = (from?: Date, to?: Date) =>
+  from || to
+    ? (libraries: LibraryResult[]) => {
+      return libraries.filter(library => {
+        const libDate = new Date(library.date)
+        return (
+          libDate >= (from || 0) && libDate <= (to || Number.MAX_SAFE_INTEGER)
+        )
+      })
+    }
+    : identity

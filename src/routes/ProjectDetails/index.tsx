@@ -1,18 +1,21 @@
 import React from 'react'
-import { RouteComponentProps } from 'react-router'
+import { RouteComponentProps } from 'react-router-dom'
 import { Category } from '../../config/types'
 import ToolBar from '../../components/ToolBar'
-import { useRepository, isBlob } from '../../data/Repository'
 import Anchor from '../../components/Anchor'
 import { Wrapper, Content, Sidebar, Input } from './styled'
 import DependenciesTable from './DependenciesTable'
-import { useLibraries } from '../../data/Library'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from '../Dashboard/RecentUpdates'
-import toDepartment from '../../utils/toDepartment'
+import toBidaDepartment from '../../utils/toDepartment'
 import { Body } from '../../components/Typography'
-// import { useRepositories } from '../../data/Repository';
-// import { Department } from '../../data/__generated-types';
+import gql from 'graphql-tag'
+import { useQuery } from '../../utils/apollo-hooks'
+import {
+  ProjectDetailsData,
+  ProjectDetailsDataVariables
+} from './__generated-types/ProjectDetailsData'
+import Loading from '../../components/Loading'
 
 export type ProjectDetailsProps = RouteComponentProps<{
   department: string
@@ -20,47 +23,28 @@ export type ProjectDetailsProps = RouteComponentProps<{
   id: string
 }>
 
-const ProjectDetails = (props: ProjectDetailsProps) => {
-  const department = toDepartment(props.match!.params.department)
-  const {
-    data: { repository }
-  } = useRepository({ name: props.match!.params.id })
-  if (!repository || !repository.object || !isBlob(repository.object)) {
-    return null
-  }
-  const { data: libraries } = useLibraries({
-    department,
-    repository: repository && repository.id
-  })
+function ProjectDetails (props: ProjectDetailsProps) {
+  const department = toBidaDepartment(props.match!.params.department)
   const now = new Date()
   const firstDayOfMonth = React.useMemo(
     () => new Date(now.getFullYear(), now.getMonth(), 1),
     [now.getFullYear(), now.getMonth()]
   )
-  const { data: recentLibraries } = useLibraries({
+  const { data, loading } = ProjectDetails.useData({
     department,
-    repository: repository && repository.id,
-    range: { from: firstDayOfMonth }
+    from: firstDayOfMonth,
+    id: props.match!.params.id
   })
-  if (!libraries || !recentLibraries) return null
-  const { outdated, total } = React.useMemo(
-    () =>
-      libraries.reduce(
-        (acc, { totalDependents, outdatedDependents }) => ({
-          outdated: acc.outdated + outdatedDependents,
-          total: acc.total + totalDependents
-        }),
-        { outdated: 0, total: 0 }
-      ),
-    [libraries]
-  )
+  const { project, recentLibraries } = data
+  if (loading) return <Loading />
+  if (project.__typename !== 'BidaNodeProject') return null
   return (
     <React.Fragment>
       <ToolBar
-        title={repository.name}
+        title={project.name}
         subtitle={
-          <Anchor target='__blank' href={repository.url}>
-            {repository.url}
+          <Anchor target='__blank' href={project.url}>
+            {project.url}
           </Anchor>
         }
       />
@@ -72,21 +56,72 @@ const ProjectDetails = (props: ProjectDetailsProps) => {
           </div>
           <DependenciesTable
             baseUrl={`/${props.match!.params.department}/${Category.LIBRARIES}`}
-            dependencies={repository.object.package!.dependencies}
+            dependencies={project.dependencies}
           />
         </Content>
         <Sidebar>
-          <RecentUpdates libraries={recentLibraries} />
+          <RecentUpdates libraries={recentLibraries.nodes} />
           <ActualityWidget
             title='Libraries Actuality'
             mt={20}
-            outdated={outdated}
-            total={total}
+            outdated={recentLibraries.outdatedDependentsCount}
+            total={recentLibraries.totalCount}
           />
         </Sidebar>
       </Wrapper>
     </React.Fragment>
   )
 }
+
+ProjectDetails.DATA_QUERY = gql`
+  query ProjectDetailsData(
+    $department: BidaDepartment!
+    $from: Date!
+    $id: String!
+  ) {
+    recentLibraries: libraries(
+      department: $department
+      from: $from
+      projectId: $id
+    ) @client {
+      id
+      outdatedDependentsCount
+      totalCount
+      nodes {
+        ... on BidaNodeLibrary {
+          id
+          name
+          version
+          date
+        }
+      }
+    }
+    project(department: $department, id: $id) @client {
+      ... on BidaNodeProject {
+        id
+        name
+        url
+        dependencies {
+          id
+          name
+          version
+          library {
+            id
+            version
+            license
+          }
+        }
+      }
+    }
+  }
+`
+ProjectDetails.useData = (variables: ProjectDetailsDataVariables) =>
+  useQuery<ProjectDetailsData, ProjectDetailsDataVariables>(
+    ProjectDetails.DATA_QUERY,
+    {
+      variables
+    },
+    [variables.department, variables.id, variables.from]
+  )
 
 export default React.memo(ProjectDetails)

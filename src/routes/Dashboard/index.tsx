@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Switch, RouteComponentProps } from 'react-router-dom'
+import { Switch, Route, RouteComponentProps } from 'react-router-dom'
 import Loading from '../../components/Loading'
 import {
   TableContainer,
@@ -12,17 +12,21 @@ import { Category } from '../../config/types'
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from './RecentUpdates'
-import { useLibraries } from '../../data/Library'
-import { useRepositories } from '../../data/Repository'
 import ToolBar, { ToolBarLink } from '../../components/ToolBar'
-import toDepartment from '../../utils/toDepartment'
-
-const LibrariesTable = React.lazy(() =>
-  import(/* webpackChunkName: 'LibrariesTable' */ './LibrariesTable')
-)
-const ProjectsTable = React.lazy(() =>
-  import(/* webpackChunkName: 'ProjectsTable' */ './ProjectsTable')
-)
+import toBidaDepartment from '../../utils/toDepartment'
+import { BidaDepartment } from '../../data/__generated-types'
+import NodeProjectsTable from '../../containers/FrontendProjectsTable'
+import LocalProjectsTable from '../../containers/LocalProjectsTable'
+import NodeLibrariesTable from '../../containers/NodeLibrariesTable'
+import LibrariesTable from '../../containers/LibrariesTable'
+import ErrorBoundary from 'react-error-boundary'
+import gql from 'graphql-tag'
+import { useQuery } from '../../utils/apollo-hooks'
+import {
+  DashboardData,
+  DashboardDataVariables,
+  DashboardData_projects_nodes_BidaNodeProject
+} from './__generated-types/DashboardData'
 
 export type DashboardProps = RouteComponentProps<{
   department: string
@@ -30,35 +34,98 @@ export type DashboardProps = RouteComponentProps<{
 }>
 
 function Dashboard ({ match }: DashboardProps) {
-  const { category, department } = match!.params
+  const department = toBidaDepartment(match!.params.department)
+  const now = new Date()
+  const firstDayOfMonth = React.useMemo(
+    () => new Date(now.getFullYear(), now.getMonth(), 1),
+    [now.getFullYear(), now.getMonth()]
+  )
+  const { data, loading } = Dashboard.useDashboardData({
+    department,
+    from: firstDayOfMonth
+  })
+  const { projects, libraries, recentLibraries } = data
+  if (loading) return <Loading />
+  const renderWidgets = React.useCallback(
+    () => (
+      <WidgetContainer>
+        <ProjectsOverviewWidget
+          total={projects.totalCount}
+          archived={projects.totalArchived}
+          width='32%'
+        />
+        <ActualityWidget
+          title='Libraries Actuality'
+          width='32%'
+          outdated={libraries.outdatedDependentsCount}
+          total={libraries.totalCount}
+        />
+        <RecentUpdates libraries={recentLibraries.nodes} width='32%' />
+      </WidgetContainer>
+    ),
+    [
+      projects.totalCount,
+      projects.totalArchived,
+      libraries.totalCount,
+      recentLibraries.nodes
+    ]
+  )
+  const renderLibraries = React.useCallback(
+    () => {
+      switch (department) {
+        case BidaDepartment.FRONTEND:
+          return <NodeLibrariesTable libraries={libraries.nodes} />
+        default:
+          return <LibrariesTable libraries={libraries.nodes} />
+      }
+    },
+    [department, libraries.nodes]
+  )
+  const renderProjects = React.useCallback(
+    () => {
+      switch (department) {
+        case BidaDepartment.FRONTEND:
+          return (
+            <NodeProjectsTable
+              projects={
+                projects.nodes as DashboardData_projects_nodes_BidaNodeProject[]
+              }
+            />
+          )
+        default:
+          return <LocalProjectsTable projects={projects.nodes} />
+      }
+    },
+    [department, projects.nodes]
+  )
   return (
     <React.Fragment>
       <ToolBar
         title='Dashboard'
         links={
           <React.Fragment>
-            <ToolBarLink to={`/${department}/libraries`}>Libraries</ToolBarLink>
-            <ToolBarLink to={`/${department}/projects`}>Projects</ToolBarLink>
+            <ToolBarLink to={`/${match!.params.department}/libraries`}>
+              Libraries
+            </ToolBarLink>
+            <ToolBarLink to={`/${match!.params.department}/projects`}>
+              Projects
+            </ToolBarLink>
           </React.Fragment>
         }
-        children={<Input placeholder={`Search ${category}`} />}
+        children={<Input placeholder={`Search ${match!.params.category}`} />}
       />
       <StyledDashboard>
         <React.Suspense fallback={<Loading />}>
           <TableContainer>
-            <Route exact path={routes.dashboard} component={Widgets} />
-            <Switch>
-              <Route
-                exact
-                path={routes.projects}
-                component={AllProjectsTable}
-              />
-              <Route
-                exact
-                path={routes.libraries}
-                component={AllLibrariesTable}
-              />
-            </Switch>
+            <ErrorBoundary onError={() => console.log('widgets')}>
+              <Route exact path={routes.dashboard} render={renderWidgets} />
+            </ErrorBoundary>
+            <ErrorBoundary onError={() => console.log('table')}>
+              <Switch>
+                <Route exact path={routes.projects} render={renderProjects} />
+                <Route exact path={routes.libraries} render={renderLibraries} />
+              </Switch>
+            </ErrorBoundary>
           </TableContainer>
         </React.Suspense>
       </StyledDashboard>
@@ -68,61 +135,60 @@ function Dashboard ({ match }: DashboardProps) {
 
 export default React.memo(Dashboard)
 
-const AllProjectsTable = React.memo(
-  (props: RouteComponentProps<{ department: string }>) => {
-    const department = toDepartment(props.match!.params.department)
-    const { data, loading } = useRepositories(department)
-    if (loading) return null
-    return <ProjectsTable baseUrl={props.match!.url} projects={data!} />
+Dashboard.DATA_QUERY = gql`
+  query DashboardData($department: BidaDepartment!, $from: Date) {
+    projects(department: $department) @client {
+      id
+      totalCount
+      totalArchived
+      nodes {
+        id
+        name
+        url
+        pushedAt
+        ... on BidaNodeProject {
+          outdatedLibraries
+          alertedLibraries
+        }
+      }
+    }
+    libraries(department: $department) @client {
+      id
+      totalCount
+      outdatedDependentsCount
+      nodes {
+        id
+        name
+        date
+        ... on BidaNodeLibrary {
+          totalDependents
+          outdatedDependents
+          alertedDependents
+          license
+          version
+        }
+      }
+    }
+    recentLibraries: libraries(department: $department, from: $from) @client {
+      id
+      nodes {
+        id
+        name
+        date
+        ... on BidaNodeLibrary {
+          version
+        }
+      }
+    }
   }
-)
+`
 
-const AllLibrariesTable = React.memo(
-  (props: RouteComponentProps<{ department: string }>) => {
-    const department = toDepartment(props.match!.params.department)
-    const { data, loading } = useLibraries({ department })
-    if (loading) return null
-    return <LibrariesTable baseUrl={props.match!.url} libraries={data} />
-  }
-)
-
-const Widgets = React.memo(
-  (props: RouteComponentProps<{ department: string }>) => {
-    const department = toDepartment(props.match!.params.department)
-    const now = new Date()
-    const firstDayOfMonth = React.useMemo(
-      () => new Date(now.getFullYear(), now.getMonth(), 1),
-      [now.getFullYear(), now.getMonth()]
-    )
-    const { data: repositories, loading: L1 } = useRepositories(department)
-    const { data: libraries, loading: L2 } = useLibraries({ department })
-    const { data: recentLibraries, loading: L3 } = useLibraries({
-      department,
-      range: { from: firstDayOfMonth }
-    })
-    if (L1 || L2 || L3) return null
-    const { outdated, total } = React.useMemo(
-      () =>
-        libraries.reduce(
-          (acc, { totalDependents, outdatedDependents }) => ({
-            outdated: acc.outdated + outdatedDependents,
-            total: acc.total + totalDependents
-          }),
-          { outdated: 0, total: 0 }
-        ),
-      [libraries]
-    )
-    return (
-      <WidgetContainer>
-        <ProjectsOverviewWidget projects={repositories!} width='32%' />
-        <ActualityWidget
-          title='Libraries Actuality'
-          width='32%'
-          outdated={outdated}
-          total={total}
-        />
-        <RecentUpdates libraries={recentLibraries} width='32%' />
-      </WidgetContainer>
-    )
-  }
-)
+Dashboard.useDashboardData = (variables: DashboardDataVariables) => {
+  return useQuery<DashboardData, DashboardDataVariables>(
+    Dashboard.DATA_QUERY,
+    {
+      variables
+    },
+    [variables.department, variables.from]
+  )
+}

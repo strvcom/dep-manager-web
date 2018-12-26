@@ -20,8 +20,10 @@ interface NetlifyResponse {
 }
 
 export function useAuth () {
-  const result = useQuery<AuthQuery>(AUTH_QUERY)
-  return result.data.auth
+  const {
+    data: { authentication }
+  } = useQuery<AuthQuery>(AUTH_QUERY)
+  return authentication
 }
 
 export function useAuthenticator () {

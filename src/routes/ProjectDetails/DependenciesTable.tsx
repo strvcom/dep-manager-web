@@ -2,19 +2,31 @@ import React from 'react'
 import Tag from '../../components/Tag'
 import Table, {
   Column,
-  TableCellDataGetterParams,
   TableCellProps,
+  TableCellDataGetterParams,
   Index
 } from '../../components/Table'
-import { RepositoryQuery_repository_object_Blob_package_dependencies } from '../../data/Repository/__generated-types/RepositoryQuery'
 import versionDiff from '../../utils/version-diff'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
 import { isValidLicense } from '../../data/Library/index'
+import gql from 'graphql-tag'
+import { DependenciesTableItem } from './__generated-types/DependenciesTableItem'
 
-type Dependency = RepositoryQuery_repository_object_Blob_package_dependencies
+gql`
+  fragment DependenciesTableItem on BidaNodeProjectDependency {
+    id
+    name
+    version
+    library {
+      id
+      version
+      license
+    }
+  }
+`
 
 export interface DependenciesTableProps {
-  dependencies: Dependency[]
+  dependencies: DependenciesTableItem[]
   baseUrl?: string
 }
 const DependenciesTable = ({
@@ -33,39 +45,41 @@ const DependenciesTable = ({
     >
       <Column width={380} label='Library Name' dataKey='name' />
       <Column
-        cellDataGetter={renderLibraryVersion}
         width={280}
         label='Up To Date Version'
-        dataKey='library version'
+        dataKey='library'
+        cellDataGetter={renderUpToDateVersion}
       />
       <Column
         width={280}
         label='Current version'
-        dataKey='version'
+        dataKey='library'
         cellRenderer={renderDependencyVersion}
       />
       <Column
         cellRenderer={renderLicense}
         width={150}
         label='License'
-        dataKey='license'
+        dataKey='library'
       />
     </Table>
   )
 }
 
-const getLibraryId = (dependency: Dependency) => dependency.id.split(':')[0]
+const getLibraryId = (dependency: DependenciesTableItem) =>
+  dependency.id.split(':')[0]
 
-const renderLibraryVersion = ({
-  rowData
-}: TableCellDataGetterParams<'library', Dependency>) => rowData.library.version
+const renderUpToDateVersion = ({
+  columnData
+}: TableCellDataGetterParams<'library', DependenciesTableItem>) =>
+  columnData && columnData.version
 
 const renderDependencyVersion = ({
   cellData,
   rowData
-}: TableCellProps<'version', Dependency>) => {
+}: TableCellProps<'library', DependenciesTableItem>) => {
   if (!cellData) return null
-  switch (versionDiff(rowData.library.version, cellData)) {
+  switch (versionDiff(rowData.version, cellData.version)) {
     case 'major':
       return <Tag critical>{cellData}</Tag>
     case 'minor':
@@ -76,11 +90,11 @@ const renderDependencyVersion = ({
 }
 
 const renderLicense = ({
-  rowData
-}: TableCellDataGetterParams<'library', Dependency>) => (
-  <Tag critical={!isValidLicense(rowData.library.license)}>
-    {rowData.library.license}
-  </Tag>
-)
+  cellData
+}: TableCellProps<'library', DependenciesTableItem>) =>
+  cellData &&
+  cellData.license && (
+    <Tag critical={!isValidLicense(cellData.license)}>{cellData.license}</Tag>
+  )
 
 export default React.memo(DependenciesTable)

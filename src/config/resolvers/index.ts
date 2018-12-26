@@ -1,15 +1,15 @@
 import Mutation from './Mutation'
-import Blob from './Blob'
 import Query from './Query'
-import NodePackage from './NodePackage'
-import NodeLibrary from './NodeLibrary'
-import NodePackageDependency from './NodePackageDependency'
+import BidaNodeLibrary from './BidaNodeLibrary'
+import BidaNodeProjectDependency from './BidaNodeProjectDependency'
+import BidaNodeProject from './BidaNodeProject'
+import BidaLibraryCollection from './BidaLibraryCollection'
 
 export default {
   Query,
   Mutation,
-  Blob,
-  NodePackage,
-  NodeLibrary,
-  NodePackageDependency
+  BidaNodeLibrary,
+  BidaNodeProjectDependency,
+  BidaNodeProject,
+  BidaLibraryCollection
 }

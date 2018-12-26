@@ -1,35 +1,94 @@
-import React from 'react'
 import { useQuery } from '../../utils/apollo-hooks'
+import gql from 'graphql-tag'
 import {
-  LibrariesQueryVariables,
-  LibrariesQuery
-} from './__generated-types/LibrariesQuery'
-import { LIBRARIES_QUERY, LIBRARY_QUERY } from './queries'
+  AllLibraries,
+  AllLibrariesVariables
+} from './__generated-types/AllLibraries'
 import {
-  LibraryQueryVariables,
-  LibraryQuery
-} from './__generated-types/LibraryQuery'
+  SingleLibrary,
+  SingleLibraryVariables
+} from './__generated-types/SingleLibrary'
+import {
+  LibrariesInfo,
+  LibrariesInfoVariables
+} from './__generated-types/LibrariesInfo'
 
-export function useLibraries (variables: LibrariesQueryVariables) {
-  const {
-    data: { libraries },
-    ...rest
-  } = useQuery<LibrariesQuery, LibrariesQueryVariables>(
+const LIBRARIES_QUERY = gql`
+  query AllLibraries(
+    $department: BidaDepartment!
+    $from: Date
+    $to: Date
+    $projectName: String
+  ) {
+    libraries(
+      department: $department
+      from: $from
+      to: $to
+      projectId: $projectName
+    ) @client {
+      id
+      nodes {
+        id
+        name
+        date
+        ... on BidaNodeLibrary {
+          totalDependents
+          outdatedDependents
+          alertedDependents
+          license
+          version
+        }
+      }
+    }
+  }
+`
+
+const LIBRARIES_INFO_QUERY = gql`
+  query LibrariesInfo(
+    $department: BidaDepartment!
+    $from: Date
+    $to: Date
+    $projectName: String
+  ) {
+    libraries(
+      department: $department
+      from: $from
+      to: $to
+      projectId: $projectName
+    ) @client {
+      totalCount
+      alertedDependentsCount
+      outdatedDependentsCount
+    }
+  }
+`
+
+const LIBRARY_QUERY = gql`
+  query SingleLibrary($id: String!, $department: BidaDepartment!) {
+    library(id: $id, department: $department) @client {
+      id
+      name
+    }
+  }
+`
+
+export function useLibraries (variables: AllLibrariesVariables) {
+  return useQuery<AllLibraries, AllLibrariesVariables>(
     LIBRARIES_QUERY,
     { variables },
-    [variables.department, variables.repository]
+    [variables.department, variables.projectName, variables.from, variables.to]
   )
-  return React.useMemo(() => ({ ...rest, data: libraries }), [
-    libraries,
-    rest.loading,
-    rest.errors,
-    rest.networkStatus,
-    rest.stale
-  ])
+}
+export function useLibrariesInfo (variables: AllLibrariesVariables) {
+  return useQuery<LibrariesInfo, LibrariesInfoVariables>(
+    LIBRARIES_INFO_QUERY,
+    { variables },
+    [variables.department, variables.projectName, variables.from, variables.to]
+  )
 }
 
-export function useLibrary (variables: LibraryQueryVariables) {
-  return useQuery<LibraryQuery, LibraryQueryVariables>(
+export function useLibrary (variables: SingleLibraryVariables) {
+  return useQuery<SingleLibrary, SingleLibraryVariables>(
     LIBRARY_QUERY,
     {
       variables

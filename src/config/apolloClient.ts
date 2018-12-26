@@ -11,9 +11,8 @@ const client = new ApolloClient({
 
 client
   .watchQuery<AuthQuery>({ query: AUTH_QUERY })
-  .subscribe(({ data: { auth } }) => {
-    if (auth && auth.token) localStorage.setItem(GITHUB_TOKEN_KEY, auth.token)
-    else localStorage.removeItem(GITHUB_TOKEN_KEY)
+  .subscribe(({ data: { authentication } }) => {
+    if (authentication && authentication.token) { localStorage.setItem(GITHUB_TOKEN_KEY, authentication.token) } else localStorage.removeItem(GITHUB_TOKEN_KEY)
   })
 
 export default client

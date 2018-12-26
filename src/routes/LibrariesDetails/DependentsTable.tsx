@@ -3,12 +3,19 @@ import Tag from '../../components/Tag'
 import Table, { Column, Index, TableCellProps } from '../../components/Table'
 import versionDiff from '../../utils/version-diff'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
-import { LibraryQuery_library_dependents } from '../../data/Library/__generated-types/LibraryQuery'
+import gql from 'graphql-tag'
+import { DependentsTableItem } from './__generated-types/DependentsTableItem'
 
-type Dependent = LibraryQuery_library_dependents
+gql`
+  fragment DependentsTableItem on BidaNodeLibraryDependent {
+    id
+    version
+    name
+  }
+`
 
 export interface DependentsTableProps {
-  dependents: Dependent[]
+  dependents: DependentsTableItem[]
   libraryVersion: string
   baseUrl?: string
 }
@@ -22,7 +29,7 @@ const DependentsTable = ({
     [dependents]
   )
   const renderVersion = React.useCallback(
-    ({ cellData }: TableCellProps<'version', Dependent>) => {
+    ({ cellData }: TableCellProps<'version', DependentsTableItem>) => {
       if (!cellData) return null
       switch (versionDiff(libraryVersion, cellData)) {
         case 'major':
@@ -52,6 +59,7 @@ const DependentsTable = ({
   )
 }
 
-const getRepositoryId = (dependent: Dependent) => dependent.id.split(':')[0]
+const getRepositoryId = (dependent: DependentsTableItem) =>
+  dependent.id.split(':')[0]
 
 export default React.memo(DependentsTable)
