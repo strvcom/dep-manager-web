@@ -10,7 +10,7 @@ import { BidaDepartment } from './../../../../data/__generated-types'
 export interface OutdatedDependentsCountRoot_nodes {
   __typename: 'BidaNodeLibrary'
   id: string
-  outdatedDependents: number
+  outdatedDependentsCount: number
 }
 
 export interface OutdatedDependentsCountRoot {

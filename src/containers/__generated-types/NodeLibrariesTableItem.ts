@@ -8,8 +8,8 @@
 export interface NodeLibrariesTableItem {
   __typename: 'BidaNodeLibrary'
   id: string
-  totalDependents: number
-  alertedDependents: number
-  outdatedDependents: number
+  totalDependentsCount: number
+  alertedDependentsCount: number
+  outdatedDependentsCount: number
   license: string | null
 }

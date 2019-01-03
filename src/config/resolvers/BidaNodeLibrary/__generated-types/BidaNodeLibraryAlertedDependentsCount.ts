@@ -2,16 +2,18 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL fragment: AlertedDependentsRoot
+// GraphQL fragment: BidaNodeLibraryAlertedDependentsCount
 // ====================================================
 
-export interface AlertedDependentsRoot_dependents {
+export interface BidaNodeLibraryAlertedDependentsCount_dependents {
   __typename: 'BidaNodeLibraryDependent'
+  id: string
   version: string
 }
 
-export interface AlertedDependentsRoot {
+export interface BidaNodeLibraryAlertedDependentsCount {
   __typename: 'BidaNodeLibrary'
+  id: string
   version: string
-  dependents: AlertedDependentsRoot_dependents[]
+  dependents: BidaNodeLibraryAlertedDependentsCount_dependents[]
 }

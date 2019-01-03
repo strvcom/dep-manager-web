@@ -70,22 +70,23 @@ const getLibraryId = (dependency: DependenciesTableItem) =>
   dependency.id.split(':')[0]
 
 const renderUpToDateVersion = ({
-  columnData
-}: TableCellDataGetterParams<'library', DependenciesTableItem>) =>
-  columnData && columnData.version
+  rowData
+}: TableCellDataGetterParams<'library', DependenciesTableItem>) => {
+  return rowData.library.version
+}
 
 const renderDependencyVersion = ({
   cellData,
   rowData
 }: TableCellProps<'library', DependenciesTableItem>) => {
   if (!cellData) return null
-  switch (versionDiff(rowData.version, cellData.version)) {
+  switch (versionDiff(cellData.version, rowData.version)) {
     case 'major':
-      return <Tag critical>{cellData}</Tag>
+      return <Tag critical>{rowData.version}</Tag>
     case 'minor':
-      return <Tag warning>{cellData}</Tag>
+      return <Tag warning>{rowData.version}</Tag>
     default:
-      return <Tag>{cellData}</Tag>
+      return <Tag>{rowData.version}</Tag>
   }
 }
 

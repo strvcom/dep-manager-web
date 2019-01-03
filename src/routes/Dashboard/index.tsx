@@ -27,6 +27,7 @@ import {
   DashboardDataVariables,
   DashboardData_projects_nodes_BidaNodeProject
 } from './__generated-types/DashboardData'
+import { ApolloQueryResult } from 'apollo-client'
 
 export type DashboardProps = RouteComponentProps<{
   department: string
@@ -133,10 +134,8 @@ function Dashboard ({ match }: DashboardProps) {
   )
 }
 
-export default React.memo(Dashboard)
-
 Dashboard.DATA_QUERY = gql`
-  query DashboardData($department: BidaDepartment!, $from: Date) {
+  query DashboardData($department: BidaDepartment!, $from: Date!) {
     projects(department: $department) @client {
       id
       totalCount
@@ -161,9 +160,9 @@ Dashboard.DATA_QUERY = gql`
         name
         date
         ... on BidaNodeLibrary {
-          totalDependents
-          outdatedDependents
-          alertedDependents
+          totalDependentsCount
+          outdatedDependentsCount
+          alertedDependentsCount
           license
           version
         }
@@ -183,12 +182,16 @@ Dashboard.DATA_QUERY = gql`
   }
 `
 
-Dashboard.useDashboardData = (variables: DashboardDataVariables) => {
+Dashboard.useDashboardData = (
+  variables: DashboardDataVariables
+): ApolloQueryResult<DashboardData> => {
   return useQuery<DashboardData, DashboardDataVariables>(
     Dashboard.DATA_QUERY,
     {
       variables
     },
-    [variables.department, variables.from]
+    [variables.department]
   )
 }
+
+export default React.memo(Dashboard)

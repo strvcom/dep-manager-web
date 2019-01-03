@@ -32,9 +32,9 @@ const LIBRARIES_QUERY = gql`
         name
         date
         ... on BidaNodeLibrary {
-          totalDependents
-          outdatedDependents
-          alertedDependents
+          totalDependentsCount
+          outdatedDependentsCount
+          alertedDependentsCount
           license
           version
         }

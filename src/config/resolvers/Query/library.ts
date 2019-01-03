@@ -1,6 +1,6 @@
 import { BidaDepartment } from '../../../data/__generated-types'
 import gql from 'graphql-tag'
-import { createResolver } from '../../../utils/ResolverFunction'
+import { createResolver } from '../../../utils/apollo-utils'
 import {
   LibraryRoot,
   LibraryRootVariables,

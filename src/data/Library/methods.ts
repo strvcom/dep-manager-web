@@ -3,6 +3,29 @@ import { fetchPackages } from '../npms'
 import { License } from '../../config/types'
 import { getNodeProjectsDependencies } from '../Projects'
 import { NodeProjectDependencies } from '../Projects/__generated-types/NodeProjectDependencies'
+import gql from 'graphql-tag'
+import { Dependent } from './__generated-types/Dependent'
+import { BidaNodeLibrary } from './__generated-types/BidaNodeLibrary'
+
+gql`
+  fragment BidaNodeLibrary on BidaNodeLibrary {
+    __typename
+    id
+    license
+    date
+    name
+    version
+    dependents {
+      ...Dependent
+    }
+  }
+  fragment Dependent on BidaNodeLibraryDependent {
+    __typename
+    id
+    name
+    version
+  }
+`
 
 export async function fetchLibraries (department: BidaDepartment) {
   switch (department) {
@@ -18,7 +41,7 @@ async function fetchFrontendLibraries () {
     await getNodeProjectsDependencies(BidaDepartment.FRONTEND)
   )
   const packages = await fetchPackages(Array.from(dependentsMap.keys()))
-  const data = Object.values(packages).map(
+  const data = Object.values(packages).map<BidaNodeLibrary>(
     ({
       collected: {
         metadata: { date, license, name, version }
@@ -32,8 +55,7 @@ async function fetchFrontendLibraries () {
         date,
         name,
         version,
-        totalDependents: dependents.length,
-        __typename: 'BidaNodeLibrary' as 'BidaNodeLibrary'
+        __typename: 'BidaNodeLibrary'
       }
     }
   )
@@ -41,14 +63,14 @@ async function fetchFrontendLibraries () {
 }
 
 function createDependentsMap (projects: NodeProjectDependencies[]) {
-  const map = new Map<string, any[]>()
+  const map = new Map<string, Dependent[]>()
   projects.forEach(({ dependencies, id, name, __typename }) => {
     if (!Array.isArray(dependencies)) return
     dependencies.forEach(dependency => {
       const dependents = mapGet(map, dependency.name, [])
       dependents.push({
-        __typename: 'NodeLibraryDependent',
-        id: `${__typename}:${id}:${dependency.name}`,
+        __typename: 'BidaNodeLibraryDependent',
+        id: `${id}:${dependency.name}`,
         name: dependency.name || name,
         version: dependency.version
       })

@@ -2,16 +2,11 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL fragment: OutdatedDependentsRoot
+// GraphQL fragment: NodeLibraryVersion
 // ====================================================
 
-export interface OutdatedDependentsRoot_dependents {
-  __typename: 'BidaNodeLibraryDependent'
-  version: string
-}
-
-export interface OutdatedDependentsRoot {
+export interface NodeLibraryVersion {
   __typename: 'BidaNodeLibrary'
+  id: string
   version: string
-  dependents: OutdatedDependentsRoot_dependents[]
 }

@@ -1,40 +1,53 @@
-import { createResolver } from '../../../utils/ResolverFunction'
+import { createResolver } from '../../../utils/apollo-utils'
 import gql from 'graphql-tag'
-import { OutdatedDependentsCountRoot } from './__generated-types/OutdatedDependentsCountRoot'
-import {
-  OutdatedDependentsCountQuery,
-  OutdatedDependentsCountQueryVariables
-} from './__generated-types/OutdatedDependentsCountQuery'
+import { BidaLibraryCollectionOutdatedDependentsCount } from './__generated-types/BidaLibraryCollectionOutdatedDependentsCount'
+import versionDiff from '../../../utils/version-diff'
+import { BidaLibraryCollectionOutdatedDependentsCountRoot } from './__generated-types/BidaLibraryCollectionOutdatedDependentsCountRoot'
 
-const QUERY = gql`
-  query OutdatedDependentsCountQuery($department: BidaDepartment!) {
-    libraries(department: $department) @client {
-      ...OutdatedDependentsCountRoot
-    }
+const FRAGMENT = gql`
+  fragment BidaLibraryCollectionOutdatedDependentsCountRoot on BidaLibraryCollection {
+    ...BidaLibraryCollectionOutdatedDependentsCount
+    projectId
   }
-  fragment OutdatedDependentsCountRoot on BidaLibraryCollection {
+  fragment BidaLibraryCollectionOutdatedDependentsCount on BidaLibraryCollection {
     id
     department
     nodes {
       ... on BidaNodeLibrary {
         id
-        outdatedDependents
+        version
+        dependents {
+          id
+          version
+        }
       }
     }
   }
 `
 
-export default createResolver<OutdatedDependentsCountRoot>(async ({ root }) => {
-  const { default: client } = await import('../../apolloClient')
-  const {
-    data: { libraries }
-  } = await client.query<
-  OutdatedDependentsCountQuery,
-  OutdatedDependentsCountQueryVariables
-  >({
-    query: QUERY,
-    variables: { department: root.department },
-    fetchPolicy: 'cache-first'
-  })
-  return libraries.nodes.reduce((acc, node) => acc + node.outdatedDependents, 0)
-})
+export default createResolver<BidaLibraryCollectionOutdatedDependentsCountRoot>(
+  ({ root, cache, getCacheKey }) => {
+    const result =
+      cache.readFragment<BidaLibraryCollectionOutdatedDependentsCount>({
+        id: getCacheKey(root),
+        fragment: FRAGMENT,
+        fragmentName: 'BidaLibraryCollectionOutdatedDependentsCount'
+      }) || root
+    return result.nodes.reduce(
+      (acc, library) =>
+        library.dependents
+          .filter(
+            dependent =>
+              !root.projectId || root.projectId === dependent.id.split(':')[0]
+          )
+          .reduce(
+            (innerAcc, dependent) =>
+              versionDiff(library.version, dependent.version) === 'major'
+                ? innerAcc + 1
+                : innerAcc,
+            acc
+          ),
+      0
+    )
+  }
+)

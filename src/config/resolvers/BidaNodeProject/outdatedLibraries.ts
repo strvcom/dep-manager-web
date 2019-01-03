@@ -1,9 +1,29 @@
-import { NodeProjectRoot } from './__generated-types/NodeProjectRoot'
+import { createResolver } from '../../../utils/apollo-utils'
+import gql from 'graphql-tag'
+import { BidaNodeProjectDependencies } from './__generated-types/BidaNodeProjectDependencies'
 import { reduceLibrariesInfo } from './helpers'
-import { createResolver } from '../../../utils/ResolverFunction'
 
-const outdatedLibraries = createResolver<NodeProjectRoot>(
-  async ({ root }) => (await reduceLibrariesInfo(root)).outdatedLibraries
+const QUERY = gql`
+  fragment BidaNodeProjectDependencies on BidaNodeProject {
+    id
+    department
+    dependencies {
+      id
+      name
+      version
+    }
+  }
+`
+
+const outdatedLibraries = createResolver<BidaNodeProjectDependencies>(
+  ({ root, cache, getCacheKey }) => {
+    const result = cache.readFragment<BidaNodeProjectDependencies>({
+      fragment: QUERY,
+      id: getCacheKey(root)
+    })
+    if (!result) return null
+    return reduceLibrariesInfo(result, cache).outdatedLibraries
+  }
 )
 
 export default outdatedLibraries

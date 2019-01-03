@@ -1,119 +1,86 @@
-import { BidaDepartment } from '../../../data/__generated-types'
-import { createResolver } from '../../../utils/ResolverFunction'
-import {
-  LibrariesRootVariables,
-  LibrariesRoot
-} from './__generated-types/LibrariesRoot'
+import { createResolver } from '../../../utils/apollo-utils'
 import gql from 'graphql-tag'
-import { LibraryCollectionResult } from './__generated-types/LibraryCollectionResult'
-import {
-  ProjectsDependencies,
-  ProjectsDependenciesVariables
-} from './__generated-types/ProjectsDependencies'
-import { fetchLibraries } from '../../../data/Library/index'
-import { LibraryResult } from './__generated-types/LibraryResult'
-import { identity } from 'ramda'
+import { LibrariesQueryVariables } from './__generated-types/LibrariesQuery'
+import { Nodes } from './__generated-types/Nodes'
+import { ApolloCache } from 'apollo-cache'
+import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { BidaDepartment } from '../../../data/__generated-types'
 
 gql`
-  query LibrariesRoot(
+  query LibrariesQuery(
     $department: BidaDepartment!
     $from: Date
     $to: Date
-    $projectName: String
+    $projectId: String
   ) {
     libraries(
       department: $department
       from: $from
       to: $to
-      projectId: $projectName
+      projectId: $projectId
     ) {
-      ...LibraryCollectionResult
+      ...QueryBidaLibraryCollection
     }
   }
-  fragment LibraryCollectionResult on BidaLibraryCollection {
+  fragment QueryBidaLibraryCollection on BidaLibraryCollection {
     id
+    from
+    to
+    projectId
     department
-    nodes {
-      ...LibraryResult
-    }
-  }
-  fragment LibraryResult on BidaLibrary {
-    id
-    date
   }
 `
+export default createResolver<{}, LibrariesQueryVariables>(
+  ({ variables, root, cache, getCacheKey }) => {
+    if (variables.from || variables.to || variables.projectId) {
+      return {
+        __typename: 'BidaLibraryCollection',
+        ...variables,
+        nodes: getAllLibraryNodes(cache, variables.department).filter(
+          library => new Date(library.date) >= (variables.from || 0)
+        ),
+        id: createId(variables)
+      }
+    }
+    return null
+  }
+)
 
-const PROJECTS_QUERY = gql`
-  query ProjectsDependencies($department: BidaDepartment!) {
-    projects(department: $department) @client {
-      id
-      nodes {
-        id
-        name
-        ... on BidaNodeProject {
-          dependencies {
-            id
-            name
+const getAllLibraryNodes = (
+  cache: ApolloCache<NormalizedCacheObject>,
+  department: BidaDepartment
+) => {
+  const result = cache.readFragment<Nodes>({
+    fragment: gql`
+      fragment Nodes on BidaLibraryCollection {
+        nodes {
+          id
+          date
+          name
+          ... on BidaNodeLibrary {
             version
+            dependents {
+              version
+            }
           }
         }
       }
-    }
-  }
-`
-
-async function queryProjects (department: BidaDepartment) {
-  const { default: client } = await import('../../apolloClient')
-  await client.query<ProjectsDependencies, ProjectsDependenciesVariables>({
-    query: PROJECTS_QUERY,
-    variables: { department },
-    fetchPolicy: 'cache-first'
+    `,
+    id: `BidaLibraryCollection:${department}`
   })
+  if (!result) return []
+  return result.nodes
 }
-
-export default createResolver<
-LibrariesRoot,
-LibrariesRootVariables,
-Promise<LibraryCollectionResult>
->(async ({ variables }) => {
-  await queryProjects(variables.department)
-  const data: LibraryCollectionResult = {
-    __typename: 'BidaLibraryCollection',
-    id: createId(variables),
-    department: variables.department,
-    nodes: await getLibraries(variables)
-  }
-  return data
-})
 
 function createId ({
   department,
-  projectName,
+  projectId,
   from,
   to
-}: LibrariesRootVariables) {
+}: LibrariesQueryVariables) {
   let id: string = department
-  if (projectName) id += `:${projectName}`
+  if (projectId) id += `:${projectId}`
   if (to) id += `:${(to as Date).valueOf()}`
   if (from) id += `:${(from as Date).valueOf()}`
   return id
 }
-
-async function getLibraries ({ department, from, to }: LibrariesRootVariables) {
-  const libraries = libraryRangeFilter(from, to)(
-    await fetchLibraries(department)
-  )
-  return libraries
-}
-
-const libraryRangeFilter = (from?: Date, to?: Date) =>
-  from || to
-    ? (libraries: LibraryResult[]) => {
-      return libraries.filter(library => {
-        const libDate = new Date(library.date)
-        return (
-          libDate >= (from || 0) && libDate <= (to || Number.MAX_SAFE_INTEGER)
-        )
-      })
-    }
-    : identity

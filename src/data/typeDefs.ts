@@ -58,6 +58,9 @@ export default gql`
   type BidaLibraryCollection {
     id: String!
     department: BidaDepartment!
+    from: Date
+    to: Date
+    projectId: String
     totalCount: Int!
     outdatedDependentsCount: Int!
     alertedDependentsCount: Int!
@@ -76,9 +79,9 @@ export default gql`
     date: String!
     version: String!
     license: String
-    outdatedDependents: Int!
-    alertedDependents: Int!
-    totalDependents: Int!
+    outdatedDependentsCount: Int!
+    alertedDependentsCount: Int!
+    totalDependentsCount: Int!
     dependents: [BidaNodeLibraryDependent!]!
   }
 
@@ -121,6 +124,7 @@ export default gql`
     outdatedLibraries: Int!
     alertedLibraries: Int!
     dependencies: [BidaNodeProjectDependency!]!
+    libraries(from: Date, to: Date): BidaLibraryCollection!
   }
 
   type BidaIOSProject implements BidaProject {

@@ -1,4 +1,4 @@
-import { createResolver } from '../../../utils/ResolverFunction'
+import { createResolver } from '../../../utils/apollo-utils'
 import {
   ChangeTokenMutationVariables,
   ChangeTokenMutation_changeToken

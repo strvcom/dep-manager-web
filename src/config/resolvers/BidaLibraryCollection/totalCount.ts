@@ -1,14 +1,17 @@
-import { createResolver } from '../../../utils/ResolverFunction'
+import { createResolver } from '../../../utils/apollo-utils'
 import gql from 'graphql-tag'
-import { LibraryCollectionRoot } from './__generated-types/LibraryCollectionRoot'
+import { BidaLibraryCollectionTotalCount } from './__generated-types/BidaLibraryCollectionTotalCount'
 
 gql`
-  fragment LibraryCollectionRoot on BidaLibraryCollection {
+  fragment BidaLibraryCollectionTotalCount on BidaLibraryCollection {
+    id
     nodes {
       id
     }
   }
 `
-export default createResolver<LibraryCollectionRoot>(({ root, context }) => {
-  return root.nodes.length
-})
+export default createResolver<BidaLibraryCollectionTotalCount>(
+  ({ root, cache, getCacheKey }) => {
+    return root.nodes.length
+  }
+)

@@ -35,7 +35,7 @@ function ProjectDetails (props: ProjectDetailsProps) {
     from: firstDayOfMonth,
     id: props.match!.params.id
   })
-  const { project, recentLibraries } = data
+  const { project } = data
   if (loading) return <Loading />
   if (project.__typename !== 'BidaNodeProject') return null
   return (
@@ -60,12 +60,12 @@ function ProjectDetails (props: ProjectDetailsProps) {
           />
         </Content>
         <Sidebar>
-          <RecentUpdates libraries={recentLibraries.nodes} />
+          <RecentUpdates libraries={project.recentLibraries.nodes} />
           <ActualityWidget
             title='Libraries Actuality'
             mt={20}
-            outdated={recentLibraries.outdatedDependentsCount}
-            total={recentLibraries.totalCount}
+            outdated={project.libraries.outdatedDependentsCount}
+            total={project.libraries.totalCount}
           />
         </Sidebar>
       </Wrapper>
@@ -79,28 +79,26 @@ ProjectDetails.DATA_QUERY = gql`
     $from: Date!
     $id: String!
   ) {
-    recentLibraries: libraries(
-      department: $department
-      from: $from
-      projectId: $id
-    ) @client {
-      id
-      outdatedDependentsCount
-      totalCount
-      nodes {
-        ... on BidaNodeLibrary {
-          id
-          name
-          version
-          date
-        }
-      }
-    }
     project(department: $department, id: $id) @client {
       ... on BidaNodeProject {
         id
         name
         url
+        recentLibraries: libraries(from: $from) {
+          nodes {
+            ... on BidaNodeLibrary {
+              id
+              name
+              version
+              date
+            }
+          }
+        }
+        libraries {
+          id
+          outdatedDependentsCount
+          totalCount
+        }
         dependencies {
           id
           name

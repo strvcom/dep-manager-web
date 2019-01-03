@@ -42,9 +42,9 @@ export interface DashboardData_libraries_nodes {
   id: string
   name: string
   date: string
-  totalDependents: number
-  outdatedDependents: number
-  alertedDependents: number
+  totalDependentsCount: number
+  outdatedDependentsCount: number
+  alertedDependentsCount: number
   license: string | null
   version: string
 }
@@ -88,5 +88,5 @@ export interface DashboardData {
 
 export interface DashboardDataVariables {
   department: BidaDepartment
-  from?: any | null
+  from: any
 }

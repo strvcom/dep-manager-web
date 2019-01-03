@@ -1,7 +1,9 @@
-import alertedDependents from './alertedDependents'
-import outdatedDependents from './outdatedDependents'
+import totalDependentsCount from './totalDependentsCount'
+import alertedDependentsCount from './alertedDependentsCount'
+import outdatedDependentsCount from './outdatedDependentsCount'
 
 export default {
-  alertedDependents,
-  outdatedDependents
+  totalDependentsCount,
+  alertedDependentsCount,
+  outdatedDependentsCount
 }

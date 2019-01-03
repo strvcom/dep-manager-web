@@ -16,9 +16,9 @@ import { NodeLibrariesTableItem } from './__generated-types/NodeLibrariesTableIt
 gql`
   fragment NodeLibrariesTableItem on BidaNodeLibrary {
     id
-    totalDependents
-    alertedDependents
-    outdatedDependents
+    totalDependentsCount
+    alertedDependentsCount
+    outdatedDependentsCount
     license
   }
 `
@@ -31,12 +31,12 @@ const NodeLibrariesTable = React.memo<NodeLibrariesTableProps>(
   ({ libraries }) => {
     const renderOutdated = React.useCallback(
       ({
-        rowData: { outdatedDependents, alertedDependents }
+        rowData: { outdatedDependentsCount, alertedDependentsCount }
       }: TableCellProps<'id', NodeLibrariesTableItem>) => {
         return (
           <StatusColumn
-            outDated={outdatedDependents || 0}
-            alerts={alertedDependents || 0}
+            outDated={outdatedDependentsCount || 0}
+            alerts={alertedDependentsCount || 0}
           />
         )
       },

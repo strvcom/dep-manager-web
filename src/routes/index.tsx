@@ -1,7 +1,7 @@
 import React from 'react'
 import Login from './Login'
 import NavBar, { NavBarLink } from '../containers/NavBar'
-import { Redirect, Switch, Route } from 'react-router-dom'
+import { Redirect, Switch, Route, RouteComponentProps } from 'react-router-dom'
 import * as routes from './routes'
 import Loading from '../components/Loading'
 import PrivateRoute from '../containers/PrivateRoute'
@@ -10,6 +10,26 @@ import { ReactComponent as Logo } from '../assets/logo.svg'
 import { ThemeProvider } from '../styles/styled'
 import lightTheme from '../styles/themes/light'
 import ErrorBoundary from 'react-error-boundary'
+import usePromise from '../utils/promise-hook'
+import { runInitializers } from '../utils/apollo-utils'
+import projectsInitializers from '../config/initializers/projectsInitializers'
+import toBidaDepartment from '../utils/toDepartment'
+import { Category } from '../config/types'
+
+export interface InitializeDataProps
+  extends RouteComponentProps<{ department: string; category: Category }> {
+  children: React.ReactElement<any> | null
+}
+
+const InitializeData = React.memo((props: InitializeDataProps) => {
+  const department = toBidaDepartment(props.match!.params.department)
+  const { pending } = usePromise(
+    () => runInitializers(projectsInitializers(department)),
+    [department]
+  )
+  if (pending) return <Loading />
+  return props.children
+})
 
 const Dashboard = React.lazy(() =>
   import(/* webpackChunkName: 'Dashboard' */ './Dashboard')
@@ -34,11 +54,21 @@ const PrivatePage = React.memo(() => (
       </NavBar>
       <React.Suspense fallback={<Loading />}>
         <ErrorBoundary>
-          <Switch>
-            <Route path={routes.projectDetails} component={ProjectDetails} />
-            {/* <Route path={routes.librariesDetails} component={LibrariesDetails} /> */}
-            <Route path={routes.dashboard} component={Dashboard} />
-          </Switch>
+          <Route
+            path={routes.department}
+            render={props => (
+              <InitializeData {...props}>
+                <Switch>
+                  <Route
+                    path={routes.projectDetails}
+                    component={ProjectDetails}
+                  />
+                  {/* <Route path={routes.librariesDetails} component={LibrariesDetails} /> */}
+                  <Route path={routes.dashboard} component={Dashboard} />
+                </Switch>
+              </InitializeData>
+            )}
+          />
         </ErrorBoundary>
       </React.Suspense>
     </React.Fragment>
