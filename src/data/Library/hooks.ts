@@ -1,4 +1,4 @@
-import { useQuery } from '../../utils/apollo-hooks'
+import { useQuery } from '../../hooks/apollo-hooks'
 import gql from 'graphql-tag'
 import {
   AllLibraries,

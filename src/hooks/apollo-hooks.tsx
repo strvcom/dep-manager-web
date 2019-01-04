@@ -48,7 +48,9 @@ function useObservableQueryCache<D> (
     if (
       deepEqual(cache.query.loc, query.loc) &&
       deepEqual(cache.options, options)
-    ) { return cache as ObservableQueryCache<D> }
+    ) {
+      return cache as ObservableQueryCache<D>
+    }
   }
   const cache: ObservableQueryCache<D> = {
     observable: client.watchQuery<D>({ ...options, query }),

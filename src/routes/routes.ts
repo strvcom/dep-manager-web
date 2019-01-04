@@ -23,15 +23,19 @@ export const projectDetails = `${department}/${Category.PROJECTS}/:id`
 export const frontend = `/${toLower(BidaDepartment.FRONTEND)}`
 export const frontendLibraries = `${frontend}/${Category.LIBRARIES}`
 export const frontendProjects = `${frontend}/${Category.PROJECTS}`
+export const frontendProjectDetails = `${frontend}/${Category.PROJECTS}/:id`
 
 export const backend = `/${toLower(BidaDepartment.BACKEND)}`
 export const backendLibraries = `${backend}/${Category.LIBRARIES}`
 export const backendProjects = `${backend}/${Category.PROJECTS}`
+export const backendProjectDetails = `${backend}/${Category.PROJECTS}/:id`
 
 export const ios = `/${toLower(BidaDepartment.IOS)}`
 export const iosLibraries = `${ios}/${Category.LIBRARIES}`
 export const iosProjects = `${ios}/${Category.PROJECTS}`
+export const iosProjectDetails = `${ios}/${Category.PROJECTS}/:id`
 
 export const android = `/${toLower(BidaDepartment.ANDROID)}`
 export const androidLibraries = `${android}/${Category.LIBRARIES}`
 export const androidProjects = `${android}/${Category.PROJECTS}`
+export const androidProjectDetails = `${android}/${Category.PROJECTS}/:id`

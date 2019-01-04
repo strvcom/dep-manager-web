@@ -21,13 +21,14 @@ import NodeLibrariesTable from '../../containers/NodeLibrariesTable'
 import LibrariesTable from '../../containers/LibrariesTable'
 import ErrorBoundary from 'react-error-boundary'
 import gql from 'graphql-tag'
-import { useQuery } from '../../utils/apollo-hooks'
+import { useQuery } from '../../hooks/apollo-hooks'
 import {
   DashboardData,
   DashboardDataVariables,
   DashboardData_projects_nodes_BidaNodeProject
 } from './__generated-types/DashboardData'
 import { ApolloQueryResult } from 'apollo-client'
+import useFirstDayOfMonth from '../../hooks/firstDayOfMonth'
 
 export type DashboardProps = RouteComponentProps<{
   department: string
@@ -36,14 +37,9 @@ export type DashboardProps = RouteComponentProps<{
 
 function Dashboard ({ match }: DashboardProps) {
   const department = toBidaDepartment(match!.params.department)
-  const now = new Date()
-  const firstDayOfMonth = React.useMemo(
-    () => new Date(now.getFullYear(), now.getMonth(), 1),
-    [now.getFullYear(), now.getMonth()]
-  )
   const { data, loading } = Dashboard.useDashboardData({
     department,
-    from: firstDayOfMonth
+    from: useFirstDayOfMonth()
   })
   const { projects, libraries, recentLibraries } = data
   if (loading) return <Loading />

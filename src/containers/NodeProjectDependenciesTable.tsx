@@ -1,19 +1,21 @@
 import React from 'react'
-import Tag from '../../components/Tag'
+import Tag from '../components/Tag'
 import Table, {
   Column,
   TableCellProps,
   TableCellDataGetterParams,
   Index
-} from '../../components/Table'
-import versionDiff from '../../utils/version-diff'
-import anchorRowRenderer from '../../utils/anchorRowRenderer'
-import { isValidLicense } from '../../data/Library/index'
+} from '../components/Table'
+import versionDiff from '../utils/version-diff'
+import anchorRowRenderer from '../utils/anchorRowRenderer'
+import { isValidLicense } from '../data/Library/index'
 import gql from 'graphql-tag'
-import { DependenciesTableItem } from './__generated-types/DependenciesTableItem'
+import { NodeProjectDependenciesTableItem } from './__generated-types/NodeProjectDependenciesTableItem'
+import { BidaDepartment } from '../data/__generated-types'
+import * as routes from '../routes/routes'
 
 gql`
-  fragment DependenciesTableItem on BidaNodeProjectDependency {
+  fragment NodeProjectDependenciesTableItem on BidaNodeProjectDependency {
     id
     name
     version
@@ -25,23 +27,37 @@ gql`
   }
 `
 
-export interface DependenciesTableProps {
-  dependencies: DependenciesTableItem[]
-  baseUrl?: string
+const departmentToBaseURL = (department: BidaDepartment) => {
+  switch (department) {
+    case BidaDepartment.BACKEND:
+      return routes.backendLibraries
+    case BidaDepartment.FRONTEND:
+      return routes.frontendLibraries
+    default:
+      return null
+  }
 }
-const DependenciesTable = ({
+
+export interface NodeProjectDependenciesTableProps {
+  dependencies: NodeProjectDependenciesTableItem[]
+  department: BidaDepartment
+}
+const NodeProjectDependenciesTable = ({
   dependencies,
-  baseUrl
-}: DependenciesTableProps) => {
+  department
+}: NodeProjectDependenciesTableProps) => {
   const handleRowGetter = React.useCallback(
     ({ index }: Index) => dependencies[index],
     [dependencies]
   )
+  const baseURL = departmentToBaseURL(department)
   return (
     <Table
       rowCount={dependencies.length}
       rowGetter={handleRowGetter}
-      rowRenderer={anchorRowRenderer(baseUrl, getLibraryId)}
+      rowRenderer={
+        baseURL ? anchorRowRenderer(baseURL, getLibraryId) : undefined
+      }
     >
       <Column width={380} label='Library Name' dataKey='name' />
       <Column
@@ -66,19 +82,19 @@ const DependenciesTable = ({
   )
 }
 
-const getLibraryId = (dependency: DependenciesTableItem) =>
+const getLibraryId = (dependency: NodeProjectDependenciesTableItem) =>
   dependency.id.split(':')[0]
 
 const renderUpToDateVersion = ({
   rowData
-}: TableCellDataGetterParams<'library', DependenciesTableItem>) => {
+}: TableCellDataGetterParams<'library', NodeProjectDependenciesTableItem>) => {
   return rowData.library.version
 }
 
 const renderDependencyVersion = ({
   cellData,
   rowData
-}: TableCellProps<'library', DependenciesTableItem>) => {
+}: TableCellProps<'library', NodeProjectDependenciesTableItem>) => {
   if (!cellData) return null
   switch (versionDiff(cellData.version, rowData.version)) {
     case 'major':
@@ -92,10 +108,10 @@ const renderDependencyVersion = ({
 
 const renderLicense = ({
   cellData
-}: TableCellProps<'library', DependenciesTableItem>) =>
+}: TableCellProps<'library', NodeProjectDependenciesTableItem>) =>
   cellData &&
   cellData.license && (
     <Tag critical={!isValidLicense(cellData.license)}>{cellData.license}</Tag>
   )
 
-export default React.memo(DependenciesTable)
+export default React.memo(NodeProjectDependenciesTable)

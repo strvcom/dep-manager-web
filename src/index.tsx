@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { ApolloProvider } from './utils/apollo-hooks'
+import { ApolloProvider } from './hooks/apollo-hooks'
 import GlobalStyle from './styles/global'
 import 'react-virtualized/styles.css'
 import App from './routes'

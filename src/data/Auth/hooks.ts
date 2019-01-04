@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '../../utils/apollo-hooks'
+import { useQuery, useMutation } from '../../hooks/apollo-hooks'
 import { AUTH_QUERY, CHANGE_TOKEN } from './queries'
 import { useCallback } from 'react'
 import Netlify from 'netlify-auth-providers'

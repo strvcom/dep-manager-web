@@ -1,43 +1,36 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { Category } from '../../config/types'
 import ToolBar from '../../components/ToolBar'
 import Anchor from '../../components/Anchor'
 import { Wrapper, Content, Sidebar, Input } from './styled'
-import DependenciesTable from './DependenciesTable'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from '../Dashboard/RecentUpdates'
-import toBidaDepartment from '../../utils/toDepartment'
 import { Body } from '../../components/Typography'
 import gql from 'graphql-tag'
-import { useQuery } from '../../utils/apollo-hooks'
+import { useQuery } from '../../hooks/apollo-hooks'
 import {
   ProjectDetailsData,
-  ProjectDetailsDataVariables
+  ProjectDetailsDataVariables,
+  ProjectDetailsData_project_BidaNodeProject
 } from './__generated-types/ProjectDetailsData'
 import Loading from '../../components/Loading'
+import NodeProjectDependenciesTable from '../../containers/NodeProjectDependenciesTable'
+import { BidaDepartment } from '../../data/__generated-types'
+import useFirstDayOfMonth from '../../hooks/firstDayOfMonth'
 
-export type ProjectDetailsProps = RouteComponentProps<{
-  department: string
-  category: Category
-  id: string
-}>
+export interface NodeProjectDetailsProps
+  extends RouteComponentProps<{ id: string }> {
+  department: BidaDepartment
+}
 
-function ProjectDetails (props: ProjectDetailsProps) {
-  const department = toBidaDepartment(props.match!.params.department)
-  const now = new Date()
-  const firstDayOfMonth = React.useMemo(
-    () => new Date(now.getFullYear(), now.getMonth(), 1),
-    [now.getFullYear(), now.getMonth()]
-  )
+function ProjectDetails (props: NodeProjectDetailsProps) {
   const { data, loading } = ProjectDetails.useData({
-    department,
-    from: firstDayOfMonth,
+    department: props.department,
+    from: useFirstDayOfMonth(),
     id: props.match!.params.id
   })
-  const { project } = data
+  const project = data.project as ProjectDetailsData_project_BidaNodeProject
   if (loading) return <Loading />
-  if (project.__typename !== 'BidaNodeProject') return null
   return (
     <React.Fragment>
       <ToolBar
@@ -54,9 +47,9 @@ function ProjectDetails (props: ProjectDetailsProps) {
           <div>
             <Input placeholder='Search for libraries' />
           </div>
-          <DependenciesTable
-            baseUrl={`/${props.match!.params.department}/${Category.LIBRARIES}`}
+          <NodeProjectDependenciesTable
             dependencies={project.dependencies}
+            department={props.department}
           />
         </Content>
         <Sidebar>

@@ -10,11 +10,13 @@ import { ReactComponent as Logo } from '../assets/logo.svg'
 import { ThemeProvider } from '../styles/styled'
 import lightTheme from '../styles/themes/light'
 import ErrorBoundary from 'react-error-boundary'
-import usePromise from '../utils/promise-hook'
+import usePromise from '../hooks/promise-hook'
 import { runInitializers } from '../utils/apollo-utils'
 import projectsInitializers from '../config/initializers/projectsInitializers'
 import toBidaDepartment from '../utils/toDepartment'
 import { Category } from '../config/types'
+import BackendProjectDetails from './BackendProjectDetails'
+import FrontendProjectDetails from './FrontendProjectDetails'
 
 export interface InitializeDataProps
   extends RouteComponentProps<{ department: string; category: Category }> {
@@ -33,10 +35,6 @@ const InitializeData = React.memo((props: InitializeDataProps) => {
 
 const Dashboard = React.lazy(() =>
   import(/* webpackChunkName: 'Dashboard' */ './Dashboard')
-)
-
-const ProjectDetails = React.lazy(() =>
-  import(/* webpackChunkName: 'ProjectDetails' */ './ProjectDetails')
 )
 
 // const LibrariesDetails = React.lazy(() =>
@@ -60,8 +58,12 @@ const PrivatePage = React.memo(() => (
               <InitializeData {...props}>
                 <Switch>
                   <Route
-                    path={routes.projectDetails}
-                    component={ProjectDetails}
+                    path={routes.backendProjectDetails}
+                    component={BackendProjectDetails}
+                  />
+                  <Route
+                    path={routes.frontendProjectDetails}
+                    component={FrontendProjectDetails}
                   />
                   {/* <Route path={routes.librariesDetails} component={LibrariesDetails} /> */}
                   <Route path={routes.dashboard} component={Dashboard} />
