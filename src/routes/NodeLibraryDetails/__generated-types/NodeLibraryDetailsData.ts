@@ -1,36 +1,37 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { BidaDepartment } from './../../../../data/__generated-types'
+import { BidaDepartment } from './../../../data/__generated-types'
 
 // ====================================================
-// GraphQL query operation: LibraryRoot
+// GraphQL query operation: NodeLibraryDetailsData
 // ====================================================
 
-export interface LibraryRoot_library_dependents {
+export interface NodeLibraryDetailsData_library_dependents {
   __typename: 'BidaNodeLibraryDependent'
   id: string
   version: string
   name: string
 }
 
-export interface LibraryRoot_library {
+export interface NodeLibraryDetailsData_library {
   __typename: 'BidaNodeLibrary'
   id: string
-  date: string
   name: string
   version: string
-  dependents: LibraryRoot_library_dependents[]
+  dependents: NodeLibraryDetailsData_library_dependents[]
+  outdatedDependentsCount: number
+  totalDependentsCount: number
 }
 
-export interface LibraryRoot {
+export interface NodeLibraryDetailsData {
   /**
    * Lookup a single library by it's id and department
    */
-  library: LibraryRoot_library
+  library: NodeLibraryDetailsData_library
 }
 
-export interface LibraryRootVariables {
+export interface NodeLibraryDetailsDataVariables {
   id: string
   department: BidaDepartment
 }

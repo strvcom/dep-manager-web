@@ -71,7 +71,7 @@ function createDependentsMap (projects: NodeProjectDependencies[]) {
       dependents.push({
         __typename: 'BidaNodeLibraryDependent',
         id: `${id}:${dependency.name}`,
-        name: dependency.name || name,
+        name,
         version: dependency.version
       })
     })

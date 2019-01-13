@@ -23,11 +23,11 @@ export interface NodeProjectDetailsProps
   department: BidaDepartment
 }
 
-function ProjectDetails (props: NodeProjectDetailsProps) {
-  const { data, loading } = ProjectDetails.useData({
+function NodeProjectDetails (props: NodeProjectDetailsProps) {
+  const { data, loading } = NodeProjectDetails.useData({
     department: props.department,
     from: useFirstDayOfMonth(),
-    id: props.match!.params.id
+    id: decodeURIComponent(props.match!.params.id)
   })
   const project = data.project as ProjectDetailsData_project_BidaNodeProject
   if (loading) return <Loading />
@@ -66,7 +66,7 @@ function ProjectDetails (props: NodeProjectDetailsProps) {
   )
 }
 
-ProjectDetails.DATA_QUERY = gql`
+NodeProjectDetails.DATA_QUERY = gql`
   query ProjectDetailsData(
     $department: BidaDepartment!
     $from: Date!
@@ -106,13 +106,13 @@ ProjectDetails.DATA_QUERY = gql`
     }
   }
 `
-ProjectDetails.useData = (variables: ProjectDetailsDataVariables) =>
+NodeProjectDetails.useData = (variables: ProjectDetailsDataVariables) =>
   useQuery<ProjectDetailsData, ProjectDetailsDataVariables>(
-    ProjectDetails.DATA_QUERY,
+    NodeProjectDetails.DATA_QUERY,
     {
       variables
     },
     [variables.department, variables.id, variables.from]
   )
 
-export default React.memo(ProjectDetails)
+export default React.memo(NodeProjectDetails)

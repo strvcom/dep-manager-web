@@ -7,17 +7,39 @@ import {
   LibraryRoot_library
 } from './__generated-types/LibraryRoot'
 
-gql`
-  query LibraryRoot($id: String!, $department: BidaDepartment!) {
-    library(id: $id, department: $department) {
-      id
+const FRAGMENT = gql`
+  fragment QueryLibrary on BidaNodeLibrary {
+    id
+    __typename
+    date
+    name
+    ... on BidaNodeLibrary {
+      version
+      dependents {
+        id
+        version
+        name
+      }
     }
   }
 `
+gql`
+  query LibraryRoot($id: String!, $department: BidaDepartment!) {
+    library(id: $id, department: $department) {
+      ...QueryLibrary
+    }
+  }
+  ${FRAGMENT}
+`
 
 export default createResolver<LibraryRoot, LibraryRootVariables>(
-  ({ variables: { department, id }, getCacheKey }) =>
-    getCacheKey({ __typename: toTypename(department), id })
+  ({ variables, getCacheKey, cache }) => {
+    const { department, id } = variables
+    return cache.readFragment({
+      fragment: FRAGMENT,
+      id: getCacheKey({ __typename: toTypename(department), id })
+    })
+  }
 )
 
 function toTypename (

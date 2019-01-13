@@ -21,7 +21,7 @@ const anchorRowRenderer = (
       className={className}
       key={key}
       role='row'
-      to={`${baseUrL}/${to}`}
+      to={`${baseUrL}/${encodeURIComponent(to)}`}
       style={style}
     >
       {columns}
