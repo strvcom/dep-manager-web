@@ -1,16 +1,24 @@
 import React from 'react'
 import { Items, ItemLink, TitleContainer, UpdatedTime } from './widget-styled'
-import { LibrariesQuery_libraries } from '../../data/Library/__generated-types/LibrariesQuery'
 import WidgetContainer, {
   WidgetContainerProps,
   WidgetTitle
 } from '../../components/Charts/Container'
+import gql from 'graphql-tag'
+import { RecentUpdatesLibrariesItem } from './__generated-types/RecentUpdatesLibrariesItem'
+
+gql`
+  fragment RecentUpdatesLibrariesItem on BidaNodeLibrary {
+    id
+    name
+    version
+    date
+  }
+`
 
 export interface RecentUpdatesProps
   extends Pick<WidgetContainerProps, 'width'> {
-  libraries: Array<
-    Pick<LibrariesQuery_libraries, 'id' | 'name' | 'version' | 'date'>
-  >
+  libraries: RecentUpdatesLibrariesItem[]
 }
 
 const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
@@ -24,9 +32,11 @@ const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
               <span>{lib.name}</span>
               <span>{lib.version}</span>
             </TitleContainer>
-            <UpdatedTime>
-              {dateFormatter.format(new Date(lib.date))}
-            </UpdatedTime>
+            {lib.date && (
+              <UpdatedTime>
+                {dateFormatter.format(new Date(lib.date))}
+              </UpdatedTime>
+            )}
           </ItemLink>
         ))}
       </Items>

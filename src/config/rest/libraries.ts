@@ -1,8 +1,8 @@
 import { Resolver } from 'graphql-anywhere'
-import { Department } from '../../data/__generated-types'
+import { BidaDepartment } from '../../data/__generated-types'
 
 interface Variables {
-  department: Department
+  department: BidaDepartment
 }
 // type Node = LoadDataQuery_organization_repositories_nodes
 
@@ -14,7 +14,9 @@ const libraries: Resolver = (
   info
 ) => {
   console.log(rootValue)
-  if (!rootValue.organization || !rootValue.organization.repositories.nodes) { return null }
+  if (!rootValue.organization || !rootValue.organization.repositories.nodes) {
+    return null
+  }
   // const nodes = rootValue.organization.repositories.nodes as Node[]
   return []
 }

@@ -5,16 +5,14 @@
 // START Enums and Input Objects
 //= =============================================================
 
-export enum Department {
+/**
+ * Enumerator that indicates types of projects this application acknowledges
+ */
+export enum BidaDepartment {
   ANDROID = 'ANDROID',
   BACKEND = 'BACKEND',
   FRONTEND = 'FRONTEND',
   IOS = 'IOS'
-}
-
-export interface RangeInput {
-  from?: any | null
-  to?: any | null
 }
 
 //= =============================================================

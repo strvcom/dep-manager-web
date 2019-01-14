@@ -6,11 +6,17 @@
 // ====================================================
 
 export interface ChangeToken_changeToken {
-  __typename: 'Authentication'
+  __typename: 'BidaAuthentication'
+  /**
+   * The Netlify token
+   */
   token: string | null
 }
 
 export interface ChangeToken {
+  /**
+   * Changes the authentication token
+   */
   changeToken: ChangeToken_changeToken
 }
 

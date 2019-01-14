@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '../../utils/apollo-hooks'
+import { useQuery, useMutation } from '../../hooks/apollo-hooks'
 import { AUTH_QUERY, CHANGE_TOKEN } from './queries'
 import { useCallback } from 'react'
 import Netlify from 'netlify-auth-providers'
@@ -20,8 +20,10 @@ interface NetlifyResponse {
 }
 
 export function useAuth () {
-  const result = useQuery<AuthQuery>(AUTH_QUERY)
-  return result.data.auth
+  const {
+    data: { authentication }
+  } = useQuery<AuthQuery>(AUTH_QUERY)
+  return authentication
 }
 
 export function useAuthenticator () {
