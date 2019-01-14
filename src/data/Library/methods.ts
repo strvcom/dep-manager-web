@@ -1,77 +1,77 @@
-import { defaultTo, path, compose } from 'ramda'
-import { Department } from '../__generated-types'
-import { fetchPackages } from '../../utils/npms'
-import {
-  NodeLibrary,
-  NodeLibrary_dependents
-} from './__generated-types/NodeLibrary'
-import { Omit } from 'utility-types'
-import {
-  RepositoriesQuery_organization_repositories_nodes,
-  RepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies
-} from '../Repository/__generated-types/RepositoriesQuery'
+import { BidaDepartment } from '../__generated-types'
+import { fetchPackages } from '../npms'
 import { License } from '../../config/types'
+import { getNodeProjectsDependencies } from '../Projects'
+import { NodeProjectDependencies } from '../Projects/__generated-types/NodeProjectDependencies'
+import gql from 'graphql-tag'
+import { Dependent } from './__generated-types/Dependent'
+import { BidaNodeLibrary } from './__generated-types/BidaNodeLibrary'
 
-export function fetchLibraries (
-  department: Department,
-  repositories: RepositoriesQuery_organization_repositories_nodes[]
-) {
-  if (!repositories.length) return []
+gql`
+  fragment BidaNodeLibrary on BidaNodeLibrary {
+    __typename
+    id
+    license
+    date
+    name
+    version
+    dependents {
+      ...Dependent
+    }
+  }
+  fragment Dependent on BidaNodeLibraryDependent {
+    __typename
+    id
+    name
+    version
+  }
+`
+
+export async function fetchLibraries (department: BidaDepartment) {
   switch (department) {
-    case Department.FRONTEND:
-      return fetchFrontendLibraries(repositories)
+    case BidaDepartment.FRONTEND:
+      return fetchFrontendLibraries()
     default:
       return []
   }
 }
 
-type PartialNodeLibrary = Omit<
-  NodeLibrary,
-  'alertedDependents' | 'outdatedDependents'
->
-
-async function fetchFrontendLibraries (
-  repositories: RepositoriesQuery_organization_repositories_nodes[]
-) {
-  const dependentsMap = createDependentsMap(repositories)
+async function fetchFrontendLibraries () {
+  const dependentsMap = createDependentsMap(
+    await getNodeProjectsDependencies(BidaDepartment.FRONTEND)
+  )
   const packages = await fetchPackages(Array.from(dependentsMap.keys()))
-  return Object.values(packages).map<PartialNodeLibrary>(
-    ({ collected: { metadata } }) => {
-      const dependents = dependentsMap.get(metadata.name) || []
+  const data = Object.values(packages).map<BidaNodeLibrary>(
+    ({
+      collected: {
+        metadata: { date, license, name, version }
+      }
+    }) => {
+      const dependents = dependentsMap.get(name) || []
       return {
-        id: metadata.name,
-        license: metadata.license || null,
-        ...metadata,
+        id: name,
         dependents,
-        totalDependents: dependents.length,
-        __typename: 'NodeLibrary'
+        license: license || null,
+        date,
+        name,
+        version,
+        __typename: 'BidaNodeLibrary'
       }
     }
   )
+  return data
 }
 
-type Dependencies = RepositoriesQuery_organization_repositories_nodes_object_Blob_package_dependencies[]
-const extractRepositoryDependencies = compose<
-RepositoriesQuery_organization_repositories_nodes,
-Dependencies | undefined,
-Dependencies
->(
-  defaultTo([]),
-  path(['object', 'package', 'dependencies'])
-)
-
-function createDependentsMap (
-  repositories: RepositoriesQuery_organization_repositories_nodes[]
-) {
-  const map = new Map<string, NodeLibrary_dependents[]>()
-  repositories.forEach(repository => {
-    const dependencies = extractRepositoryDependencies(repository)
+function createDependentsMap (projects: NodeProjectDependencies[]) {
+  const map = new Map<string, Dependent[]>()
+  projects.forEach(({ dependencies, id, name, __typename }) => {
+    if (!Array.isArray(dependencies)) return
     dependencies.forEach(dependency => {
       const dependents = mapGet(map, dependency.name, [])
       dependents.push({
-        __typename: 'NodeLibraryDependent',
-        id: `${repository.id}:${dependency.name}`,
-        name: repository.name,
+        __typename: 'BidaNodeLibraryDependent',
+        id: `${id}:${dependency.name}`,
+        name,
         version: dependency.version
       })
     })

@@ -5,11 +5,17 @@
 // GraphQL query operation: AuthQuery
 // ====================================================
 
-export interface AuthQuery_auth {
-  __typename: 'Authentication'
+export interface AuthQuery_authentication {
+  __typename: 'BidaAuthentication'
+  /**
+   * The Netlify token
+   */
   token: string | null
 }
 
 export interface AuthQuery {
-  auth: AuthQuery_auth
+  /**
+   * Lookup for a singleton that represents the authentication state of the client
+   */
+  authentication: AuthQuery_authentication
 }

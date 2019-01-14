@@ -1,9 +1,11 @@
 import libraries from './libraries'
 import library from './library'
-import repository from './repository'
+import project from './project'
+import projects from './projects'
 
 export default {
   libraries,
+  projects,
   library,
-  repository
+  project
 }

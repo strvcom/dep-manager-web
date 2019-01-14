@@ -1,91 +1,86 @@
-import {
-  LibrariesQueryVariables,
-  LibrariesQuery,
-  LibrariesQuery_libraries
-} from '../../../data/Library/__generated-types/LibrariesQuery'
-import {
-  fetchLibraries,
-  LIBRARIES_QUERY,
-  NODE_LIBRARY_FRAGMENT
-} from '../../../data/Library'
-import { Department, RangeInput } from '../../../data/__generated-types'
-import { getRepositories, REPOSITORY_FRAGMENT } from '../../../data/Repository'
-import {
-  Repository,
-  Repository_object_Blob_package_dependencies
-} from '../../../data/Repository/__generated-types/Repository'
-import { identity, defaultTo, compose, path } from 'ramda'
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { NodeLibrary } from '../../../data/Library/__generated-types/NodeLibrary'
+import { createResolver } from '../../../utils/apollo-utils'
+import gql from 'graphql-tag'
+import { LibrariesQueryVariables } from './__generated-types/LibrariesQuery'
+import { Nodes } from './__generated-types/Nodes'
+import { ApolloCache } from 'apollo-cache'
+import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { BidaDepartment } from '../../../data/__generated-types'
 
-export default async (
-  _: any,
-  {
-    department,
-    range,
-    repository
-  }: { department: Department; range?: RangeInput; repository?: string },
-  { cache }: { cache: InMemoryCache }
-) => {
-  if (!range && !repository) {
-    return fetchLibraries(department, await getRepositories())
+gql`
+  query LibrariesQuery(
+    $department: BidaDepartment!
+    $from: Date
+    $to: Date
+    $projectId: String
+  ) {
+    libraries(
+      department: $department
+      from: $from
+      to: $to
+      projectId: $projectId
+    ) {
+      ...QueryBidaLibraryCollection
+    }
   }
-  return (repository
-    ? getLibrariesByRepository(cache, repository)
-    : getLibraries(department)
-  ).then(librariesRangeFilter(range))
-}
-
-const librariesRangeFilter = (range?: RangeInput) =>
-  range
-    ? (libraries: LibrariesQuery_libraries[]) =>
-      libraries.filter(lib => {
-        const libDate = new Date(lib.date)
-        return (
-          libDate >= (range.from || 0) &&
-            libDate <= (range.to || Number.MAX_SAFE_INTEGER)
-        )
-      })
-    : identity
-
-type Dependencies = Repository_object_Blob_package_dependencies[]
-const extractRepositoryDependencies = compose<
-Repository,
-Dependencies | undefined,
-Dependencies
->(
-  defaultTo([]),
-  path(['object', 'package', 'dependencies'])
+  fragment QueryBidaLibraryCollection on BidaLibraryCollection {
+    id
+    from
+    to
+    projectId
+    department
+  }
+`
+export default createResolver<{}, LibrariesQueryVariables>(
+  ({ variables, root, cache, getCacheKey }) => {
+    if (variables.from || variables.to || variables.projectId) {
+      return {
+        __typename: 'BidaLibraryCollection',
+        ...variables,
+        nodes: getAllLibraryNodes(cache, variables.department).filter(
+          library => new Date(library.date) >= (variables.from || 0)
+        ),
+        id: createId(variables)
+      }
+    }
+    return null
+  }
 )
 
-const getLibraries = async (department: Department) => {
-  const { default: client } = await import('../../apolloClient')
-  const {
-    data: { libraries }
-  } = await client.query<LibrariesQuery, LibrariesQueryVariables>({
-    query: LIBRARIES_QUERY,
-    variables: { department }
+const getAllLibraryNodes = (
+  cache: ApolloCache<NormalizedCacheObject>,
+  department: BidaDepartment
+) => {
+  const result = cache.readFragment<Nodes>({
+    fragment: gql`
+      fragment Nodes on BidaLibraryCollection {
+        nodes {
+          id
+          date
+          name
+          ... on BidaNodeLibrary {
+            version
+            dependents {
+              version
+            }
+          }
+        }
+      }
+    `,
+    id: `BidaLibraryCollection:${department}`
   })
-  return libraries
+  if (!result) return []
+  return result.nodes
 }
 
-const getLibrariesByRepository = async (
-  cache: InMemoryCache,
-  repositoryId?: string
-) => {
-  const repository = cache.readFragment<Repository>({
-    fragment: REPOSITORY_FRAGMENT,
-    fragmentName: 'Repository',
-    id: `Repository:${repositoryId}`
-  })
-  if (!repository) return []
-  const dependencies = extractRepositoryDependencies(repository)
-  return dependencies.reduce<NodeLibrary[]>((acc, dep) => {
-    const library = cache.readFragment<NodeLibrary>({
-      fragment: NODE_LIBRARY_FRAGMENT,
-      id: `NodeLibrary:${dep.name}`
-    })
-    if (library) acc.push(library)
-    return acc
-  }, [])
+function createId ({
+  department,
+  projectId,
+  from,
+  to
+}: LibrariesQueryVariables) {
+  let id: string = department
+  if (projectId) id += `:${projectId}`
+  if (to) id += `:${(to as Date).valueOf()}`
+  if (from) id += `:${(from as Date).valueOf()}`
+  return id
 }
