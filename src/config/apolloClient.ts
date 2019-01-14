@@ -13,7 +13,7 @@ const client = new ApolloClient({
   resolvers,
   initializers: {
     authentication: () => ({
-      __typename: 'Authentication',
+      __typename: 'BidaAuthentication',
       token: localStorage.getItem(GITHUB_TOKEN_KEY)
     })
   }
