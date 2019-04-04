@@ -43,58 +43,44 @@ function Dashboard ({ match }: DashboardProps) {
   })
   const { projects, libraries, recentLibraries } = data
   if (loading) return <Loading />
-  const renderWidgets = React.useCallback(
-    () => (
-      <WidgetContainer>
-        <ProjectsOverviewWidget
-          total={projects.totalCount}
-          archived={projects.totalArchived}
-          width='32%'
-        />
-        <ActualityWidget
-          title='Libraries Actuality'
-          width='32%'
-          outdated={libraries.outdatedDependentsCount}
-          total={libraries.totalCount}
-        />
-        <RecentUpdates libraries={recentLibraries.nodes} width='32%' />
-      </WidgetContainer>
-    ),
-    [
-      projects.totalCount,
-      projects.totalArchived,
-      libraries.totalCount,
-      recentLibraries.nodes
-    ]
+  const renderWidgets = () => (
+    <WidgetContainer>
+      <ProjectsOverviewWidget
+        total={projects.totalCount}
+        archived={projects.totalArchived}
+        width='32%'
+      />
+      <ActualityWidget
+        title='Libraries Actuality'
+        width='32%'
+        outdated={libraries.outdatedDependentsCount}
+        total={libraries.totalCount}
+      />
+      <RecentUpdates libraries={recentLibraries.nodes} width='32%' />
+    </WidgetContainer>
   )
-  const renderLibraries = React.useCallback(
-    () => {
-      switch (department) {
-        case BidaDepartment.FRONTEND:
-          return <NodeLibrariesTable libraries={libraries.nodes} />
-        default:
-          return <LibrariesTable libraries={libraries.nodes} />
-      }
-    },
-    [department, libraries.nodes]
-  )
-  const renderProjects = React.useCallback(
-    () => {
-      switch (department) {
-        case BidaDepartment.FRONTEND:
-          return (
-            <NodeProjectsTable
-              projects={
-                projects.nodes as DashboardData_projects_nodes_BidaNodeProject[]
-              }
-            />
-          )
-        default:
-          return <LocalProjectsTable projects={projects.nodes} />
-      }
-    },
-    [department, projects.nodes]
-  )
+  const renderLibraries = () => {
+    switch (department) {
+      case BidaDepartment.FRONTEND:
+        return <NodeLibrariesTable libraries={libraries.nodes} />
+      default:
+        return <LibrariesTable libraries={libraries.nodes} />
+    }
+  }
+  const renderProjects = () => {
+    switch (department) {
+      case BidaDepartment.FRONTEND:
+        return (
+          <NodeProjectsTable
+            projects={
+              projects.nodes as DashboardData_projects_nodes_BidaNodeProject[]
+            }
+          />
+        )
+      default:
+        return <LocalProjectsTable projects={projects.nodes} />
+    }
+  }
   return (
     <React.Fragment>
       <ToolBar

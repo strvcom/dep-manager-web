@@ -24,17 +24,20 @@ export type DepartmentPageProps = RouteComponentProps<{
 
 const DepartmentPage = React.memo((props: DepartmentPageProps) => {
   const department = toBidaDepartment(props.match!.params.department)
+  const renderNodeProjectDetails = useNodeProjectDetails(department)
+  const renderNodeLibraryDetails = useNodeLibraryDetails(department)
+
   return (
     <InitializeData loading={<Loading />} department={department}>
       <Switch>
         <Route
           path={routes.nodeProjectDetails}
-          render={useNodeProjectDetails(department)}
+          render={renderNodeProjectDetails}
         />
         />
         <Route
           path={routes.nodeLibraryDetails}
-          render={useNodeLibraryDetails(department)}
+          render={renderNodeLibraryDetails}
         />
         <Route path={routes.dashboard} component={Dashboard} />
       </Switch>
