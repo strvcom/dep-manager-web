@@ -8,6 +8,7 @@
   "linterOptions": {
     "exclude": [
       "node_modules/**",
+      ".storybook/**/*",
       "./**/*.test.ts",
       "./**/*.d.ts",
       "serve-api.ts"
