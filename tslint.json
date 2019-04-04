@@ -9,6 +9,7 @@
     "exclude": [
       "node_modules/**",
       ".storybook/**/*",
+      "./**/*.stories.*",
       "./**/*.test.ts",
       "./**/*.d.ts",
       "serve-api.ts"
