@@ -1,5 +1,3 @@
-const path = require('path')
-
 const babelLoader = {
   loader: require.resolve('babel-loader'),
   options: {
@@ -7,27 +5,20 @@ const babelLoader = {
     babelrc: false,
     presets: [
       [require.resolve('@babel/preset-env'), { modules: false }],
-      require.resolve('@babel/preset-react')
-    ]
-  }
+      require.resolve('@babel/preset-react'),
+    ],
+  },
 }
 
-module.exports = (config, configType) => {
+module.exports = ({ config }) => {
   config.module.rules.push({
     test: /\.tsx?$/,
-    use: [
-      babelLoader,
-      {loader: require.resolve('awesome-typescript-loader')}
-    ]
+    use: [{ loader: require.resolve('awesome-typescript-loader') }],
   })
-  config.module.rules.push({
-    test: /\.jsx?$/,
-    use: [babelLoader]
-  })
-  config.module.rules.push({
-    test: /\.(svg|png)$/,
-    loader: 'file-loader'
-  })
+
+  config.module.rules.push({ test: /\.jsx?$/, use: [babelLoader] })
+  config.module.rules.push({ test: /\.(svg|png)$/, loader: 'file-loader' })
   config.resolve.extensions.push('.tsx', '.ts')
+
   return config
 }
