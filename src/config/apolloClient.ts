@@ -8,7 +8,6 @@ import resolvers from './resolvers'
 const client = new ApolloClient({
   link,
   cache,
-  connectToDevTools: true,
   typeDefs,
   resolvers,
   initializers: {
