@@ -17,11 +17,14 @@
     "deep-equal": "^1.0.1",
     "graphql": "^14.2.1",
     "graphql-anywhere": "^4.1.23",
+    "graphql-modules-fn": "^0.1.0-alpha8",
     "graphql-tag": "^2.10.0",
     "graphql-tools": "^4.0.4",
     "history": "^4.7.2",
     "isomorphic-fetch": "^2.2.1",
     "netlify-auth-providers": "^1.0.0-alpha5",
+    "patch-package": "^6.1.0",
+    "postinstall-postinstall": "^2.0.0",
     "prop-types": "^15.6.2",
     "ramda": "^0.25.0",
     "react": "^16.8.6",
@@ -96,7 +99,8 @@
     "codegen": "apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public",
-    "dev-api": "onchange -i -k '**/*.js' '**/*.ts' -- ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' serve-api.ts"
+    "dev-api": "onchange -i -k '**/*.js' '**/*.ts' -- ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' serve-api.ts",
+    "postinstall": "patch-package"
   },
   "browserslist": [
     ">0.2%",
