@@ -19,7 +19,7 @@ export const cache = new InMemoryCache({
 const authLink = new ApolloLink((operation, forward) => {
   const {
     authentication: { token }
-  } = cache.readQuery<AuthQuery>({ query: AUTH_QUERY })
+  }: any = cache.readQuery<AuthQuery>({ query: AUTH_QUERY })
   operation.setContext({
     headers: { authorization: token ? `bearer ${token}` : null }
   })
