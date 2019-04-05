@@ -13,16 +13,7 @@ export const GITHUB_TOKEN_KEY = 'Bida-App-Github-Token'
 export const cache = new InMemoryCache({
   fragmentMatcher: new IntrospectionFragmentMatcher({
     introspectionQueryResultData
-  }),
-  dataIdFromObject (result) {
-    if (result.__typename) {
-      return result.id !== undefined
-        ? `${result.__typename}:${result.id}`
-        : result.__typename
-    }
-    return null
-  },
-  addTypename: true
+  })
 })
 
 const authLink = new ApolloLink((operation, forward) => {
