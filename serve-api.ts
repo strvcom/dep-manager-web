@@ -6,7 +6,7 @@
 
 import { ApolloServer } from 'apollo-server'
 
-import { createSchema } from './src/api/schema/github'
+import { createSchema } from './src/api/schema'
 
 createSchema()
   .then(schema => {
