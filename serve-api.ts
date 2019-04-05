@@ -4,23 +4,19 @@
  * not be addressed here.
  */
 
-import { ApolloServer, gql } from 'apollo-server'
+import { ApolloServer } from 'apollo-server'
 
-const typeDefs = gql`
-  type Query {
-    "A simple type for getting started!"
-    hello: String
-  }
-`
+import { createSchema } from './src/api/schema/github'
 
-const resolvers = {
-  Query: {
-    hello: () => 'world'
-  }
-}
+createSchema()
+  .then(schema => {
+    const server = new ApolloServer({ schema })
 
-const server = new ApolloServer({ typeDefs, resolvers })
-
-server.listen().then(({ url }) => {
-  console.log(`API ready at ${url}`)
-})
+    return server.listen().then(({ url }) => {
+      console.log(`API ready at ${url}`)
+    })
+  })
+  .catch(err => {
+    console.error(err)
+    process.exit()
+  })
