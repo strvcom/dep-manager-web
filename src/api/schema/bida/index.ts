@@ -1,10 +1,12 @@
-import { GraphQLSchema } from 'graphql'
+import { print } from 'graphql/language'
 import gql from 'graphql-tag'
-import { bundle } from 'graphql-modules-fn'
+import { over, lensProp, mergeDeepRight } from 'ramda'
+
+import projects from './modules/projects'
 
 const core = {
   typeDefs: gql`
-    type Query {
+    extend type Query {
       bida: String!
     }
   `,
@@ -16,17 +18,21 @@ const core = {
   }
 }
 
-const modules = [core]
+const modules = [core, projects]
 
-interface BundledSchema {
-  schema: GraphQLSchema
-  context: () => any
+interface Module {
+  typeDefs: any
+  resolvers: object
 }
 
-const createSchema = async (): Promise<GraphQLSchema> => {
-  const { schema } = (await bundle(modules)) as BundledSchema
+const combineModules = (combining: Module[]) =>
+  combining.map(over(lensProp('typeDefs'), print)).reduce((acc, next) => ({
+    typeDefs: `${acc.typeDefs}\n${next.typeDefs}`,
+    resolvers: mergeDeepRight(acc.resolvers, next.resolvers)
+  }))
 
-  return schema
-}
+// we keep this promise based signature for future possibilities of
+// actual deep schema merging and isolation (namespaces).
+const createSchema = async (): Promise<any> => combineModules(modules)
 
 export { createSchema }
