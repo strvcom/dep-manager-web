@@ -9,13 +9,11 @@ import { ApolloServer } from 'apollo-server'
 import { createSchema } from './src/api/schema'
 
 createSchema()
-  .then(schema => {
-    const server = new ApolloServer({ schema })
-
-    return server.listen().then(({ url }) => {
-      console.log(`API ready at ${url}`)
-    })
-  })
+  .then(schema =>
+    new ApolloServer({ schema })
+      .listen()
+      .then(({ url }: { url: string }) => console.log(`API ready at ${url}`))
+  )
   .catch(err => {
     console.error(err)
     process.exit()
