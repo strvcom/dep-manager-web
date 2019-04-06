@@ -15,7 +15,13 @@ const typeDefs = gql`
     """
     Lookup a collection of project by department
     """
-    projects(department: BidaDepartment!): SearchResultItemConnection!
+    projects(
+      after: String
+      before: String
+      first: Int
+      last: Int
+      department: BidaDepartment!
+    ): SearchResultItemConnection
     """
     Lookup a project by department and id
     """
@@ -23,6 +29,29 @@ const typeDefs = gql`
   }
 `
 
-const resolvers = {}
+/**
+ * Resolves all projects of the provided department inside strvcom org.
+ */
+const projects = (root: any, args: any, context: any, info: any) => {
+  const { department, ...search } = args
+  const { schema, mergeInfo } = info
+
+  return mergeInfo.delegateToSchema({
+    info,
+    schema,
+    context,
+    operation: 'query',
+    fieldName: 'search',
+    args: {
+      type: 'REPOSITORY',
+      query: `topic:${department.toLowerCase()} user:strvcom`,
+      ...search
+    }
+  })
+}
+
+const resolvers = {
+  Query: { projects }
+}
 
 export default { typeDefs, resolvers }
