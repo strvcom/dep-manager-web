@@ -11,9 +11,21 @@ const typeDefs = gql`
     IOS
   }
 
+  type NPMPackage {
+    id: String!
+    name: String!
+    version: String
+    private: Boolean
+    description: String
+  }
+
+  extend type Repository {
+    npmPackage: NPMPackage
+  }
+
   extend type Query {
     """
-    Lookup a collection of project by department
+    Search projects within a department
     """
     projects(
       after: String
@@ -22,6 +34,7 @@ const typeDefs = gql`
       last: Int
       department: BidaDepartment!
     ): SearchResultItemConnection
+
     """
     Lookup a project by department and id
     """
@@ -50,8 +63,26 @@ const projects = (root: any, args: any, context: any, info: any) => {
   })
 }
 
+const npmPackage = {
+  fragment: `
+    ... on Repository {
+      npmPackageJSON: object(expression: "HEAD:package.json") {
+        ... on Blob {
+          id
+          text
+        }
+      }
+    }
+  `,
+  resolve: ({ npmPackageJSON }: any) =>
+    npmPackageJSON && npmPackageJSON.text
+      ? { id: npmPackageJSON.id, ...JSON.parse(npmPackageJSON.text) }
+      : null
+}
+
 const resolvers = {
-  Query: { projects }
+  Query: { projects },
+  Repository: { npmPackage }
 }
 
 export default { typeDefs, resolvers }
