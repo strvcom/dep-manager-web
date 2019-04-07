@@ -9,4 +9,11 @@ import { schema } from './src/api/schema'
 
 const running = ({ url }: { url: string }) => console.log(`API ready at ${url}`)
 
-new ApolloServer({ schema }).listen().then(running)
+const config = {
+  schema,
+  engine: {
+    apiKey: process.env.ENGINE_API_KEY
+  }
+}
+
+new ApolloServer(config).listen().then(running)

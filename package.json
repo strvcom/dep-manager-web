@@ -89,6 +89,9 @@
     "typescript": "^3.2.2",
     "typescript-styled-plugin": "^0.13.0"
   },
+  "resolutions": {
+    "graphql": "14.2.1"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "tsc -p tsconfig.production.json && react-scripts build",
