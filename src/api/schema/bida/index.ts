@@ -1,28 +1,13 @@
 import { print } from 'graphql/language'
-import gql from 'graphql-tag'
 import { over, lensProp, mergeDeepRight } from 'ramda'
 
 import npm from './modules/npm'
 import projects from './modules/projects'
 
-const core = {
-  typeDefs: gql`
-    extend type Query {
-      bida: String!
-    }
-  `,
-
-  resolvers: {
-    Query: {
-      bida: () => 'Hello, bida!'
-    }
-  }
-}
-
-const modules = [core, npm, projects]
+const modules = [npm, projects]
 
 interface Module {
-  typeDefs: any
+  typeDefs: string
   resolvers: object
 }
 
