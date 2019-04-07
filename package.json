@@ -11,6 +11,7 @@
     "apollo-link-context": "^1.0.17",
     "apollo-link-error": "^1.1.10",
     "apollo-link-http": "^1.5.14",
+    "apollo-link-schema": "^1.2.2",
     "apollo-link-state": "^0.4.2",
     "apollo-utilities": "^1.2.1",
     "debug": "^4.1.1",
