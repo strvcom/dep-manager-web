@@ -3,6 +3,7 @@ import { IResolvers } from 'graphql-tools'
 import { over, lensProp, mergeDeepRight } from 'ramda'
 
 import npm from './modules/npm'
+import npms from './modules/npms'
 import projects from './modules/projects'
 
 interface Module {
@@ -10,7 +11,7 @@ interface Module {
   resolvers: IResolvers
 }
 
-const modules: Module[] = [npm, projects]
+const modules: Module[] = [npm, npms, projects]
 
 /**
  * Combines two GraphQL modules (typeDefs + resolvers) into one.
