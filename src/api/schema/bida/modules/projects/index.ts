@@ -23,6 +23,7 @@ const typeDefs = gql`
       before: String
       first: Int
       last: Int
+      archived: Boolean
       department: BidaDepartment!
     ): SearchResultItemConnection
 
@@ -38,11 +39,17 @@ const Query = {
    * Resolves all projects of the provided department inside strvcom org.
    */
   projects: (root: any, args: any, context: any, info: any) => {
-    const { department, ...search } = args
+    const { department, archived, ...search } = args
     const { schema, mergeInfo } = info
 
     const type = 'REPOSITORY'
-    const query = `topic:${department.toLowerCase()} user:strvcom`
+    const queryParts = ['user:strvcom', `topic:${department.toLowerCase()}`]
+
+    if (typeof archived !== 'undefined') {
+      queryParts.push(`archived:${archived}`)
+    }
+
+    const query = queryParts.join(' ')
 
     return mergeInfo.delegateToSchema({
       info,
