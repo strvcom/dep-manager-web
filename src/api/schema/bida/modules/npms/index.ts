@@ -6,7 +6,7 @@
  */
 
 import gql from 'graphql-tag'
-import fetch from 'isomorphic-fetch'
+import { analysis } from './loaders'
 
 const typeDefs = gql`
   # type NPMSLinks {
@@ -50,24 +50,12 @@ const typeDefs = gql`
   }
 
   extend type NPMPackage {
-    analisys: NPMSAnalysis
+    analysis: NPMSAnalysis
   }
 `
 
 const NPMPackage = {
-  analisys: async ({ name }: any) => {
-    const response = await fetch('https://api.npms.io/v2/package/mget', {
-      method: 'POST',
-      body: JSON.stringify([name]),
-      headers: { 'Content-Type': 'application/json' }
-    })
-
-    if (!response.ok) throw new Error(response.status.toString())
-
-    const analisys = await response.json()
-
-    return analisys[name]
-  }
+  analysis: ({ name }: any) => analysis.load(name)
 }
 
 const resolvers = { NPMPackage }
