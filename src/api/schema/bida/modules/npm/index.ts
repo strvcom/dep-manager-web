@@ -1,18 +1,43 @@
 import gql from 'graphql-tag'
+import { path, pipe, propOr, toPairs, zipObj, map, identity, when } from 'ramda'
 
 const typeDefs = gql`
+  type NPMDependency {
+    id: String!
+    package: NPMPackage!
+  }
+
   type NPMPackage {
     id: String!
     name: String!
     version: String
     private: Boolean
     description: String
+    dependencies: [NPMDependency]!
   }
 
   extend type Repository {
     npmPackage: NPMPackage
   }
 `
+
+const packageIDResolver = ({ id, name, version }: any) =>
+  id || `${name}@${version}`
+
+const NPMPackage = {
+  id: packageIDResolver,
+  dependencies: pipe(
+    propOr({}, 'dependencies'),
+    // @ts-ignore
+    toPairs,
+    map(zipObj(['name', 'version']))
+  )
+}
+
+const NPMDependency = {
+  id: packageIDResolver,
+  package: identity
+}
 
 const Repository = {
   /**
@@ -36,6 +61,6 @@ const Repository = {
   }
 }
 
-const resolvers = { Repository }
+const resolvers = { NPMPackage, NPMDependency, Repository }
 
 export default { typeDefs, resolvers }
