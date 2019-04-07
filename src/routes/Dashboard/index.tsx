@@ -1,179 +1,78 @@
-import React from 'react'
-import { Switch, Route, RouteComponentProps } from 'react-router-dom'
-import Loading from '../../components/Loading'
-import {
-  TableContainer,
-  StyledDashboard,
-  WidgetContainer,
-  Input
-} from './styled'
-import * as routes from '../routes'
-import { Category } from '../../config/types'
-import ProjectsOverviewWidget from './ProjectsOverviewWidget'
-import ActualityWidget from '../../containers/LibrariesActualityWidget'
-import RecentUpdates from './RecentUpdates'
-import ToolBar, { ToolBarLink } from '../../components/ToolBar'
-import toBidaDepartment from '../../utils/toDepartment'
-import { BidaDepartment } from '../../data/__generated-types'
-import NodeProjectsTable from '../../containers/FrontendProjectsTable'
-import LocalProjectsTable from '../../containers/LocalProjectsTable'
-import NodeLibrariesTable from '../../containers/NodeLibrariesTable'
-import LibrariesTable from '../../containers/LibrariesTable'
-import ErrorBoundary from 'react-error-boundary'
+import React, { Fragment, Suspense, memo } from 'react'
+import { Route, RouteComponentProps } from 'react-router-dom'
 import gql from 'graphql-tag'
-import { useQuery } from '../../hooks/apollo-hooks'
-import {
-  DashboardData,
-  DashboardDataVariables,
-  DashboardData_projects_nodes_BidaNodeProject
-} from './__generated-types/DashboardData'
-import { ApolloQueryResult } from 'apollo-client'
-import useFirstDayOfMonth from '../../hooks/firstDayOfMonth'
+import ErrorBoundary from 'react-error-boundary'
 
-export type DashboardProps = RouteComponentProps<{
-  department: string
-  category: Category
-}>
+import * as routes from '../routes'
+import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
+import Loading from '../../components/Loading'
 
-function Dashboard ({ match }: DashboardProps) {
-  const department = toBidaDepartment(match!.params.department)
-  const { data, loading } = Dashboard.useDashboardData({
-    department,
-    from: useFirstDayOfMonth()
-  })
-  const { projects, libraries, recentLibraries } = data
-  if (loading) return <Loading />
-  const renderWidgets = () => (
-    <WidgetContainer>
-      <ProjectsOverviewWidget
-        total={projects.totalCount}
-        archived={projects.totalArchived}
-        width='32%'
-      />
-      <ActualityWidget
-        title='Libraries Actuality'
-        width='32%'
-        outdated={libraries.outdatedDependentsCount}
-        total={libraries.totalCount}
-      />
-      <RecentUpdates libraries={recentLibraries.nodes} width='32%' />
-    </WidgetContainer>
-  )
-  const renderLibraries = () => {
-    switch (department) {
-      case BidaDepartment.FRONTEND:
-        return <NodeLibrariesTable libraries={libraries.nodes} />
-      default:
-        return <LibrariesTable libraries={libraries.nodes} />
-    }
-  }
-  const renderProjects = () => {
-    switch (department) {
-      case BidaDepartment.FRONTEND:
-        return (
-          <NodeProjectsTable
-            projects={
-              projects.nodes as DashboardData_projects_nodes_BidaNodeProject[]
-            }
-          />
-        )
-      default:
-        return <LocalProjectsTable projects={projects.nodes} />
-    }
-  }
-  return (
-    <React.Fragment>
-      <ToolBar
-        title='Dashboard'
-        links={
-          <React.Fragment>
-            <ToolBarLink to={`/${match!.params.department}/libraries`}>
-              Libraries
-            </ToolBarLink>
-            <ToolBarLink to={`/${match!.params.department}/projects`}>
-              Projects
-            </ToolBarLink>
-          </React.Fragment>
-        }
-        children={<Input placeholder={`Search ${match!.params.category}`} />}
-      />
-      <StyledDashboard>
-        <React.Suspense fallback={<Loading />}>
-          <TableContainer>
-            <ErrorBoundary onError={() => console.log('widgets')}>
-              <Route exact path={routes.dashboard} render={renderWidgets} />
-            </ErrorBoundary>
-            <ErrorBoundary onError={() => console.log('table')}>
-              <Switch>
-                <Route exact path={routes.projects} render={renderProjects} />
-                <Route exact path={routes.libraries} render={renderLibraries} />
-              </Switch>
-            </ErrorBoundary>
-          </TableContainer>
-        </React.Suspense>
-      </StyledDashboard>
-    </React.Fragment>
-  )
-}
+import { TableContainer, StyledDashboard } from './styled'
+import DashboardToolBar from './DashboardToolBar'
+import Widgets from './Widgets'
 
-Dashboard.DATA_QUERY = gql`
-  query DashboardData($department: BidaDepartment!, $from: Date!) {
-    projects(department: $department) @client {
-      id
-      totalCount
-      totalArchived
-      nodes {
-        id
-        name
-        url
-        pushedAt
-        ... on BidaNodeProject {
-          outdatedLibraries
-          alertedLibraries
+const DASHBOARD_QUERY = gql`
+  query DASHBOARD_QUERY($department: BidaDepartment!) {
+    projects(first: 10, department: $department) {
+      total: repositoryCount
+      edges {
+        cursor
+        node {
+          ... on Repository {
+            name
+          }
         }
       }
     }
-    libraries(department: $department) @client {
-      id
-      totalCount
-      outdatedDependentsCount
-      nodes {
-        id
-        name
-        date
-        ... on BidaNodeLibrary {
-          totalDependentsCount
-          outdatedDependentsCount
-          alertedDependentsCount
-          license
-          version
-        }
-      }
-    }
-    recentLibraries: libraries(department: $department, from: $from) @client {
-      id
-      nodes {
-        id
-        name
-        date
-        ... on BidaNodeLibrary {
-          version
-        }
-      }
+
+    archived: projects(department: $department, archived: true) {
+      total: repositoryCount
     }
   }
 `
 
-Dashboard.useDashboardData = (
-  variables: DashboardDataVariables
-): ApolloQueryResult<DashboardData> => {
-  return useQuery<DashboardData, DashboardDataVariables>(
-    Dashboard.DATA_QUERY,
-    {
-      variables
-    },
-    [variables.department]
+type DashboardProps = RouteComponentProps<{
+  department: string
+  category: string
+}>
+
+const Dashboard = ({ match }: DashboardProps) => {
+  const { department, category } = match!.params
+
+  return (
+    <AuthenticatedQuery
+      query={DASHBOARD_QUERY}
+      variables={{ department: department.toUpperCase() }}
+    >
+      {({ data, loading, error }: any) => {
+        if (error) throw error
+
+        return (
+          <Fragment>
+            <DashboardToolBar department={department} category={category} />
+
+            <StyledDashboard>
+              {loading ? (
+                <Loading />
+              ) : (
+                <Suspense fallback={<Loading />}>
+                  <ErrorBoundary>
+                    <TableContainer>
+                      <Route
+                        exact
+                        path={routes.dashboard}
+                        render={() => <Widgets {...data} />}
+                      />
+                    </TableContainer>
+                  </ErrorBoundary>
+                </Suspense>
+              )}
+            </StyledDashboard>
+          </Fragment>
+        )
+      }}
+    </AuthenticatedQuery>
   )
 }
 
-export default React.memo(Dashboard)
+export default memo(Dashboard)
