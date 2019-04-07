@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "preserveConstEnums": true,
     "sourceMap": true,
+    "noUnusedLocals": false,
+    "preserveConstEnums": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "suppressImplicitAnyIndexErrors": true,
@@ -9,17 +10,13 @@
     "module": "esnext",
     "target": "esnext",
     "jsx": "preserve",
-    "lib": [
-      "es2017",
-      "dom"
-    ],
+    "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "strictFunctionTypes": true,
     "allowUnreachableCode": true,
     "allowUnusedLabels": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "noUnusedLocals": true,
     "strict": true,
     "resolveJsonModule": true,
     "pretty": true,
@@ -27,24 +24,14 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "noEmit": true,
-    "typeRoots": [
-      "node_module/@types",
-      "types"
-    ],
+    "typeRoots": ["node_module/@types", "types"],
     "plugins": [
       {
         "name": "typescript-styled-plugin"
       }
     ],
-    "rootDirs": [
-      "src",
-      "stories"
-    ]
+    "rootDirs": ["src", "stories"]
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
