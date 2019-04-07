@@ -1,9 +1,7 @@
 import { ApolloLink } from 'apollo-link'
-import { HttpLink } from 'apollo-link-http'
-import fetch from 'isomorphic-fetch'
 
-import { debug } from '../../debug'
-import { GITHUB_OAUTH_TOKEN } from '../../../config/env'
+import { debug } from '../../../debug'
+import { GITHUB_OAUTH_TOKEN } from '../../../../config/env'
 
 /**
  * Fixed authorization method, used only for local development of the API.
@@ -18,24 +16,17 @@ if (authorization) {
   debug('Using fixed authentication token %o', authorization)
 }
 
-const httpLink = new HttpLink({
-  uri: 'https://api.github.com/graphql',
-  fetch,
-  headers: { authorization }
-})
-
-const authLink = new ApolloLink((operation, forward) => {
+const link = new ApolloLink((operation, forward) => {
   const { graphqlContext: { token } = { token: null } } = operation.getContext()
 
-  if (token) {
-    operation.setContext({
-      headers: { authorization: `bearer ${token}` }
-    })
-  }
+  operation.setContext({
+    headers: {
+      // either use token, or global authentication method.
+      authorization: token ? `bearer ${token}` : authorization
+    }
+  })
 
   return forward!(operation)
 })
-
-const link = ApolloLink.from([authLink, httpLink])
 
 export { link }
