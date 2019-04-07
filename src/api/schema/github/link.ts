@@ -24,8 +24,17 @@ const httpLink = new HttpLink({
   headers: { authorization }
 })
 
-// @TODO: implement.
-const authLink = new ApolloLink((operation, forward) => forward!(operation))
+const authLink = new ApolloLink((operation, forward) => {
+  const { graphqlContext: { token } = { token: null } } = operation.getContext()
+
+  if (token) {
+    operation.setContext({
+      headers: { authorization: `bearer ${token}` }
+    })
+  }
+
+  return forward!(operation)
+})
 
 const link = ApolloLink.from([authLink, httpLink])
 
