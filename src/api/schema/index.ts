@@ -1,16 +1,13 @@
 import { mergeSchemas } from 'graphql-tools'
 
-import { createSchema as createGitHubSchema } from './github'
-import { createSchema as createBidaSchema } from './bida'
+import { schema as gitHubSchema } from './github'
+import { schema as bidaSchema } from './bida'
 
-/**
- * Creates the joined schema based on all the project's APIs.
- */
-const createSchema = async (): Promise<any> => {
-  const gitHubSchema = await createGitHubSchema()
-  const { typeDefs, resolvers } = await createBidaSchema()
+const { typeDefs, resolvers } = bidaSchema
 
-  return mergeSchemas({ schemas: [gitHubSchema, typeDefs], resolvers })
-}
+const schema = mergeSchemas({
+  schemas: [gitHubSchema, typeDefs],
+  resolvers
+})
 
-export { createSchema }
+export { schema }

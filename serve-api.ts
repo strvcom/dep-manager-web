@@ -5,16 +5,8 @@
  */
 
 import { ApolloServer } from 'apollo-server'
+import { schema } from './src/api/schema'
 
-import { createSchema } from './src/api/schema'
+const running = ({ url }: { url: string }) => console.log(`API ready at ${url}`)
 
-createSchema()
-  .then(schema =>
-    new ApolloServer({ schema })
-      .listen()
-      .then(({ url }: { url: string }) => console.log(`API ready at ${url}`))
-  )
-  .catch(err => {
-    console.error(err)
-    process.exit()
-  })
+new ApolloServer({ schema }).listen().then(running)

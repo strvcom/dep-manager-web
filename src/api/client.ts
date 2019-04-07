@@ -2,11 +2,9 @@ import { ApolloClient } from 'apollo-client'
 import { SchemaLink } from 'apollo-link-schema'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 
-import { createSchema } from './schema'
+import { schema } from './schema'
 
 const createClient = async () => {
-  const schema = await createSchema()
-
   // pass apollo-client context forward to schema link.
   const context = (operation: any) => operation.getContext()
 

@@ -1,4 +1,4 @@
-import { GraphQLSchema, buildClientSchema } from 'graphql'
+import { buildClientSchema } from 'graphql'
 import { makeRemoteExecutableSchema } from 'graphql-tools'
 
 import introspection from './introspection.json'
@@ -6,15 +6,14 @@ import introspection from './introspection.json'
 import { link } from './link'
 
 // type forcing
-const schema: any = introspection
+const introspectedSchema: any = introspection
 
 /**
  * Creates a remote schema based on GitHub GraphQL API.
  */
-const createSchema = async (): Promise<GraphQLSchema> =>
-  makeRemoteExecutableSchema({
-    schema: buildClientSchema(schema),
-    link
-  })
+const schema = makeRemoteExecutableSchema({
+  schema: buildClientSchema(introspectedSchema),
+  link
+})
 
-export { createSchema }
+export { schema }
