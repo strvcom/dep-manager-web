@@ -1,13 +1,10 @@
-import { useQuery, useMutation } from '../../hooks/apollo-hooks'
-import { AUTH_QUERY, CHANGE_TOKEN } from './queries'
-import { useCallback } from 'react'
+import { writeStorage } from '@rehooks/local-storage'
+import { useQuery } from '../../hooks/apollo-hooks'
+import { AUTH_QUERY } from './queries'
 import Netlify from 'netlify-auth-providers'
 import { AuthQuery } from './__generated-types/AuthQuery'
-import {
-  ChangeToken,
-  ChangeTokenVariables
-} from './__generated-types/ChangeToken'
 import { REACT_APP_SITE_ID } from '../../config/env'
+import { GITHUB_TOKEN_KEY } from '../../config/link'
 
 const options =
   process.env.NODE_ENV === 'development' ? { site_id: REACT_APP_SITE_ID } : {}
@@ -26,19 +23,18 @@ export function useAuth () {
   return authentication
 }
 
-export function useAuthenticator () {
-  const changeAuth = useMutation<ChangeToken, ChangeTokenVariables>(
-    CHANGE_TOKEN
+const provider = 'github'
+const scope = 'read:gpg_key,read:org,read:public_key,read:repo_hook,repo,user'
+
+export const authenticate = () =>
+  authenticator.authenticate(
+    { provider, scope },
+    (err, data: NetlifyResponse) => {
+      if (err) {
+        alert('Could not authenticate. Try again later.')
+        return console.error(err)
+      }
+
+      writeStorage(GITHUB_TOKEN_KEY, data.token)
+    }
   )
-  return useCallback(
-    () =>
-      authenticator.authenticate(
-        { provider: 'github', scope: 'read:user,read:org,repo' },
-        (err, data: NetlifyResponse) => {
-          if (err) return alert(`LOGIN ERROR: ${err}`)
-          changeAuth({ variables: { token: data.token } })
-        }
-      ),
-    [changeAuth]
-  )
-}
