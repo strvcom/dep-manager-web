@@ -45,19 +45,20 @@ const Repository = {
    */
   npmPackage: {
     fragment: `
-    ... on Repository {
-      npmPackageJSON: object(expression: "HEAD:package.json") {
-        ... on Blob {
-          id
-          text
+      ... on Repository {
+        npmPackageJSON: object(expression: "HEAD:package.json") {
+          ... on Blob {
+            text
+          }
         }
       }
-    }
-  `,
-    resolve: ({ npmPackageJSON }: any) =>
-      npmPackageJSON && npmPackageJSON.text
-        ? { id: npmPackageJSON.id, ...JSON.parse(npmPackageJSON.text) }
-        : null
+    `,
+    resolve: pipe(
+      // @ts-ignore
+      path(['npmPackageJSON', 'text']),
+      // @ts-ignore
+      when(Boolean, JSON.parse)
+    )
   }
 }
 
