@@ -1,3 +1,7 @@
+/**
+ * This module holds NPM asset resolving based on GitHub blob.
+ */
+
 import gql from 'graphql-tag'
 import { path, pipe, propOr, toPairs, zipObj, map, identity, when } from 'ramda'
 
