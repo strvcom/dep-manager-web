@@ -2,6 +2,7 @@ import { print } from 'graphql/language'
 import gql from 'graphql-tag'
 import { over, lensProp, mergeDeepRight } from 'ramda'
 
+import npm from './modules/npm'
 import projects from './modules/projects'
 
 const core = {
@@ -18,7 +19,7 @@ const core = {
   }
 }
 
-const modules = [core, projects]
+const modules = [core, npm, projects]
 
 interface Module {
   typeDefs: any

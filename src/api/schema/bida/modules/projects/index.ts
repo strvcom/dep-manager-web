@@ -10,16 +10,7 @@ const typeDefs = gql`
     ${DEPARTMENTS.join('\n')}
   }
 
-  type NPMPackage {
-    id: String!
-    name: String!
-    version: String
-    private: Boolean
-    description: String
-  }
-
   extend type Repository {
-    npmPackage: NPMPackage
     departments: [BidaDepartment]
   }
 
@@ -42,45 +33,34 @@ const typeDefs = gql`
   }
 `
 
-/**
- * Resolves all projects of the provided department inside strvcom org.
- */
-const projects = (root: any, args: any, context: any, info: any) => {
-  const { department, ...search } = args
-  const { schema, mergeInfo } = info
+const Query = {
+  /**
+   * Resolves all projects of the provided department inside strvcom org.
+   */
+  projects: (root: any, args: any, context: any, info: any) => {
+    const { department, ...search } = args
+    const { schema, mergeInfo } = info
 
-  const type = 'REPOSITORY'
-  const query = `topic:${department.toLowerCase()} user:strvcom`
+    const type = 'REPOSITORY'
+    const query = `topic:${department.toLowerCase()} user:strvcom`
 
-  return mergeInfo.delegateToSchema({
-    info,
-    schema,
-    context,
-    operation: 'query',
-    fieldName: 'search',
-    args: { type, query, ...search }
-  })
+    return mergeInfo.delegateToSchema({
+      info,
+      schema,
+      context,
+      operation: 'query',
+      fieldName: 'search',
+      args: { type, query, ...search }
+    })
+  }
 }
 
-const npmPackage = {
-  fragment: `
-    ... on Repository {
-      npmPackageJSON: object(expression: "HEAD:package.json") {
-        ... on Blob {
-          id
-          text
-        }
-      }
-    }
-  `,
-  resolve: ({ npmPackageJSON }: any) =>
-    npmPackageJSON && npmPackageJSON.text
-      ? { id: npmPackageJSON.id, ...JSON.parse(npmPackageJSON.text) }
-      : null
-}
-
-const departments = {
-  fragment: `
+const Repository = {
+  /**
+   * Resolves the STRV departments of a repository based on present topics.
+   */
+  departments: {
+    fragment: `
     ... on Repository {
       repositoryTopics (first: 10) {
         nodes {
@@ -91,16 +71,14 @@ const departments = {
       }
     }
   `,
-  resolve: ({ repositoryTopics }: any) =>
-    repositoryTopics.nodes
-      .map(({ topic: { name } }: any) => name)
-      .map((name: string) => name.toUpperCase())
-      .filter((name: string) => DEPARTMENTS.includes(name))
+    resolve: ({ repositoryTopics }: any) =>
+      repositoryTopics.nodes
+        .map(({ topic: { name } }: any) => name)
+        .map((name: string) => name.toUpperCase())
+        .filter((name: string) => DEPARTMENTS.includes(name))
+  }
 }
 
-const resolvers = {
-  Query: { projects },
-  Repository: { npmPackage, departments }
-}
+const resolvers = { Query, Repository }
 
 export default { typeDefs, resolvers }
