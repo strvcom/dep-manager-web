@@ -20,6 +20,25 @@ const DASHBOARD_QUERY = gql`
         node {
           ... on Repository {
             name
+            npmPackage {
+              dependencies {
+                id
+                package {
+                  id
+                  name
+                  version
+                  analysis {
+                    analyzedAt
+                    collected {
+                      metadata {
+                        version
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
