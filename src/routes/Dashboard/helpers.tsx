@@ -51,11 +51,7 @@ const getOutdates = pipe(
     flip(append),
     // @ts-ignore
     [],
-    pipe(
-      // @ts-ignore
-      prop('outdated'),
-      toLower
-    )
+    prop('outdated')
   )
 )
 

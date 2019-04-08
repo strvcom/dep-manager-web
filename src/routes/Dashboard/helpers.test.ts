@@ -69,4 +69,36 @@ describe('routes/Dashboard/helpers', () => {
       expect(getOutdated(data.outdates)).toHaveProperty('1.outdated', 'MAJOR')
     })
   })
+
+  describe('getOutdates', () => {
+    const data = {
+      nil: {},
+      empty: { libraries: [] },
+      noOutdated: { libraries: [{ outdated: null }] },
+      outdates: {
+        libraries: [
+          { outdated: 'MINOR' },
+          { outdated: 'MAJOR' },
+          { outdated: 'MINOR' },
+          { outdated: 'PATCH' }
+        ]
+      }
+    }
+
+    it('should return empty array when no outdated packages', () => {
+      expect(getOutdates(data.nil)).toEqual({})
+      expect(getOutdates(data.empty)).toEqual({})
+      expect(getOutdates(data.noOutdated)).toEqual({})
+    })
+
+    it('should return grouped outdated packages', () => {
+      expect(getOutdates(data.outdates)).toHaveProperty('MINOR')
+      expect(getOutdates(data.outdates)).toHaveProperty('MAJOR')
+      expect(getOutdates(data.outdates)).toHaveProperty('PATCH')
+
+      expect(getOutdates(data.outdates)).toHaveProperty('MINOR.length', 2)
+      expect(getOutdates(data.outdates)).toHaveProperty('MAJOR.length', 1)
+      expect(getOutdates(data.outdates)).toHaveProperty('PATCH.length', 1)
+    })
+  })
 })

@@ -59,6 +59,10 @@ type DashboardProps = RouteComponentProps<{
   category: string
 }>
 
+const distances = {
+  MAJOR: 'MAJOR'
+}
+
 const Dashboard = ({ match }: DashboardProps) => {
   const { department, category } = match!.params
 
@@ -81,7 +85,7 @@ const Dashboard = ({ match }: DashboardProps) => {
             const {
               libraries,
               uniqueLibraries,
-              outdates: { major },
+              outdates: { [distances.MAJOR]: major },
               recentlyUpdated
             } = extractLibrariesInfo(projects)
 
