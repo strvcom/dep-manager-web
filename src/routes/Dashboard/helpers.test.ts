@@ -4,7 +4,7 @@ import { __get__ } from './helpers'
 
 const setter = __get__('setter')
 const getLibraries = __get__('getLibraries')
-const getLibraries = __get__('getLibraries')
+const getOutdated = __get__('getOutdated')
 
 describe('routes/Dashboard/helpers', () => {
   describe('setter', () => {
@@ -40,6 +40,33 @@ describe('routes/Dashboard/helpers', () => {
       expect(getLibraries(data.fulfiled).length).toBe(2)
       expect(getLibraries(data.fulfiled)).toHaveProperty('0.name', 'first')
       expect(getLibraries(data.fulfiled)).toHaveProperty('1.name', 'second')
+    })
+  })
+
+  describe('getOutdated', () => {
+    const data = {
+      nil: {},
+      empty: { libraries: [] },
+      noOutdated: { libraries: [{ outdated: null }] },
+      outdates: {
+        libraries: [
+          { outdated: 'MINOR' },
+          { outdated: 'MAJOR' },
+          { outdated: null }
+        ]
+      }
+    }
+
+    it('should return empty array when no dependencies', () => {
+      expect(getOutdated(data.nil)).toEqual([])
+      expect(getOutdated(data.empty)).toEqual([])
+      expect(getOutdated(data.noOutdated)).toEqual([])
+    })
+
+    it('should return outdated packages', () => {
+      expect(getOutdated(data.outdates).length).toBe(2)
+      expect(getOutdated(data.outdates)).toHaveProperty('0.outdated', 'MINOR')
+      expect(getOutdated(data.outdates)).toHaveProperty('1.outdated', 'MAJOR')
     })
   })
 })

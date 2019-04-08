@@ -15,6 +15,7 @@ import {
   pick,
   pipe,
   prop,
+  propOr,
   reduce,
   reduceBy,
   reverse,
@@ -38,7 +39,7 @@ const getLibraries = pipe(
 
 const getOutdated = pipe(
   // @ts-ignore
-  prop('libraries'),
+  propOr([], 'libraries'),
   // @ts-ignore
   filter(prop('outdated'))
 )
