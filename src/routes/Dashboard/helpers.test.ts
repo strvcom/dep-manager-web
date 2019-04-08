@@ -3,17 +3,52 @@ import 'jest'
 import { __get__ } from './helpers'
 
 const setter = __get__('setter')
+const merger = __get__('merger')
 const getLibraries = __get__('getLibraries')
 const getOutdated = __get__('getOutdated')
+const getOutdates = __get__('getOutdates')
 
 describe('routes/Dashboard/helpers', () => {
-  describe('setter', () => {
-    it('should append key based on object mapper', () => {
-      const obj = { a: '1' }
-      const mapper = jest.fn(() => '2')
+  describe('fn', () => {
+    describe('setter', () => {
+      it('should append key based on object mapper', () => {
+        const obj = { a: 1 }
+        const mapper = jest.fn(() => 2)
 
-      expect(setter('b', mapper, obj)).toEqual({ a: '1', b: '2' })
-      expect(mapper).toHaveBeenCalledWith(obj)
+        expect(setter('b', mapper, obj)).toEqual({ a: 1, b: 2 })
+        expect(mapper).toHaveBeenCalledWith(obj)
+      })
+    })
+
+    describe('merger', () => {
+      it('should merge two objects with non-conflicting keys', () => {
+        const a = { a: 1 }
+        const b = { b: 2 }
+
+        const merge = merger({})
+
+        expect(merge(a, b)).toEqual({ a: 1, b: 2 })
+      })
+
+      it('should merge two objects with conflicting keys but no mapper (merge-left)', () => {
+        const a = { key: 1, a: 1 }
+        const b = { key: 2, b: 2 }
+
+        const merge = merger({})
+
+        expect(merge(a, b)).toEqual({ key: 2, a: 1, b: 2 })
+      })
+
+      it('should use mapper to merge two objects with conflicting keys', () => {
+        const a = { key: 1, a: 1 }
+        const b = { key: 2, b: 2 }
+
+        const merge = merger({
+          key: (l: number, r: number) => l + r
+        })
+
+        expect(merge(a, b)).toEqual({ key: 3, a: 1, b: 2 })
+      })
     })
   })
 
