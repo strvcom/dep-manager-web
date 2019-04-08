@@ -79,7 +79,8 @@ const Dashboard = ({ match }: DashboardProps) => {
             // heavy processing here:
             const {
               libraries,
-              outdated,
+              uniqueLibraries,
+              outdates: { major },
               recentlyUpdated
             } = extractLibrariesInfo(projects)
 
@@ -93,7 +94,7 @@ const Dashboard = ({ match }: DashboardProps) => {
                 <ActualityWidget
                   title='Libraries Actuality'
                   width='32%'
-                  outdated={outdated.length}
+                  outdated={major.length}
                   total={libraries.length}
                 />
                 <RecentUpdates libraries={recentlyUpdated} width='32%' />

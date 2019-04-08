@@ -1,26 +1,30 @@
 import {
   always,
+  append,
   assoc,
   concat,
+  cond,
   converge,
   curry,
   equals,
   filter,
+  flip,
   identity,
-  join,
   map,
   memoizeWith,
   mergeWith,
+  mergeWithKey,
   path,
   pathOr,
   pick,
   pipe,
   prop,
-  propEq,
   reduce,
+  reduceBy,
   reverse,
   sortBy,
   take,
+  toLower,
   uniqBy
 } from 'ramda'
 
@@ -38,12 +42,62 @@ const getOutdated = pipe(
   // @ts-ignore
   prop('libraries'),
   // @ts-ignore
-  filter(propEq('outdated', 'MAJOR'))
+  filter(prop('outdated'))
+)
+
+const getOutdates = pipe(
+  getOutdated,
+  // @ts-ignore
+  reduceBy(
+    flip(append),
+    // @ts-ignore
+    [],
+    pipe(
+      // @ts-ignore
+      prop('outdated'),
+      toLower
+    )
+  )
+)
+
+const merger = (mergeMap: any) =>
+  mergeWithKey(
+    cond(
+      // @ts-ignore
+      Object.keys(mergeMap).map(key => [
+        equals(key),
+        (k: string, l: any, r: any) => mergeMap[key](l, r)
+      ])
+    )
+  )
+
+const mergeLibrariesInfo = merger({
+  libraries: concat,
+  outdates: mergeWith(pipe(concat))
+})
+
+// this operation can be expensive... memoization for the rescue.
+const buildLibrariesInfo = memoizeWith(
+  prop('cursor'),
+  pipe(
+    // @ts-ignore
+    prop('node'),
+    setter('libraries', getLibraries),
+    setter('outdates', getOutdates),
+    pick(['libraries', 'outdates'])
+  )
+)
+
+const getUniqueLibraries = pipe(
+  // @ts-ignore
+  prop('libraries'),
+  // @ts-ignore
+  uniqBy(prop('id'))
 )
 
 const getRecentlyUpdated = pipe(
   // @ts-ignore
-  prop('libraries'),
+  prop('uniqueLibraries'),
   // @ts-ignore
   sortBy(path(['analysis', 'collected', 'metadata', 'date'])),
   // @ts-ignore
@@ -52,47 +106,13 @@ const getRecentlyUpdated = pipe(
   take(10)
 )
 
-const processLibrariesInfo = memoizeWith(
-  // memoization cache key.
-  prop('id'),
-  // fn.
-  pipe(
-    setter('libraries', getLibraries),
-    setter('outdated', getOutdated),
-    setter('recentlyUpdated', getRecentlyUpdated),
-    pick(['libraries', 'outdated', 'recentlyUpdated'])
-  )
-)
-
-const mergeLibraries = pipe(
-  concat,
+const extractLibrariesInfo = pipe(
   // @ts-ignore
-  uniqBy(prop('id'))
-)
-
-// this calculation can be expensive... thus why we memoize it.
-const extractLibrariesInfo = memoizeWith(
-  pipe(
-    prop('edges'),
-    // @ts-ignore
-    map(prop('cursor')),
-    // @ts-ignore
-    join('')
-  ),
-  pipe(
-    // @ts-ignore
-    prop('edges'),
-    // @ts-ignore
-    map(
-      pipe(
-        // @ts-ignore
-        prop('node'),
-        processLibrariesInfo
-      )
-    ),
-
-    reduce(mergeWith(mergeLibraries), {})
-  )
+  prop('edges'),
+  map(buildLibrariesInfo),
+  reduce(mergeLibrariesInfo, {}),
+  setter('uniqueLibraries', getUniqueLibraries),
+  setter('recentlyUpdated', getRecentlyUpdated)
 )
 
 export { extractLibrariesInfo }
