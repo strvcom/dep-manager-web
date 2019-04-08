@@ -25,7 +25,7 @@ const typeDefs = gql`
     name: String!
     version: String!
     # description: String!
-    # date: String!
+    date: String!
     # license: String!
     # scope: String
     # keywords: String[]
