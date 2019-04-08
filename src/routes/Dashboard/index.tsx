@@ -2,6 +2,7 @@ import React, { Fragment, Suspense, memo } from 'react'
 import { Route, RouteComponentProps } from 'react-router-dom'
 import gql from 'graphql-tag'
 import ErrorBoundary from 'react-error-boundary'
+import { memoizeWith, pipe, prop, map, join } from 'ramda'
 
 import * as routes from '../routes'
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
@@ -54,6 +55,26 @@ const DASHBOARD_QUERY = gql`
   }
 `
 
+// this calculation can be expensive... thus why we memoize it.
+const processLibraries = memoizeWith(
+  pipe(
+    prop('edges'),
+    // @ts-ignore
+    map(prop('cursor')),
+    // @ts-ignore
+    join('')
+  ),
+  projects => {
+    const libraries: any = getAllDependencies(
+      projects.edges.map(({ node }: any) => node)
+    )
+    const outdated = libraries.filter(isOutdated)
+    const updated: any[] = getRecentlyUpdated(libraries)
+
+    return { libraries, outdated, updated }
+  }
+)
+
 type DashboardProps = RouteComponentProps<{
   department: string
   category: string
@@ -76,14 +97,7 @@ const Dashboard = ({ match }: DashboardProps) => {
             if (loading) return <Loading />
 
             const { projects, archived } = data
-
-            const libraries: any = getAllDependencies(
-              projects.edges.map(({ node }: any) => node)
-            )
-            const outdatedLibraries = libraries.filter(isOutdated)
-            const recentlyUpdatedLibraries: any[] = getRecentlyUpdated(
-              libraries
-            )
+            const { libraries, outdated, updated } = processLibraries(projects)
 
             const renderWidgets = () => (
               <WidgetContainer>
@@ -95,13 +109,10 @@ const Dashboard = ({ match }: DashboardProps) => {
                 <ActualityWidget
                   title='Libraries Actuality'
                   width='32%'
-                  outdated={outdatedLibraries.length}
+                  outdated={outdated.length}
                   total={libraries.length}
                 />
-                <RecentUpdates
-                  libraries={recentlyUpdatedLibraries}
-                  width='32%'
-                />
+                <RecentUpdates libraries={updated} width='32%' />
               </WidgetContainer>
             )
 
