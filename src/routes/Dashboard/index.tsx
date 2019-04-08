@@ -2,7 +2,6 @@ import React, { Fragment, Suspense, memo } from 'react'
 import { Route, RouteComponentProps } from 'react-router-dom'
 import gql from 'graphql-tag'
 import ErrorBoundary from 'react-error-boundary'
-import { memoizeWith, pipe, prop, map, join } from 'ramda'
 
 import * as routes from '../routes'
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
@@ -13,7 +12,7 @@ import ProjectsOverviewWidget from './ProjectsOverviewWidget'
 import RecentUpdates from './RecentUpdates'
 import DashboardToolBar from './DashboardToolBar'
 import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
-import { getAllDependencies, isOutdated, getRecentlyUpdated } from './helpers'
+import { extractLibrariesInfo } from './helpers'
 
 const DASHBOARD_QUERY = gql`
   query DASHBOARD_QUERY($department: BidaDepartment!) {
@@ -23,6 +22,7 @@ const DASHBOARD_QUERY = gql`
         cursor
         node {
           ... on Repository {
+            id
             name
             npmPackage {
               dependencies {
@@ -55,26 +55,6 @@ const DASHBOARD_QUERY = gql`
   }
 `
 
-// this calculation can be expensive... thus why we memoize it.
-const processLibraries = memoizeWith(
-  pipe(
-    prop('edges'),
-    // @ts-ignore
-    map(prop('cursor')),
-    // @ts-ignore
-    join('')
-  ),
-  projects => {
-    const libraries: any = getAllDependencies(
-      projects.edges.map(({ node }: any) => node)
-    )
-    const outdated = libraries.filter(isOutdated)
-    const updated: any[] = getRecentlyUpdated(libraries)
-
-    return { libraries, outdated, updated }
-  }
-)
-
 type DashboardProps = RouteComponentProps<{
   department: string
   category: string
@@ -97,7 +77,11 @@ const Dashboard = ({ match }: DashboardProps) => {
             if (loading) return <Loading />
 
             const { projects, archived } = data
-            const { libraries, outdated, updated } = processLibraries(projects)
+
+            // heavy processing here:
+            const { libraries, outdated, updated } = extractLibrariesInfo(
+              projects
+            )
 
             const renderWidgets = () => (
               <WidgetContainer>

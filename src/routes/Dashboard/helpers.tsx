@@ -1,11 +1,22 @@
 import {
+  always,
+  assoc,
+  concat,
   converge,
+  curry,
   equals,
+  filter,
+  identity,
+  join,
   map,
+  memoizeWith,
+  mergeWith,
   path,
   pathOr,
+  pick,
   pipe,
   prop,
+  reduce,
   reverse,
   sortBy,
   take,
@@ -13,20 +24,6 @@ import {
 } from 'ramda'
 
 import versionDiff from '../../utils/version-diff'
-
-const getDependencies = pipe(
-  pathOr([], ['npmPackage', 'dependencies']),
-  map(prop('package'))
-)
-
-const getAllDependencies = pipe(
-  // @ts-ignore
-  map(getDependencies),
-  // @ts-ignore
-  libraries => [].concat(...libraries),
-  // @ts-ignore
-  uniqBy(prop('id'))
-)
 
 const isOutdated = pipe(
   converge(versionDiff, [
@@ -36,7 +33,26 @@ const isOutdated = pipe(
   equals('major')
 )
 
+const setter = curry((key, mapper) =>
+  // @ts-ignore
+  converge(assoc, [always(key), mapper, identity])
+)
+
+const getLibraries = pipe(
+  pathOr([], ['npmPackage', 'dependencies']),
+  map(prop('package'))
+)
+
+const getOutdated = pipe(
+  // @ts-ignore
+  prop('libraries'),
+  // @ts-ignore
+  filter(isOutdated)
+)
+
 const getRecentlyUpdated = pipe(
+  // @ts-ignore
+  prop('libraries'),
   // @ts-ignore
   sortBy(path(['analysis', 'collected', 'metadata', 'date'])),
   // @ts-ignore
@@ -45,4 +61,47 @@ const getRecentlyUpdated = pipe(
   take(10)
 )
 
-export { getAllDependencies, isOutdated, getRecentlyUpdated }
+const processLibrariesInfo = memoizeWith(
+  // memoization cache key.
+  prop('id'),
+  // fn.
+  pipe(
+    setter('libraries', getLibraries),
+    setter('outdated', getOutdated),
+    setter('updated', getRecentlyUpdated),
+    pick(['libraries', 'outdated', 'updated'])
+  )
+)
+
+const mergeLibraries = pipe(
+  concat,
+  // @ts-ignore
+  uniqBy(prop('id'))
+)
+
+// this calculation can be expensive... thus why we memoize it.
+const extractLibrariesInfo = memoizeWith(
+  pipe(
+    prop('edges'),
+    // @ts-ignore
+    map(prop('cursor')),
+    // @ts-ignore
+    join('')
+  ),
+  pipe(
+    // @ts-ignore
+    prop('edges'),
+    // @ts-ignore
+    map(
+      pipe(
+        // @ts-ignore
+        prop('node'),
+        processLibrariesInfo
+      )
+    ),
+
+    reduce(mergeWith(mergeLibraries), {})
+  )
+)
+
+export { extractLibrariesInfo }
