@@ -1,15 +1,11 @@
 import {
-  always,
   append,
-  assoc,
   concat,
   cond,
-  converge,
   curry,
   equals,
   filter,
   flip,
-  identity,
   map,
   memoizeWith,
   mergeWith,
@@ -28,9 +24,11 @@ import {
   uniqBy
 } from 'ramda'
 
-const setter = curry((key, mapper) =>
-  // @ts-ignore
-  converge(assoc, [always(key), mapper, identity])
+const setter = curry(
+  (key: string, mapper: (obj: object) => any, obj: object) => ({
+    ...obj,
+    [key]: mapper(obj)
+  })
 )
 
 const getLibraries = pipe(
