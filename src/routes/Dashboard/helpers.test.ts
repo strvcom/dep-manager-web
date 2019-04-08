@@ -9,7 +9,7 @@ const getOutdated = __get__('getOutdated')
 const getOutdates = __get__('getOutdates')
 const buildLibrariesInfo = __get__('buildLibrariesInfo')
 const mergeLibrariesInfo = __get__('mergeLibrariesInfo')
-// const getUniqueLibraries = __get__('getUniqueLibraries')
+const getUniqueLibraries = __get__('getUniqueLibraries')
 // const getRecentlyUpdated = __get__('getRecentlyUpdated')
 // const extractLibrariesInfo = __get__('extractLibrariesInfo')
 
@@ -256,6 +256,21 @@ describe('routes/Dashboard/helpers', () => {
       }
 
       expect(mergeLibrariesInfo(left, right)).toEqual(result)
+    })
+  })
+
+  describe('getUniqueLibraries', () => {
+    it('should return empty arrays when no libraries', () => {
+      expect(getUniqueLibraries({})).toEqual([])
+      expect(getUniqueLibraries({ libraries: [] })).toEqual([])
+    })
+
+    it('should return unique libraries', () => {
+      const unequal = { libraries: [{ name: 'a' }, { name: 'b' }] }
+      const equal = { libraries: [{ name: 'a' }, { name: 'b' }, { name: 'a' }] }
+
+      expect(getUniqueLibraries(unequal)).toEqual(unequal.libraries)
+      expect(getUniqueLibraries(equal)).toEqual(unequal.libraries)
     })
   })
 })
