@@ -70,11 +70,6 @@ const getOutdates = pipe(
   )
 )
 
-const mergeLibrariesInfo = merger({
-  libraries: concat,
-  outdates: mergeWith(pipe(concat))
-})
-
 // this operation can be expensive... memoization for the rescue.
 const buildLibrariesInfo = memoizeWith(
   prop('cursor'),
@@ -86,6 +81,11 @@ const buildLibrariesInfo = memoizeWith(
     pick(['libraries', 'outdates'])
   )
 )
+
+const mergeLibrariesInfo = merger({
+  libraries: concat,
+  outdates: mergeWith(pipe(concat))
+})
 
 const getUniqueLibraries = pipe(
   // @ts-ignore
