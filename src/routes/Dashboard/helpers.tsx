@@ -10,6 +10,7 @@ import {
   memoizeWith,
   mergeWith,
   mergeWithKey,
+  nthArg,
   path,
   pathOr,
   pick,
@@ -21,8 +22,8 @@ import {
   reverse,
   sortBy,
   take,
-  toLower,
-  uniqBy
+  uniqBy,
+  T
 } from 'ramda'
 
 const setter = curry(
@@ -31,6 +32,20 @@ const setter = curry(
     [key]: mapper(obj)
   })
 )
+
+const merger = (mergeMap: object) =>
+  mergeWithKey(
+    cond(
+      // @ts-ignore
+      Object.keys(mergeMap)
+        .map(key => [
+          equals(key),
+          (k: string, l: any, r: any) => mergeMap[key](l, r)
+        ])
+        // default merge-left.
+        .concat([[T, nthArg(2)]])
+    )
+  )
 
 const getLibraries = pipe(
   pathOr([], ['npmPackage', 'dependencies']),
@@ -54,17 +69,6 @@ const getOutdates = pipe(
     prop('outdated')
   )
 )
-
-const merger = (mergeMap: any) =>
-  mergeWithKey(
-    cond(
-      // @ts-ignore
-      Object.keys(mergeMap).map(key => [
-        equals(key),
-        (k: string, l: any, r: any) => mergeMap[key](l, r)
-      ])
-    )
-  )
 
 const mergeLibrariesInfo = merger({
   libraries: concat,
