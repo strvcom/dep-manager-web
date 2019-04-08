@@ -21,30 +21,30 @@ const typeDefs = gql`
   #   username: String
   # }
 
-  # type NPMSMetadata {
-  #   name: String!
-  #   version: String!
-  #   description: String!
-  #   date: String!
-  #   scope: String
-  #   license: String!
-  #   keywords: String[]
-  #   publisher: NPMSUser
-  #   maintainers: NPMSUser[]
-  #   repository: NPMSRepository
-  #   links: NPMSLinks
-  #   dependencies: NPMDependency
-  #   releases: Release[]
-  # }
+  type NPMSMetadata {
+    name: String!
+    version: String!
+    # description: String!
+    # date: String!
+    # license: String!
+    # scope: String
+    # keywords: String[]
+    # publisher: NPMSUser
+    # maintainers: NPMSUser[]
+    # repository: NPMSRepository
+    # links: NPMSLinks
+    # dependencies: NPMDependency
+    # releases: Release[]
+  }
 
-  # type NPMSCollected {
-  #   metadata: NPMSMetadata!
-  # }
+  type NPMSCollected {
+    metadata: NPMSMetadata!
+  }
 
   type NPMSAnalysis {
     id: String!
     analyzedAt: String!
-    # collected: NPMSCollected
+    collected: NPMSCollected
     # evaluation: NPMSEvaluation!
     # score: NPMSScore!
   }
