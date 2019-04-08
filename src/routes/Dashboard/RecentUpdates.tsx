@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 
 import WidgetContainer, {
   WidgetContainerProps,
@@ -18,29 +18,27 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric'
 })
 
-const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
-  return (
-    <WidgetContainer width={width}>
-      <WidgetTitle>Recent Updates</WidgetTitle>
-      <Items>
-        {libraries.map(lib => (
-          <ItemLink to='#' key={lib.id}>
-            <TitleContainer>
-              <span>{lib.name}</span>
-              <span>{lib.version}</span>
-            </TitleContainer>
-            {lib.analysis.collected.metadata.date && (
-              <UpdatedTime>
-                {dateFormatter.format(
-                  new Date(lib.analysis.collected.metadata.date)
-                )}
-              </UpdatedTime>
-            )}
-          </ItemLink>
-        ))}
-      </Items>
-    </WidgetContainer>
-  )
-}
+const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => (
+  <WidgetContainer width={width}>
+    <WidgetTitle>Recent Updates</WidgetTitle>
+    <Items>
+      {libraries.map(lib => (
+        <ItemLink to='#' key={lib.id}>
+          <TitleContainer>
+            <span>{lib.name}</span>
+            <span>{lib.version}</span>
+          </TitleContainer>
+          {lib.analysis.collected.metadata.date && (
+            <UpdatedTime>
+              {dateFormatter.format(
+                new Date(lib.analysis.collected.metadata.date)
+              )}
+            </UpdatedTime>
+          )}
+        </ItemLink>
+      ))}
+    </Items>
+  </WidgetContainer>
+)
 
-export default RecentUpdates
+export default memo(RecentUpdates)
