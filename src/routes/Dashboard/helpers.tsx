@@ -101,7 +101,7 @@ const getUniqueLibraries = pipe(
 
 const getRecentlyUpdated = pipe(
   // @ts-ignore
-  prop('uniqueLibraries'),
+  propOr([], 'uniqueLibraries'),
   // @ts-ignore
   sortBy(path(['analysis', 'collected', 'metadata', 'date'])),
   // @ts-ignore

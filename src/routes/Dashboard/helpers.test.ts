@@ -10,8 +10,10 @@ const getOutdates = __get__('getOutdates')
 const buildLibrariesInfo = __get__('buildLibrariesInfo')
 const mergeLibrariesInfo = __get__('mergeLibrariesInfo')
 const getUniqueLibraries = __get__('getUniqueLibraries')
-// const getRecentlyUpdated = __get__('getRecentlyUpdated')
+const getRecentlyUpdated = __get__('getRecentlyUpdated')
 // const extractLibrariesInfo = __get__('extractLibrariesInfo')
+
+const copy = (obj: any) => JSON.parse(JSON.stringify(obj))
 
 describe('routes/Dashboard/helpers', () => {
   describe('fn', () => {
@@ -271,6 +273,47 @@ describe('routes/Dashboard/helpers', () => {
 
       expect(getUniqueLibraries(unequal)).toEqual(unequal.libraries)
       expect(getUniqueLibraries(equal)).toEqual(unequal.libraries)
+    })
+  })
+
+  describe('getRecentlyUpdated', () => {
+    it('should return empty arrays when no libraries', () => {
+      expect(getRecentlyUpdated({})).toEqual([])
+      expect(getRecentlyUpdated({ uniqueLibraries: [] })).toEqual([])
+    })
+
+    it('should return max 10 libraries', () => {
+      const data = { uniqueLibraries: Array(20).fill({}) }
+      expect(getRecentlyUpdated(data)).toHaveProperty('length', 10)
+    })
+
+    it('should return less than 10 libraries when having less', () => {
+      const data = { uniqueLibraries: Array(5).fill({}) }
+      expect(getRecentlyUpdated(data)).toHaveProperty('length', 5)
+    })
+
+    it('should sort results', () => {
+      const initial = { analysis: { collected: { metadata: {} } } }
+
+      const lib = Array(3)
+        .fill(initial)
+        .map(copy)
+
+      const dates = { 0: '2010', 1: '2011', 2: '2008' }
+
+      for (const i in dates) {
+        lib[i].analysis.collected.metadata.date = dates[i]
+      }
+
+      expect(lib).toHaveProperty('0.analysis.collected.metadata.date', '2010')
+      expect(lib).toHaveProperty('1.analysis.collected.metadata.date', '2011')
+      expect(lib).toHaveProperty('2.analysis.collected.metadata.date', '2008')
+
+      const res = getRecentlyUpdated({ uniqueLibraries: lib })
+
+      expect(res).toHaveProperty('0.analysis.collected.metadata.date', '2011')
+      expect(res).toHaveProperty('1.analysis.collected.metadata.date', '2010')
+      expect(res).toHaveProperty('2.analysis.collected.metadata.date', '2008')
     })
   })
 })
