@@ -31,8 +31,9 @@ const DASHBOARD_QUERY = gql`
                     analyzedAt
                     collected {
                       metadata {
-                        version
                         name
+                        version
+                        date
                       }
                     }
                   }

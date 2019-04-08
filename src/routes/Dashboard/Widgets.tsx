@@ -1,12 +1,24 @@
 import React, { memo } from 'react'
-import { converge, equals, map, path, pathOr, pipe, prop, uniqBy } from 'ramda'
+import {
+  converge,
+  equals,
+  map,
+  path,
+  pathOr,
+  pipe,
+  prop,
+  reverse,
+  sortBy,
+  take,
+  uniqBy
+} from 'ramda'
 
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import versionDiff from '../../utils/version-diff'
 
 import { WidgetContainer } from './styled'
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
-// import RecentUpdates from './RecentUpdates'
+import RecentUpdates from './RecentUpdates'
 
 interface Props {
   projects: {
@@ -42,9 +54,19 @@ const isOutdated = pipe(
   equals('major')
 )
 
+const getRecentlyUpdated = pipe(
+  // @ts-ignore
+  sortBy(path(['analysis', 'collected', 'metadata', 'date'])),
+  // @ts-ignore
+  reverse,
+  // @ts-ignore
+  take(10)
+)
+
 const Widgets = ({ projects, archived }: Props) => {
   const libraries: any = getAllDependencies(projects.edges.map(prop('node')))
   const outdatedLibraries = libraries.filter(isOutdated)
+  const recentlyUpdatedLibraries: any[] = getRecentlyUpdated(libraries)
 
   return (
     <WidgetContainer>
@@ -59,6 +81,7 @@ const Widgets = ({ projects, archived }: Props) => {
         outdated={outdatedLibraries.length}
         total={libraries.length}
       />
+      <RecentUpdates libraries={recentlyUpdatedLibraries} width='32%' />
     </WidgetContainer>
   )
 }
