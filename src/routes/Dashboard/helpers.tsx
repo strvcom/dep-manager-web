@@ -8,6 +8,7 @@ import {
   flip,
   map,
   memoizeWith,
+  mergeRight,
   mergeWith,
   mergeWithKey,
   nthArg,
@@ -76,16 +77,20 @@ const buildLibrariesInfo = memoizeWith(
   pipe(
     // @ts-ignore
     prop('node'),
+    // @ts-ignore
     setter('libraries', getLibraries),
     setter('outdates', getOutdates),
     pick(['libraries', 'outdates'])
   )
 )
 
-const mergeLibrariesInfo = merger({
-  libraries: concat,
-  outdates: mergeWith(pipe(concat))
-})
+const mergeLibrariesInfo = pipe(
+  merger({
+    libraries: concat,
+    outdates: mergeWith(pipe(concat))
+  }),
+  mergeRight({ libraries: [], outdates: {} })
+)
 
 const getUniqueLibraries = pipe(
   // @ts-ignore
