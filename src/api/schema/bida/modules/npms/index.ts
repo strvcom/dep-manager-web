@@ -6,9 +6,26 @@
  */
 
 import gql from 'graphql-tag'
+import { path } from 'ramda'
+import semver, { SemVer } from 'semver'
+
 import { analysis } from './loaders'
 
 const typeDefs = gql`
+  """
+  Enumerator that indicates a version distance.
+  """
+  enum SemverOutdated {
+    MAJOR
+    PREMAJOR
+    MINOR
+    PREMINOR
+    PATCH
+    PREPATCH
+    PRERELEASE
+    UNKNOWN # Could not reliably calculate a distance.
+  }
+
   # type NPMSLinks {
   #   npm: String
   #   homepage: String
@@ -51,11 +68,41 @@ const typeDefs = gql`
 
   extend type NPMPackage {
     analysis: NPMSAnalysis
+    outdated: SemverOutdated
   }
 `
 
 const NPMPackage = {
-  analysis: ({ name }: any) => analysis.load(name)
+  /**
+   * Resolves package analysis based on NPMS service.
+   */
+  analysis: {
+    fragment: `... on NPMPackage { name }`,
+    resolve: ({ name }: any) => analysis.load(name)
+  },
+
+  /**
+   * Shortcut for analyzing a package's outdate distance.
+   */
+  outdated: {
+    fragment: `... on NPMPackage { name version }`,
+    resolve: async ({ name, version }: any) => {
+      const analysisResult = await analysis.load(name)
+
+      const current: SemVer | null = semver.coerce(version)
+      const latest: SemVer | undefined = semver.coerce(
+        // @ts-ignore
+        path(['collected', 'metadata', 'version'], analysisResult)
+      )
+
+      // console.log({ root, current, latest })
+
+      const diff =
+        !current || !latest ? 'UNKNOWN' : semver.diff(current, latest)
+
+      return diff ? diff.toUpperCase() : null
+    }
+  }
 }
 
 const resolvers = { NPMPackage }
