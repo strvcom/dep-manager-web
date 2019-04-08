@@ -8,7 +8,7 @@ const getLibraries = __get__('getLibraries')
 const getOutdated = __get__('getOutdated')
 const getOutdates = __get__('getOutdates')
 const buildLibrariesInfo = __get__('buildLibrariesInfo')
-// const mergeLibrariesInfo = __get__('mergeLibrariesInfo')
+const mergeLibrariesInfo = __get__('mergeLibrariesInfo')
 // const getUniqueLibraries = __get__('getUniqueLibraries')
 // const getRecentlyUpdated = __get__('getRecentlyUpdated')
 // const extractLibrariesInfo = __get__('extractLibrariesInfo')
@@ -35,7 +35,7 @@ describe('routes/Dashboard/helpers', () => {
         expect(merge(a, b)).toEqual({ a: 1, b: 2 })
       })
 
-      it('should merge two objects with conflicting keys but no mapper (merge-left)', () => {
+      it('should merge two objects with conflicting keys but no mapper (merge-right)', () => {
         const a = { key: 1, a: 1 }
         const b = { key: 2, b: 2 }
 
@@ -221,6 +221,41 @@ describe('routes/Dashboard/helpers', () => {
 
       expect(outdates).toHaveProperty('outdates.MAJOR.length', 2)
       expect(outdates).toHaveProperty('outdates.MINOR.length', 1)
+    })
+  })
+
+  describe('mergeLibrariesInfo', () => {
+    it('should merge empty infos (default shape)', () => {
+      const nil = {}
+      const empty = { libraries: [], outdates: {} }
+
+      expect(mergeLibrariesInfo(nil, nil)).toEqual(empty)
+      expect(mergeLibrariesInfo(empty, empty)).toEqual(empty)
+    })
+
+    it('should combine libraries list', () => {
+      const left = { libraries: [{ name: 'a' }] }
+      const right = { libraries: [{ name: 'b' }] }
+      const result = { libraries: [{ name: 'a' }, { name: 'b' }], outdates: {} }
+
+      expect(mergeLibrariesInfo(left, right)).toEqual(result)
+    })
+
+    it('should combine outdates', () => {
+      const left = { outdates: { MAJOR: [{ name: 'a' }] } }
+      const right = {
+        outdates: { MAJOR: [{ name: 'b' }], MINOR: [{ name: 'c' }] }
+      }
+
+      const result = {
+        libraries: [],
+        outdates: {
+          MAJOR: [{ name: 'a' }, { name: 'b' }],
+          MINOR: [{ name: 'c' }]
+        }
+      }
+
+      expect(mergeLibrariesInfo(left, right)).toEqual(result)
     })
   })
 })
