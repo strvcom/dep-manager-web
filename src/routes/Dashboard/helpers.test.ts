@@ -1,7 +1,7 @@
 import 'jest'
 import uuid from 'uuid/v4'
 
-import { __get__ } from './helpers'
+import { extractLibrariesInfo, __get__ } from './helpers'
 
 const setter = __get__('setter')
 const merger = __get__('merger')
@@ -12,7 +12,7 @@ const buildLibrariesInfo = __get__('buildLibrariesInfo')
 const mergeLibrariesInfo = __get__('mergeLibrariesInfo')
 const getUniqueLibraries = __get__('getUniqueLibraries')
 const getRecentlyUpdated = __get__('getRecentlyUpdated')
-// const extractLibrariesInfo = __get__('extractLibrariesInfo')
+const infoShape = __get__('infoShape')
 
 const copy = (obj: any) => JSON.parse(JSON.stringify(obj))
 
@@ -315,6 +315,133 @@ describe('routes/Dashboard/helpers', () => {
       expect(res).toHaveProperty('0.analysis.collected.metadata.date', '2011')
       expect(res).toHaveProperty('1.analysis.collected.metadata.date', '2010')
       expect(res).toHaveProperty('2.analysis.collected.metadata.date', '2008')
+    })
+  })
+
+  describe('extractLibrariesInfo', () => {
+    it('should ensure shape', () => {
+      const info = extractLibrariesInfo(null)
+
+      expect(info).toHaveProperty('libraries', infoShape.libraries)
+      expect(info).toHaveProperty('outdates', infoShape.outdates)
+      expect(info).toHaveProperty('uniqueLibraries', infoShape.uniqueLibraries)
+      expect(info).toHaveProperty('recentlyUpdated', infoShape.recentlyUpdated)
+    })
+
+    it('should extract libraries from all edges', () => {
+      const data = {
+        edges: [
+          {
+            cursor: uuid(),
+            node: { npmPackage: { dependencies: [{ package: { name: 'a' } }] } }
+          },
+          {
+            cursor: uuid(),
+            node: { npmPackage: { dependencies: [{ package: { name: 'b' } }] } }
+          }
+        ]
+      }
+
+      const info = extractLibrariesInfo(data)
+
+      expect(info).toHaveProperty('libraries.0.name', 'a')
+      expect(info).toHaveProperty('libraries.1.name', 'b')
+    })
+
+    it('should extract outdated libraries from all edges', () => {
+      const data = {
+        edges: [
+          {
+            cursor: uuid(),
+            node: {
+              npmPackage: {
+                dependencies: [{ package: { name: 'a', outdated: 'MAJOR' } }]
+              }
+            }
+          },
+          {
+            cursor: uuid(),
+            node: {
+              npmPackage: {
+                dependencies: [{ package: { name: 'a', outdated: 'MINOR' } }]
+              }
+            }
+          }
+        ]
+      }
+
+      const info = extractLibrariesInfo(data)
+
+      expect(info).toHaveProperty('outdates.MAJOR.0.name', 'a')
+      expect(info).toHaveProperty('outdates.MAJOR.0.outdated', 'MAJOR')
+
+      expect(info).toHaveProperty('outdates.MINOR.0.name', 'a')
+      expect(info).toHaveProperty('outdates.MINOR.0.outdated', 'MINOR')
+    })
+
+    it('should extract unique libraries from all edges', () => {
+      const data = {
+        edges: [
+          {
+            cursor: uuid(),
+            node: { npmPackage: { dependencies: [{ package: { name: 'a' } }] } }
+          },
+          {
+            cursor: uuid(),
+            node: { npmPackage: { dependencies: [{ package: { name: 'a' } }] } }
+          }
+        ]
+      }
+
+      const info = extractLibrariesInfo(data)
+
+      expect(info).toHaveProperty('libraries.0.name', 'a')
+      expect(info).toHaveProperty('libraries.1.name', 'a')
+
+      expect(info).toHaveProperty('uniqueLibraries.0.name', 'a')
+      expect(info).not.toHaveProperty('uniqueLibraries.1.name', 'a')
+    })
+
+    it('should extract recently updated libraries from all edges', () => {
+      const data = {
+        edges: [
+          {
+            cursor: uuid(),
+            node: {
+              npmPackage: {
+                dependencies: [
+                  {
+                    package: {
+                      name: 'a',
+                      analysis: { collected: { metadata: { date: '2010' } } }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            cursor: uuid(),
+            node: {
+              npmPackage: {
+                dependencies: [
+                  {
+                    package: {
+                      name: 'b',
+                      analysis: { collected: { metadata: { date: '2020' } } }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+
+      const info = extractLibrariesInfo(data)
+
+      expect(info).toHaveProperty('recentlyUpdated.0.name', 'b')
+      expect(info).toHaveProperty('recentlyUpdated.1.name', 'a')
     })
   })
 })
