@@ -27,9 +27,24 @@ import {
   reverse,
   sortBy,
   take,
-  uniqBy,
-  T
+  uniqBy
 } from 'ramda'
+
+const infoShape = {
+  libraries: [],
+  outdates: {
+    MAJOR: [],
+    PREMAJOR: [],
+    MINOR: [],
+    PREMINOR: [],
+    PATCH: [],
+    PREPATCH: [],
+    PRERELEASE: [],
+    UNKNOWN: []
+  },
+  uniqueLibraries: [],
+  recentlyUpdated: []
+}
 
 const setter = curry(
   (key: string, mapper: (obj: object) => any, obj: object) => ({
@@ -91,7 +106,7 @@ const buildLibrariesInfo = memoizeWith(
 const mergeLibrariesInfo = pipe(
   merger({
     libraries: concat,
-    outdates: mergeWith(pipe(concat))
+    outdates: mergeWith(concat)
   }),
   mergeRight({ libraries: [], outdates: {} })
 )
@@ -116,9 +131,12 @@ const getRecentlyUpdated = pipe(
 
 const extractLibrariesInfo = pipe(
   // @ts-ignore
-  prop('edges'),
+  propOr([], 'edges'),
+  // @ts-ignore
   map(buildLibrariesInfo),
-  reduce(mergeLibrariesInfo, {}),
+  // @ts-ignore
+  reduce(mergeLibrariesInfo, infoShape),
+  // @ts-ignore
   setter('uniqueLibraries', getUniqueLibraries),
   setter('recentlyUpdated', getRecentlyUpdated)
 )
