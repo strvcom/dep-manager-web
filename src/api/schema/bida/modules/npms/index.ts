@@ -11,19 +11,23 @@ import semver, { SemVer } from 'semver'
 
 import { analysis } from './loaders'
 
+const OUTDATE_TYPES = [
+  'MAJOR',
+  'PREMAJOR',
+  'MINOR',
+  'PREMINOR',
+  'PATCH',
+  'PREPATCH',
+  'PRERELEASE',
+  'UNKNOWN'
+]
+
 const typeDefs = gql`
   """
   Enumerator that indicates a version distance.
   """
   enum SemverOutdated {
-    MAJOR
-    PREMAJOR
-    MINOR
-    PREMINOR
-    PATCH
-    PREPATCH
-    PRERELEASE
-    UNKNOWN # Could not reliably calculate a distance.
+    ${OUTDATE_TYPES.join('\n')}
   }
 
   # type NPMSLinks {
