@@ -1,25 +1,22 @@
 import React from 'react'
-import { Items, ItemLink, TitleContainer, UpdatedTime } from './widget-styled'
+
 import WidgetContainer, {
   WidgetContainerProps,
   WidgetTitle
 } from '../../components/Charts/Container'
-import gql from 'graphql-tag'
-import { RecentUpdatesLibrariesItem } from './__generated-types/RecentUpdatesLibrariesItem'
 
-gql`
-  fragment RecentUpdatesLibrariesItem on BidaNodeLibrary {
-    id
-    name
-    version
-    date
-  }
-`
+import { Items, ItemLink, TitleContainer, UpdatedTime } from './widget-styled'
 
 export interface RecentUpdatesProps
   extends Pick<WidgetContainerProps, 'width'> {
-  libraries: RecentUpdatesLibrariesItem[]
+  libraries: any[]
 }
+
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric'
+})
 
 const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
   return (
@@ -32,9 +29,11 @@ const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
               <span>{lib.name}</span>
               <span>{lib.version}</span>
             </TitleContainer>
-            {lib.date && (
+            {lib.analysis.collected.metadata.date && (
               <UpdatedTime>
-                {dateFormatter.format(new Date(lib.date))}
+                {dateFormatter.format(
+                  new Date(lib.analysis.collected.metadata.date)
+                )}
               </UpdatedTime>
             )}
           </ItemLink>
@@ -43,11 +42,5 @@ const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => {
     </WidgetContainer>
   )
 }
-
-const dateFormatter = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric'
-})
 
 export default RecentUpdates
