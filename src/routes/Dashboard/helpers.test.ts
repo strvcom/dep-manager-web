@@ -1,4 +1,5 @@
 import 'jest'
+import uuid from 'uuid/v4'
 
 import { __get__ } from './helpers'
 
@@ -152,10 +153,10 @@ describe('routes/Dashboard/helpers', () => {
     }
 
     const data = {
-      nil: { cursor: 'a', node: {} },
-      empty: { cursor: 'b', node: { npmPackage: { dependencies: [] } } },
+      nil: { cursor: uuid(), node: {} },
+      empty: { cursor: uuid(), node: { npmPackage: { dependencies: [] } } },
       noOutdated: {
-        cursor: 'c',
+        cursor: uuid(),
         node: {
           npmPackage: {
             dependencies: [
@@ -166,7 +167,7 @@ describe('routes/Dashboard/helpers', () => {
         }
       },
       outdates: {
-        cursor: 'd',
+        cursor: uuid(),
         node: {
           npmPackage: {
             dependencies: [
