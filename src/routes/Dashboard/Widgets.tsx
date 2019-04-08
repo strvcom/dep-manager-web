@@ -1,24 +1,12 @@
 import React, { memo } from 'react'
-import {
-  converge,
-  equals,
-  map,
-  path,
-  pathOr,
-  pipe,
-  prop,
-  reverse,
-  sortBy,
-  take,
-  uniqBy
-} from 'ramda'
+import { prop } from 'ramda'
 
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
-import versionDiff from '../../utils/version-diff'
 
 import { WidgetContainer } from './styled'
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
 import RecentUpdates from './RecentUpdates'
+import { getAllDependencies, isOutdated, getRecentlyUpdated } from './helpers'
 
 interface Props {
   projects: {
@@ -31,37 +19,6 @@ interface Props {
     total: number
   }
 }
-
-const getDependencies = pipe(
-  pathOr([], ['npmPackage', 'dependencies']),
-  map(prop('package'))
-)
-
-const getAllDependencies = pipe(
-  // @ts-ignore
-  map(getDependencies),
-  // @ts-ignore
-  libraries => [].concat(...libraries),
-  // @ts-ignore
-  uniqBy(prop('id'))
-)
-
-const isOutdated = pipe(
-  converge(versionDiff, [
-    prop('version'),
-    path(['analysis', 'collected', 'metadata', 'version'])
-  ]),
-  equals('major')
-)
-
-const getRecentlyUpdated = pipe(
-  // @ts-ignore
-  sortBy(path(['analysis', 'collected', 'metadata', 'date'])),
-  // @ts-ignore
-  reverse,
-  // @ts-ignore
-  take(10)
-)
 
 const Widgets = ({ projects, archived }: Props) => {
   const libraries: any = getAllDependencies(projects.edges.map(prop('node')))
