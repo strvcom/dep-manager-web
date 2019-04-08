@@ -60,38 +60,35 @@ const Dashboard = ({ match }: DashboardProps) => {
   const { department, category } = match!.params
 
   return (
-    <AuthenticatedQuery
-      query={DASHBOARD_QUERY}
-      variables={{ department: department.toUpperCase() }}
-    >
-      {({ data, loading, error }: any) => {
-        if (error) throw error
+    <Fragment>
+      <DashboardToolBar department={department} category={category} />
 
-        return (
-          <Fragment>
-            <DashboardToolBar department={department} category={category} />
+      <StyledDashboard>
+        <AuthenticatedQuery
+          query={DASHBOARD_QUERY}
+          variables={{ department: department.toUpperCase() }}
+        >
+          {({ data, loading, error }: any) => {
+            if (error) throw error
+            if (loading) return <Loading />
 
-            <StyledDashboard>
-              {loading ? (
-                <Loading />
-              ) : (
-                <Suspense fallback={<Loading />}>
-                  <ErrorBoundary>
-                    <TableContainer>
-                      <Route
-                        exact
-                        path={routes.dashboard}
-                        render={() => <Widgets {...data} />}
-                      />
-                    </TableContainer>
-                  </ErrorBoundary>
-                </Suspense>
-              )}
-            </StyledDashboard>
-          </Fragment>
-        )
-      }}
-    </AuthenticatedQuery>
+            return (
+              <Suspense fallback={<Loading />}>
+                <ErrorBoundary>
+                  <TableContainer>
+                    <Route
+                      exact
+                      path={routes.dashboard}
+                      render={() => <Widgets {...data} />}
+                    />
+                  </TableContainer>
+                </ErrorBoundary>
+              </Suspense>
+            )
+          }}
+        </AuthenticatedQuery>
+      </StyledDashboard>
+    </Fragment>
   )
 }
 
