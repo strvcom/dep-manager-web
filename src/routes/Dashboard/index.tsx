@@ -1,5 +1,5 @@
 import React, { Fragment, Suspense, memo } from 'react'
-import { Route, RouteComponentProps } from 'react-router-dom'
+import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import gql from 'graphql-tag'
 import ErrorBoundary from 'react-error-boundary'
 
@@ -7,6 +7,7 @@ import * as routes from '../routes'
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 import Loading from '../../components/Loading'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
+import NodeLibrariesTable from '../../containers/NodeLibrariesTable'
 
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
 import RecentUpdates from './RecentUpdates'
@@ -101,6 +102,10 @@ const Dashboard = ({ match }: DashboardProps) => {
               </WidgetContainer>
             )
 
+            const renderLibraries = () => (
+              <NodeLibrariesTable libraries={uniqueLibraries} />
+            )
+
             return (
               <Suspense fallback={<Loading />}>
                 <ErrorBoundary>
@@ -110,6 +115,14 @@ const Dashboard = ({ match }: DashboardProps) => {
                       path={routes.dashboard}
                       render={renderWidgets}
                     />
+
+                    <Switch>
+                      <Route
+                        exact
+                        path={routes.libraries}
+                        render={renderLibraries}
+                      />
+                    </Switch>
                   </TableContainer>
                 </ErrorBoundary>
               </Suspense>
