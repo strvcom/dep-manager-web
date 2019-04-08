@@ -31,12 +31,10 @@ const DASHBOARD_QUERY = gql`
                   id
                   name
                   version
+                  outdated
                   analysis {
-                    analyzedAt
                     collected {
                       metadata {
-                        name
-                        version
                         date
                       }
                     }
@@ -79,9 +77,11 @@ const Dashboard = ({ match }: DashboardProps) => {
             const { projects, archived } = data
 
             // heavy processing here:
-            const { libraries, outdated, updated } = extractLibrariesInfo(
-              projects
-            )
+            const {
+              libraries,
+              outdated,
+              recentlyUpdated
+            } = extractLibrariesInfo(projects)
 
             const renderWidgets = () => (
               <WidgetContainer>
@@ -96,7 +96,7 @@ const Dashboard = ({ match }: DashboardProps) => {
                   outdated={outdated.length}
                   total={libraries.length}
                 />
-                <RecentUpdates libraries={updated} width='32%' />
+                <RecentUpdates libraries={recentlyUpdated} width='32%' />
               </WidgetContainer>
             )
 

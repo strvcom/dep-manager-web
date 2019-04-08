@@ -16,22 +16,13 @@ import {
   pick,
   pipe,
   prop,
+  propEq,
   reduce,
   reverse,
   sortBy,
   take,
   uniqBy
 } from 'ramda'
-
-import versionDiff from '../../utils/version-diff'
-
-const isOutdated = pipe(
-  converge(versionDiff, [
-    prop('version'),
-    path(['analysis', 'collected', 'metadata', 'version'])
-  ]),
-  equals('major')
-)
 
 const setter = curry((key, mapper) =>
   // @ts-ignore
@@ -47,7 +38,7 @@ const getOutdated = pipe(
   // @ts-ignore
   prop('libraries'),
   // @ts-ignore
-  filter(isOutdated)
+  filter(propEq('outdated', 'MAJOR'))
 )
 
 const getRecentlyUpdated = pipe(
@@ -68,8 +59,8 @@ const processLibrariesInfo = memoizeWith(
   pipe(
     setter('libraries', getLibraries),
     setter('outdated', getOutdated),
-    setter('updated', getRecentlyUpdated),
-    pick(['libraries', 'outdated', 'updated'])
+    setter('recentlyUpdated', getRecentlyUpdated),
+    pick(['libraries', 'outdated', 'recentlyUpdated'])
   )
 )
 
