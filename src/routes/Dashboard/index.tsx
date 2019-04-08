@@ -6,10 +6,13 @@ import ErrorBoundary from 'react-error-boundary'
 import * as routes from '../routes'
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 import Loading from '../../components/Loading'
+import ActualityWidget from '../../containers/LibrariesActualityWidget'
 
-import { TableContainer, StyledDashboard } from './styled'
+import ProjectsOverviewWidget from './ProjectsOverviewWidget'
+import RecentUpdates from './RecentUpdates'
 import DashboardToolBar from './DashboardToolBar'
-import Widgets from './Widgets'
+import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
+import { getAllDependencies, isOutdated, getRecentlyUpdated } from './helpers'
 
 const DASHBOARD_QUERY = gql`
   query DASHBOARD_QUERY($department: BidaDepartment!) {
@@ -72,6 +75,36 @@ const Dashboard = ({ match }: DashboardProps) => {
             if (error) throw error
             if (loading) return <Loading />
 
+            const { projects, archived } = data
+
+            const libraries: any = getAllDependencies(
+              projects.edges.map(({ node }: any) => node)
+            )
+            const outdatedLibraries = libraries.filter(isOutdated)
+            const recentlyUpdatedLibraries: any[] = getRecentlyUpdated(
+              libraries
+            )
+
+            const renderWidgets = () => (
+              <WidgetContainer>
+                <ProjectsOverviewWidget
+                  total={projects.total}
+                  archived={archived.total}
+                  width='32%'
+                />
+                <ActualityWidget
+                  title='Libraries Actuality'
+                  width='32%'
+                  outdated={outdatedLibraries.length}
+                  total={libraries.length}
+                />
+                <RecentUpdates
+                  libraries={recentlyUpdatedLibraries}
+                  width='32%'
+                />
+              </WidgetContainer>
+            )
+
             return (
               <Suspense fallback={<Loading />}>
                 <ErrorBoundary>
@@ -79,7 +112,7 @@ const Dashboard = ({ match }: DashboardProps) => {
                     <Route
                       exact
                       path={routes.dashboard}
-                      render={() => <Widgets {...data} />}
+                      render={renderWidgets}
                     />
                   </TableContainer>
                 </ErrorBoundary>
