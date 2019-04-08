@@ -66,6 +66,7 @@
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.4",
     "babel-plugin-ramda": "^1.6.3",
+    "babel-plugin-rewire": "^1.2.0",
     "babel-plugin-styled-components": "^1.9.4",
     "dotenv": "^7.0.0",
     "husky": "^1.1.3",

@@ -1,6 +1,4 @@
 {
-  "plugins": [
-    "ramda",
-    "styled-components"
-  ]
+  "plugins": ["ramda", "styled-components"],
+  "env": { "test": { "plugins": ["rewire"] } }
 }
