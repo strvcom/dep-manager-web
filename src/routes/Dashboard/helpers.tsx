@@ -94,9 +94,9 @@ const mergeLibrariesInfo = pipe(
 
 const getUniqueLibraries = pipe(
   // @ts-ignore
-  prop('libraries'),
+  propOr([], 'libraries'),
   // @ts-ignore
-  uniqBy(prop('id'))
+  uniqBy(prop('name'))
 )
 
 const getRecentlyUpdated = pipe(
