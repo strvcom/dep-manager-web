@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { pipe, pathOr, any, pathEq } from 'ramda'
 
 const DEPARTMENTS = ['FRONTEND', 'BACKEND', 'ANDROID', 'IOS']
 
@@ -14,6 +15,17 @@ const typeDefs = gql`
     departments: [BidaDepartment]
   }
 
+  extend type NPMPackage {
+    dependents(
+      after: String
+      before: String
+      first: Int
+      last: Int
+      archived: Boolean
+      department: BidaDepartment
+    ): SearchResultItemConnection
+  }
+
   extend type Query {
     """
     Search projects within a department
@@ -24,8 +36,8 @@ const typeDefs = gql`
       first: Int
       last: Int
       archived: Boolean
-      department: BidaDepartment!
-    ): SearchResultItemConnection
+      department: BidaDepartment
+    ): SearchResultItemConnection!
 
     """
     Lookup a project by department and id
@@ -43,7 +55,11 @@ const Query = {
     const { schema, mergeInfo } = info
 
     const type = 'REPOSITORY'
-    const queryParts = ['user:strvcom', `topic:${department.toLowerCase()}`]
+    const queryParts = ['user:strvcom']
+
+    if (department) {
+      queryParts.push(`topic:${department.toLowerCase()}`)
+    }
 
     if (typeof archived !== 'undefined') {
       queryParts.push(`archived:${archived}`)
@@ -86,6 +102,63 @@ const Repository = {
   }
 }
 
-const resolvers = { Query, Repository }
+const dependentsSelection = gql`
+  fragment RepositoryDependencies on SearchResultItemConnection {
+    edges {
+      node {
+        ... on Repository {
+          npmPackage {
+            dependencies {
+              package {
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`.definitions[0].selectionSet.selections[0]
+
+const NPMPackage = {
+  /**
+   * Resolves the STRV repositories that depend on a given package.
+   *
+   * Currently, we rely on querying the repositorie's package.json and
+   * manually iterating each to look for dependencies on the root package.
+   * This is not performatic at all. The APIs we have cannot resolve these
+   * scenarios efficiently, so we definitely should move this code to an API
+   * of our own, with a proper caching data-layer.
+   *
+   * @ALERT do NOT rely on pagination info when using this field!
+   */
+  dependents: {
+    fragment: `... on NPMPackage { name }`,
+    resolve: async ({ name }: any, args: any, context: any, info: any) => {
+      // selection grafting
+      info.fieldNodes[0].selectionSet.selections.push(dependentsSelection)
+
+      const connection = await Query.projects(null, args, context, info)
+
+      // find dependent edges.
+      connection.edges = connection.edges.filter(
+        pipe(
+          pathOr([], ['node', 'npmPackage', 'dependencies']),
+          any(pathEq(['package', 'name'], name))
+        )
+      )
+
+      // "fix" counts.
+      connection.repositoryCount = connection.edges.length
+
+      // cleanup grafted selection.
+      info.fieldNodes[0].selectionSet.selections.pop()
+
+      return connection
+    }
+  }
+}
+
+const resolvers = { Query, Repository, NPMPackage }
 
 export default { typeDefs, resolvers }
