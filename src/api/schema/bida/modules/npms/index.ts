@@ -8,7 +8,7 @@
 import gql from 'graphql-tag'
 import { identity, path, prop } from 'ramda'
 import semver, { SemVer } from 'semver'
-import { pipeResolvers } from 'graphql-resolvers'
+import { combineResolvers, pipeResolvers } from 'graphql-resolvers'
 
 import * as loaders from './loaders'
 
@@ -93,10 +93,13 @@ const attachAnalysis = async (root: any) => ({
  */
 const metadata = (field: string, transform: any = identity) => ({
   fragment: `... on NPMPackage { name }`,
-  resolve: pipeResolvers(
-    attachAnalysis,
-    path(['analysis', 'collected', 'metadata', field]),
-    transform
+  resolve: combineResolvers(
+    prop(field),
+    pipeResolvers(
+      attachAnalysis,
+      path(['analysis', 'collected', 'metadata', field]),
+      transform
+    )
   )
 })
 
