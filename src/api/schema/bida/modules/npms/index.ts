@@ -6,10 +6,11 @@
  */
 
 import gql from 'graphql-tag'
-import { path } from 'ramda'
+import { path, prop } from 'ramda'
 import semver, { SemVer } from 'semver'
+import { pipeResolvers } from 'graphql-resolvers'
 
-import { analysis } from './loaders'
+import * as loaders from './loaders'
 
 const OUTDATE_TYPES = [
   'MAJOR',
@@ -76,13 +77,21 @@ const typeDefs = gql`
   }
 `
 
+/**
+ * Load analysis and inject into package object.
+ */
+const attachAnalysis = async (root: any) => ({
+  ...root,
+  analysis: await loaders.analysis.load(root.name)
+})
+
 const NPMPackage = {
   /**
    * Resolves package analysis based on NPMS service.
    */
   analysis: {
     fragment: `... on NPMPackage { name }`,
-    resolve: ({ name }: any) => analysis.load(name)
+    resolve: pipeResolvers(attachAnalysis, prop('analysis'))
   },
 
   /**
@@ -90,22 +99,23 @@ const NPMPackage = {
    */
   outdated: {
     fragment: `... on NPMPackage { name version }`,
-    resolve: async ({ name, version }: any) => {
-      const analysisResult = await analysis.load(name)
+    resolve: pipeResolvers(
+      attachAnalysis,
+      async ({ name, version, analysis }: any) => {
+        const current: SemVer | null = semver.coerce(version)
+        const latest: SemVer | undefined = semver.coerce(
+          // @ts-ignore
+          path(['collected', 'metadata', 'version'], analysis)
+        )
 
-      const current: SemVer | null = semver.coerce(version)
-      const latest: SemVer | undefined = semver.coerce(
-        // @ts-ignore
-        path(['collected', 'metadata', 'version'], analysisResult)
-      )
+        // console.log({ root, current, latest })
 
-      // console.log({ root, current, latest })
+        const diff =
+          !current || !latest ? 'UNKNOWN' : semver.diff(current, latest)
 
-      const diff =
-        !current || !latest ? 'UNKNOWN' : semver.diff(current, latest)
-
-      return diff ? diff.toUpperCase() : null
-    }
+        return diff ? diff.toUpperCase() : null
+      }
+    )
   }
 }
 
