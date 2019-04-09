@@ -20,21 +20,49 @@ export interface Props {
   }
 }
 
+const Usage = memo(
+  ({ library, outdates }: any) => (
+    <span>
+      {Object.keys(outdates).reduce(
+        (acc, status) =>
+          acc +
+          outdates[status].filter((lib: any) => lib.name === library).length,
+        0
+      )}
+    </span>
+  ),
+  (prev, next) => prev.name === next.name
+)
+
 const Outdated = memo(
-  ({ library: { name }, outdates }: any) => {
+  ({ library, outdates }: any) => {
     const { [distances.MAJOR]: major, [distances.MINOR]: minor } = outdates
 
-    const majors = major.filter((lib: any) => lib.name === name)
-    const minors = minor.filter((lib: any) => lib.name === name)
+    const majors = major.filter((lib: any) => lib.name === library)
+    const minors = minor.filter((lib: any) => lib.name === library)
 
     return <StatusColumn outDated={majors.length} alerts={minors.length} />
   },
-  (prev, next) => prev.rowData.name === next.rowData.name
+  (prev, next) => prev.name === next.name
+)
+
+const License = memo(
+  ({ license }: any) =>
+    license && <Tag critical={!isValidLicense(license)}>{license}</Tag>,
+  (prev, next) => prev.license === next.license
 )
 
 const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
-  const renderOutdated = ({ rowData }: any) => (
-    <Outdated library={rowData} outdates={outdates} />
+  const renderUsage = ({ rowData: { name } }: any) => (
+    <Usage library={name} outdates={outdates} />
+  )
+
+  const renderOutdated = ({ rowData: { name } }: any) => (
+    <Outdated library={name} outdates={outdates} />
+  )
+
+  const renderLicense = ({ rowData: { license } }: any) => (
+    <License license={license} />
   )
 
   const rowRenderer = React.useMemo(
@@ -54,7 +82,12 @@ const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
     >
       <Column width={380} flexGrow={1} label='Library Name' dataKey='name' />
 
-      <Column width={80} label='Total Used On' dataKey='totalDependents' />
+      <Column
+        width={80}
+        label='Total Used On'
+        dataKey='id'
+        cellRenderer={renderUsage}
+      />
 
       <Column
         width={180}
@@ -73,10 +106,5 @@ const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
     </Table>
   )
 }
-
-const renderLicense = ({ rowData }: any) =>
-  rowData.license && (
-    <Tag critical={!isValidLicense(rowData.license)}>{rowData.license}</Tag>
-  )
 
 export default memo(NodeLibrariesTable)
