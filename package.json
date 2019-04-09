@@ -25,6 +25,7 @@
     "graphql-tools": "^4.0.4",
     "history": "^4.7.2",
     "isomorphic-fetch": "^2.2.1",
+    "mem": "^4.3.0",
     "netlify-auth-providers": "^1.0.0-alpha5",
     "prop-types": "^15.6.2",
     "ramda": "^0.26.1",

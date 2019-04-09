@@ -32,6 +32,7 @@ const DASHBOARD_QUERY = gql`
                   id
                   name
                   version
+                  license
                   outdated
                   analysis {
                     collected {
@@ -85,9 +86,11 @@ const Dashboard = ({ match }: DashboardProps) => {
             const {
               libraries,
               uniqueLibraries,
-              outdates: { [distances.MAJOR]: major },
+              outdates,
               recentlyUpdated
             } = extractLibrariesInfo(projects)
+
+            const { [distances.MAJOR]: major } = outdates
 
             const renderWidgets = () => (
               <WidgetContainer>
@@ -107,7 +110,10 @@ const Dashboard = ({ match }: DashboardProps) => {
             )
 
             const renderLibraries = () => (
-              <NodeLibrariesTable libraries={uniqueLibraries} />
+              <NodeLibrariesTable
+                libraries={uniqueLibraries}
+                outdates={outdates}
+              />
             )
 
             return (
