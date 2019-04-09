@@ -40,7 +40,8 @@ const infoShape = {
     PATCH: [],
     PREPATCH: [],
     PRERELEASE: [],
-    UNKNOWN: []
+    UNKNOWN: [],
+    UPTODATE: []
   },
   uniqueLibraries: [],
   recentlyUpdated: []
@@ -72,21 +73,14 @@ const getLibraries = pipe(
   map(prop('package'))
 )
 
-const getOutdated = pipe(
-  // @ts-ignore
-  propOr([], 'libraries'),
-  // @ts-ignore
-  filter(prop('outdated'))
-)
-
 const getOutdates = pipe(
-  getOutdated,
+  propOr([], 'libraries'),
   // @ts-ignore
   reduceBy(
     flip(append),
     // @ts-ignore
     [],
-    prop('outdated')
+    prop('outdateStatus')
   )
 )
 

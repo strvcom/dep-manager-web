@@ -6,7 +6,6 @@ import { extractLibrariesInfo, __get__ } from './helpers'
 const setter = __get__('setter')
 const merger = __get__('merger')
 const getLibraries = __get__('getLibraries')
-const getOutdated = __get__('getOutdated')
 const getOutdates = __get__('getOutdates')
 const buildLibrariesInfo = __get__('buildLibrariesInfo')
 const mergeLibrariesInfo = __get__('mergeLibrariesInfo')
@@ -86,55 +85,27 @@ describe('routes/Dashboard/helpers', () => {
     })
   })
 
-  describe('getOutdated', () => {
-    const data = {
-      nil: {},
-      empty: { libraries: [] },
-      noOutdated: { libraries: [{ outdated: null }] },
-      outdates: {
-        libraries: [
-          { outdated: 'MINOR' },
-          { outdated: 'MAJOR' },
-          { outdated: null }
-        ]
-      }
-    }
-
-    it('should return empty array when no dependencies', () => {
-      expect(getOutdated(data.nil)).toEqual([])
-      expect(getOutdated(data.empty)).toEqual([])
-      expect(getOutdated(data.noOutdated)).toEqual([])
-    })
-
-    it('should return outdated packages', () => {
-      expect(getOutdated(data.outdates).length).toBe(2)
-      expect(getOutdated(data.outdates)).toHaveProperty('0.outdated', 'MINOR')
-      expect(getOutdated(data.outdates)).toHaveProperty('1.outdated', 'MAJOR')
-    })
-  })
-
   describe('getOutdates', () => {
     const data = {
       nil: {},
       empty: { libraries: [] },
-      noOutdated: { libraries: [{ outdated: null }] },
+      uptodate: { libraries: [{ outdateStatus: 'UPTODATE' }] },
       outdates: {
         libraries: [
-          { outdated: 'MINOR' },
-          { outdated: 'MAJOR' },
-          { outdated: 'MINOR' },
-          { outdated: 'PATCH' }
+          { outdateStatus: 'MINOR' },
+          { outdateStatus: 'MAJOR' },
+          { outdateStatus: 'MINOR' },
+          { outdateStatus: 'PATCH' }
         ]
       }
     }
 
-    it('should return empty array when no outdated packages', () => {
+    it('should return empty array when no outdate status found', () => {
       expect(getOutdates(data.nil)).toEqual({})
       expect(getOutdates(data.empty)).toEqual({})
-      expect(getOutdates(data.noOutdated)).toEqual({})
     })
 
-    it('should return grouped outdated packages', () => {
+    it('should return grouped packages by outdate status', () => {
       expect(getOutdates(data.outdates)).toHaveProperty('MINOR')
       expect(getOutdates(data.outdates)).toHaveProperty('MAJOR')
       expect(getOutdates(data.outdates)).toHaveProperty('PATCH')
@@ -147,15 +118,15 @@ describe('routes/Dashboard/helpers', () => {
 
   describe('buildLibrariesInfo', () => {
     const packages = {
-      uptodate: (ext: object) => ({ outdated: null, ...ext }),
-      major: (ext: object) => ({ outdated: 'MAJOR', ...ext }),
-      minor: (ext: object) => ({ outdated: 'MINOR', ...ext })
+      uptodate: (ext: object) => ({ outdateStatus: 'UPTODATE', ...ext }),
+      major: (ext: object) => ({ outdateStatus: 'MAJOR', ...ext }),
+      minor: (ext: object) => ({ outdateStatus: 'MINOR', ...ext })
     }
 
     const data = {
       nil: { cursor: uuid(), node: {} },
       empty: { cursor: uuid(), node: { npmPackage: { dependencies: [] } } },
-      noOutdated: {
+      uptodate: {
         cursor: uuid(),
         node: {
           npmPackage: {
@@ -201,11 +172,11 @@ describe('routes/Dashboard/helpers', () => {
     })
 
     it('should return dependency packages', () => {
-      const noOutdated = buildLibrariesInfo(data.noOutdated)
+      const uptodate = buildLibrariesInfo(data.uptodate)
 
-      expect(noOutdated).toHaveProperty('libraries.length', 2)
-      expect(noOutdated).toHaveProperty('libraries.0.name', 'a')
-      expect(noOutdated).toHaveProperty('libraries.1.name', 'b')
+      expect(uptodate).toHaveProperty('libraries.length', 2)
+      expect(uptodate).toHaveProperty('libraries.0.name', 'a')
+      expect(uptodate).toHaveProperty('libraries.1.name', 'b')
 
       const outdates = buildLibrariesInfo(data.outdates)
 
@@ -348,14 +319,16 @@ describe('routes/Dashboard/helpers', () => {
       expect(info).toHaveProperty('libraries.1.name', 'b')
     })
 
-    it('should extract outdated libraries from all edges', () => {
+    it('should extract outdate status libraries from all edges', () => {
       const data = {
         edges: [
           {
             cursor: uuid(),
             node: {
               npmPackage: {
-                dependencies: [{ package: { name: 'a', outdated: 'MAJOR' } }]
+                dependencies: [
+                  { package: { name: 'a', outdateStatus: 'MAJOR' } }
+                ]
               }
             }
           },
@@ -363,7 +336,9 @@ describe('routes/Dashboard/helpers', () => {
             cursor: uuid(),
             node: {
               npmPackage: {
-                dependencies: [{ package: { name: 'a', outdated: 'MINOR' } }]
+                dependencies: [
+                  { package: { name: 'a', outdateStatus: 'MINOR' } }
+                ]
               }
             }
           }
@@ -373,10 +348,10 @@ describe('routes/Dashboard/helpers', () => {
       const info = extractLibrariesInfo(data)
 
       expect(info).toHaveProperty('outdates.MAJOR.0.name', 'a')
-      expect(info).toHaveProperty('outdates.MAJOR.0.outdated', 'MAJOR')
+      expect(info).toHaveProperty('outdates.MAJOR.0.outdateStatus', 'MAJOR')
 
       expect(info).toHaveProperty('outdates.MINOR.0.name', 'a')
-      expect(info).toHaveProperty('outdates.MINOR.0.outdated', 'MINOR')
+      expect(info).toHaveProperty('outdates.MINOR.0.outdateStatus', 'MINOR')
     })
 
     it('should extract unique libraries from all edges', () => {

@@ -12,7 +12,7 @@ import { combineResolvers, pipeResolvers } from 'graphql-resolvers'
 
 import * as loaders from './loaders'
 
-const OUTDATE_TYPES = [
+const OUTDATE_STATUS = [
   'MAJOR',
   'PREMAJOR',
   'MINOR',
@@ -20,15 +20,16 @@ const OUTDATE_TYPES = [
   'PATCH',
   'PREPATCH',
   'PRERELEASE',
-  'UNKNOWN'
+  'UNKNOWN',
+  'UPTODATE'
 ]
 
 const typeDefs = gql`
   """
   Enumerator that indicates a version distance.
   """
-  enum SemverOutdated {
-    ${OUTDATE_TYPES.join('\n')}
+  enum SemverOutdateStatus {
+    ${OUTDATE_STATUS.join('\n')}
   }
 
   # type NPMSLinks {
@@ -76,7 +77,7 @@ const typeDefs = gql`
     private: Boolean
     description: String
     analysis: NPMSAnalysis
-    outdated: SemverOutdated
+    outdateStatus: SemverOutdateStatus
   }
 `
 
@@ -119,7 +120,7 @@ const NPMPackage = {
   /**
    * Shortcut for analyzing a package's outdate distance.
    */
-  outdated: {
+  outdateStatus: {
     fragment: `... on NPMPackage { name version }`,
     resolve: pipeResolvers(
       attachAnalysis,
@@ -130,12 +131,10 @@ const NPMPackage = {
           path(['collected', 'metadata', 'version'], analysis)
         )
 
-        // console.log({ root, current, latest })
-
         const diff =
           !current || !latest ? 'UNKNOWN' : semver.diff(current, latest)
 
-        return diff ? diff.toUpperCase() : null
+        return diff ? diff.toUpperCase() : 'UPTODATE'
       }
     )
   }
