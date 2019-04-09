@@ -8,6 +8,7 @@ import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 import Loading from '../../components/Loading'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import NodeLibrariesTable from '../../containers/NodeLibrariesTable'
+import NodeProjectsTable from '../../containers/FrontendProjectsTable'
 
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
 import RecentUpdates from './RecentUpdates'
@@ -25,6 +26,7 @@ const DASHBOARD_QUERY = gql`
           ... on Repository {
             id
             name
+            pushedAt
             npmPackage {
               dependencies {
                 id
@@ -116,6 +118,12 @@ const Dashboard = ({ match }: DashboardProps) => {
               />
             )
 
+            const renderProjects = () => (
+              <NodeProjectsTable
+                projects={projects.edges.map(({ node }: any) => node)}
+              />
+            )
+
             return (
               <Suspense fallback={<Loading />}>
                 <ErrorBoundary>
@@ -131,6 +139,12 @@ const Dashboard = ({ match }: DashboardProps) => {
                         exact
                         path={routes.libraries}
                         render={renderLibraries}
+                      />
+
+                      <Route
+                        exact
+                        path={routes.projects}
+                        render={renderProjects}
                       />
                     </Switch>
                   </TableContainer>

@@ -65,14 +65,12 @@ const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
     <License license={license} />
   )
 
+  const rowGetter = ({ index }: { index: number }) => libraries[index]
+
   const rowRenderer = React.useMemo(
     () => anchorRowRenderer(routes.frontendLibraries, 'id'),
     [routes.frontendLibraries]
   )
-
-  const rowGetter = React.useCallback(({ index }: Index) => libraries[index], [
-    libraries
-  ])
 
   return (
     <Table

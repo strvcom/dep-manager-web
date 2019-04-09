@@ -1,32 +1,74 @@
-import React from 'react'
-import Table, { Column, Index, TableCellProps } from '../components/Table/index'
+import React, { memo } from 'react'
+
+import Table, { Column } from '../components/Table/index'
 import StatusColumn from '../components/Table/StatusColumn'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
 import * as routes from '../routes/routes'
-import gql from 'graphql-tag'
-import { NodeProjectsTableItem } from './__generated-types/NodeProjectsTableItem'
 
-gql`
-  fragment NodeProjectsTableItem on BidaNodeProject {
-    id
-    name
-    pushedAt
-    alertedLibraries
-    outdatedLibraries
-  }
-`
-export interface NodeProjectsTableProps {
-  projects: NodeProjectsTableItem[]
+const distances = {
+  MAJOR: 'MAJOR',
+  MINOR: 'MINOR'
 }
 
-const NodeProjectsTable = React.memo<NodeProjectsTableProps>(({ projects }) => {
-  const rowGetter = React.useCallback(({ index }: Index) => projects[index], [
-    projects
-  ])
+interface Package {
+  outdateStatus: string
+}
+
+interface Project {
+  name: string
+  npmPackage: null | {
+    dependencies: Package[]
+  }
+}
+
+interface Props {
+  projects: Project[]
+}
+
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric'
+})
+
+const Outdated = memo(
+  ({ project: { name, npmPackage } }: any) => {
+    if (!npmPackage) return null
+
+    const majors = npmPackage.dependencies.filter(
+      ({ package: { outdateStatus } }: any) => outdateStatus === distances.MAJOR
+    )
+
+    const minors = npmPackage.dependencies.filter(
+      ({ package: { outdateStatus } }: any) => outdateStatus === distances.MINOR
+    )
+
+    return <StatusColumn outDated={majors.length} alerts={minors.length} />
+  },
+  (prev, next) => prev.project.name === next.project.name
+)
+
+const LastUpdate = memo(
+  ({ pushedAt }: { pushedAt: string }) => (
+    <span>{pushedAt ? dateFormatter.format(Date.parse(pushedAt)) : null}</span>
+  ),
+  (prev, next) => prev.pushedAt === next.pushedAt
+)
+
+const NodeProjectsTable = ({ projects }: Props) => {
+  const renderDate = ({ rowData: { pushedAt } }: any) => (
+    <LastUpdate pushedAt={pushedAt} />
+  )
+
+  const renderOutdated = ({ rowData }: any) => <Outdated project={rowData} />
+
+  const rowGetter = ({ index }: { index: number }) => projects[index]
+
   const rowRenderer = React.useMemo(
     () => anchorRowRenderer(routes.frontendProjects, 'id'),
     [routes.frontendProjects]
   )
+
   return (
     <Table
       rowCount={projects.length}
@@ -34,12 +76,14 @@ const NodeProjectsTable = React.memo<NodeProjectsTableProps>(({ projects }) => {
       rowRenderer={rowRenderer}
     >
       <Column width={380} label='Project Name' dataKey='name' />
+
       <Column
         width={180}
         label='Last Active'
         dataKey='pushedAt'
         cellRenderer={renderDate}
       />
+
       <Column
         width={200}
         label='Outdated Libraries'
@@ -48,27 +92,6 @@ const NodeProjectsTable = React.memo<NodeProjectsTableProps>(({ projects }) => {
       />
     </Table>
   )
-})
-
-const renderOutdated = ({
-  rowData
-}: TableCellProps<'id', NodeProjectsTableItem>) => {
-  const { outdatedLibraries, alertedLibraries } = rowData
-  return (
-    <StatusColumn
-      outDated={outdatedLibraries || 0}
-      alerts={alertedLibraries || 0}
-    />
-  )
 }
 
-const renderDate = ({ cellData }: { cellData?: string }) =>
-  cellData ? dateFormatter.format(Date.parse(cellData)) : null
-
-const dateFormatter = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric'
-})
-
-export default NodeProjectsTable
+export default memo(NodeProjectsTable)
