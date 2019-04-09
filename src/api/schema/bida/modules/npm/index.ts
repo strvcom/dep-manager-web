@@ -15,8 +15,6 @@ const typeDefs = gql`
     id: String!
     name: String!
     version: String
-    private: Boolean
-    description: String
     dependencies: [NPMDependency]!
   }
 

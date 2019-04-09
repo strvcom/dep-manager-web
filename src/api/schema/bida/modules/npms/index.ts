@@ -6,7 +6,7 @@
  */
 
 import gql from 'graphql-tag'
-import { path, prop } from 'ramda'
+import { identity, path, prop } from 'ramda'
 import semver, { SemVer } from 'semver'
 import { pipeResolvers } from 'graphql-resolvers'
 
@@ -72,6 +72,9 @@ const typeDefs = gql`
   }
 
   extend type NPMPackage {
+    license: String
+    private: Boolean
+    description: String
     analysis: NPMSAnalysis
     outdated: SemverOutdated
   }
@@ -85,7 +88,23 @@ const attachAnalysis = async (root: any) => ({
   analysis: await loaders.analysis.load(root.name)
 })
 
+/**
+ * Factory for scalar package field resolvers based on NPMS metadata.
+ */
+const metadata = (field: string, transform: any = identity) => ({
+  fragment: `... on NPMPackage { name }`,
+  resolve: pipeResolvers(
+    attachAnalysis,
+    path(['analysis', 'collected', 'metadata', field]),
+    transform
+  )
+})
+
 const NPMPackage = {
+  license: metadata('license'),
+  description: metadata('description'),
+  private: metadata('private', Boolean),
+
   /**
    * Resolves package analysis based on NPMS service.
    */
