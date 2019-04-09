@@ -79,6 +79,10 @@ const typeDefs = gql`
     analysis: NPMSAnalysis
     outdateStatus: SemverOutdateStatus
   }
+
+  extend type Query {
+    npmPackage (name: String!): NPMPackage
+  }
 `
 
 /**
@@ -140,6 +144,14 @@ const NPMPackage = {
   }
 }
 
-const resolvers = { NPMPackage }
+const Query = {
+  /**
+   * Resolves an NPMPackage info based on NPMS API.
+   */
+  npmPackage: (root: any, { name }: any) =>
+    loaders.analysis.load(name).then(path(['collected', 'metadata']))
+}
+
+const resolvers = { Query, NPMPackage }
 
 export default { typeDefs, resolvers }
