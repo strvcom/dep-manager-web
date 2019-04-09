@@ -1,4 +1,5 @@
 import React, { memo } from 'react'
+import mem from 'mem'
 
 import Table, { Column, Index } from '../components/Table/index'
 import StatusColumn from '../components/Table/StatusColumn'
@@ -46,10 +47,10 @@ const Outdated = memo(
   (prev, next) => prev.name === next.name
 )
 
-const License = memo(
-  ({ license }: any) =>
+const renderLicense = mem(
+  ({ rowData: { license } }: any) =>
     license && <Tag critical={!isValidLicense(license)}>{license}</Tag>,
-  (prev, next) => prev.license === next.license
+  { cacheKey: ({ rowData: { license } }: any) => license }
 )
 
 const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
@@ -59,10 +60,6 @@ const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
 
   const renderOutdated = ({ rowData: { name } }: any) => (
     <Outdated library={name} outdates={outdates} />
-  )
-
-  const renderLicense = ({ rowData: { license } }: any) => (
-    <License license={license} />
   )
 
   const rowGetter = ({ index }: { index: number }) => libraries[index]

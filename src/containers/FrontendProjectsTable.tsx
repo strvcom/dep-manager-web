@@ -32,8 +32,8 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
 })
 
 const Outdated = memo(
-  ({ project: { name, npmPackage } }: any) => {
-    if (!npmPackage) return null
+  ({ project: { npmPackage } }: any) => {
+    if (!npmPackage || !npmPackage.dependencies) return null
 
     const majors = npmPackage.dependencies.filter(
       ({ package: { outdateStatus } }: any) => outdateStatus === distances.MAJOR
