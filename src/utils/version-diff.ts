@@ -1,20 +1,23 @@
+import { curry } from 'ramda'
 import semver, { SemVer } from 'semver'
 
-const versionDistance = (
-  left: string | SemVer | undefined,
-  right: string | SemVer | undefined
-) => {
-  if (!left || !right) return 'UNKNOWN'
+const versionDistance = curry(
+  (
+    left: string | SemVer | undefined,
+    right: string | SemVer | undefined
+  ): string => {
+    if (!left || !right) return 'UNKNOWN'
 
-  const coercedLeft = semver.coerce(left)
-  const coercedRight = semver.coerce(right)
+    const coercedLeft = semver.coerce(left)
+    const coercedRight = semver.coerce(right)
 
-  if (!coercedLeft || !coercedRight) return 'UNKNOWN'
+    if (!coercedLeft || !coercedRight) return 'UNKNOWN'
 
-  const distance = semver.diff(coercedLeft, coercedRight)
+    const distance = semver.diff(coercedLeft, coercedRight)
 
-  return distance ? distance.toUpperCase() : 'UPTODATE'
-}
+    return distance ? distance.toUpperCase() : 'UPTODATE'
+  }
+)
 
 const versionDiff = (left: string | SemVer, right: string | SemVer) => {
   const coercedLeft = semver.coerce(left)
