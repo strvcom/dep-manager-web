@@ -65,7 +65,7 @@ const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
   const rowGetter = ({ index }: { index: number }) => libraries[index]
 
   const rowRenderer = React.useMemo(
-    () => anchorRowRenderer(routes.frontendLibraries, 'id'),
+    () => anchorRowRenderer(routes.frontendLibraries, 'name'),
     [routes.frontendLibraries]
   )
 
