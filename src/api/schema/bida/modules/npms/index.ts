@@ -6,11 +6,12 @@
  */
 
 import gql from 'graphql-tag'
-import { identity, path, prop } from 'ramda'
-import { combineResolvers, pipeResolvers } from 'graphql-resolvers'
 
-import { versionDistance } from '../../../../../utils/version-diff'
-import * as loaders from './loaders'
+import { Query } from './resolvers/Query'
+import { NPMPackage } from './resolvers/NPMPackage'
+import { NPMDependency } from './resolvers/NPMDependency'
+
+const resolvers = { Query, NPMPackage, NPMDependency }
 
 const OUTDATE_STATUS = [
   'MAJOR',
@@ -88,74 +89,5 @@ const typeDefs = gql`
     npmPackage (name: String!): NPMPackage
   }
 `
-
-/**
- * Load analysis and inject into package object.
- */
-const attachAnalysis = async (root: any) => ({
-  ...root,
-  analysis: await loaders.analysis.load(root.name)
-})
-
-/**
- * Factory for scalar package field resolvers based on NPMS metadata.
- */
-const metadata = (field: string, transform: any = identity) => ({
-  fragment: `... on NPMPackage { name }`,
-  resolve: combineResolvers(
-    // first, try and grab an existing value.
-    prop(field),
-    // then, load from NPMS analysis as a fallback.
-    pipeResolvers(
-      attachAnalysis,
-      path(['analysis', 'collected', 'metadata', field]),
-      transform
-    )
-  )
-})
-
-const NPMPackage = {
-  license: metadata('license'),
-  description: metadata('description'),
-  private: metadata('private', Boolean),
-  updatedAt: metadata('date'),
-  version: metadata('version'),
-
-  /**
-   * Resolves package analysis based on NPMS service.
-   */
-  analysis: {
-    fragment: `... on NPMPackage { name }`,
-    resolve: pipeResolvers(attachAnalysis, prop('analysis'))
-  }
-}
-
-const NPMDependency = {
-  /**
-   * Shortcut for analyzing a package's outdate distance.
-   */
-  outdateStatus: {
-    fragment: `... on NPMDependency { name version }`,
-    resolve: async ({ name, version }: any) => {
-      const analysis = await loaders.analysis.load(name)
-
-      return versionDistance(
-        version,
-        // @ts-ignore
-        path(['collected', 'metadata', 'version'], analysis)
-      )
-    }
-  }
-}
-
-const Query = {
-  /**
-   * Resolves an NPMPackage info based on NPMS API.
-   */
-  npmPackage: (root: any, { name }: any) =>
-    loaders.analysis.load(name).then(path(['collected', 'metadata']))
-}
-
-const resolvers = { Query, NPMPackage, NPMDependency }
 
 export default { typeDefs, resolvers }

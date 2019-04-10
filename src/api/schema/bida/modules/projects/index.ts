@@ -8,6 +8,8 @@ import { Repository } from './resolvers/Repository'
 import { NPMPackage } from './resolvers/NPMPackage'
 import { Dependent } from './resolvers/Dependent'
 
+const resolvers = { Query, Repository, NPMPackage, Dependent }
+
 const typeDefs = gql`
   """
   Enumerator that indicates types of projects this application acknowledges
@@ -60,12 +62,5 @@ const typeDefs = gql`
     project(name: String!): Repository!
   }
 `
-
-const resolvers = {
-  Query,
-  Repository,
-  NPMPackage,
-  Dependent
-}
 
 export default { typeDefs, resolvers }
