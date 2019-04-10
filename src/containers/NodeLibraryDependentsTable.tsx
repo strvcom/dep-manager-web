@@ -4,7 +4,7 @@ import Tag from '../components/Tag'
 import Table, { Column } from '../components/Table/index'
 import { versionDistance } from '../utils/version-diff'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
-import { BidaDepartment } from '../data/__generated-types'
+import { BidaDepartment } from '../config/types'
 import * as routes from '../routes/routes'
 
 export interface Props {

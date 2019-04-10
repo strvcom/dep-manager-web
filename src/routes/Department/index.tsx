@@ -2,7 +2,7 @@ import React from 'react'
 import { Switch, Route, RouteComponentProps } from 'react-router-dom'
 import * as routes from '../routes'
 import toBidaDepartment from '../../utils/toDepartment'
-import { BidaDepartment } from '../../data/__generated-types'
+import { BidaDepartment } from '../../config/types'
 
 const Dashboard = React.lazy(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../Dashboard')

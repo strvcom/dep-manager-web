@@ -1,4 +1,4 @@
-import { BidaDepartment } from '../data/__generated-types'
+import { BidaDepartment } from '../config/types'
 import { toUpper } from 'ramda'
 
 const toBidaDepartment = (str: string) => {

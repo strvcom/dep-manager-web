@@ -7,7 +7,7 @@ import ToolBar from '../../components/ToolBar'
 import { Wrapper, Content, Sidebar, Input } from './styled'
 import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import NodeLibraryDependentsTable from '../../containers/NodeLibraryDependentsTable'
-import { BidaDepartment } from '../../data/__generated-types'
+import { BidaDepartment } from '../../config/types'
 import Loading from '../../components/Loading'
 
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'

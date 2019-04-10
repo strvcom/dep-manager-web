@@ -1,7 +1,7 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { BidaDepartment } from './../../../data/__generated-types'
+import { BidaDepartment } from './../../../config/types'
 
 // ====================================================
 // GraphQL query operation: ProjectDetailsData

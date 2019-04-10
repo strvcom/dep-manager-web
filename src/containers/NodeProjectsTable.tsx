@@ -3,7 +3,7 @@ import React, { memo } from 'react'
 import Table, { Column } from '../components/Table/index'
 import StatusColumn from '../components/Table/StatusColumn'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
-import { BidaDepartment } from '../data/__generated-types'
+import { BidaDepartment } from '../config/types'
 import * as routes from '../routes/routes'
 
 const distances = {

@@ -13,3 +13,10 @@ export enum License {
   WTFPL = 'WTFPL',
   Yahoo = 'Yahoo'
 }
+
+export enum BidaDepartment {
+  ANDROID = 'ANDROID',
+  BACKEND = 'BACKEND',
+  FRONTEND = 'FRONTEND',
+  IOS = 'IOS'
+}

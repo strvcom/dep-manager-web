@@ -1,5 +1,4 @@
-import { Category } from '../config/types'
-import { BidaDepartment } from '../data/__generated-types'
+import { BidaDepartment, Category } from '../config/types'
 import { toLower } from 'ramda'
 
 const departments = Object.values(BidaDepartment)

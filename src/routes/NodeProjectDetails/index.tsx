@@ -11,7 +11,7 @@ import RecentUpdates from '../Dashboard/RecentUpdates'
 import { Body } from '../../components/Typography'
 import Loading from '../../components/Loading'
 import NodeProjectDependenciesTable from '../../containers/NodeProjectDependenciesTable'
-import { BidaDepartment } from '../../data/__generated-types'
+import { BidaDepartment } from '../../config/types'
 
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 import { getRecentlyUpdated } from '../Dashboard/helpers'
