@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { DEPARTMENTS } from './constants'
 
 // "* as NAME" syntax breaks GraphQL resolvers tree.
-import { projects } from './resolvers/Query'
+import { projects, project } from './resolvers/Query'
 import { departments } from './resolvers/Repository'
 import { dependents } from './resolvers/NPMPackage'
 
@@ -51,14 +51,14 @@ const typeDefs = gql`
     ): SearchResultItemConnection!
 
     """
-    Lookup a project by department and id
+    Lookup a project by name
     """
-    project(id: String!): Repository!
+    project(name: String!): Repository!
   }
 `
 
 const resolvers = {
-  Query: { projects },
+  Query: { projects, project },
   Repository: { departments },
   NPMPackage: { dependents }
 }

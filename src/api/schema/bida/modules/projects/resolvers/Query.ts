@@ -30,4 +30,24 @@ const projects = (root: any, args: any, context: any, info: any) => {
   })
 }
 
-export { projects }
+/**
+ * Query::project
+ *
+ * Resolves a project inside strvcom org based on name.
+ */
+const project = (root: any, { name }: any, context: any, info: any) => {
+  const { schema, mergeInfo } = info
+
+  const owner = 'strvcom'
+
+  return mergeInfo.delegateToSchema({
+    info,
+    schema,
+    context,
+    operation: 'query',
+    fieldName: 'repository',
+    args: { name, owner }
+  })
+}
+
+export { projects, project }
