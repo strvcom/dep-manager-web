@@ -1,6 +1,8 @@
 import { pathEq } from 'ramda'
 import mem from 'mem'
 
+import { versionDistance } from '../../../../../../utils/version-diff'
+
 const getVersion = mem(
   (lib: string, repository: any) =>
     repository.npmPackage.dependencies.find(pathEq(['package', 'name'], lib))
@@ -31,4 +33,16 @@ const name = ({ repository }: any) => repository.name
 const id = ({ __parent, repository }: any) =>
   `${getVersion(__parent.name, repository)}@${repository.name}`
 
-export const Dependent = { id, name, version }
+/**
+ * Dependent::outdatedStatus
+ *
+ * Shortcut resolver for outdate status on this dependent.
+ */
+const outdateStatus = ({ __parent, repository }: any) =>
+  versionDistance(
+    getVersion(__parent.name, repository),
+    // @ts-ignore
+    __parent.version
+  )
+
+export const Dependent = { id, name, version, outdateStatus }

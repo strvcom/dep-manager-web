@@ -20,6 +20,7 @@ const typeDefs = gql`
     id: String!
     name: String!
     version: String!
+    outdateStatus: SemverOutdateStatus!
     repository: Repository!
   }
 
