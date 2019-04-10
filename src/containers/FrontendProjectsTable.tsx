@@ -65,7 +65,7 @@ const NodeProjectsTable = ({ projects }: Props) => {
   const rowGetter = ({ index }: { index: number }) => projects[index]
 
   const rowRenderer = React.useMemo(
-    () => anchorRowRenderer(routes.frontendProjects, 'id'),
+    () => anchorRowRenderer(routes.frontendProjects, 'name'),
     [routes.frontendProjects]
   )
 
