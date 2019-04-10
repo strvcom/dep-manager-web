@@ -26,6 +26,7 @@ const dependentsSelection = gql`
             dependencies {
               package {
                 name
+                version
               }
             }
           }
@@ -49,11 +50,13 @@ const dependsOn = (name: string) =>
 /**
  * Normalize a Repository edge into an Dependent edge (with meta-data info)
  */
-const edgeToDependent = (version: string) => ({ cursor, node }: any) => ({
+const edgeToDependent = (library: string) => ({ cursor, node }: any) => ({
   cursor,
   node: {
     __typename: 'Dependent',
-    version,
+    version: node.npmPackage.dependencies.find(
+      pathEq(['package', 'name'], library)
+    ).package.version,
     repository: node
   }
 })
@@ -124,12 +127,7 @@ const visitor = {
  */
 const dependents = {
   fragment: `... on NPMPackage { name version }`,
-  resolve: async (
-    { name, version }: any,
-    args: any,
-    context: any,
-    info: any
-  ) => {
+  resolve: async ({ name }: any, args: any, context: any, info: any) => {
     // transform request selection.
     const fieldNodes = visit(info.fieldNodes, visitor)
 
@@ -142,7 +140,7 @@ const dependents = {
     // find dependent edges.
     connection.edges = connection.edges
       .filter(dependsOn(name))
-      .map(edgeToDependent(version))
+      .map(edgeToDependent(name))
 
     // "fix" counts.
     connection.repositoryCount = connection.edges.length

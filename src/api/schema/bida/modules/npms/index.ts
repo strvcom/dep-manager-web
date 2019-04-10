@@ -131,6 +131,7 @@ const NPMPackage = {
       async ({ name, version, analysis }: any) =>
         versionDistance(
           version,
+          // @ts-ignore
           path(['collected', 'metadata', 'version'], analysis)
         )
     )
