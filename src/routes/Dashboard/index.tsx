@@ -18,7 +18,7 @@ import { extractLibrariesInfo } from './helpers'
 
 const DASHBOARD_QUERY = gql`
   query DASHBOARD_QUERY($department: BidaDepartment!) {
-    projects(first: 10, department: $department) {
+    projects(first: 50, department: $department) {
       total: repositoryCount
       edges {
         cursor
