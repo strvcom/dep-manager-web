@@ -1,4 +1,5 @@
 import React, { memo } from 'react'
+import { path, pipe } from 'ramda'
 import mem from 'mem'
 
 import Table, { Column, Index } from '../components/Table/index'
@@ -44,28 +45,37 @@ const Outdated = memo(
 
     return <StatusColumn outDated={majors.length} alerts={minors.length} />
   },
-  (prev, next) => prev.name === next.name
+  (prev, next) => prev.library === next.library
 )
 
 const renderLicense = mem(
-  ({ rowData: { license } }: any) =>
-    license && <Tag critical={!isValidLicense(license)}>{license}</Tag>,
-  { cacheKey: ({ rowData: { license } }: any) => license }
+  pipe(
+    path(['rowData', 'package', 'license']),
+    (license: any) =>
+      license ? <Tag critical={!isValidLicense(license)}>{license}</Tag> : null
+  ),
+  { cacheKey: path(['rowData', 'package', 'license']) }
 )
 
 const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
-  const renderUsage = ({ rowData: { name } }: any) => (
-    <Usage library={name} outdates={outdates} />
-  )
-
-  const renderOutdated = ({ rowData: { name } }: any) => (
-    <Outdated library={name} outdates={outdates} />
-  )
-
   const rowGetter = ({ index }: { index: number }) => libraries[index]
 
+  const renderUsage = ({ rowData }: any) => (
+    <Usage library={rowData.package.name} outdates={outdates} />
+  )
+
+  const renderName = ({ rowData }: any) => rowData.package.name
+
+  const renderOutdated = ({ rowData }: any) => (
+    <Outdated library={rowData.package.name} outdates={outdates} />
+  )
+
   const rowRenderer = React.useMemo(
-    () => anchorRowRenderer(routes.frontendLibraries, 'name'),
+    () =>
+      anchorRowRenderer(
+        routes.frontendLibraries,
+        rowData => rowData.package.name
+      ),
     [routes.frontendLibraries]
   )
 
@@ -75,7 +85,13 @@ const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
       rowGetter={rowGetter}
       rowRenderer={rowRenderer}
     >
-      <Column width={380} flexGrow={1} label='Library Name' dataKey='name' />
+      <Column
+        width={380}
+        flexGrow={1}
+        label='Library Name'
+        dataKey='package'
+        cellRenderer={renderName}
+      />
 
       <Column
         width={80}

@@ -30,13 +30,14 @@ const DASHBOARD_QUERY = gql`
             npmPackage {
               dependencies {
                 id
+                name
+                outdateStatus
                 package {
                   id
                   name
                   version
                   license
                   updatedAt
-                  outdateStatus
                 }
               }
             }
