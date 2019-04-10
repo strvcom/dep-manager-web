@@ -28,6 +28,7 @@ const DASHBOARD_QUERY = gql`
             name
             pushedAt
             npmPackage {
+              id
               dependencies {
                 id
                 name
