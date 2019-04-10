@@ -1,8 +1,7 @@
 import { writeStorage } from '@rehooks/local-storage'
 import Netlify from 'netlify-auth-providers'
 
-import { REACT_APP_SITE_ID } from '../../config/env'
-import { GITHUB_TOKEN_KEY } from '../../config/link'
+import { REACT_APP_SITE_ID, GITHUB_TOKEN_KEY } from './env'
 
 const options =
   process.env.NODE_ENV === 'development' ? { site_id: REACT_APP_SITE_ID } : {}
