@@ -70,13 +70,8 @@ const merger = (mergeMap: object) =>
 
 const getDependencies = pathOr([], ['npmPackage', 'dependencies'])
 
-const getLibraries = pipe(
-  propOr([], 'dependencies'),
-  map(prop('package'))
-)
-
 const getOutdates = pipe(
-  propOr([], 'dependencies'),
+  propOr([], 'libraries'),
   // @ts-ignore
   reduceBy(
     flip(append),
@@ -94,8 +89,7 @@ const buildLibrariesInfo = memoizeWith(
     // @ts-ignore
     prop('node'),
     // @ts-ignore
-    setter('dependencies', getDependencies),
-    setter('libraries', getLibraries),
+    setter('libraries', getDependencies),
     setter('outdates', getOutdates),
     pick(['libraries', 'outdates'])
   )
@@ -110,11 +104,11 @@ const mergeLibrariesInfo = pipe(
 )
 
 // @ts-ignore
-const getUniqueLibraries = uniqBy(prop('name'))
+const getUniqueDependencies = uniqBy(path(['package', 'name']))
 
 export const getRecentlyUpdated = pipe(
   // @ts-ignore
-  sortBy(prop('updatedAt')),
+  sortBy(path(['package', 'updatedAt'])),
   // @ts-ignore
   reverse,
   // @ts-ignore
@@ -125,7 +119,8 @@ const calcUniqueLibraries = setter(
   'uniqueLibraries',
   pipe(
     propOr([], 'libraries'),
-    getUniqueLibraries
+    // @ts-ignore
+    getUniqueDependencies
   )
 )
 
@@ -133,7 +128,8 @@ const calcRecentlyUpdated = setter(
   'recentlyUpdated',
   pipe(
     propOr([], 'uniqueLibraries'),
-    getRecentlyUpdated
+    getRecentlyUpdated,
+    map(prop('package'))
   )
 )
 

@@ -5,11 +5,11 @@ import { extractLibrariesInfo, getRecentlyUpdated, __get__ } from './helpers'
 
 const setter = __get__('setter')
 const merger = __get__('merger')
-const getLibraries = __get__('getLibraries')
+const getDependencies = __get__('getDependencies')
 const getOutdates = __get__('getOutdates')
 const buildLibrariesInfo = __get__('buildLibrariesInfo')
 const mergeLibrariesInfo = __get__('mergeLibrariesInfo')
-const getUniqueLibraries = __get__('getUniqueLibraries')
+const getUniqueDependencies = __get__('getUniqueDependencies')
 const infoShape = __get__('infoShape')
 
 describe('routes/Dashboard/helpers', () => {
@@ -56,37 +56,45 @@ describe('routes/Dashboard/helpers', () => {
     })
   })
 
-  describe('getLibraries', () => {
+  describe('getDependencies', () => {
     const data = {
       nil: {},
-      empty: { dependencies: [] },
+      empty: { npmPackage: { dependencies: [] } },
       fulfiled: {
-        dependencies: [
-          { package: { name: 'first' } },
-          { package: { name: 'second' } }
-        ]
+        npmPackage: {
+          dependencies: [
+            { package: { name: 'first' } },
+            { package: { name: 'second' } }
+          ]
+        }
       }
     }
 
     it('should return empty array when no dependencies', () => {
-      expect(getLibraries(data.nil)).toEqual([])
-      expect(getLibraries(data.empty)).toEqual([])
+      expect(getDependencies(data.nil)).toEqual([])
+      expect(getDependencies(data.empty)).toEqual([])
     })
 
     it('should return dependency packages', () => {
-      expect(getLibraries(data.fulfiled).length).toBe(2)
-      expect(getLibraries(data.fulfiled)).toHaveProperty('0.name', 'first')
-      expect(getLibraries(data.fulfiled)).toHaveProperty('1.name', 'second')
+      expect(getDependencies(data.fulfiled).length).toBe(2)
+      expect(getDependencies(data.fulfiled)).toHaveProperty(
+        '0.package.name',
+        'first'
+      )
+      expect(getDependencies(data.fulfiled)).toHaveProperty(
+        '1.package.name',
+        'second'
+      )
     })
   })
 
   describe('getOutdates', () => {
     const data = {
       nil: {},
-      empty: { dependencies: [] },
-      uptodate: { dependencies: [{ outdateStatus: 'UPTODATE' }] },
+      empty: { libraries: [] },
+      uptodate: { libraries: [{ outdateStatus: 'UPTODATE' }] },
       outdates: {
-        dependencies: [
+        libraries: [
           { outdateStatus: 'MINOR' },
           { outdateStatus: 'MAJOR' },
           { outdateStatus: 'MINOR' },
@@ -164,16 +172,16 @@ describe('routes/Dashboard/helpers', () => {
       const uptodate = buildLibrariesInfo(data.uptodate)
 
       expect(uptodate).toHaveProperty('libraries.length', 2)
-      expect(uptodate).toHaveProperty('libraries.0.name', 'a')
-      expect(uptodate).toHaveProperty('libraries.1.name', 'b')
+      expect(uptodate).toHaveProperty('libraries.0.package.name', 'a')
+      expect(uptodate).toHaveProperty('libraries.1.package.name', 'b')
 
       const outdates = buildLibrariesInfo(data.outdates)
 
       expect(outdates).toHaveProperty('libraries.length', 4)
-      expect(outdates).toHaveProperty('libraries.0.name', 'a')
-      expect(outdates).toHaveProperty('libraries.1.name', 'b')
-      expect(outdates).toHaveProperty('libraries.2.name', 'c')
-      expect(outdates).toHaveProperty('libraries.3.name', 'd')
+      expect(outdates).toHaveProperty('libraries.0.package.name', 'a')
+      expect(outdates).toHaveProperty('libraries.1.package.name', 'b')
+      expect(outdates).toHaveProperty('libraries.2.package.name', 'c')
+      expect(outdates).toHaveProperty('libraries.3.package.name', 'd')
     })
 
     it('should return grouped outdates', () => {
@@ -222,17 +230,22 @@ describe('routes/Dashboard/helpers', () => {
     })
   })
 
-  describe('getUniqueLibraries', () => {
+  describe('getUniqueDependencies', () => {
     it('should return empty arrays when no libraries', () => {
-      expect(getUniqueLibraries([])).toEqual([])
+      expect(getUniqueDependencies([])).toEqual([])
     })
 
     it('should return unique libraries', () => {
-      const unique = [{ name: 'a' }, { name: 'b' }]
-      const repeated = [{ name: 'a' }, { name: 'b' }, { name: 'a' }]
+      const unique = [{ package: { name: 'a' } }, { package: { name: 'b' } }]
 
-      expect(getUniqueLibraries(unique)).toEqual(unique)
-      expect(getUniqueLibraries(repeated)).toEqual(unique)
+      const repeated = [
+        { package: { name: 'a' } },
+        { package: { name: 'b' } },
+        { package: { name: 'a' } }
+      ]
+
+      expect(getUniqueDependencies(unique)).toEqual(unique)
+      expect(getUniqueDependencies(repeated)).toEqual(unique)
     })
   })
 
@@ -254,20 +267,23 @@ describe('routes/Dashboard/helpers', () => {
 
     it('should sort results', () => {
       const libs = [
-        { updatedAt: '2010' },
-        { updatedAt: '2011' },
-        { updatedAt: '2008' }
+        { package: { updatedAt: '2007' } },
+        { package: { updatedAt: '2010' } },
+        { package: { updatedAt: '2011' } },
+        { package: { updatedAt: '2008' } }
       ]
 
-      expect(libs).toHaveProperty('0.updatedAt', '2010')
-      expect(libs).toHaveProperty('1.updatedAt', '2011')
-      expect(libs).toHaveProperty('2.updatedAt', '2008')
+      expect(libs).toHaveProperty('0.package.updatedAt', '2007')
+      expect(libs).toHaveProperty('1.package.updatedAt', '2010')
+      expect(libs).toHaveProperty('2.package.updatedAt', '2011')
+      expect(libs).toHaveProperty('3.package.updatedAt', '2008')
 
       const res = getRecentlyUpdated(libs)
 
-      expect(res).toHaveProperty('0.updatedAt', '2011')
-      expect(res).toHaveProperty('1.updatedAt', '2010')
-      expect(res).toHaveProperty('2.updatedAt', '2008')
+      expect(res).toHaveProperty('0.package.updatedAt', '2011')
+      expect(res).toHaveProperty('1.package.updatedAt', '2010')
+      expect(res).toHaveProperty('2.package.updatedAt', '2008')
+      expect(res).toHaveProperty('3.package.updatedAt', '2007')
     })
   })
 
@@ -297,8 +313,8 @@ describe('routes/Dashboard/helpers', () => {
 
       const info = extractLibrariesInfo(data)
 
-      expect(info).toHaveProperty('libraries.0.name', 'a')
-      expect(info).toHaveProperty('libraries.1.name', 'b')
+      expect(info).toHaveProperty('libraries.0.package.name', 'a')
+      expect(info).toHaveProperty('libraries.1.package.name', 'b')
     })
 
     it('should extract outdate status libraries from all edges', () => {
@@ -349,11 +365,11 @@ describe('routes/Dashboard/helpers', () => {
 
       const info = extractLibrariesInfo(data)
 
-      expect(info).toHaveProperty('libraries.0.name', 'a')
-      expect(info).toHaveProperty('libraries.1.name', 'a')
+      expect(info).toHaveProperty('libraries.0.package.name', 'a')
+      expect(info).toHaveProperty('libraries.1.package.name', 'a')
 
-      expect(info).toHaveProperty('uniqueLibraries.0.name', 'a')
-      expect(info).not.toHaveProperty('uniqueLibraries.1.name', 'a')
+      expect(info).toHaveProperty('uniqueLibraries.0.package.name', 'a')
+      expect(info).not.toHaveProperty('uniqueLibraries.1.package.name', 'a')
     })
 
     it('should extract recently updated libraries from all edges', () => {
