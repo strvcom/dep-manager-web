@@ -47,9 +47,9 @@ const typeDefs = gql`
   type NPMSMetadata {
     name: String!
     version: String!
-    # description: String!
+    description: String!
     date: String!
-    # license: String!
+    license: String!
     # scope: String
     # keywords: String[]
     # publisher: NPMSUser
@@ -74,6 +74,7 @@ const typeDefs = gql`
 
   extend type NPMPackage {
     license: String
+    updatedAt: String
     private: Boolean
     description: String
     analysis: NPMSAnalysis
@@ -112,6 +113,7 @@ const NPMPackage = {
   license: metadata('license'),
   description: metadata('description'),
   private: metadata('private', Boolean),
+  updatedAt: metadata('date'),
 
   /**
    * Resolves package analysis based on NPMS service.
