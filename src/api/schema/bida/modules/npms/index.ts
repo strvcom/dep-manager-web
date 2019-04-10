@@ -119,6 +119,7 @@ const NPMPackage = {
   description: metadata('description'),
   private: metadata('private', Boolean),
   updatedAt: metadata('date'),
+  version: metadata('version'),
 
   /**
    * Resolves package analysis based on NPMS service.
