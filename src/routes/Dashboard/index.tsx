@@ -57,16 +57,17 @@ const DASHBOARD_QUERY = gql`
   }
 `
 
-type DashboardProps = RouteComponentProps<{
-  department: string
-  category: string
-}>
+export interface Props
+  extends RouteComponentProps<{
+    department: string
+    category: string
+  }> {}
 
 const distances = {
   MAJOR: 'MAJOR'
 }
 
-const Dashboard = ({ match }: DashboardProps) => {
+const Dashboard = ({ match }: Props) => {
   const { department, category } = match!.params
 
   return (
