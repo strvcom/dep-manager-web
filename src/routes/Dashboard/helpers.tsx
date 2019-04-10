@@ -68,20 +68,23 @@ const merger = (mergeMap: object) =>
     )
   )
 
+const getDependencies = pathOr([], ['npmPackage', 'dependencies'])
+
 const getLibraries = pipe(
-  pathOr([], ['npmPackage', 'dependencies']),
+  propOr([], 'dependencies'),
   map(prop('package'))
 )
 
 const getOutdates = pipe(
-  propOr([], 'libraries'),
+  propOr([], 'dependencies'),
   // @ts-ignore
   reduceBy(
     flip(append),
     // @ts-ignore
     [],
     prop('outdateStatus')
-  )
+  ),
+  map(map(prop('package')))
 )
 
 // this operation can be expensive... memoization for the rescue.
@@ -91,6 +94,7 @@ const buildLibrariesInfo = memoizeWith(
     // @ts-ignore
     prop('node'),
     // @ts-ignore
+    setter('dependencies', getDependencies),
     setter('libraries', getLibraries),
     setter('outdates', getOutdates),
     pick(['libraries', 'outdates'])
@@ -108,7 +112,7 @@ const mergeLibrariesInfo = pipe(
 // @ts-ignore
 const getUniqueLibraries = uniqBy(prop('name'))
 
-const getRecentlyUpdated = pipe(
+export const getRecentlyUpdated = pipe(
   // @ts-ignore
   sortBy(prop('updatedAt')),
   // @ts-ignore

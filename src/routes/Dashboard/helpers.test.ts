@@ -1,7 +1,7 @@
 import 'jest'
 import uuid from 'uuid/v4'
 
-import { extractLibrariesInfo, __get__ } from './helpers'
+import { extractLibrariesInfo, getRecentlyUpdated, __get__ } from './helpers'
 
 const setter = __get__('setter')
 const merger = __get__('merger')
@@ -10,10 +10,7 @@ const getOutdates = __get__('getOutdates')
 const buildLibrariesInfo = __get__('buildLibrariesInfo')
 const mergeLibrariesInfo = __get__('mergeLibrariesInfo')
 const getUniqueLibraries = __get__('getUniqueLibraries')
-const getRecentlyUpdated = __get__('getRecentlyUpdated')
 const infoShape = __get__('infoShape')
-
-const copy = (obj: any) => JSON.parse(JSON.stringify(obj))
 
 describe('routes/Dashboard/helpers', () => {
   describe('fn', () => {
@@ -62,14 +59,12 @@ describe('routes/Dashboard/helpers', () => {
   describe('getLibraries', () => {
     const data = {
       nil: {},
-      empty: { npmPackage: { dependencies: [] } },
+      empty: { dependencies: [] },
       fulfiled: {
-        npmPackage: {
-          dependencies: [
-            { package: { name: 'first' } },
-            { package: { name: 'second' } }
-          ]
-        }
+        dependencies: [
+          { package: { name: 'first' } },
+          { package: { name: 'second' } }
+        ]
       }
     }
 
@@ -88,10 +83,10 @@ describe('routes/Dashboard/helpers', () => {
   describe('getOutdates', () => {
     const data = {
       nil: {},
-      empty: { libraries: [] },
-      uptodate: { libraries: [{ outdateStatus: 'UPTODATE' }] },
+      empty: { dependencies: [] },
+      uptodate: { dependencies: [{ outdateStatus: 'UPTODATE' }] },
       outdates: {
-        libraries: [
+        dependencies: [
           { outdateStatus: 'MINOR' },
           { outdateStatus: 'MAJOR' },
           { outdateStatus: 'MINOR' },
@@ -117,12 +112,6 @@ describe('routes/Dashboard/helpers', () => {
   })
 
   describe('buildLibrariesInfo', () => {
-    const packages = {
-      uptodate: (ext: object) => ({ outdateStatus: 'UPTODATE', ...ext }),
-      major: (ext: object) => ({ outdateStatus: 'MAJOR', ...ext }),
-      minor: (ext: object) => ({ outdateStatus: 'MINOR', ...ext })
-    }
-
     const data = {
       nil: { cursor: uuid(), node: {} },
       empty: { cursor: uuid(), node: { npmPackage: { dependencies: [] } } },
@@ -131,8 +120,8 @@ describe('routes/Dashboard/helpers', () => {
         node: {
           npmPackage: {
             dependencies: [
-              { package: packages.uptodate({ name: 'a' }) },
-              { package: packages.uptodate({ name: 'b' }) }
+              { package: { name: 'a' }, outdateStatus: 'UPTODATE' },
+              { package: { name: 'b' }, outdateStatus: 'UPTODATE' }
             ]
           }
         }
@@ -142,10 +131,10 @@ describe('routes/Dashboard/helpers', () => {
         node: {
           npmPackage: {
             dependencies: [
-              { package: packages.uptodate({ name: 'a' }) },
-              { package: packages.major({ name: 'b' }) },
-              { package: packages.minor({ name: 'c' }) },
-              { package: packages.major({ name: 'd' }) }
+              { package: { name: 'a' }, outdateStatus: 'UPTODATE' },
+              { package: { name: 'b' }, outdateStatus: 'MAJOR' },
+              { package: { name: 'c' }, outdateStatus: 'MINOR' },
+              { package: { name: 'd' }, outdateStatus: 'MAJOR' }
             ]
           }
         }
@@ -320,7 +309,7 @@ describe('routes/Dashboard/helpers', () => {
             node: {
               npmPackage: {
                 dependencies: [
-                  { package: { name: 'a', outdateStatus: 'MAJOR' } }
+                  { package: { name: 'a' }, outdateStatus: 'MAJOR' }
                 ]
               }
             }
@@ -330,7 +319,7 @@ describe('routes/Dashboard/helpers', () => {
             node: {
               npmPackage: {
                 dependencies: [
-                  { package: { name: 'a', outdateStatus: 'MINOR' } }
+                  { package: { name: 'a' }, outdateStatus: 'MINOR' }
                 ]
               }
             }
@@ -341,10 +330,7 @@ describe('routes/Dashboard/helpers', () => {
       const info = extractLibrariesInfo(data)
 
       expect(info).toHaveProperty('outdates.MAJOR.0.name', 'a')
-      expect(info).toHaveProperty('outdates.MAJOR.0.outdateStatus', 'MAJOR')
-
       expect(info).toHaveProperty('outdates.MINOR.0.name', 'a')
-      expect(info).toHaveProperty('outdates.MINOR.0.outdateStatus', 'MINOR')
     })
 
     it('should extract unique libraries from all edges', () => {
