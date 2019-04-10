@@ -78,6 +78,9 @@ const typeDefs = gql`
     private: Boolean
     description: String
     analysis: NPMSAnalysis
+  }
+
+  extend type NPMDependency {
     outdateStatus: SemverOutdateStatus
   }
 
@@ -100,7 +103,9 @@ const attachAnalysis = async (root: any) => ({
 const metadata = (field: string, transform: any = identity) => ({
   fragment: `... on NPMPackage { name }`,
   resolve: combineResolvers(
+    // first, try and grab an existing value.
     prop(field),
+    // then, load from NPMS analysis as a fallback.
     pipeResolvers(
       attachAnalysis,
       path(['analysis', 'collected', 'metadata', field]),
@@ -121,22 +126,24 @@ const NPMPackage = {
   analysis: {
     fragment: `... on NPMPackage { name }`,
     resolve: pipeResolvers(attachAnalysis, prop('analysis'))
-  },
+  }
+}
 
+const NPMDependency = {
   /**
    * Shortcut for analyzing a package's outdate distance.
    */
   outdateStatus: {
-    fragment: `... on NPMPackage { name version }`,
-    resolve: pipeResolvers(
-      attachAnalysis,
-      async ({ name, version, analysis }: any) =>
-        versionDistance(
-          version,
-          // @ts-ignore
-          path(['collected', 'metadata', 'version'], analysis)
-        )
-    )
+    fragment: `... on NPMDependency { name version }`,
+    resolve: async ({ name, version }: any) => {
+      const analysis = await loaders.analysis.load(name)
+
+      return versionDistance(
+        version,
+        // @ts-ignore
+        path(['collected', 'metadata', 'version'], analysis)
+      )
+    }
   }
 }
 
@@ -148,6 +155,6 @@ const Query = {
     loaders.analysis.load(name).then(path(['collected', 'metadata']))
 }
 
-const resolvers = { Query, NPMPackage }
+const resolvers = { Query, NPMPackage, NPMDependency }
 
 export default { typeDefs, resolvers }
