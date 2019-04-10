@@ -117,6 +117,7 @@ const Dashboard = ({ match }: Props) => {
 
             const renderProjects = () => (
               <NodeProjectsTable
+                department={department}
                 projects={projects.edges.map(({ node }: any) => node)}
               />
             )

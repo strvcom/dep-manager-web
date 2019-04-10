@@ -3,6 +3,7 @@ import React, { memo } from 'react'
 import Table, { Column } from '../components/Table/index'
 import StatusColumn from '../components/Table/StatusColumn'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
+import { BidaDepartment } from '../data/__generated-types'
 import * as routes from '../routes/routes'
 
 const distances = {
@@ -23,6 +24,7 @@ interface Project {
 
 interface Props {
   projects: Project[]
+  department: string
 }
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -55,7 +57,14 @@ const LastUpdate = memo(
   (prev, next) => prev.pushedAt === next.pushedAt
 )
 
-const NodeProjectsTable = ({ projects }: Props) => {
+const departmentBaseURLs = {
+  [BidaDepartment.BACKEND]: routes.backendProjects,
+  [BidaDepartment.FRONTEND]: routes.frontendProjects
+}
+
+const NodeProjectsTable = ({ projects, department }: Props) => {
+  const baseURL = departmentBaseURLs[department.toUpperCase()]
+
   const renderDate = ({ rowData: { pushedAt } }: any) => (
     <LastUpdate pushedAt={pushedAt} />
   )
@@ -64,10 +73,7 @@ const NodeProjectsTable = ({ projects }: Props) => {
 
   const rowGetter = ({ index }: { index: number }) => projects[index]
 
-  const rowRenderer = React.useMemo(
-    () => anchorRowRenderer(routes.frontendProjects, 'name'),
-    [routes.frontendProjects]
-  )
+  const rowRenderer = baseURL ? anchorRowRenderer(baseURL, 'name') : undefined
 
   return (
     <Table
