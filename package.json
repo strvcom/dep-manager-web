@@ -10,6 +10,7 @@
     "apollo-client-preset": "^1.0.8",
     "apollo-link": "^1.2.11",
     "apollo-link-context": "^1.0.17",
+    "apollo-link-dedup": "^1.0.18",
     "apollo-link-error": "^1.1.10",
     "apollo-link-http": "^1.5.14",
     "apollo-link-schema": "^1.2.2",
