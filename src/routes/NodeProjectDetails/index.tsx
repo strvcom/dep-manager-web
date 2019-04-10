@@ -45,7 +45,7 @@ export interface Props extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
 }
 
-function NodeProjectDetails ({ match, department }: Props) {
+const NodeProjectDetails = ({ match, department }: Props) => {
   const { id: name } = match!.params
 
   return (
@@ -55,7 +55,10 @@ function NodeProjectDetails ({ match, department }: Props) {
         if (loading) return <Loading />
 
         const { project } = data
-        const dependencies = project.npmPackage.dependencies
+
+        const dependencies = project.npmPackage
+          ? project.npmPackage.dependencies
+          : []
 
         const outdated = dependencies.filter(propEq('outdateStatus', 'MAJOR'))
 
