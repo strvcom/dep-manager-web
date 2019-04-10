@@ -47,15 +47,3 @@ export interface Repository {
   type: string
   url: string
 }
-
-export const fetchPackages = async (
-  names: string[]
-): Promise<Record<any, NPMSPackage>> => {
-  const response = await fetch('https://api.npms.io/v2/package/mget', {
-    method: 'POST',
-    body: JSON.stringify(names),
-    headers: { 'Content-Type': 'application/json' }
-  })
-  if (!response.ok) throw new Error(response.status.toString())
-  return response.json()
-}

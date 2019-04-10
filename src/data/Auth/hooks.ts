@@ -1,8 +1,6 @@
 import { writeStorage } from '@rehooks/local-storage'
-import { useQuery } from '../../hooks/apollo-hooks'
-import { AUTH_QUERY } from './queries'
 import Netlify from 'netlify-auth-providers'
-import { AuthQuery } from './__generated-types/AuthQuery'
+
 import { REACT_APP_SITE_ID } from '../../config/env'
 import { GITHUB_TOKEN_KEY } from '../../config/link'
 
@@ -14,13 +12,6 @@ const authenticator = new Netlify(options)
 interface NetlifyResponse {
   token: string
   scope: string
-}
-
-export function useAuth () {
-  const {
-    data: { authentication }
-  } = useQuery<AuthQuery>(AUTH_QUERY)
-  return authentication
 }
 
 const provider = 'github'
