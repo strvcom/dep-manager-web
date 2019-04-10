@@ -1,18 +1,7 @@
 import React, { memo, Fragment } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import gql from 'graphql-tag'
-import {
-  __,
-  curry,
-  pipe,
-  path,
-  pathOr,
-  any,
-  both,
-  prop,
-  propEq,
-  equals
-} from 'ramda'
+import { __, propEq } from 'ramda'
 
 import ToolBar from '../../components/ToolBar'
 import { Wrapper, Content, Sidebar, Input } from './styled'
@@ -20,7 +9,6 @@ import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import NodeLibraryDependentsTable from '../../containers/NodeLibraryDependentsTable'
 import { BidaDepartment } from '../../data/__generated-types'
 import Loading from '../../components/Loading'
-import { versionDistance } from '../../utils/version-diff'
 
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 
@@ -35,8 +23,11 @@ const NODE_LIBRARY_QUERY = gql`
         edges {
           node {
             ... on Dependent {
+              id
               version
+              outdateStatus
               repository {
+                id
                 name
               }
             }
@@ -50,14 +41,6 @@ const NODE_LIBRARY_QUERY = gql`
 export interface Props extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
 }
-
-const isOutdatedEdge = (version: string) =>
-  pipe(
-    path(['node', 'version']),
-    // @ts-ignore
-    versionDistance(version),
-    equals('MAJOR')
-  )
 
 const NodeLibraryDetails = ({ match, department }: Props) => {
   const { id: name } = match!.params
@@ -74,7 +57,7 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
         const { library } = data
 
         const outdated = library.dependents.edges.filter(
-          isOutdatedEdge(library.version)
+          propEq('outdatedStatus', 'MAJOR')
         )
 
         return (

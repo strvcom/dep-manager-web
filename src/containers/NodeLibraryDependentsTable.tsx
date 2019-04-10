@@ -29,7 +29,7 @@ const Outdated = memo(
 
 const getRepositoryId = (dependent: any) => dependent.repository.name
 
-const baseURLs = {
+const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendProjects,
   [BidaDepartment.FRONTEND]: routes.frontendProjects
 }
@@ -39,7 +39,7 @@ const NodeLibraryDependentsTable = ({
   libraryVersion,
   department
 }: Props) => {
-  const baseURL = baseURLs[department]
+  const baseURL = departmentBaseURLs[department]
 
   const rowGetter = ({ index }: { index: number }) => dependents[index].node
   const renderName = ({ rowData }: any) => rowData.repository.name
