@@ -15,6 +15,13 @@ const typeDefs = gql`
     ${DEPARTMENTS.join('\n')}
   }
 
+  type Dependent {
+    version: String!
+    repository: Repository!
+  }
+
+  extend union SearchResultItem = Dependent
+
   extend type Repository {
     departments: [BidaDepartment]
   }
