@@ -3,11 +3,13 @@
  */
 
 import gql from 'graphql-tag'
-import { path, pipe, propOr, toPairs, zipObj, map, identity, when } from 'ramda'
+import { path, pipe, propOr, toPairs, zipObj, map, omit, when } from 'ramda'
 
 const typeDefs = gql`
   type NPMDependency {
     id: String!
+    name: String!
+    version: String!
     package: NPMPackage!
   }
 
@@ -23,11 +25,8 @@ const typeDefs = gql`
   }
 `
 
-const packageIDResolver = ({ id, name, version }: any) =>
-  id || `${name}@${version}`
-
 const NPMPackage = {
-  id: packageIDResolver,
+  id: ({ id, name }: any) => id || name,
   dependencies: pipe(
     propOr({}, 'dependencies'),
     // @ts-ignore
@@ -37,8 +36,8 @@ const NPMPackage = {
 }
 
 const NPMDependency = {
-  id: packageIDResolver,
-  package: identity
+  id: ({ name, version }: any) => `${name}@${version}`,
+  package: omit(['version'])
 }
 
 const Repository = {
