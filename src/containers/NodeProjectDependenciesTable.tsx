@@ -1,94 +1,93 @@
-import React from 'react'
+import React, { memo } from 'react'
+import { path } from 'ramda'
+import mem from 'mem'
+
 import Tag from '../components/Tag'
-import Table, {
-  Column,
-  TableCellProps,
-  TableCellDataGetterParams,
-  Index
-} from '../components/Table'
+import Table, { Column, TableCellProps } from '../components/Table'
 import versionDiff from '../utils/version-diff'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
 import { isValidLicense } from '../data/Library/index'
-import gql from 'graphql-tag'
 import { NodeProjectDependenciesTableItem } from './__generated-types/NodeProjectDependenciesTableItem'
 import { BidaDepartment } from '../data/__generated-types'
 import * as routes from '../routes/routes'
 
-gql`
-  fragment NodeProjectDependenciesTableItem on BidaNodeProjectDependency {
-    id
-    name
-    version
-    library {
-      id
-      version
-      license
-    }
-  }
-`
-
-const departmentToBaseURL = (department: BidaDepartment) => {
-  switch (department) {
-    case BidaDepartment.BACKEND:
-      return routes.backendLibraries
-    case BidaDepartment.FRONTEND:
-      return routes.frontendLibraries
-    default:
-      return null
-  }
-}
-
-export interface NodeProjectDependenciesTableProps {
-  dependencies: NodeProjectDependenciesTableItem[]
+export interface Props {
+  dependencies: any[]
   department: BidaDepartment
 }
-const NodeProjectDependenciesTable = ({
-  dependencies,
-  department
-}: NodeProjectDependenciesTableProps) => {
-  const handleRowGetter = React.useCallback(
-    ({ index }: Index) => dependencies[index],
-    [dependencies]
+
+const departmentBaseURLs = {
+  [BidaDepartment.BACKEND]: routes.backendLibraries,
+  [BidaDepartment.FRONTEND]: routes.frontendLibraries
+}
+
+const Outdated = memo(
+  ({ version, outdateStatus }: any) => (
+    <Tag
+      critical={outdateStatus === 'MAJOR'}
+      warning={outdateStatus === 'MINOR'}
+    >
+      {version}
+    </Tag>
+  ),
+  (prev, next) =>
+    prev.version + prev.outdateStatus === next.version + next.outdateStatus
+)
+
+const renderLicense = mem(
+  ({ rowData: { license } }: any) =>
+    license && <Tag critical={!isValidLicense(license)}>{license}</Tag>,
+  { cacheKey: ({ rowData: { license } }: any) => license }
+)
+
+const NodeProjectDependenciesTable = ({ dependencies, department }: Props) => {
+  const baseURL = departmentBaseURLs[department]
+
+  const rowGetter = ({ index }: { index: number }) => dependencies[index]
+
+  const renderVersion = ({ rowData: { version, outdateStatus } }: any) => (
+    <Outdated version={version} outdateStatus={outdateStatus} />
   )
-  const baseURL = departmentToBaseURL(department)
+
+  const rowRenderer = baseURL
+    ? anchorRowRenderer(baseURL, path(['package', 'name']) as () => string)
+    : undefined
+
   return (
     <Table
       rowCount={dependencies.length}
-      rowGetter={handleRowGetter}
-      rowRenderer={
-        baseURL ? anchorRowRenderer(baseURL, getLibraryId) : undefined
-      }
+      rowGetter={rowGetter}
+      rowRenderer={rowRenderer}
     >
-      <Column width={380} label='Library Name' dataKey='name' />
+      <Column
+        width={380}
+        label='Library Name'
+        dataKey='name'
+        cellDataGetter={path(['rowData', 'package', 'name'])}
+      />
+
       <Column
         width={280}
         label='Up To Date Version'
         dataKey='library'
-        cellDataGetter={renderUpToDateVersion}
+        cellDataGetter={path(['rowData', 'package', 'version'])}
       />
+
       <Column
         width={280}
         label='Current version'
-        dataKey='library'
-        cellRenderer={renderDependencyVersion}
+        dataKey='version'
+        cellRenderer={renderVersion}
       />
+
       <Column
-        cellRenderer={renderLicense}
         width={150}
         label='License'
-        dataKey='library'
+        dataKey='license'
+        cellDataGetter={path(['rowData', 'package', 'license'])}
       />
     </Table>
   )
-}
-
-const getLibraryId = (dependency: NodeProjectDependenciesTableItem) =>
-  dependency.id.split(':')[0]
-
-const renderUpToDateVersion = ({
-  rowData
-}: TableCellDataGetterParams<'library', NodeProjectDependenciesTableItem>) => {
-  return rowData.library.version
 }
 
 const renderDependencyVersion = ({
@@ -105,13 +104,5 @@ const renderDependencyVersion = ({
       return <Tag>{rowData.version}</Tag>
   }
 }
-
-const renderLicense = ({
-  cellData
-}: TableCellProps<'library', NodeProjectDependenciesTableItem>) =>
-  cellData &&
-  cellData.license && (
-    <Tag critical={!isValidLicense(cellData.license)}>{cellData.license}</Tag>
-  )
 
 export default React.memo(NodeProjectDependenciesTable)
