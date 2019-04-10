@@ -3,8 +3,6 @@ import { Switch, Route, RouteComponentProps } from 'react-router-dom'
 import * as routes from '../routes'
 import toBidaDepartment from '../../utils/toDepartment'
 import { BidaDepartment } from '../../data/__generated-types'
-import InitializeData from '../../containers/InitializeData'
-import Loading from '../../components/Loading'
 
 const Dashboard = React.lazy(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../Dashboard')
@@ -28,20 +26,18 @@ const DepartmentPage = React.memo((props: DepartmentPageProps) => {
   const renderNodeLibraryDetails = useNodeLibraryDetails(department)
 
   return (
-    <InitializeData loading={<Loading />} department={department}>
-      <Switch>
-        <Route
-          path={routes.nodeProjectDetails}
-          render={renderNodeProjectDetails}
-        />
-        />
-        <Route
-          path={routes.nodeLibraryDetails}
-          render={renderNodeLibraryDetails}
-        />
-        <Route path={routes.dashboard} component={Dashboard} />
-      </Switch>
-    </InitializeData>
+    <Switch>
+      <Route
+        path={routes.nodeProjectDetails}
+        render={renderNodeProjectDetails}
+      />
+      />
+      <Route
+        path={routes.nodeLibraryDetails}
+        render={renderNodeLibraryDetails}
+      />
+      <Route path={routes.dashboard} component={Dashboard} />
+    </Switch>
   )
 })
 
