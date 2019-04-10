@@ -7,9 +7,9 @@
 
 import gql from 'graphql-tag'
 import { identity, path, prop } from 'ramda'
-import semver, { SemVer } from 'semver'
 import { combineResolvers, pipeResolvers } from 'graphql-resolvers'
 
+import { versionDistance } from '../../../../../utils/version-diff'
 import * as loaders from './loaders'
 
 const OUTDATE_STATUS = [
@@ -128,18 +128,11 @@ const NPMPackage = {
     fragment: `... on NPMPackage { name version }`,
     resolve: pipeResolvers(
       attachAnalysis,
-      async ({ name, version, analysis }: any) => {
-        const current: SemVer | null = semver.coerce(version)
-        const latest: SemVer | undefined = semver.coerce(
-          // @ts-ignore
+      async ({ name, version, analysis }: any) =>
+        versionDistance(
+          version,
           path(['collected', 'metadata', 'version'], analysis)
         )
-
-        const diff =
-          !current || !latest ? 'UNKNOWN' : semver.diff(current, latest)
-
-        return diff ? diff.toUpperCase() : 'UPTODATE'
-      }
     )
   }
 }
