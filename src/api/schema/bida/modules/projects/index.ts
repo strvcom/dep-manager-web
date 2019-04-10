@@ -3,9 +3,10 @@ import gql from 'graphql-tag'
 import { DEPARTMENTS } from './constants'
 
 // "* as NAME" syntax breaks GraphQL resolvers tree.
-import { projects, project } from './resolvers/Query'
-import { departments } from './resolvers/Repository'
-import { dependents } from './resolvers/NPMPackage'
+import { Query } from './resolvers/Query'
+import { Repository } from './resolvers/Repository'
+import { NPMPackage } from './resolvers/NPMPackage'
+import { Dependent } from './resolvers/Dependent'
 
 const typeDefs = gql`
   """
@@ -16,6 +17,8 @@ const typeDefs = gql`
   }
 
   type Dependent {
+    id: String!
+    name: String!
     version: String!
     repository: Repository!
   }
@@ -58,9 +61,10 @@ const typeDefs = gql`
 `
 
 const resolvers = {
-  Query: { projects, project },
-  Repository: { departments },
-  NPMPackage: { dependents }
+  Query,
+  Repository,
+  NPMPackage,
+  Dependent
 }
 
 export default { typeDefs, resolvers }

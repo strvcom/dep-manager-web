@@ -50,4 +50,4 @@ const project = (root: any, { name }: any, context: any, info: any) => {
   })
 }
 
-export { projects, project }
+export const Query = { projects, project }

@@ -15,18 +15,19 @@ import {
   set
 } from 'ramda'
 
-import { projects } from './Query'
+import { Query } from './Query'
 
 const dependentsSelection = gql`
   fragment RepositoryDependencies on SearchResultItemConnection {
     edges {
       node {
         ... on Repository {
+          name
           npmPackage {
             dependencies {
+              version
               package {
                 name
-                version
               }
             }
           }
@@ -50,13 +51,14 @@ const dependsOn = (name: string) =>
 /**
  * Normalize a Repository edge into an Dependent edge (with meta-data info)
  */
-const edgeToDependent = (library: string) => ({ cursor, node }: any) => ({
+const edgeToDependent = (name: string, version: string) => ({
+  cursor,
+  node
+}: any) => ({
   cursor,
   node: {
     __typename: 'Dependent',
-    version: node.npmPackage.dependencies.find(
-      pathEq(['package', 'name'], library)
-    ).package.version,
+    __parent: { name, version },
     repository: node
   }
 })
@@ -127,12 +129,17 @@ const visitor = {
  */
 const dependents = {
   fragment: `... on NPMPackage { name version }`,
-  resolve: async ({ name }: any, args: any, context: any, info: any) => {
+  resolve: async (
+    { name, version }: any,
+    args: any,
+    context: any,
+    info: any
+  ) => {
     // transform request selection.
     const fieldNodes = visit(info.fieldNodes, visitor)
 
     // reuse Query::projects delegation logic.
-    const connection = await projects(null, args, context, {
+    const connection = await Query.projects(null, args, context, {
       ...info,
       fieldNodes
     })
@@ -140,7 +147,7 @@ const dependents = {
     // find dependent edges.
     connection.edges = connection.edges
       .filter(dependsOn(name))
-      .map(edgeToDependent(name))
+      .map(edgeToDependent(name, version))
 
     // "fix" counts.
     connection.repositoryCount = connection.edges.length
@@ -149,4 +156,4 @@ const dependents = {
   }
 }
 
-export { dependents }
+export const NPMPackage = { dependents }

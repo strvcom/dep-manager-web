@@ -24,4 +24,4 @@ const departments = {
       .filter((name: string) => DEPARTMENTS.includes(name))
 }
 
-export { departments }
+export const Repository = { departments }
