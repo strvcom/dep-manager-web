@@ -7,7 +7,7 @@ import StatusColumn from '../components/Table/StatusColumn'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
 import Tag from '../components/Tag'
 import * as routes from '../routes/routes'
-import { isValidLicense } from '../data/Library/index'
+import { isValidLicense } from '../utils/license'
 
 const distances = {
   MAJOR: 'MAJOR',

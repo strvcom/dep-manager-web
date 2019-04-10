@@ -1,4 +1,4 @@
-import { License } from '../../config/types'
+import { License } from '../config/types'
 
 const licenses = Object.keys(License)
 

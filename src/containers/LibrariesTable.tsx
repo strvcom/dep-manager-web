@@ -2,7 +2,6 @@ import React from 'react'
 import Table, { Column, Index } from '../components/Table/index'
 import gql from 'graphql-tag'
 import { LibrariesTableItem } from './__generated-types/LibrariesTableItem'
-// import { isValidLicense } from '../../data/Library/index'
 
 gql`
   fragment LibrariesTableItem on BidaLibrary {

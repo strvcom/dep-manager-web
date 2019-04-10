@@ -5,7 +5,7 @@ import mem from 'mem'
 import Tag from '../components/Tag'
 import Table, { Column } from '../components/Table'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
-import { isValidLicense } from '../data/Library/index'
+import { isValidLicense } from '../utils/license'
 import { BidaDepartment } from '../config/types'
 import * as routes from '../routes/routes'
 
