@@ -2,7 +2,7 @@ import React, { memo } from 'react'
 import { path, pipe } from 'ramda'
 import mem from 'mem'
 
-import Table, { Column, Index } from '../components/Table/index'
+import Table, { Column } from '../components/Table/index'
 import StatusColumn from '../components/Table/StatusColumn'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
 import Tag from '../components/Tag'

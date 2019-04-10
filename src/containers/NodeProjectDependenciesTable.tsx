@@ -3,11 +3,9 @@ import { path } from 'ramda'
 import mem from 'mem'
 
 import Tag from '../components/Tag'
-import Table, { Column, TableCellProps } from '../components/Table'
-import versionDiff from '../utils/version-diff'
+import Table, { Column } from '../components/Table'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
 import { isValidLicense } from '../data/Library/index'
-import { NodeProjectDependenciesTableItem } from './__generated-types/NodeProjectDependenciesTableItem'
 import { BidaDepartment } from '../data/__generated-types'
 import * as routes from '../routes/routes'
 
@@ -21,8 +19,8 @@ const departmentBaseURLs = {
   [BidaDepartment.FRONTEND]: routes.frontendLibraries
 }
 
-const Outdated = memo(
-  ({ version, outdateStatus }: any) => (
+const renderVersion = mem(
+  ({ cellData: { version, outdateStatus } }: any) => (
     <Tag
       critical={outdateStatus === 'MAJOR'}
       warning={outdateStatus === 'MINOR'}
@@ -30,24 +28,22 @@ const Outdated = memo(
       {version}
     </Tag>
   ),
-  (prev, next) =>
-    prev.version + prev.outdateStatus === next.version + next.outdateStatus
+  {
+    cacheKey: ({ cellData: { version, outdateStatus } }: any) =>
+      version + outdateStatus
+  }
 )
 
 const renderLicense = mem(
-  ({ rowData: { license } }: any) =>
+  ({ cellData: license }: any) =>
     license && <Tag critical={!isValidLicense(license)}>{license}</Tag>,
-  { cacheKey: ({ rowData: { license } }: any) => license }
+  { cacheKey: ({ cellData: license }: any) => license }
 )
 
 const NodeProjectDependenciesTable = ({ dependencies, department }: Props) => {
   const baseURL = departmentBaseURLs[department]
 
   const rowGetter = ({ index }: { index: number }) => dependencies[index]
-
-  const renderVersion = ({ rowData: { version, outdateStatus } }: any) => (
-    <Outdated version={version} outdateStatus={outdateStatus} />
-  )
 
   const rowRenderer = baseURL
     ? anchorRowRenderer(baseURL, path(['package', 'name']) as () => string)
@@ -78,31 +74,18 @@ const NodeProjectDependenciesTable = ({ dependencies, department }: Props) => {
         label='Current version'
         dataKey='version'
         cellRenderer={renderVersion}
+        cellDataGetter={path(['rowData'])}
       />
 
       <Column
         width={150}
         label='License'
         dataKey='license'
+        cellRenderer={renderLicense}
         cellDataGetter={path(['rowData', 'package', 'license'])}
       />
     </Table>
   )
 }
 
-const renderDependencyVersion = ({
-  cellData,
-  rowData
-}: TableCellProps<'library', NodeProjectDependenciesTableItem>) => {
-  if (!cellData) return null
-  switch (versionDiff(cellData.version, rowData.version)) {
-    case 'major':
-      return <Tag critical>{rowData.version}</Tag>
-    case 'minor':
-      return <Tag warning>{rowData.version}</Tag>
-    default:
-      return <Tag>{rowData.version}</Tag>
-  }
-}
-
-export default React.memo(NodeProjectDependenciesTable)
+export default memo(NodeProjectDependenciesTable)
