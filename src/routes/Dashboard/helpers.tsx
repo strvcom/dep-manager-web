@@ -105,22 +105,32 @@ const mergeLibrariesInfo = pipe(
   mergeRight({ libraries: [], outdates: {} })
 )
 
-const getUniqueLibraries = pipe(
-  // @ts-ignore
-  propOr([], 'libraries'),
-  // @ts-ignore
-  uniqBy(prop('name'))
-)
+// @ts-ignore
+const getUniqueLibraries = uniqBy(prop('name'))
 
 const getRecentlyUpdated = pipe(
   // @ts-ignore
-  propOr([], 'uniqueLibraries'),
-  // @ts-ignore
-  sortBy(path(['analysis', 'collected', 'metadata', 'date'])),
+  sortBy(prop('updatedAt')),
   // @ts-ignore
   reverse,
   // @ts-ignore
   take(10)
+)
+
+const calcUniqueLibraries = setter(
+  'uniqueLibraries',
+  pipe(
+    propOr([], 'libraries'),
+    getUniqueLibraries
+  )
+)
+
+const calcRecentlyUpdated = setter(
+  'recentlyUpdated',
+  pipe(
+    propOr([], 'uniqueLibraries'),
+    getRecentlyUpdated
+  )
 )
 
 const extractLibrariesInfo = pipe(
@@ -130,9 +140,10 @@ const extractLibrariesInfo = pipe(
   map(buildLibrariesInfo),
   // @ts-ignore
   reduce(mergeLibrariesInfo, infoShape),
+
   // @ts-ignore
-  setter('uniqueLibraries', getUniqueLibraries),
-  setter('recentlyUpdated', getRecentlyUpdated)
+  calcUniqueLibraries,
+  calcRecentlyUpdated
 )
 
 export { extractLibrariesInfo }

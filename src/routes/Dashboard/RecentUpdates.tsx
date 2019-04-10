@@ -28,11 +28,9 @@ const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => (
             <span>{lib.name}</span>
             <span>{lib.version}</span>
           </TitleContainer>
-          {lib.analysis.collected.metadata.date && (
+          {lib.updatedAt && (
             <UpdatedTime>
-              {dateFormatter.format(
-                new Date(lib.analysis.collected.metadata.date)
-              )}
+              {dateFormatter.format(new Date(lib.updatedAt))}
             </UpdatedTime>
           )}
         </ItemLink>

@@ -35,14 +35,8 @@ const DASHBOARD_QUERY = gql`
                   name
                   version
                   license
+                  updatedAt
                   outdateStatus
-                  analysis {
-                    collected {
-                      metadata {
-                        date
-                      }
-                    }
-                  }
                 }
               }
             }

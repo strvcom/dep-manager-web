@@ -235,16 +235,15 @@ describe('routes/Dashboard/helpers', () => {
 
   describe('getUniqueLibraries', () => {
     it('should return empty arrays when no libraries', () => {
-      expect(getUniqueLibraries({})).toEqual([])
-      expect(getUniqueLibraries({ libraries: [] })).toEqual([])
+      expect(getUniqueLibraries([])).toEqual([])
     })
 
     it('should return unique libraries', () => {
-      const unequal = { libraries: [{ name: 'a' }, { name: 'b' }] }
-      const equal = { libraries: [{ name: 'a' }, { name: 'b' }, { name: 'a' }] }
+      const unique = [{ name: 'a' }, { name: 'b' }]
+      const repeated = [{ name: 'a' }, { name: 'b' }, { name: 'a' }]
 
-      expect(getUniqueLibraries(unequal)).toEqual(unequal.libraries)
-      expect(getUniqueLibraries(equal)).toEqual(unequal.libraries)
+      expect(getUniqueLibraries(unique)).toEqual(unique)
+      expect(getUniqueLibraries(repeated)).toEqual(unique)
     })
   })
 
@@ -255,37 +254,31 @@ describe('routes/Dashboard/helpers', () => {
     })
 
     it('should return max 10 libraries', () => {
-      const data = { uniqueLibraries: Array(20).fill({}) }
+      const data = Array(20).fill({})
       expect(getRecentlyUpdated(data)).toHaveProperty('length', 10)
     })
 
     it('should return less than 10 libraries when having less', () => {
-      const data = { uniqueLibraries: Array(5).fill({}) }
+      const data = Array(5).fill({})
       expect(getRecentlyUpdated(data)).toHaveProperty('length', 5)
     })
 
     it('should sort results', () => {
-      const initial = { analysis: { collected: { metadata: {} } } }
+      const libs = [
+        { updatedAt: '2010' },
+        { updatedAt: '2011' },
+        { updatedAt: '2008' }
+      ]
 
-      const lib = Array(3)
-        .fill(initial)
-        .map(copy)
+      expect(libs).toHaveProperty('0.updatedAt', '2010')
+      expect(libs).toHaveProperty('1.updatedAt', '2011')
+      expect(libs).toHaveProperty('2.updatedAt', '2008')
 
-      const dates = { 0: '2010', 1: '2011', 2: '2008' }
+      const res = getRecentlyUpdated(libs)
 
-      for (const i in dates) {
-        lib[i].analysis.collected.metadata.date = dates[i]
-      }
-
-      expect(lib).toHaveProperty('0.analysis.collected.metadata.date', '2010')
-      expect(lib).toHaveProperty('1.analysis.collected.metadata.date', '2011')
-      expect(lib).toHaveProperty('2.analysis.collected.metadata.date', '2008')
-
-      const res = getRecentlyUpdated({ uniqueLibraries: lib })
-
-      expect(res).toHaveProperty('0.analysis.collected.metadata.date', '2011')
-      expect(res).toHaveProperty('1.analysis.collected.metadata.date', '2010')
-      expect(res).toHaveProperty('2.analysis.collected.metadata.date', '2008')
+      expect(res).toHaveProperty('0.updatedAt', '2011')
+      expect(res).toHaveProperty('1.updatedAt', '2010')
+      expect(res).toHaveProperty('2.updatedAt', '2008')
     })
   })
 
