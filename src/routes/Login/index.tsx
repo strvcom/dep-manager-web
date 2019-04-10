@@ -1,7 +1,7 @@
 import React from 'react'
 import { ReactComponent as Logo } from '../../assets/logo.svg'
 import { LoginButton, Container } from './styled'
-import { authenticate } from '../../data/Auth'
+import { authenticate } from '../../config/auth'
 import { ThemeProvider } from '../../styles/styled'
 import darkTheme from '../../styles/themes/dark'
 

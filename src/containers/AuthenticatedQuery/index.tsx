@@ -2,7 +2,7 @@ import React from 'react'
 import { Query } from 'react-apollo'
 import { useLocalStorage } from '@rehooks/local-storage'
 
-import { GITHUB_TOKEN_KEY } from '../../config/link'
+import { GITHUB_TOKEN_KEY } from '../../config/env'
 
 const AuthenticatedQuery = ({ skip, context, ...rest }: any) => {
   const [token] = useLocalStorage(GITHUB_TOKEN_KEY)
