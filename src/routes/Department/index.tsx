@@ -31,7 +31,6 @@ const DepartmentPage = React.memo((props: DepartmentPageProps) => {
         path={routes.nodeProjectDetails}
         render={renderNodeProjectDetails}
       />
-      />
       <Route
         path={routes.nodeLibraryDetails}
         render={renderNodeLibraryDetails}

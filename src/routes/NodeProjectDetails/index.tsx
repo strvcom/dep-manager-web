@@ -1,4 +1,4 @@
-import React, { Fragment, memo } from 'react'
+import React, { Fragment, memo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { prop, propEq } from 'ramda'
 import gql from 'graphql-tag'
@@ -47,6 +47,7 @@ export interface Props extends RouteComponentProps<{ id: string }> {
 
 const NodeProjectDetails = ({ match, department }: Props) => {
   const { id: name } = match!.params
+  const [search, setSearch] = useState('')
 
   return (
     <AuthenticatedQuery query={PROJECT_QUERY} variables={{ name }}>
@@ -66,6 +67,10 @@ const NodeProjectDetails = ({ match, department }: Props) => {
           prop('package')
         )
 
+        const filtered = dependencies.filter(
+          (dependency: any) => dependency.package.name.indexOf(search) > -1
+        )
+
         return (
           <Fragment>
             <ToolBar
@@ -80,15 +85,21 @@ const NodeProjectDetails = ({ match, department }: Props) => {
               <Content>
                 <Body>Project libraries</Body>
                 <div>
-                  <Input placeholder='Search for libraries' />
+                  <Input
+                    autoFocus
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder='Search for libraries'
+                  />
                 </div>
                 <NodeProjectDependenciesTable
-                  dependencies={dependencies}
+                  dependencies={filtered}
                   department={department}
                 />
               </Content>
               <Sidebar>
                 <RecentUpdates libraries={recentLibraries} />
+
                 <ActualityWidget
                   title='Libraries Actuality'
                   mt={20}
