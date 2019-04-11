@@ -9,7 +9,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Loading from './components/Loading'
 import PropTypes from 'prop-types'
 
-import { createClient } from './api/client'
+import { client } from './api/client'
 
 if (process.env.NODE_ENV === 'development') {
   // fixes react-router erroneous prop-types
@@ -19,20 +19,16 @@ if (process.env.NODE_ENV === 'development') {
   ])
 }
 
-createClient()
-  .then(client =>
-    ReactDOM.render(
-      <React.Suspense fallback={<Loading />}>
-        <ApolloProvider client={client}>
-          <Router>
-            <App />
-          </Router>
-        </ApolloProvider>
-        <GlobalStyle />
-      </React.Suspense>,
-      document.getElementById('root')
-    )
-  )
-  .catch(console.error)
+ReactDOM.render(
+  <React.Suspense fallback={<Loading />}>
+    <ApolloProvider client={client}>
+      <Router>
+        <App />
+      </Router>
+    </ApolloProvider>
+    <GlobalStyle />
+  </React.Suspense>,
+  document.getElementById('root')
+)
 
 registerServiceWorker()
