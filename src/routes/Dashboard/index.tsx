@@ -1,4 +1,4 @@
-import React, { Fragment, Suspense, memo } from 'react'
+import React, { Fragment, Suspense, memo, useState } from 'react'
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import gql from 'graphql-tag'
 import ErrorBoundary from 'react-error-boundary'
@@ -66,9 +66,16 @@ const distances = {
 const Dashboard = ({ match }: Props) => {
   const { department, category } = match!.params
 
+  const [search, setSearch] = useState('')
+
   return (
     <Fragment>
-      <DashboardToolBar department={department} category={category} />
+      <DashboardToolBar
+        department={department}
+        category={category}
+        search={search}
+        setSearch={setSearch}
+      />
 
       <StyledDashboard>
         <AuthenticatedQuery
@@ -98,29 +105,40 @@ const Dashboard = ({ match }: Props) => {
                   archived={archived.total}
                   width='32%'
                 />
+
                 <ActualityWidget
                   title='Libraries Actuality'
                   width='32%'
                   outdated={major.length}
                   total={libraries.length}
                 />
+
                 <RecentUpdates libraries={recentlyUpdated} width='32%' />
               </WidgetContainer>
             )
 
-            const renderLibraries = () => (
-              <NodeLibrariesTable
-                libraries={uniqueLibraries}
-                outdates={outdates}
-              />
-            )
+            const renderLibraries = () => {
+              const filtered = uniqueLibraries.filter(
+                ({ package: { name } }: any) => name.indexOf(search) > -1
+              )
 
-            const renderProjects = () => (
-              <NodeProjectsTable
-                department={department}
-                projects={projects.edges.map(({ node }: any) => node)}
-              />
-            )
+              return (
+                <NodeLibrariesTable libraries={filtered} outdates={outdates} />
+              )
+            }
+
+            const renderProjects = () => {
+              const filtered = projects.edges
+                .map(({ node }: any) => node)
+                .filter(({ name }: any) => name.indexOf(search) > -1)
+
+              return (
+                <NodeProjectsTable
+                  department={department}
+                  projects={filtered}
+                />
+              )
+            }
 
             return (
               <Suspense fallback={<Loading />}>
