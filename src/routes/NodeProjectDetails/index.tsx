@@ -67,8 +67,8 @@ const NodeProjectDetails = ({ match, department }: Props) => {
           prop('package')
         )
 
-        const filtered = dependencies.filter(
-          (dependency: any) => dependency.package.name.indexOf(search) > -1
+        const filtered = dependencies.filter((dependency: any) =>
+          dependency.package.name.includes(search)
         )
 
         return (

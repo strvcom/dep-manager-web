@@ -119,7 +119,7 @@ const Dashboard = ({ match }: Props) => {
 
             const renderLibraries = () => {
               const filtered = uniqueLibraries.filter(
-                ({ package: { name } }: any) => name.indexOf(search) > -1
+                ({ package: { name } }: any) => name.includes(search)
               )
 
               return (
@@ -130,7 +130,7 @@ const Dashboard = ({ match }: Props) => {
             const renderProjects = () => {
               const filtered = projects.edges
                 .map(({ node }: any) => node)
-                .filter(({ name }: any) => name.indexOf(search) > -1)
+                .filter(({ name }: any) => name.includes(search))
 
               return (
                 <NodeProjectsTable

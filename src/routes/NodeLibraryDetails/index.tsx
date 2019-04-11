@@ -61,8 +61,8 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
           propEq('outdatedStatus', 'MAJOR')
         )
 
-        const filtered = library.dependents.edges.filter(
-          ({ node }: any) => node.repository.name.indexOf(search) > -1
+        const filtered = library.dependents.edges.filter(({ node }: any) =>
+          node.repository.name.includes(search)
         )
 
         return (
