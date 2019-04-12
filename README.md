@@ -24,4 +24,4 @@ By utilizing GraphQL endpoint we can do this in one network call with no over fe
 
 The environment variables that should be available for this project to work properly
 
-* REACT_APP_SITE_ID (The netlify ID)
+- NETLIFY_SITE_ID (The netlify ID)

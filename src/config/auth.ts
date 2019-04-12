@@ -1,10 +1,10 @@
 import { writeStorage } from '@rehooks/local-storage'
 import Netlify from 'netlify-auth-providers'
 
-import { REACT_APP_SITE_ID, GITHUB_TOKEN_KEY } from './env'
+import { NETLIFY_SITE_ID, GITHUB_TOKEN_KEY } from './env'
 
 const options =
-  process.env.NODE_ENV === 'development' ? { site_id: REACT_APP_SITE_ID } : {}
+  process.env.NODE_ENV === 'development' ? { site_id: NETLIFY_SITE_ID } : {}
 
 const authenticator = new Netlify(options)
 
