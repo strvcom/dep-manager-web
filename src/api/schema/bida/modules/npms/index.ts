@@ -82,6 +82,7 @@ const typeDefs = gql`
   }
 
   extend type NPMDependency {
+    package: NPMPackage!
     outdateStatus: SemverOutdateStatus
   }
 

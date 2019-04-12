@@ -10,7 +10,6 @@ const typeDefs = gql`
     id: String!
     name: String!
     version: String!
-    package: NPMPackage!
   }
 
   type NPMPackage {
