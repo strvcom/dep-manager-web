@@ -1,15 +1,15 @@
 import { writeStorage } from '@rehooks/local-storage'
 import Netlify from 'netlify-auth-providers'
 
-import { NETLIFY_SITE_ID, GITHUB_TOKEN_KEY } from './env'
+import { REACT_APP_NETLIFY_SITE_ID, GITHUB_TOKEN_KEY } from './env'
 
-if (!NETLIFY_SITE_ID) {
+if (!REACT_APP_NETLIFY_SITE_ID) {
   throw new Error(
-    `You must define NETLIFY_SITE_ID env in order to start the application`
+    `You must define REACT_APP_NETLIFY_SITE_ID env in order to start the application`
   )
 }
 
-const authenticator = new Netlify({ site_id: NETLIFY_SITE_ID })
+const authenticator = new Netlify({ site_id: REACT_APP_NETLIFY_SITE_ID })
 
 interface NetlifyResponse {
   token: string
