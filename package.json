@@ -118,7 +118,6 @@
     "@types/styled-components": "^4.1.0",
     "@types/styled-system": "^3.0.6",
     "apollo": "^2.8.1",
-    "apollo-server": "^2.4.8",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.4",
     "babel-plugin-ramda": "^1.6.3",
