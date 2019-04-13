@@ -1,8 +1,7 @@
-export const {
-  NODE_ENV,
-  PUBLIC_URL,
-  GITHUB_OAUTH_TOKEN,
-  GITHUB_TOKEN_KEY = 'Bida-App-Github-Token',
-  REACT_APP_NETLIFY_SITE_ID,
-  REACT_APP_GRAPHQL_ENDPOINT
-} = process.env
+export const NODE_ENV = process.env.NODE_ENV
+export const PUBLIC_URL = process.env.PUBLIC_URL
+export const REACT_APP_NETLIFY_SITE_ID = process.env.REACT_APP_NETLIFY_SITE_ID
+export const REACT_APP_GRAPHQL_ENDPOINT = process.env.REACT_APP_GRAPHQL_ENDPOINT
+export const GITHUB_OAUTH_TOKEN = process.env.GITHUB_OAUTH_TOKEN
+export const GITHUB_TOKEN_KEY =
+  process.env.GITHUB_TOKEN_KEY || 'Bida-App-Github-Token'
