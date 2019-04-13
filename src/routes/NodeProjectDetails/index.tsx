@@ -46,7 +46,7 @@ export interface Props extends RouteComponentProps<{ id: string }> {
 }
 
 const NodeProjectDetails = ({ match, department }: Props) => {
-  const { id: name } = match!.params
+  const name = decodeURIComponent(match!.params.id)
   const [search, setSearch] = useState('')
 
   return (
