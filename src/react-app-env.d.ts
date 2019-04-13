@@ -2,6 +2,6 @@
 
 declare namespace NodeJS {
   interface ProcessEnv {
-    NETLIFY_SITE_ID: string
+    REACT_APP_NETLIFY_SITE_ID: string
   }
 }
