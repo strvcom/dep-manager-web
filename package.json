@@ -2,6 +2,40 @@
   "name": "bida-app",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.production.json && react-app-rewired build",
+    "build-storybook": "build-storybook -s public",
+    "codegen": "apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts",
+    "dev-api": "onchange -i -k '**/*.js' '**/*.ts' -- ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' serve-api.ts",
+    "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
+    "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
+    "start": "react-app-rewired start",
+    "storybook": "start-storybook -p 9009 -s public",
+    "test": "react-app-rewired test --env=jsdom"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier-standard",
+      "tslint --fix",
+      "stylelint --fix",
+      "git add"
+    ],
+    "package.json": [
+      "yarn sort-package-json",
+      "git add"
+    ]
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
   "dependencies": {
     "@rehooks/local-storage": "^1.4.0",
     "apollo-cache": "^1.2.1",
@@ -83,6 +117,7 @@
     "react-app-rewired": "^2.1.1",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "rimraf": "^2.6.2",
+    "sort-package-json": "^1.22.1",
     "stylelint": "^9.9.0",
     "stylelint-config-recommended": "^2.1.0",
     "stylelint-config-styled-components": "^0.1.1",
@@ -100,35 +135,5 @@
   },
   "resolutions": {
     "graphql": "14.2.1"
-  },
-  "scripts": {
-    "start": "react-app-rewired start",
-    "build": "tsc -p tsconfig.production.json && react-app-rewired build",
-    "test": "react-app-rewired test --env=jsdom",
-    "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
-    "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
-    "codegen": "apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts",
-    "storybook": "start-storybook -p 9009 -s public",
-    "build-storybook": "build-storybook -s public",
-    "dev-api": "onchange -i -k '**/*.js' '**/*.ts' -- ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' serve-api.ts"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier-standard",
-      "tslint --fix",
-      "stylelint --fix",
-      "git add"
-    ]
   }
 }
