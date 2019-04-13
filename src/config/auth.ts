@@ -3,10 +3,13 @@ import Netlify from 'netlify-auth-providers'
 
 import { NETLIFY_SITE_ID, GITHUB_TOKEN_KEY } from './env'
 
-const options =
-  process.env.NODE_ENV === 'development' ? { site_id: NETLIFY_SITE_ID } : {}
+if (!NETLIFY_SITE_ID) {
+  throw new Error(
+    `You must define NETLIFY_SITE_ID env in order to start the application`
+  )
+}
 
-const authenticator = new Netlify(options)
+const authenticator = new Netlify({ site_id: NETLIFY_SITE_ID })
 
 interface NetlifyResponse {
   token: string
