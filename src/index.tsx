@@ -9,7 +9,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Loading from './components/Loading'
 import PropTypes from 'prop-types'
 
-import { client } from './api/client'
+import { client } from './config/client'
 
 if (process.env.NODE_ENV === 'development') {
   // fixes react-router erroneous prop-types
