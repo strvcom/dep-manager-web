@@ -21,6 +21,14 @@ cd dep-manager-web
 yarn
 ```
 
+**Set environment**
+
+```sh
+cp .env.development .env
+```
+
+Modify `.env` [accordingly](#environment-variables).
+
 **Run locally**
 
 ```sh
@@ -31,11 +39,13 @@ yarn start
 
 You can define these variables either by prefixing any command, or by setting a [`.env`](https://github.com/motdotla/dotenv) file.
 
-| Variable             | Used for                             | Where to find                                                                 | Target        |
-| -------------------- | ------------------------------------ | ----------------------------------------------------------------------------- | ------------- |
-| `NETLIFY_SITE_ID`    | Authenticate using netlify           | `https://app.netlify.com/sites/[site-name]/settings/general#site-information` | `production`  |
-| `ENGINE_API_KEY`     | Tracking query execution performance | `https://engine.apollographql.com/service/[service name]/settings`            | `development` |
-| `GITHUB_OAUTH_TOKEN` | Running isolated API locally         | `https://github.com/settings/tokens`                                          | `development` |
+| Variable                     | Used for                             | How to set                                                                    | Target      | Default                         |
+| ---------------------------- | ------------------------------------ | ----------------------------------------------------------------------------- | ----------- | ------------------------------- |
+| `REACT_APP_NETLIFY_SITE_ID`  | Authenticate using netlify           | `https://app.netlify.com/sites/[site-name]/settings/general#site-information` | production  |                                 |
+| `REACT_APP_GRAPHQL_ENDPOINT` | Connect to GraphQL API               | Should point to a running API, either locally or remote                       | any         | `http://localhost:9000/graphql` |
+| `DEBUG`                      | Enable debugging messages            | [`bida*`](https://github.com/visionmedia/debug)                               | any         |                                 |
+| `GITHUB_OAUTH_TOKEN`         | Running isolated API locally         | `https://github.com/settings/tokens`                                          | development |                                 |
+| `ENGINE_API_KEY`             | Tracking query execution performance | `https://engine.apollographql.com/service/[service name]/settings`            | development |                                 |
 
 ## Version control
 
