@@ -9,6 +9,7 @@ const server = new ApolloServer({
     functionName: context.functionName,
     aws: { event, context }
   }),
+  // optional
   engine: { apiKey: process.env.ENGINE_API_KEY }
 })
 

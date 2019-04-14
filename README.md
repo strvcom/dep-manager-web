@@ -17,6 +17,14 @@ cd dep-manager-web
 yarn
 ```
 
+**Set environment**
+
+```sh
+cp .env.development .env
+```
+
+Modify `.env` [accordingly](#environment-variables).
+
 **Run locally**
 
 ```sh
@@ -41,6 +49,7 @@ yarn start
 3. Authenticated via [netlify OAuth](https://www.netlify.com/docs/authentication-providers/)
 4. Load repository info from [GitHub API v4](https://developer.github.com/v4/) (GraphQL API)
 5. Load NPM package info from [NPMS API](https://api-docs.npms.io/)
+6. GraphQL API served in a [netlify function](https://www.netlify.com/docs/functions/)
 
 ### Why netlify
 
@@ -58,8 +67,10 @@ By using GraphQL, we can do this in one network call with no over fetching of da
 
 You can define these variables either prefixing any command, or by setting a [`.env`](https://github.com/motdotla/dotenv) file.
 
-| Variable             | Used for                             | Where to find                                                                 | Target        |
-| -------------------- | ------------------------------------ | ----------------------------------------------------------------------------- | ------------- |
-| `NETLIFY_SITE_ID`    | Authenticate using netlify           | `https://app.netlify.com/sites/[site-name]/settings/general#site-information` | `production`  |
-| `ENGINE_API_KEY`     | Tracking query execution performance | `https://engine.apollographql.com/service/[service name]/settings`            | `development` |
-| `GITHUB_OAUTH_TOKEN` | Running isolated API locally         | `https://github.com/settings/tokens`                                          | `development` |
+| Variable                     | Used for                             | How to set                                                                    | Target      | Default                         |
+| ---------------------------- | ------------------------------------ | ----------------------------------------------------------------------------- | ----------- | ------------------------------- |
+| `REACT_APP_NETLIFY_SITE_ID`  | Authenticate using netlify           | `https://app.netlify.com/sites/[site-name]/settings/general#site-information` | production  |                                 |
+| `REACT_APP_GRAPHQL_ENDPOINT` | Connect to GraphQL API               | Should point to a running API, either locally or remote                       | any         | `http://localhost:9000/graphql` |
+| `DEBUG`                      | Enable debugging messages            | [`bida*`](https://github.com/visionmedia/debug)                               | any         |                                 |
+| `GITHUB_OAUTH_TOKEN`         | Running isolated API locally         | `https://github.com/settings/tokens`                                          | development |                                 |
+| `ENGINE_API_KEY`             | Tracking query execution performance | `https://engine.apollographql.com/service/[service name]/settings`            | development |                                 |
