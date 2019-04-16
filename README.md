@@ -10,6 +10,12 @@ As you make and maintain more projects on GitHub, there is a need for a way to t
 
 <!--toc-start-->
 
+- [Alternative Softwares](docs/alternatives.md#alternative-softwares)
+  - [<a href="https://snyk.io/" rel="nofollow">snyk</a>](docs/alternatives.md#snyk)
+  - [<a href="https://libraries.io/" rel="nofollow">Libraries.io</a>](docs/alternatives.md#librariesio)
+  - [<a href="https://probely.com/" rel="nofollow">Probe.ly</a>](docs/alternatives.md#probely)
+  - [<a href="https://greenkeeper.io" rel="nofollow">Greenkeeper</a>](docs/alternatives.md#greenkeeper)
+
 - [Development Guidelines](docs/development.md#development-guidelines)
   - [Getting started](docs/development.md#getting-started)
   - [Environment Variables](docs/development.md#environment-variables)
