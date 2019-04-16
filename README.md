@@ -55,5 +55,13 @@ Bida App aims to create a dashboard of project's health to manage outdate status
   - [<a href="https://probely.com/" rel="nofollow">Probe.ly</a>](docs/02-alternatives.md#probely)
   - [<a href="https://greenkeeper.io" rel="nofollow">Greenkeeper</a>](docs/02-alternatives.md#greenkeeper)
 
+- [Workflow](docs/flow.md#workflow)
+  - [1. Create issues](docs/flow.md#1-create-issues)
+  - [2. Backlog](docs/flow.md#2-backlog)
+  - [3. Ready for dev](docs/flow.md#3-ready-for-dev)
+  - [4. In progress](docs/flow.md#4-in-progress)
+  - [5. Approval](docs/flow.md#5-approval)
+  - [6. Done](docs/flow.md#6-done)
+
 
 <!--toc-end-->
