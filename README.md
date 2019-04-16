@@ -32,28 +32,28 @@ Bida App aims to create a dashboard of project's health to manage outdate status
 
 <!--toc-start-->
 
-- [Alternative Softwares](docs/alternatives.md#alternative-softwares)
-  - [<a href="https://snyk.io/" rel="nofollow">snyk</a>](docs/alternatives.md#snyk)
-  - [<a href="https://libraries.io/" rel="nofollow">Libraries.io</a>](docs/alternatives.md#librariesio)
-  - [<a href="https://probely.com/" rel="nofollow">Probe.ly</a>](docs/alternatives.md#probely)
-  - [<a href="https://greenkeeper.io" rel="nofollow">Greenkeeper</a>](docs/alternatives.md#greenkeeper)
+- [Stack &amp; Whys](docs/00-stack.md#stack--whys)
+  - [Built with](docs/00-stack.md#built-with)
+  - [Decisions](docs/00-stack.md#decisions)
+    - [Why netlify](docs/00-stack.md#why-netlify)
+    - [Why GraphQL](docs/00-stack.md#why-graphql)
+    - [Why Apollo](docs/00-stack.md#why-apollo)
+    - [Why <a href="https://npms.io/" rel="nofollow">npms</a>](docs/00-stack.md#why-npms)
 
-- [Development Guidelines](docs/development.md#development-guidelines)
-  - [Getting started](docs/development.md#getting-started)
-  - [Environment Variables](docs/development.md#environment-variables)
-  - [Version control](docs/development.md#version-control)
-    - [Branch](docs/development.md#branch)
-    - [Commit](docs/development.md#commit)
-    - [Integration](docs/development.md#integration)
-      - [<em>Squash and merge</em>](docs/development.md#squash-and-merge)
+- [Development Guidelines](docs/01-development.md#development-guidelines)
+  - [Getting started](docs/01-development.md#getting-started)
+  - [Environment Variables](docs/01-development.md#environment-variables)
+  - [Version control](docs/01-development.md#version-control)
+    - [Branch](docs/01-development.md#branch)
+    - [Commit](docs/01-development.md#commit)
+    - [Integration](docs/01-development.md#integration)
+      - [<em>Squash and merge</em>](docs/01-development.md#squash-and-merge)
 
-- [Stack &amp; Whys](docs/stack.md#stack--whys)
-  - [Built with](docs/stack.md#built-with)
-  - [Decisions](docs/stack.md#decisions)
-    - [Why netlify](docs/stack.md#why-netlify)
-    - [Why GraphQL](docs/stack.md#why-graphql)
-    - [Why Apollo](docs/stack.md#why-apollo)
-    - [Why <a href="https://npms.io/" rel="nofollow">npms</a>](docs/stack.md#why-npms)
+- [Alternative Softwares](docs/02-alternatives.md#alternative-softwares)
+  - [<a href="https://snyk.io/" rel="nofollow">snyk</a>](docs/02-alternatives.md#snyk)
+  - [<a href="https://libraries.io/" rel="nofollow">Libraries.io</a>](docs/02-alternatives.md#librariesio)
+  - [<a href="https://probely.com/" rel="nofollow">Probe.ly</a>](docs/02-alternatives.md#probely)
+  - [<a href="https://greenkeeper.io" rel="nofollow">Greenkeeper</a>](docs/02-alternatives.md#greenkeeper)
 
 
 <!--toc-end-->
