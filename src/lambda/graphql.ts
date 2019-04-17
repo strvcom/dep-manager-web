@@ -1,6 +1,8 @@
 import { ApolloServer } from 'apollo-server-lambda'
 import { schema } from '../api/schema'
 
+const { ENGINE_API_KEY } = process.env
+
 const server = new ApolloServer({
   schema,
   introspection: true,
@@ -10,7 +12,7 @@ const server = new ApolloServer({
     aws: { event, context }
   }),
   // optional
-  engine: { apiKey: process.env.ENGINE_API_KEY }
+  engine: ENGINE_API_KEY ? { apiKey: ENGINE_API_KEY } : false
 })
 
 const handler = server.createHandler({
