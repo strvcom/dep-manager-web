@@ -1,0 +1,22 @@
+query PROJECT_QUERY($name: String!) {
+  project(name: $name) {
+    id
+    url
+    name
+    npmPackage {
+      id
+      dependencies {
+        id
+        version
+        outdateStatus
+        package {
+          id
+          name
+          license
+          version
+          updatedAt
+        }
+      }
+    }
+  }
+}
