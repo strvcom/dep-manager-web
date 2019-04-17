@@ -50,6 +50,7 @@ Bida App aims to create a dashboard of project's health to manage outdate status
 
 - [Development Guidelines](docs/02-development.md#development-guidelines)
   - [Getting started](docs/02-development.md#getting-started)
+    - [Isolated environments](docs/02-development.md#isolated-environments)
   - [Environment Variables](docs/02-development.md#environment-variables)
   - [Version control](docs/02-development.md#version-control)
     - [Branch](docs/02-development.md#branch)
