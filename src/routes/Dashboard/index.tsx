@@ -1,6 +1,5 @@
 import React, { Fragment, Suspense, memo, useState } from 'react'
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
-import gql from 'graphql-tag'
 import ErrorBoundary from 'react-error-boundary'
 
 import * as routes from '../routes'
@@ -15,43 +14,7 @@ import RecentUpdates from './RecentUpdates'
 import DashboardToolBar from './DashboardToolBar'
 import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
 import { extractLibrariesInfo } from './helpers'
-
-const DASHBOARD_QUERY = gql`
-  query DASHBOARD_QUERY($department: BidaDepartment!) {
-    projects(first: 50, department: $department) {
-      total: repositoryCount
-      edges {
-        cursor
-        node {
-          ... on Repository {
-            id
-            name
-            pushedAt
-            npmPackage {
-              id
-              dependencies {
-                id
-                name
-                outdateStatus
-                package {
-                  id
-                  name
-                  version
-                  license
-                  updatedAt
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    archived: projects(department: $department, archived: true) {
-      total: repositoryCount
-    }
-  }
-`
+import { DASHBOARD_QUERY } from './query.gql'
 
 export interface Props
   extends RouteComponentProps<{
