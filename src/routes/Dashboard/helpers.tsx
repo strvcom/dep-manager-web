@@ -71,6 +71,7 @@ const getOutdates = pipe(
   propOr([], 'libraries'),
   // @ts-ignore
   reduceBy(
+    // @ts-ignore
     flip(append),
     // @ts-ignore
     [],
@@ -122,14 +123,17 @@ const calcUniqueLibraries = setter(
 )
 
 const calcRecentlyUpdated = setter(
+  // @ts-ignore
   'recentlyUpdated',
   pipe(
     propOr([], 'uniqueLibraries'),
     getRecentlyUpdated,
+    // @ts-ignore
     map(prop('package'))
   )
 )
 
+// @ts-ignore
 const extractLibrariesInfo = pipe(
   // @ts-ignore
   propOr([], 'edges'),
