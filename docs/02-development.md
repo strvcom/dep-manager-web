@@ -35,6 +35,18 @@ Modify `.env` [accordingly](#environment-variables).
 yarn start
 ```
 
+### Isolated environments
+
+As the API and App are isolated parts, you can run them without the other as follows:
+
+**API**: `yarn start:lambda`
+
+**App**: `yarn start:app`
+
+Both are useful when you are developing independent parts of the application.
+
+> Keep in mind in the case of the _App_ your are still going to need an API running somewhere. The nice thing is that can be any of your already deployed environments. For instance, you can: `REACT_APP_GRAPHQL_ENDPOINT=https://[netlify-deploy-url]/.netlify/functions/graphql yarn start:app` to use a remote API source.
+
 ## Environment Variables
 
 You can define these variables either by prefixing any command, or by setting a [`.env`](https://github.com/motdotla/dotenv) file.
