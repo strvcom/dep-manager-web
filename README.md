@@ -1,8 +1,8 @@
-# Bida App
+<p align="center">
+  <img title="Bida App" alt="Bida App" src="https://emoji.slack-edge.com/T024TJQD8/bida/c0dadfe69d7ed5f9.png" />
+</p>
 
-**Quality tracker for inside projects.**
-
-## Introduction
+<h2 align="center">Project Quality Tracker</h2>
 
 ### Outline
 
