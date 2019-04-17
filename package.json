@@ -12,6 +12,7 @@
     "dev-api": "onchange -i -k '**/*.js' '**/*.ts' -- ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' serve-api.ts",
     "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
     "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
+    "pull-request": "node ./scripts/pull-request.js",
     "start": "run-p start:**",
     "start:app": "react-scripts start",
     "start:lambda": "netlify-lambda serve src/lambda --config ./webpack.functions.js",
