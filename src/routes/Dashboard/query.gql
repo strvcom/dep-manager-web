@@ -1,0 +1,34 @@
+query DASHBOARD_QUERY($department: BidaDepartment!) {
+  projects(first: 50, department: $department) {
+    total: repositoryCount
+    edges {
+      cursor
+      node {
+        ... on Repository {
+          id
+          name
+          pushedAt
+          npmPackage {
+            id
+            dependencies {
+              id
+              name
+              outdateStatus
+              package {
+                id
+                name
+                version
+                license
+                updatedAt
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  archived: projects(department: $department, archived: true) {
+    total: repositoryCount
+  }
+}
