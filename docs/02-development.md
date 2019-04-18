@@ -88,6 +88,16 @@ Every branch should eventually generate a pull-request against the `master`.
 
 > _We do not use `dev`. Each pull-request is deployed on it's self contained [deploy preview](https://www.netlify.com/blog/2016/07/20/introducing-deploy-previews-in-netlify/)_
 
-#### _Squash and merge_
+#### Issue vs Pull-Request redundancy
 
-We use _Squash and merge_ strategy for pull-requests. It's important, though, that every branch becomes up-to-date with the `master` history before merging (`git rebase origin/master`).
+Usually for every branch/pull-request there will be a single issue previously registered. Though this it not necessarily a problem, nor always true, most of the time things can become redundant. You have to visit more than one place to get enough information for a task; a the least an issue and it's comments, and a pull-request in response to that.
+
+We can transform an _issue_ into a _pull-request_.
+
+GitHub does not provide a way to do that through the UI, but that's documented on APIs. GitHub's [official CLI](https://github.com/github/hub) does support it.
+
+There is a script to facilitate this process: `yarn pull-request`. Give it a `--help` argument to see what is possible, but basically a no-argument run will use the [branch naming pattern](#branch) to decide which issue to transform into the pull-request (i.e. `issue/[number]` means `number`).
+
+#### _Rebase and merge_
+
+We use _Rebase and merge_ strategy for pull-requests. It's important, though, that every branch becomes up-to-date with the `master` history before merging (`git rebase origin/master`).
