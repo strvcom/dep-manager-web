@@ -8,6 +8,7 @@
     "build:analysis": "mkdir build -p build/.dev && source-map-explorer 'build/static/js/*.js' --html > build/.dev/bundle-analysis.html",
     "build:app": "tsc -p tsconfig.production.json && NODE_ENV=production react-scripts build",
     "build:lambda": "netlify-lambda build src/lambda --config ./webpack.functions.js",
+    "build:schema": "yarn ts scripts/build-schema.js",
     "codegen": "apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts",
     "eslint": "eslint --ext .js --ext .jsx --ext .ts --ext .tsx",
     "postinstall": "patch-package",
@@ -23,7 +24,8 @@
     "storybook:build": "build-storybook -s public",
     "storybook:start": "start-storybook -p 9009 -s public",
     "test": "jest",
-    "type-check": "tsc -p tsconfig.production.json"
+    "type-check": "tsc -p tsconfig.production.json",
+    "ts": "ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' "
   },
   "husky": {
     "hooks": {
