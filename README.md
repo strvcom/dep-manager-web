@@ -56,7 +56,8 @@ Bida App aims to create a dashboard of project's health to manage outdate status
     - [Branch](docs/02-development.md#branch)
     - [Commit](docs/02-development.md#commit)
     - [Integration](docs/02-development.md#integration)
-      - [<em>Squash and merge</em>](docs/02-development.md#squash-and-merge)
+      - [Issue vs Pull-Request redundancy](docs/02-development.md#issue-vs-pull-request-redundancy)
+      - [<em>Rebase and merge</em>](docs/02-development.md#rebase-and-merge)
 
 - [Alternative Softwares](docs/03-alternatives.md#alternative-softwares)
   - [<a href="https://snyk.io/" rel="nofollow">snyk</a>](docs/03-alternatives.md#snyk)
