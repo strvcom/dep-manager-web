@@ -1,8 +1,10 @@
 module.exports = {
   client: {
-    includes: ['src/**/*.ts', 'src/**/*.tsx'],
+    includes: ['src/**/*.gql'],
+    excludes: ['src/api/**/*'],
     service: {
-      localSchemaFile: './src/config/github-schema.json'
+      name: 'bida-schema',
+      localSchemaFile: './generated/schema.graphql'
     }
   }
 }
