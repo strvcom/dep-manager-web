@@ -12,6 +12,7 @@
     "dev-api": "onchange -i -k '**/*.js' '**/*.ts' -- ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' serve-api.ts",
     "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
     "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
+    "pr": "yarn pull-request",
     "pull-request": "node ./scripts/pull-request.js",
     "start": "run-p start:**",
     "start:app": "react-scripts start",
@@ -126,8 +127,10 @@
     "babel-plugin-rewire": "^1.2.0",
     "babel-plugin-styled-components": "^1.9.4",
     "babel-polyfill": "^6.26.0",
+    "chalk": "^2.4.2",
     "dotenv": "^7.0.0",
     "dotenv-webpack": "^1.7.0",
+    "enquirer": "^2.3.0",
     "glob": "^7.1.3",
     "husky": "^1.1.3",
     "jest": "^23.6.0",
@@ -155,7 +158,8 @@
     "tslint-react": "^3.6.0",
     "typescript": "^3.2.2",
     "typescript-styled-plugin": "^0.13.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "yargs": "^13.2.2"
   },
   "resolutions": {
     "caniuse-lite": "1.0.30000957",
