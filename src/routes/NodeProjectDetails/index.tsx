@@ -71,6 +71,7 @@ const NodeProjectDetails = ({ match, department }: Props) => {
                 <NodeProjectDependenciesTable
                   dependencies={filtered}
                   department={department}
+                  cacheKey={search}
                 />
               </Content>
               <Sidebar>

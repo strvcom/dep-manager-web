@@ -1,6 +1,6 @@
-import React, { memo } from 'react'
-import { path } from 'ramda'
+import React, { memo, useMemo } from 'react'
 import mem from 'mem'
+import { ascend, path, prop } from 'ramda'
 
 import Tag from '../components/Tag'
 import Table, { Column } from '../components/Table'
@@ -10,6 +10,7 @@ import { BidaDepartment } from '../config/types'
 import * as routes from '../routes/routes'
 
 export interface Props {
+  cacheKey?: string
   dependencies: any[]
   department: BidaDepartment
 }
@@ -20,16 +21,16 @@ const departmentBaseURLs = {
 }
 
 const renderVersion = mem(
-  ({ cellData: { version, outdateStatus } }: any) => (
+  ({ rowData: { currentVersion, outdateStatus } }: any) => (
     <Tag
       critical={outdateStatus === 'MAJOR'}
       warning={outdateStatus === 'MINOR'}
     >
-      {version}
+      {currentVersion}
     </Tag>
   ),
   {
-    cacheKey: ({ cellData: { version, outdateStatus } }: any) =>
+    cacheKey: ({ rowData: { version, outdateStatus } }: any) =>
       version + outdateStatus
   }
 )
@@ -37,14 +38,38 @@ const renderVersion = mem(
 const renderLicense = mem(
   ({ cellData: license }: any) =>
     license && <Tag critical={!isValidLicense(license)}>{license}</Tag>,
-  { cacheKey: ({ cellData: license }: any) => license }
+  { cacheKey: prop('cellData') }
 )
 
-const NodeProjectDependenciesTable = ({ dependencies, department }: Props) => {
+/**
+ * Flattens and processes a dependency data for easier display and sort operations.
+ */
+const normalize = mem(
+  (dependency: any) => ({
+    outdateStatus: dependency.outdateStatus,
+    name: dependency.package.name,
+    currentVersion: dependency.version,
+    version: dependency.package.version,
+    licene: dependency.package.licene
+  }),
+  { cacheKey: prop('id') }
+)
+
+const NodeProjectDependenciesTable = ({
+  cacheKey,
+  dependencies,
+  department
+}: Props) => {
+  // memoized normalization
+
+  const cacheKeys = cacheKey ? [cacheKey] : []
+  const list = useMemo(() => dependencies.map(normalize), cacheKeys)
+
+  // renderers.
+
+  const rowGetter = ({ index }: { index: number }) => list[index]
+
   const baseURL = departmentBaseURLs[department]
-
-  const rowGetter = ({ index }: { index: number }) => dependencies[index]
-
   const rowRenderer = baseURL
     ? anchorRowRenderer(baseURL, path(['package', 'name']) as () => string)
     : undefined
@@ -55,26 +80,15 @@ const NodeProjectDependenciesTable = ({ dependencies, department }: Props) => {
       rowGetter={rowGetter}
       rowRenderer={rowRenderer}
     >
-      <Column
-        width={380}
-        label='Library Name'
-        dataKey='name'
-        cellDataGetter={path(['rowData', 'package', 'name'])}
-      />
+      <Column width={380} label='Library Name' dataKey='name' />
 
-      <Column
-        width={280}
-        label='Up To Date Version'
-        dataKey='library'
-        cellDataGetter={path(['rowData', 'package', 'version'])}
-      />
+      <Column width={280} label='Up To Date Version' dataKey='version' />
 
       <Column
         width={280}
         label='Current version'
-        dataKey='version'
+        dataKey='currentVersion'
         cellRenderer={renderVersion}
-        cellDataGetter={path(['rowData'])}
       />
 
       <Column
@@ -82,10 +96,11 @@ const NodeProjectDependenciesTable = ({ dependencies, department }: Props) => {
         label='License'
         dataKey='license'
         cellRenderer={renderLicense}
-        cellDataGetter={path(['rowData', 'package', 'license'])}
       />
     </Table>
   )
 }
 
-export default memo(NodeProjectDependenciesTable)
+export default memo(NodeProjectDependenciesTable, (prev: Props, next: Props) =>
+  prev.cacheKey ? prev.cacheKey === next.cacheKey : false
+)
