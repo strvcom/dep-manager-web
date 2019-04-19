@@ -30,7 +30,7 @@ const distances = {
 }
 
 export interface Props {
-  cacheKey: string // key for verifying memoization
+  cacheKey?: string // key for verifying memoization
   libraries: any[]
   outdates: {
     MAJOR: any[]
@@ -94,7 +94,7 @@ const renderLicense = ({ cellData }: any) =>
 const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
   // memoized normalization
 
-  const cacheKeys = [cacheKey]
+  const cacheKeys = cacheKey ? [cacheKey] : []
   const list = useMemo(
     // broken for better memoization.
     () => libraries.map(library => normalizeLibrary(library, outdates)),
@@ -146,6 +146,6 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
   )
 }
 
-export default memo(NodeLibrariesTable, (prev, next) =>
+export default memo(NodeLibrariesTable, (prev: Props, next: Props) =>
   prev.cacheKey ? prev.cacheKey === next.cacheKey : false
 )
