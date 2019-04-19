@@ -9,6 +9,8 @@ import { isValidLicense } from '../utils/license'
 import { BidaDepartment } from '../config/types'
 import * as routes from '../routes/routes'
 
+import { useSort } from '../hooks/useSort'
+
 export interface Props {
   cacheKey?: string
   dependencies: any[]
@@ -19,6 +21,8 @@ const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendLibraries,
   [BidaDepartment.FRONTEND]: routes.frontendLibraries
 }
+
+const defaultSort = ascend(prop('name'))
 
 const renderVersion = mem(
   ({ rowData: { currentVersion, outdateStatus } }: any) => (
@@ -47,10 +51,10 @@ const renderLicense = mem(
 const normalize = mem(
   (dependency: any) => ({
     outdateStatus: dependency.outdateStatus,
-    name: dependency.package.name,
     currentVersion: dependency.version,
+    name: dependency.package.name,
     version: dependency.package.version,
-    licene: dependency.package.licene
+    license: dependency.package.license
   }),
   { cacheKey: prop('id') }
 )
@@ -65,30 +69,48 @@ const NodeProjectDependenciesTable = ({
   const cacheKeys = cacheKey ? [cacheKey] : []
   const list = useMemo(() => dependencies.map(normalize), cacheKeys)
 
+  // state
+
+  const [sorted, setSort, sort] = useSort({
+    list,
+    cacheKeys,
+    defaultSort,
+    initial: { sortBy: 'name', sortDirection: 'ASC' }
+  })
+
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }) => list[index]
+  const rowGetter = ({ index }: { index: number }) => sorted[index]
 
   const baseURL = departmentBaseURLs[department]
   const rowRenderer = baseURL
-    ? anchorRowRenderer(baseURL, path(['package', 'name']) as () => string)
+    ? anchorRowRenderer(baseURL, prop('name'))
     : undefined
 
   return (
     <Table
+      sort={setSort}
+      sortBy={sort.sortBy}
+      sortDirection={sort.sortDirection}
       rowCount={dependencies.length}
       rowGetter={rowGetter}
       rowRenderer={rowRenderer}
     >
       <Column width={380} label='Library Name' dataKey='name' />
 
-      <Column width={280} label='Up To Date Version' dataKey='version' />
+      <Column
+        width={280}
+        label='Up To Date Version'
+        dataKey='version'
+        disableSort
+      />
 
       <Column
         width={280}
         label='Current version'
         dataKey='currentVersion'
         cellRenderer={renderVersion}
+        disableSort
       />
 
       <Column
