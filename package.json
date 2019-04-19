@@ -143,6 +143,7 @@
     "prettier": "^1.15.1",
     "prettier-standard": "^8.0.1",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
+    "react-hooks-testing-library": "^0.4.1",
     "rimraf": "^2.6.2",
     "simple-git": "^1.110.0",
     "sort-package-json": "^1.22.1",
