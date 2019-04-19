@@ -20,6 +20,8 @@ import { BidaDepartment } from '../config/types'
 import * as routes from '../routes/routes'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
 
+import { useSort, UseSortOptions } from '../hooks/useSort'
+
 const distances = {
   MAJOR: 'MAJOR',
   MINOR: 'MINOR'
@@ -99,6 +101,12 @@ const normalizeProject = mem(
   { cacheKey: prop('name') }
 )
 
+const sortDefaults: UseSortOptions = {
+  list: [],
+  defaultSort: ascend(prop('name')),
+  initial: { sortBy: 'name', sortDirection: 'ASC' }
+}
+
 const NodeProjectsTable = ({ projects, department, cacheKey }: Props) => {
   // memoized normalization
 
@@ -109,12 +117,19 @@ const NodeProjectsTable = ({ projects, department, cacheKey }: Props) => {
     cacheKeys
   )
 
-  const rowGetter = ({ index }: { index: number }) => list[index]
+  // state
+
+  const [sorted, setSort, sort] = useSort({ ...sortDefaults, list, cacheKeys })
+
+  const rowGetter = ({ index }: { index: number }) => sorted[index]
   const baseURL = departmentBaseURLs[department.toUpperCase()]
   const renderRow = baseURL ? anchorRowRenderer(baseURL, 'name') : undefined
 
   return (
     <Table
+      sort={setSort}
+      sortBy={sort.sortBy}
+      sortDirection={sort.sortDirection}
       rowCount={projects.length}
       rowGetter={rowGetter}
       rowRenderer={renderRow}

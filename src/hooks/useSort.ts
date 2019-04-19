@@ -37,7 +37,7 @@ const sorter = ({
   return sortWith(sorters, list)
 }
 
-interface UseSortOptions {
+export interface UseSortOptions {
   list: any[]
   initial?: Sort
   cacheKeys?: string[]
