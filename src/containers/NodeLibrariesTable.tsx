@@ -64,10 +64,19 @@ const sumObject = pipe(
   sum
 )
 
+const sumOutdates = pipe(
+  pick(Object.values(distances)),
+  sumObject
+)
+
+/**
+ * Flattens and processes a library data for easier display and sort operations.
+ */
 const normalizeLibrary = mem(
   (library: any, allOutdates: any) => {
     const name = library.package.name
     const license = library.package.license
+
     const outdates = map(
       pipe(
         filter(propEq('name', name)),
@@ -77,12 +86,7 @@ const normalizeLibrary = mem(
       allOutdates
     )
 
-    const totalOutdates = pipe(
-      pick(Object.values(distances)),
-      sumObject
-    )(outdates)
-
-    // prettier-ignore
+    const totalOutdates = sumOutdates(outdates)
     const usage = sumObject(outdates)
 
     return { name, license, outdates, totalOutdates, usage }
@@ -108,17 +112,18 @@ const renderLicense = ({ cellData }: any) =>
 const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
   // memoized normalization
 
+  const normalizationCache = [cacheKey]
   const normalized = useMemo(
     // broken for better memoization.
     () => libraries.map(library => normalizeLibrary(library, outdates)),
-    [cacheKey]
+    normalizationCache
   )
 
   // state
 
   const [sort, setSort] = useState<Sort>({ by: 'name', direction: 'ASC' })
 
-  const sortCache = [cacheKey, ...Object.values(sort)]
+  const sortCache = normalizationCache.concat(Object.values(sort))
   const sorted = useMemo(() => sorter(normalized, sort), sortCache)
 
   const handleSort = ({ sortBy: by, sortDirection: direction }: any) =>
