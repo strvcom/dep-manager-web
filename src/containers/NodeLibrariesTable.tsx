@@ -16,12 +16,12 @@ import {
   values
 } from 'ramda'
 
-import Table, { Column } from '../components/Table/index'
+import Table, { Column } from '../components/Table'
 import StatusColumn from '../components/Table/StatusColumn'
-import anchorRowRenderer from '../utils/anchorRowRenderer'
 import Tag from '../components/Tag'
 import * as routes from '../routes/routes'
 import { isValidLicense } from '../utils/license'
+import anchorRowRenderer from '../utils/anchorRowRenderer'
 
 const distances = {
   MAJOR: 'MAJOR',
@@ -94,7 +94,7 @@ const normalizeLibrary = mem(
   { cacheKey: path(['package', 'name']) }
 )
 
-const rowRenderer = anchorRowRenderer(
+const renderRow = anchorRowRenderer(
   routes.frontendLibraries,
   ({ name }) => name
 )
@@ -140,22 +140,23 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
       sortDirection={sort.direction}
       rowCount={libraries.length}
       rowGetter={rowGetter}
-      rowRenderer={rowRenderer}
+      rowRenderer={renderRow}
     >
-      <Column width={380} flexGrow={1} label='Library Name' dataKey='name' />
+      <Column width={5} flexGrow={5} label='Library Name' dataKey='name' />
 
-      <Column width={80} label='Total Used On' dataKey='usage' />
+      <Column width={2} flexGrow={2} label='Total Used On' dataKey='usage' />
 
       <Column
-        width={180}
+        width={3}
+        flexGrow={3}
         label='Outdated Projects'
         dataKey='totalOutdates'
         cellRenderer={renderOutdates}
       />
 
       <Column
+        width={1}
         flexGrow={1}
-        width={100}
         label='License'
         dataKey='license'
         cellRenderer={renderLicense}

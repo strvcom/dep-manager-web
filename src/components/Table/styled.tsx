@@ -21,6 +21,8 @@ export const StyledTable = styled(
 )`
   .header {
     ${typography.caption}
+    display: flex;
+    align-items: center;
   }
   .row {
     ${typography.body}
@@ -29,6 +31,11 @@ export const StyledTable = styled(
     &:hover {
       background: rgba(0, 0, 0, 0.1);
     }
+  }
+
+  .ReactVirtualized__Table__sortableHeaderIcon {
+    font-size: 2em;
+    transform: translateY(-0.1em);
   }
 `
 
