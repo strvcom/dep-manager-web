@@ -38,7 +38,6 @@ export interface Props {
   }
 }
 
-// @ts-ignore
 const defaultSort = ascend(prop('name'))
 
 const sumObject = pipe(
@@ -76,10 +75,7 @@ const normalizeLibrary = mem(
   { cacheKey: path(['package', 'name']) }
 )
 
-const renderRow = anchorRowRenderer(
-  routes.frontendLibraries,
-  ({ name }) => name
-)
+const renderRow = anchorRowRenderer(routes.frontendLibraries, prop('name'))
 
 const renderOutdates = ({ rowData: { outdates } }: any) => (
   <StatusColumn
