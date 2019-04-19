@@ -35,7 +35,7 @@ export const StyledTable = styled(
 
   .ReactVirtualized__Table__sortableHeaderIcon {
     font-size: 2em;
-    transform: translateY(-0.1em);
+    transform: translateY(-0.1em) rotate(180deg);
   }
 `
 
