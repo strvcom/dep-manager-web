@@ -103,6 +103,7 @@ const Dashboard = ({ match }: Props) => {
                 <NodeProjectsTable
                   department={department}
                   projects={filtered}
+                  cacheKey={search}
                 />
               )
             }

@@ -1,15 +1,40 @@
-import React, { memo } from 'react'
+import React, { memo, useMemo } from 'react'
+import mem from 'mem'
+import {
+  __,
+  ascend,
+  filter,
+  length,
+  map,
+  pick,
+  pipe,
+  propEq,
+  prop,
+  sum,
+  values
+} from 'ramda'
 
 import Table, { Column } from '../components/Table/index'
 import StatusColumn from '../components/Table/StatusColumn'
-import anchorRowRenderer from '../utils/anchorRowRenderer'
 import { BidaDepartment } from '../config/types'
 import * as routes from '../routes/routes'
+import anchorRowRenderer from '../utils/anchorRowRenderer'
 
 const distances = {
   MAJOR: 'MAJOR',
   MINOR: 'MINOR'
 }
+
+const departmentBaseURLs = {
+  [BidaDepartment.BACKEND]: routes.backendProjects,
+  [BidaDepartment.FRONTEND]: routes.frontendProjects
+}
+
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric'
+})
 
 interface Package {
   outdateStatus: string
@@ -23,63 +48,76 @@ interface Project {
 }
 
 interface Props {
+  cacheKey?: string
   projects: Project[]
   department: string
 }
 
-const dateFormatter = new Intl.DateTimeFormat('en-US', {
-  month: 'short',
-  day: 'numeric',
-  year: 'numeric'
-})
+const renderPushedAt = ({ cellData }: any) =>
+  cellData ? dateFormatter.format(Date.parse(cellData)) : null
 
-const Outdated = memo(
-  ({ project: { npmPackage } }: any) => {
-    if (!npmPackage || !npmPackage.dependencies) return null
-
-    const majors = npmPackage.dependencies.filter(
-      ({ package: { outdateStatus } }: any) => outdateStatus === distances.MAJOR
-    )
-
-    const minors = npmPackage.dependencies.filter(
-      ({ package: { outdateStatus } }: any) => outdateStatus === distances.MINOR
-    )
-
-    return <StatusColumn outDated={majors.length} alerts={minors.length} />
-  },
-  (prev, next) => prev.project.name === next.project.name
+const renderOutdated = ({ rowData: { outdated } }: any) => (
+  <StatusColumn
+    outDated={outdated[distances.MAJOR]}
+    alerts={outdated[distances.MINOR]}
+  />
 )
 
-const LastUpdate = memo(
-  ({ pushedAt }: { pushedAt: string }) => (
-    <span>{pushedAt ? dateFormatter.format(Date.parse(pushedAt)) : null}</span>
-  ),
-  (prev, next) => prev.pushedAt === next.pushedAt
-)
-
-const departmentBaseURLs = {
-  [BidaDepartment.BACKEND]: routes.backendProjects,
-  [BidaDepartment.FRONTEND]: routes.frontendProjects
-}
-
-const NodeProjectsTable = ({ projects, department }: Props) => {
-  const baseURL = departmentBaseURLs[department.toUpperCase()]
-
-  const renderDate = ({ rowData: { pushedAt } }: any) => (
-    <LastUpdate pushedAt={pushedAt} />
+const getOutdated = (dependencies: any[]) =>
+  pipe(
+    propEq('outdateStatus'),
+    filter(__, dependencies),
+    length
   )
 
-  const renderOutdated = ({ rowData }: any) => <Outdated project={rowData} />
+const sumObject = pipe(
+  values,
+  sum
+)
 
-  const rowGetter = ({ index }: { index: number }) => projects[index]
+const sumOutdates = pipe(
+  pick(Object.values(distances)),
+  sumObject
+)
 
-  const rowRenderer = baseURL ? anchorRowRenderer(baseURL, 'name') : undefined
+/**
+ * Flattens and processes a project data for easier display and sort operations.
+ */
+const normalizeProject = mem(
+  (project: any) => {
+    const name = project.name
+    const pushedAt = project.pushedAt
+
+    const dependencies =
+      (project.npmPackage && project.npmPackage.dependencies) || []
+
+    const outdated = map(getOutdated(dependencies), distances)
+    const totalOutdated = sumOutdates(outdated)
+
+    return { name, pushedAt, outdated, totalOutdated }
+  },
+  { cacheKey: prop('name') }
+)
+
+const NodeProjectsTable = ({ projects, department, cacheKey }: Props) => {
+  // memoized normalization
+
+  const cacheKeys = cacheKey ? [cacheKey] : []
+  const list = useMemo(
+    // broken for better memoization.
+    () => projects.map(project => normalizeProject(project)),
+    cacheKeys
+  )
+
+  const rowGetter = ({ index }: { index: number }) => list[index]
+  const baseURL = departmentBaseURLs[department.toUpperCase()]
+  const renderRow = baseURL ? anchorRowRenderer(baseURL, 'name') : undefined
 
   return (
     <Table
       rowCount={projects.length}
       rowGetter={rowGetter}
-      rowRenderer={rowRenderer}
+      rowRenderer={renderRow}
     >
       <Column width={380} label='Project Name' dataKey='name' />
 
@@ -87,17 +125,19 @@ const NodeProjectsTable = ({ projects, department }: Props) => {
         width={180}
         label='Last Active'
         dataKey='pushedAt'
-        cellRenderer={renderDate}
+        cellRenderer={renderPushedAt}
       />
 
       <Column
         width={200}
         label='Outdated Libraries'
-        dataKey='id'
+        dataKey='totalOutdated'
         cellRenderer={renderOutdated}
       />
     </Table>
   )
 }
 
-export default memo(NodeProjectsTable)
+export default memo(NodeProjectsTable, (prev: Props, next: Props) =>
+  prev.cacheKey ? prev.cacheKey === next.cacheKey : false
+)
