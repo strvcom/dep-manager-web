@@ -1,6 +1,20 @@
-import React, { memo, useMemo } from 'react'
+import React, { memo, useState, useMemo } from 'react'
 import mem from 'mem'
-import { filter, length, map, path, pipe, propEq, sum, values } from 'ramda'
+import {
+  ascend,
+  descend,
+  filter,
+  length,
+  map,
+  path,
+  pick,
+  pipe,
+  prop,
+  propEq,
+  sortWith,
+  sum,
+  values
+} from 'ramda'
 
 import Table, { Column } from '../components/Table/index'
 import StatusColumn from '../components/Table/StatusColumn'
@@ -23,6 +37,33 @@ export interface Props {
   }
 }
 
+interface Sort {
+  by: string | undefined
+  direction: 'DESC' | 'ASC' | undefined
+}
+
+const sortDirections = {
+  ASC: ascend,
+  DESC: descend
+}
+
+// @ts-ignore
+const defaultSort = ascend(prop('name'))
+
+const sorter = (
+  libraries: Props['libraries'],
+  { by, direction = 'ASC' }: Sort
+) =>
+  sortWith(
+    by ? [sortDirections[direction](prop(by)), defaultSort] : [defaultSort],
+    libraries
+  )
+
+const sumObject = pipe(
+  values,
+  sum
+)
+
 const normalizeLibrary = mem(
   (library: any, allOutdates: any) => {
     const name = library.package.name
@@ -35,10 +76,16 @@ const normalizeLibrary = mem(
       ),
       allOutdates
     )
-    // prettier-ignore
-    const usage = pipe(values, sum)(outdates)
 
-    return { name, license, outdates, usage }
+    const totalOutdates = pipe(
+      pick(Object.values(distances)),
+      sumObject
+    )(outdates)
+
+    // prettier-ignore
+    const usage = sumObject(outdates)
+
+    return { name, license, outdates, totalOutdates, usage }
   },
   { cacheKey: path(['package', 'name']) }
 )
@@ -47,6 +94,16 @@ const rowRenderer = anchorRowRenderer(
   routes.frontendLibraries,
   ({ name }) => name
 )
+
+const renderOutdates = ({ rowData: { outdates } }: any) => (
+  <StatusColumn
+    outDated={outdates[distances.MAJOR]}
+    alerts={outdates[distances.MINOR]}
+  />
+)
+
+const renderLicense = ({ cellData }: any) =>
+  cellData ? <Tag critical={!isValidLicense(cellData)}>{cellData}</Tag> : null
 
 const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
   // memoized normalization
@@ -57,12 +114,25 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
     [cacheKey]
   )
 
+  // state
+
+  const [sort, setSort] = useState<Sort>({ by: 'name', direction: 'ASC' })
+
+  const sortCache = [cacheKey, ...Object.values(sort)]
+  const sorted = useMemo(() => sorter(normalized, sort), sortCache)
+
+  const handleSort = ({ sortBy: by, sortDirection: direction }: any) =>
+    setSort({ by, direction })
+
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }) => normalized[index]
+  const rowGetter = ({ index }: { index: number }) => sorted[index]
 
   return (
     <Table
+      sort={handleSort}
+      sortBy={sort.by}
+      sortDirection={sort.direction}
       rowCount={libraries.length}
       rowGetter={rowGetter}
       rowRenderer={rowRenderer}
@@ -74,14 +144,8 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
       <Column
         width={180}
         label='Outdated Projects'
-        dataKey='outdates'
-        disableSort
-        cellRenderer={({ cellData }: any) => (
-          <StatusColumn
-            outDated={cellData[distances.MAJOR]}
-            alerts={cellData[distances.MINOR]}
-          />
-        )}
+        dataKey='totalOutdates'
+        cellRenderer={renderOutdates}
       />
 
       <Column
@@ -89,11 +153,7 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
         width={100}
         label='License'
         dataKey='license'
-        cellRenderer={({ cellData }: any) =>
-          cellData ? (
-            <Tag critical={!isValidLicense(cellData)}>{cellData}</Tag>
-          ) : null
-        }
+        cellRenderer={renderLicense}
       />
     </Table>
   )
