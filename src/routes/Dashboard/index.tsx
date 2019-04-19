@@ -86,7 +86,11 @@ const Dashboard = ({ match }: Props) => {
               )
 
               return (
-                <NodeLibrariesTable libraries={filtered} outdates={outdates} />
+                <NodeLibrariesTable
+                  libraries={filtered}
+                  outdates={outdates}
+                  cacheKey={search}
+                />
               )
             }
 

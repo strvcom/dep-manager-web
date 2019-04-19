@@ -1,6 +1,6 @@
-import React, { memo } from 'react'
-import { path, pipe } from 'ramda'
+import React, { memo, useMemo } from 'react'
 import mem from 'mem'
+import { filter, length, map, path, pipe, propEq, sum, values } from 'ramda'
 
 import Table, { Column } from '../components/Table/index'
 import StatusColumn from '../components/Table/StatusColumn'
@@ -15,6 +15,7 @@ const distances = {
 }
 
 export interface Props {
+  cacheKey: string // key for verifying memoization
   libraries: any[]
   outdates: {
     MAJOR: any[]
@@ -22,62 +23,43 @@ export interface Props {
   }
 }
 
-const Usage = memo(
-  ({ library, outdates }: any) => (
-    <span>
-      {Object.keys(outdates).reduce(
-        (acc, status) =>
-          acc +
-          outdates[status].filter((lib: any) => lib.name === library).length,
-        0
-      )}
-    </span>
-  ),
-  (prev, next) => prev.name === next.name
-)
-
-const Outdated = memo(
-  ({ library, outdates }: any) => {
-    const { [distances.MAJOR]: major, [distances.MINOR]: minor } = outdates
-
-    const majors = major.filter((lib: any) => lib.name === library)
-    const minors = minor.filter((lib: any) => lib.name === library)
-
-    return <StatusColumn outDated={majors.length} alerts={minors.length} />
-  },
-  (prev, next) => prev.library === next.library
-)
-
-const renderLicense = mem(
-  pipe(
-    path(['rowData', 'package', 'license']),
-    (license: any) =>
-      license ? <Tag critical={!isValidLicense(license)}>{license}</Tag> : null
-  ),
-  { cacheKey: path(['rowData', 'package', 'license']) }
-)
-
-const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
-  const rowGetter = ({ index }: { index: number }) => libraries[index]
-
-  const renderUsage = ({ rowData }: any) => (
-    <Usage library={rowData.package.name} outdates={outdates} />
-  )
-
-  const renderName = ({ rowData }: any) => rowData.package.name
-
-  const renderOutdated = ({ rowData }: any) => (
-    <Outdated library={rowData.package.name} outdates={outdates} />
-  )
-
-  const rowRenderer = React.useMemo(
-    () =>
-      anchorRowRenderer(
-        routes.frontendLibraries,
-        rowData => rowData.package.name
+const normalizeLibrary = mem(
+  (library: any, allOutdates: any) => {
+    const name = library.package.name
+    const license = library.package.license
+    const outdates = map(
+      pipe(
+        filter(propEq('name', name)),
+        // @ts-ignore
+        length
       ),
-    [routes.frontendLibraries]
+      allOutdates
+    )
+    // prettier-ignore
+    const usage = pipe(values, sum)(outdates)
+
+    return { name, license, outdates, usage }
+  },
+  { cacheKey: path(['package', 'name']) }
+)
+
+const rowRenderer = anchorRowRenderer(
+  routes.frontendLibraries,
+  ({ name }) => name
+)
+
+const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
+  // memoized normalization
+
+  const normalized = useMemo(
+    // broken for better memoization.
+    () => libraries.map(library => normalizeLibrary(library, outdates)),
+    [cacheKey]
   )
+
+  // renderers.
+
+  const rowGetter = ({ index }: { index: number }) => normalized[index]
 
   return (
     <Table
@@ -85,26 +67,21 @@ const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
       rowGetter={rowGetter}
       rowRenderer={rowRenderer}
     >
-      <Column
-        width={380}
-        flexGrow={1}
-        label='Library Name'
-        dataKey='package'
-        cellRenderer={renderName}
-      />
+      <Column width={380} flexGrow={1} label='Library Name' dataKey='name' />
 
-      <Column
-        width={80}
-        label='Total Used On'
-        dataKey='id'
-        cellRenderer={renderUsage}
-      />
+      <Column width={80} label='Total Used On' dataKey='usage' />
 
       <Column
         width={180}
         label='Outdated Projects'
-        dataKey='id'
-        cellRenderer={renderOutdated}
+        dataKey='outdates'
+        disableSort
+        cellRenderer={({ cellData }: any) => (
+          <StatusColumn
+            outDated={cellData[distances.MAJOR]}
+            alerts={cellData[distances.MINOR]}
+          />
+        )}
       />
 
       <Column
@@ -112,10 +89,17 @@ const NodeLibrariesTable = ({ libraries, outdates }: Props) => {
         width={100}
         label='License'
         dataKey='license'
-        cellRenderer={renderLicense}
+        cellRenderer={({ cellData }: any) =>
+          cellData ? (
+            <Tag critical={!isValidLicense(cellData)}>{cellData}</Tag>
+          ) : null
+        }
       />
     </Table>
   )
 }
 
-export default memo(NodeLibrariesTable)
+export default memo(
+  NodeLibrariesTable,
+  (prev, next) => prev.cacheKey === next.cacheKey
+)
