@@ -34,7 +34,6 @@ const sorter = ({
   if (sortBy) sorters.push(sortDirections[sortDirection](prop(sortBy)))
   if (defaultSort) sorters.push(defaultSort)
 
-  // @ts-ignore
   return sortWith(sorters, list)
 }
 

@@ -26,6 +26,7 @@ const combine = (left: Module, right: Module): Module => ({
 const schema = modules
   // extract typeDefs text, AST is not compatible
   .map(over(lensProp('typeDefs'), print))
+  // @ts-ignore
   .reduce(combine)
 
 export { schema }
