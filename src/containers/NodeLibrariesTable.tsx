@@ -1,8 +1,8 @@
-import React, { memo, useState, useMemo } from 'react'
+import React, { memo, useMemo } from 'react'
 import mem from 'mem'
+
 import {
   ascend,
-  descend,
   filter,
   length,
   map,
@@ -11,7 +11,6 @@ import {
   pipe,
   prop,
   propEq,
-  sortWith,
   sum,
   values
 } from 'ramda'
@@ -22,6 +21,8 @@ import Tag from '../components/Tag'
 import * as routes from '../routes/routes'
 import { isValidLicense } from '../utils/license'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
+
+import { useSort } from '../hooks/useSort'
 
 const distances = {
   MAJOR: 'MAJOR',
@@ -37,27 +38,8 @@ export interface Props {
   }
 }
 
-interface Sort {
-  by: string | undefined
-  direction: 'DESC' | 'ASC' | undefined
-}
-
-const sortDirections = {
-  ASC: ascend,
-  DESC: descend
-}
-
 // @ts-ignore
 const defaultSort = ascend(prop('name'))
-
-const sorter = (
-  libraries: Props['libraries'],
-  { by, direction = 'ASC' }: Sort
-) =>
-  sortWith(
-    by ? [sortDirections[direction](prop(by)), defaultSort] : [defaultSort],
-    libraries
-  )
 
 const sumObject = pipe(
   values,
@@ -112,22 +94,21 @@ const renderLicense = ({ cellData }: any) =>
 const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
   // memoized normalization
 
-  const normalizationCache = [cacheKey]
-  const normalized = useMemo(
+  const cacheKeys = [cacheKey]
+  const list = useMemo(
     // broken for better memoization.
     () => libraries.map(library => normalizeLibrary(library, outdates)),
-    normalizationCache
+    cacheKeys
   )
 
   // state
 
-  const [sort, setSort] = useState<Sort>({ by: 'name', direction: 'ASC' })
-
-  const sortCache = normalizationCache.concat(Object.values(sort))
-  const sorted = useMemo(() => sorter(normalized, sort), sortCache)
-
-  const handleSort = ({ sortBy: by, sortDirection: direction }: any) =>
-    setSort({ by, direction })
+  const [sorted, setSort, sort] = useSort({
+    list,
+    cacheKeys,
+    defaultSort,
+    initial: { sortBy: 'name', sortDirection: 'ASC' }
+  })
 
   // renderers.
 
@@ -135,9 +116,9 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
 
   return (
     <Table
-      sort={handleSort}
-      sortBy={sort.by}
-      sortDirection={sort.direction}
+      sort={setSort}
+      sortBy={sort.sortBy}
+      sortDirection={sort.sortDirection}
       rowCount={libraries.length}
       rowGetter={rowGetter}
       rowRenderer={renderRow}
@@ -165,7 +146,6 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
   )
 }
 
-export default memo(
-  NodeLibrariesTable,
-  (prev, next) => prev.cacheKey === next.cacheKey
+export default memo(NodeLibrariesTable, (prev, next) =>
+  prev.cacheKey ? prev.cacheKey === next.cacheKey : false
 )
