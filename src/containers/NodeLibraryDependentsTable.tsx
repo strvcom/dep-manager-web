@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react'
 import mem from 'mem'
-import { path, prop } from 'ramda'
+import { ascend, path, prop } from 'ramda'
 
 import Tag from '../components/Tag'
 import Table, { Column } from '../components/Table/index'
@@ -9,12 +9,16 @@ import anchorRowRenderer from '../utils/anchorRowRenderer'
 import { BidaDepartment } from '../config/types'
 import * as routes from '../routes/routes'
 
+import { useSort } from '../hooks/useSort'
+
 export interface Props {
   cacheKey?: string
   dependents: any[]
   libraryVersion: string
   department: BidaDepartment
 }
+
+const defaultSort = ascend(prop('name'))
 
 const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendProjects,
@@ -53,9 +57,18 @@ const NodeLibraryDependentsTable = ({
     cacheKeys
   )
 
+  // state
+
+  const [sorted, setSort, sort] = useSort({
+    list,
+    cacheKeys,
+    defaultSort,
+    initial: { sortBy: 'name', sortDirection: 'ASC' }
+  })
+
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }) => list[index]
+  const rowGetter = ({ index }: { index: number }) => sorted[index]
 
   const baseURL = departmentBaseURLs[department]
   const rowRenderer = baseURL
@@ -64,6 +77,9 @@ const NodeLibraryDependentsTable = ({
 
   return (
     <Table
+      sort={setSort}
+      sortBy={sort.sortBy}
+      sortDirection={sort.sortDirection}
       rowCount={dependents.length}
       rowGetter={rowGetter}
       rowRenderer={rowRenderer}
@@ -71,8 +87,9 @@ const NodeLibraryDependentsTable = ({
       <Column width={380} label='Project Name' dataKey='name' />
 
       <Column
+        disableSort
         width={280}
-        dataKey='version'
+        dataKey='distance'
         label='Used Version'
         cellRenderer={renderVersion}
       />
