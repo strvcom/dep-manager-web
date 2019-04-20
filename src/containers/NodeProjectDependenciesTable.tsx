@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react'
 import mem from 'mem'
-import { ascend, path, prop } from 'ramda'
+import { ascend, prop } from 'ramda'
 
 import Tag from '../components/Tag'
 import Table, { Column } from '../components/Table'
