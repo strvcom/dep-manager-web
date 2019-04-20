@@ -14,6 +14,7 @@
     "lint": "tslint-config-prettier-check ./tslint.json && tslint src/**/*.tsx src/**/*.ts",
     "pr": "yarn pull-request",
     "pull-request": "node ./scripts/pull-request.js",
+    "qa": "tsc -p tsconfig.production.json && yarn test",
     "start": "run-p start:**",
     "start:app": "react-scripts start",
     "start:lambda": "netlify-lambda serve src/lambda --config ./webpack.functions.js",
