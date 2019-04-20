@@ -15,6 +15,14 @@ git clone git@github.com:strvcom/dep-manager-web.git
 cd dep-manager-web
 ```
 
+**Initialize container**
+
+```sh
+make run
+```
+
+> All following commands should be run inside the container.
+
 **Install**
 
 ```sh
