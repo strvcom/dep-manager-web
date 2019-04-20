@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  app:
+    image: dep-manager-web
+    build:
+      context: ./docker/
+    network_mode: 'host'
+    # ports:
+    #   - 3000:3000
+    # dns:
+    #   - 8.8.8.8
+    volumes:
+      - $HOME/.ssh:/home/node/.ssh
+      - $HOME/.gitconfig:/home/node/.gitconfig
+      - $HOME/.now:/home/node/.now
+      - $PWD:/home/node/app
+      - $PWD/docker/.bash_history:/home/node/.bash_history

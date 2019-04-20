@@ -75,6 +75,7 @@ typings/
 
 scripts/token.txt
 tmp
+docker/.bash_history
 
 npm-debug.log*
 yarn-debug.log*
