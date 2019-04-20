@@ -6,10 +6,6 @@ services:
     build:
       context: ./docker/
     network_mode: 'host'
-    # ports:
-    #   - 3000:3000
-    # dns:
-    #   - 8.8.8.8
     volumes:
       - $HOME/.ssh:/home/node/.ssh
       - $HOME/.gitconfig:/home/node/.gitconfig
