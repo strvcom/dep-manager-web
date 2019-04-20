@@ -59,6 +59,7 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
                   libraryVersion={library.version}
                   dependents={filtered}
                   department={department}
+                  cacheKey={search}
                 />
               </Content>
 

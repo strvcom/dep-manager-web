@@ -1,4 +1,6 @@
-import React, { memo } from 'react'
+import React, { memo, useMemo } from 'react'
+import mem from 'mem'
+import { path, prop } from 'ramda'
 
 import Tag from '../components/Tag'
 import Table, { Column } from '../components/Table/index'
@@ -8,47 +10,56 @@ import { BidaDepartment } from '../config/types'
 import * as routes from '../routes/routes'
 
 export interface Props {
+  cacheKey?: string
   dependents: any[]
   libraryVersion: string
   department: BidaDepartment
 }
-
-const Outdated = memo(
-  ({ current, target }: any) => {
-    const distance = versionDistance(target, current)
-
-    return (
-      // @ts-ignore
-      <Tag critical={distance === 'MAJOR'} warning={distance === 'MINOR'}>
-        {current}
-      </Tag>
-    )
-  },
-  (prev, next) => prev.current + prev.target === next.current + next.target
-)
-
-const getRepositoryId = (dependent: any) => dependent.repository.name
 
 const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendProjects,
   [BidaDepartment.FRONTEND]: routes.frontendProjects
 }
 
+const renderVersion = ({ rowData: { distance, version } }: any) => (
+  <Tag critical={distance === 'MAJOR'} warning={distance === 'MINOR'}>
+    {version}
+  </Tag>
+)
+
+/**
+ * Flattens and processes a dependent data for easier display and sort operations.
+ */
+const normalize = mem(
+  (dependent: any, libraryVersion: string) => ({
+    name: dependent.node.repository.name,
+    version: dependent.node.version,
+    distance: versionDistance(libraryVersion, dependent.node.version)
+  }),
+  { cacheKey: path(['node', 'id']) }
+)
+
 const NodeLibraryDependentsTable = ({
+  cacheKey,
   dependents,
   libraryVersion,
   department
 }: Props) => {
-  const baseURL = departmentBaseURLs[department]
+  // memoized normalization
 
-  const rowGetter = ({ index }: { index: number }) => dependents[index].node
-  const renderName = ({ rowData }: any) => rowData.repository.name
-  const renderVersion = ({ rowData }: any) => (
-    <Outdated current={rowData.version} target={libraryVersion} />
+  const cacheKeys = cacheKey ? [cacheKey] : []
+  const list = useMemo(
+    () => dependents.map(dep => normalize(dep, libraryVersion)),
+    cacheKeys
   )
 
+  // renderers.
+
+  const rowGetter = ({ index }: { index: number }) => list[index]
+
+  const baseURL = departmentBaseURLs[department]
   const rowRenderer = baseURL
-    ? anchorRowRenderer(baseURL, getRepositoryId)
+    ? anchorRowRenderer(baseURL, prop('name'))
     : undefined
 
   return (
@@ -57,12 +68,7 @@ const NodeLibraryDependentsTable = ({
       rowGetter={rowGetter}
       rowRenderer={rowRenderer}
     >
-      <Column
-        width={380}
-        label='Project Name'
-        dataKey='name'
-        cellRenderer={renderName}
-      />
+      <Column width={380} label='Project Name' dataKey='name' />
 
       <Column
         width={280}
@@ -74,4 +80,6 @@ const NodeLibraryDependentsTable = ({
   )
 }
 
-export default memo(NodeLibraryDependentsTable)
+export default memo(NodeLibraryDependentsTable, (prev: Props, next: Props) =>
+  prev.cacheKey ? prev.cacheKey === next.cacheKey : false
+)
