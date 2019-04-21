@@ -96,7 +96,7 @@ We can transform an _issue_ into a _pull-request_.
 
 GitHub does not provide a way to do that through the UI, but that's documented on APIs. GitHub's [official CLI](https://github.com/github/hub) does support it.
 
-There is a script to facilitate this process: `yarn pull-request`. Give it a `--help` argument to see what is possible, but basically a no-argument run will use the [branch naming pattern](#branch) to decide which issue to transform into the pull-request (i.e. `issue/[number]` means `number`).
+There is a script to facilitate this process: `yarn pull-request`. This will guide you to create a pull-request, or turn an issue into one.
 
 #### _Rebase and merge_
 
