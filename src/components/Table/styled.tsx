@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '../../styles/styled'
 import * as Virtual from 'react-virtualized'
-import { typography, palette } from '../../styles/themes/mixins'
+import { typography } from '../../styles/themes/mixins'
 
 export const Wrapper = styled.section`
   margin-top: 60px;
@@ -37,38 +37,4 @@ export const StyledTable = styled(
     font-size: 2em;
     transform: translateY(-0.1em) rotate(180deg);
   }
-`
-
-export interface StatusProp
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLSpanElement>,
-    HTMLSpanElement
-  > {
-  count: number
-}
-
-const StatusCmp = ({ count, ...props }: StatusProp) => <span {...props} />
-export const Status = styled(StatusCmp)`
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 2px;
-  ${typography.tag}
-`
-
-export const Outdated = styled(Status)`
-  ${({ count }) =>
-    count &&
-    `
-    background-color: ${palette.palePink};
-    color: ${palette.red};
-  `};
-`
-
-export const Alerts = styled(Status)`
-  ${({ count }) =>
-    count &&
-    `
-    background-color: ${palette.eggShell};
-    color: ${palette.ocher};
-  `};
 `

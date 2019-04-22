@@ -1,12 +1,15 @@
-import React from 'react'
-import { Outdated, Alerts } from './styled'
+import React, { Fragment } from 'react'
+import Badge, { BadgeType } from '../Badge'
 
-const StatusColumn = ({ alerts = 0, outDated = 0 }: StatusColumnProps) => (
-  <div>
-    {outDated > 0 && <Outdated count={outDated}>{outDated} Outdated</Outdated>}{' '}
-    {alerts > 0 && <Alerts count={alerts}>{alerts} Alerts</Alerts>}
-  </div>
-)
+const { DANGER, WARNING } = BadgeType
+
+const StatusColumn = ({ alerts = 0, outDated = 0 }: StatusColumnProps) =>
+  alerts && outDated ? (
+    <Fragment>
+      {outDated ? <Badge type={DANGER}>{outDated} Outdated</Badge> : null}
+      {alerts ? <Badge type={WARNING}>{alerts} Alerts</Badge> : null}
+    </Fragment>
+  ) : null
 
 export interface StatusColumnProps {
   outDated: number
