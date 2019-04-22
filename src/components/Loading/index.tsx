@@ -35,6 +35,7 @@ const BarLoader = styled.div<BarLoaderProps>`
   text-indent: -9999em;
   transform: translateZ(0);
   width: 1em;
+
   &:before {
     animation: ${loading} 1s infinite ease-in-out;
     animation-delay: ${props => `${props.duration! * -0.32}s`};
@@ -46,6 +47,7 @@ const BarLoader = styled.div<BarLoaderProps>`
     top: 0;
     width: 1em;
   }
+
   &:after {
     animation: ${loading} 1s infinite ease-in-out;
     animation-delay: ${props => `${props.duration! * 0.08}s`};
