@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react'
 import mem from 'mem'
 import { ascend, prop } from 'ramda'
 
-import Tag from '../components/Tag'
+import Badge, { BadgeType } from '../components/Badge'
 import Table, { Column } from '../components/Table'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
 import { isValidLicense } from '../utils/license'
@@ -24,14 +24,14 @@ const departmentBaseURLs = {
 
 const defaultSort = ascend(prop('name'))
 
+const versionBadgeType = {
+  MAJOR: BadgeType.DANGER,
+  MINOR: BadgeType.WARNING
+}
+
 const renderVersion = mem(
   ({ rowData: { currentVersion, outdateStatus } }: any) => (
-    <Tag
-      critical={outdateStatus === 'MAJOR'}
-      warning={outdateStatus === 'MINOR'}
-    >
-      {currentVersion}
-    </Tag>
+    <Badge type={versionBadgeType[outdateStatus]}>{currentVersion}</Badge>
   ),
   {
     cacheKey: ({ rowData: { version, outdateStatus } }: any) =>
@@ -41,7 +41,11 @@ const renderVersion = mem(
 
 const renderLicense = mem(
   ({ cellData: license }: any) =>
-    license && <Tag critical={!isValidLicense(license)}>{license}</Tag>,
+    license && (
+      <Badge type={!isValidLicense(license) ? BadgeType.DANGER : null}>
+        {license}
+      </Badge>
+    ),
   { cacheKey: prop('cellData') }
 )
 

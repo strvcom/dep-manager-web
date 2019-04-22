@@ -17,7 +17,7 @@ import {
 
 import Table, { Column } from '../components/Table'
 import StatusColumn from '../components/Table/StatusColumn'
-import Tag from '../components/Tag'
+import Badge, { BadgeType } from '../components/Badge'
 import * as routes from '../routes/routes'
 import { isValidLicense } from '../utils/license'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
@@ -85,7 +85,11 @@ const renderOutdates = ({ rowData: { outdates } }: any) => (
 )
 
 const renderLicense = ({ cellData }: any) =>
-  cellData ? <Tag critical={!isValidLicense(cellData)}>{cellData}</Tag> : null
+  cellData ? (
+    <Badge type={!isValidLicense(cellData) ? BadgeType.DANGER : null}>
+      {cellData}
+    </Badge>
+  ) : null
 
 const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
   // memoized normalization

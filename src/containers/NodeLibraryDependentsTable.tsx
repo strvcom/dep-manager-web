@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react'
 import mem from 'mem'
 import { ascend, path, prop } from 'ramda'
 
-import Tag from '../components/Tag'
+import Badge, { BadgeType } from '../components/Badge'
 import Table, { Column } from '../components/Table/index'
 import { versionDistance } from '../utils/version-diff'
 import anchorRowRenderer from '../utils/anchorRowRenderer'
@@ -25,10 +25,13 @@ const departmentBaseURLs = {
   [BidaDepartment.FRONTEND]: routes.frontendProjects
 }
 
+const versionBadgeType = {
+  MAJOR: BadgeType.DANGER,
+  MINOR: BadgeType.WARNING
+}
+
 const renderVersion = ({ rowData: { distance, version } }: any) => (
-  <Tag critical={distance === 'MAJOR'} warning={distance === 'MINOR'}>
-    {version}
-  </Tag>
+  <Badge type={versionBadgeType[distance]}>{version}</Badge>
 )
 
 /**
