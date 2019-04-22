@@ -1,6 +1,5 @@
 import styled from '../../styles/styled'
 import React from 'react'
-import { NavLink } from 'react-router-dom'
 import { space, SpaceProps } from 'styled-system'
 import { typography } from '../../styles/themes/mixins'
 
@@ -48,15 +47,6 @@ export const Title = styled(
 
 export const Subtitle = styled.div`
   margin-bottom: 40px;
-`
-
-export const StyledNavLink = styled(NavLink)`
-  padding: 20px 0;
-  margin-right: 40px;
-  color: inherit;
-  text-decoration: inherit;
-  box-sizing: border-box;
-  cursor: pointer;
 `
 
 export const Nav = styled.div`

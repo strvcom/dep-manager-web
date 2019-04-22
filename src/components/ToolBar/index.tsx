@@ -1,4 +1,5 @@
 import React from 'react'
+
 import {
   Nav,
   StyledNavBar,
@@ -29,4 +30,5 @@ const ToolBar = (props: ToolBarProps) => (
 )
 
 export { default as ToolBarLink } from './ToolBarLink'
+
 export default React.memo(ToolBar)
