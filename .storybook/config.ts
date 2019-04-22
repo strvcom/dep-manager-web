@@ -3,6 +3,7 @@ import 'babel-polyfill'
 import { configure, addDecorator } from '@storybook/react'
 import { withThemes } from 'storybook-styled-components'
 import StoryRouter from 'storybook-react-router'
+import { withKnobs } from '@storybook/addon-knobs'
 
 import light from '../src/styles/themes/light'
 import dark from '../src/styles/themes/dark'
@@ -12,6 +13,7 @@ const themes = {
   Dark: dark
 }
 
+addDecorator(withKnobs)
 addDecorator(withThemes(themes))
 addDecorator(StoryRouter())
 

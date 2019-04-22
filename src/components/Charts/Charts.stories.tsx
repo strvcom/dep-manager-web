@@ -1,6 +1,6 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
-import { withKnobs, color, number } from '@storybook/addon-knobs'
+import { number } from '@storybook/addon-knobs'
 
 import Bar from './Bar'
 import Doughnut from './Doughnut'
@@ -13,7 +13,6 @@ const percentage = {
 }
 
 storiesOf('Charts', module)
-  .addDecorator(withKnobs)
   .add('Bar', () => <Bar fill={number('Filled (%)', 50, percentage)} />)
   .add('Doughnut', () => (
     <Doughnut
