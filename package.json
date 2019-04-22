@@ -151,6 +151,7 @@
     "simple-git": "^1.110.0",
     "sort-package-json": "^1.22.1",
     "source-map-explorer": "^1.8.0",
+    "storybook-react-router": "^1.0.5",
     "storybook-styled-components": "^1.1.3",
     "stylelint": "^9.9.0",
     "stylelint-config-recommended": "^2.1.0",
