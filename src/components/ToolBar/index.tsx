@@ -10,20 +10,21 @@ import {
 } from './styled'
 
 export interface ToolBarProps {
-  title: React.ReactNode
+  title?: React.ReactNode
   subtitle?: React.ReactNode
   links?: React.ReactNode
   children?: React.ReactNode
 }
 
-const ToolBar = (props: ToolBarProps) => (
+const ToolBar = ({ title, subtitle, links, children }: ToolBarProps) => (
   <StyledNavBar>
     <NavBarContainer>
-      <Title mb='10px'>{props.title}</Title>
-      {props.subtitle && <Subtitle>{props.subtitle}</Subtitle>}
+      {title && <Title mb='10px'>{title}</Title>}
+      {subtitle && <Subtitle>{subtitle}</Subtitle>}
+
       <Wrapper>
-        {props.links && <Nav>{props.links}</Nav>}
-        {props.children}
+        {links && <Nav>{links}</Nav>}
+        {children}
       </Wrapper>
     </NavBarContainer>
   </StyledNavBar>
