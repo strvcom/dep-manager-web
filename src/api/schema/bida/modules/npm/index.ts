@@ -3,7 +3,7 @@
  */
 
 import gql from 'graphql-tag'
-import { path, pipe, propOr, toPairs, zipObj, map, omit, when } from 'ramda'
+import { pathOr, pipe, propOr, toPairs, zipObj, map, omit, when } from 'ramda'
 
 const typeDefs = gql`
   type NPMDependency {
@@ -73,7 +73,7 @@ const Repository = {
     `,
     resolve: pipe(
       // @ts-ignore
-      path(['npmPackageJSON', 'text']),
+      pathOr(null, ['npmPackageJSON', 'text']),
       // @ts-ignore
       when(Boolean, JSON.parse)
     )

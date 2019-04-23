@@ -74,5 +74,24 @@ describe('api/bida/npm', () => {
         })
       })
     })
+
+    describe('Repository', () => {
+      describe('npmPackage', () => {
+        const {
+          npmPackage: { resolve }
+        } = npm.resolvers.Repository
+
+        it('should be null when no package available', () => {
+          expect(resolve({})).toBe(null)
+        })
+
+        it('should parse package blob text', () => {
+          expect(resolve({ npmPackageJSON: { text: '{}' } })).toEqual({})
+          expect(
+            resolve({ npmPackageJSON: { text: '{"name": "a"}' } })
+          ).toEqual({ name: 'a' })
+        })
+      })
+    })
   })
 })
