@@ -20,6 +20,13 @@ deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
 
       await expect(attachAnalysis(pack)).resolves.toEqual({ ...pack, analysis })
     })
+
+    it('should throw when no name provided', async () => {
+      const pack = {}
+      const analysis = { result: 'value' }
+
+      await expect(attachAnalysis(pack)).rejects.toThrow('without "name"')
+    })
   })
 
   describe('metadata', () => {

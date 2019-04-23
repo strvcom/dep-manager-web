@@ -6,10 +6,15 @@ import * as loaders from '../loaders'
 /**
  * Load analysis and inject into package object.
  */
-const attachAnalysis = async (root: any) => ({
-  ...root,
-  analysis: await loaders.analysis.load(root.name)
-})
+const attachAnalysis = async (root: any) => {
+  if (!root.name) {
+    throw new Error('Cannot load package analysis without "name".')
+  }
+
+  const result = await loaders.analysis.load(root.name)
+
+  return { ...root, analysis: result }
+}
 
 /**
  * Factory for scalar package field resolvers based on NPMS metadata.
