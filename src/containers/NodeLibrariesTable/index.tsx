@@ -15,14 +15,14 @@ import {
   values
 } from 'ramda'
 
-import Table, { Column } from '../components/Table'
-import StatusColumn from '../components/Table/StatusColumn'
-import Badge, { BadgeType } from '../components/Badge'
-import * as routes from '../routes/routes'
-import { isValidLicense } from '../utils/license'
-import anchorRowRenderer from '../utils/anchorRowRenderer'
+import Table, { Column } from '../../components/Table'
+import StatusColumn from '../../components/Table/StatusColumn'
+import Badge, { BadgeType } from '../../components/Badge'
+import * as routes from '../../routes/routes'
+import { isValidLicense } from '../../utils/license'
+import anchorRowRenderer from '../../utils/anchorRowRenderer'
 
-import { useSort } from '../hooks/useSort'
+import { useSort } from '../../hooks/useSort'
 
 const distances = {
   MAJOR: 'MAJOR',
