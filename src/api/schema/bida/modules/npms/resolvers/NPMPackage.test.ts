@@ -52,6 +52,46 @@ deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
       expect(await resolve({ field: 'value' })).toBe('VALUE')
       expect(transform).toHaveBeenCalledWith('value')
     })
+
+    describe('license', () => {
+      it('should get license from metadata', async () => {
+        const { resolve } = NPMPackage.license
+        load.mockReturnValueOnce(getAnalysis({ license: 'MIT' }))
+        expect(await resolve({ name: 'name' })).toBe('MIT')
+      })
+    })
+
+    describe('description', () => {
+      it('should get description from metadata', async () => {
+        const { resolve } = NPMPackage.description
+        load.mockReturnValueOnce(getAnalysis({ description: 'value' }))
+        expect(await resolve({ name: 'name' })).toBe('value')
+      })
+    })
+
+    describe('private', () => {
+      it('should get private from metadata', async () => {
+        const { resolve } = NPMPackage.private
+        load.mockReturnValueOnce(getAnalysis({ private: true }))
+        expect(await resolve({ name: 'name' })).toBe(true)
+      })
+    })
+
+    describe('updatedAt', () => {
+      it('should get updatedAt from metadata', async () => {
+        const { resolve } = NPMPackage.updatedAt
+        load.mockReturnValueOnce(getAnalysis({ date: 'value' }))
+        expect(await resolve({ name: 'name' })).toBe('value')
+      })
+    })
+
+    describe('version', () => {
+      it('should get version from metadata', async () => {
+        const { resolve } = NPMPackage.version
+        load.mockReturnValueOnce(getAnalysis({ version: 'value' }))
+        expect(await resolve({ name: 'name' })).toBe('value')
+      })
+    })
   })
 })
 
