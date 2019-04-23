@@ -58,6 +58,21 @@ describe('api/bida/npm', () => {
           expect(() => resolver({ name: 'a' })).toThrow('must have a version')
         })
       })
+
+      describe('package', () => {
+        const { package: resolver } = npm.resolvers.NPMDependency
+
+        it('should resolve package from root', () => {
+          const dependency = { name: 'a', other: 'b' }
+          expect(resolver(dependency)).toEqual(dependency)
+        })
+
+        it('should omit version when resolving', () => {
+          expect(resolver({ name: 'a', version: '^1.0.0' })).toEqual({
+            name: 'a'
+          })
+        })
+      })
     })
   })
 })
