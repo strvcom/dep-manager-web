@@ -11,7 +11,9 @@ const [$0, $1, ...commands] = process.argv
 const log = text => console.log(chalk.bold('[stashed]: ') + chalk.gray(text))
 
 log('saving uncommitted changes to stash')
-execSync('git stash')
+
+const result = execSync('git stash').toString()
+const stashed = !/No local changes to save/.test(result)
 
 for (const command of commands) {
   try {
@@ -27,4 +29,4 @@ for (const command of commands) {
 }
 
 log('recovering uncommitted changes from stash')
-execSync('git stash apply')
+if (stashed) execSync('git stash apply')
