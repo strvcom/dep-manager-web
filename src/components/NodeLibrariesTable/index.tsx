@@ -15,9 +15,10 @@ import {
   values
 } from 'ramda'
 
-import Table, { Column } from '../../components/Table'
-import StatusColumn from '../../components/Table/StatusColumn'
-import Badge, { BadgeType } from '../../components/Badge'
+import Table, { Column } from '../Table'
+import StatusColumn from '../Table/StatusColumn'
+import Badge, { BadgeType } from '../Badge'
+
 import * as routes from '../../routes/routes'
 import { isValidLicense } from '../../utils/license'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
