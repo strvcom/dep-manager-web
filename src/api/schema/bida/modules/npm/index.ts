@@ -42,7 +42,18 @@ const NPMPackage = {
 }
 
 const NPMDependency = {
-  id: ({ name, version }: any) => `${name}@${version}`,
+  id: ({ name, version }: any) => {
+    if (!name) {
+      throw new Error('NPMDependency::id must have a name available.')
+    }
+
+    if (!version) {
+      throw new Error('NPMDependency::id must have a version available.')
+    }
+
+    return `${name}@${version}`
+  },
+
   package: omit(['version'])
 }
 

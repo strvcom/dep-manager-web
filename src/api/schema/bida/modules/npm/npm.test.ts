@@ -39,5 +39,25 @@ describe('api/bida/npm', () => {
         })
       })
     })
+
+    describe('NPMDependency', () => {
+      describe('id', () => {
+        const { id: resolver } = npm.resolvers.NPMDependency
+
+        it('should resolve id based on name and version', () => {
+          expect(resolver({ name: 'a', version: '^1.0.0' })).toBe('a@^1.0.0')
+        })
+
+        it('should throw when no name available', () => {
+          expect(() => resolver({ version: '^1.0.0' })).toThrow(
+            'must have a name'
+          )
+        })
+
+        it('should throw when no version available', () => {
+          expect(() => resolver({ name: 'a' })).toThrow('must have a version')
+        })
+      })
+    })
   })
 })
