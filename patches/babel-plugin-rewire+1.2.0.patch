@@ -1,0 +1,13 @@
+diff --git a/node_modules/babel-plugin-rewire/lib/babel-plugin-rewire.js b/node_modules/babel-plugin-rewire/lib/babel-plugin-rewire.js
+index c98a599..67ba3ba 100644
+--- a/node_modules/babel-plugin-rewire/lib/babel-plugin-rewire.js
++++ b/node_modules/babel-plugin-rewire/lib/babel-plugin-rewire.js
+@@ -31,7 +31,7 @@ module.exports = function (_ref) {
+ 		    parent = path.parent;
+ 
+ 
+-		return variableBinding.referencePaths !== null && !(parent.type === 'VariableDeclarator' && parent.id == node) && !(parent.type === 'ForInStatement' && parent.left == node) && !(parent.type === 'FunctionExpression' && parent.id === node) && !(parent.type === 'MemberExpression' && parent.property === node) && !(parent.type === 'ObjectProperty' && parent.key === node) && !(parent.type === 'RestProperty') && !(parent.type === 'ObjectMethod' && parent.key === node) && !(parent.type === 'ObjectProperty' && path.parentPath && path.parentPath.parent && path.parentPath.parent.type === 'ObjectPattern') && !(parent.type === 'ExportSpecifier') && !(parent.type === 'ImportSpecifier') && !(parent.type === 'ObjectTypeProperty') && !(parent.type === 'ClassMethod');
++		return variableBinding.referencePaths !== null && !(parent.type === 'VariableDeclarator' && parent.id == node) && !(parent.type === 'ForInStatement' && parent.left == node) && !(parent.type === 'FunctionExpression' && parent.id === node) && !(parent.type === 'MemberExpression' && parent.property === node) && !(parent.type === 'ObjectProperty' && parent.key === node) && !(parent.type === 'RestProperty') && !(parent.type === 'ObjectMethod' && parent.key === node) && !(parent.type === 'ObjectProperty' && path.parentPath && path.parentPath.parent && path.parentPath.parent.type === 'ObjectPattern') && !(parent.type === 'ExportSpecifier') && !(parent.type === 'ImportSpecifier') && !(parent.type === 'ObjectTypeProperty') && !(parent.type === 'ClassMethod') && !(parent.type === 'TSTypeReference') && !(parent.type === 'TSTypeQuery') && !(parent.type === 'TSQualifiedName');
+ 	}
+ 
+ 	function doesIdentifierRepresentAValidReference(path, variableBinding, rewireInformation) {
