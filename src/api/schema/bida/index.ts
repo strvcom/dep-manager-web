@@ -9,7 +9,7 @@ import projects from './modules/projects'
 
 const modules: Module[] = [npm, npms, projects]
 
-const schema = modules
+const schema: Module = modules
   // extract typeDefs text, AST is not compatible to "combine"
   .map(over(lensProp('typeDefs'), print))
   .reduce(combine)
