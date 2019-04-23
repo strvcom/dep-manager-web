@@ -16,15 +16,17 @@ const attachAnalysis = async (root: any) => ({
  */
 const metadata = (field: string, transform: any = identity) => ({
   fragment: `... on NPMPackage { name }`,
-  resolve: combineResolvers(
-    // first, try and grab an existing value.
-    prop(field),
-    // then, load from NPMS analysis as a fallback.
-    pipeResolvers(
-      attachAnalysis,
-      path(['analysis', 'collected', 'metadata', field]),
-      transform
-    )
+  resolve: pipeResolvers(
+    combineResolvers(
+      // first, try and grab an existing value.
+      prop(field),
+      // then, load from NPMS analysis as a fallback.
+      pipeResolvers(
+        attachAnalysis,
+        path(['analysis', 'collected', 'metadata', field])
+      )
+    ),
+    transform
   )
 })
 
