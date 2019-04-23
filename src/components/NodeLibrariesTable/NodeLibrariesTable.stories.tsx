@@ -1,26 +1,11 @@
 import React from 'react'
-import Chance from 'chance'
 import { prop } from 'ramda'
 import { storiesOf } from '@storybook/react'
 import { number } from '@storybook/addon-knobs'
 import 'react-virtualized/styles.css'
+import { n, chance } from '../../tests/utils/mocking'
 
 import NodeLibrariesTable from './'
-
-const chance = new Chance()
-
-chance.mixin({
-  package: (name: string) => ({
-    name: name || chance.word(),
-    license: chance.pickone(['MIT', 'Apache', 'GPLv3', 'UNLICENSED'])
-  })
-})
-
-chance.mixin({
-  library: (...args: any[]) => ({
-    package: chance.package(...args)
-  })
-})
 
 storiesOf('NodeLibrariesTable', module)
   .add('empty', () => (
@@ -29,7 +14,7 @@ storiesOf('NodeLibrariesTable', module)
   .add('filled', () => {
     const amount = Math.max(0, number('Libraries', 10))
 
-    const libraries = new Array(amount).fill(null).map(chance.library)
+    const libraries = n(amount, chance.library)
     const outs = { range: true, min: 0, max: amount, step: 1 }
 
     const outdates = {

@@ -1,42 +1,10 @@
 import React from 'react'
-import Chance from 'chance'
 import { storiesOf } from '@storybook/react'
 import { number } from '@storybook/addon-knobs'
 import 'react-virtualized/styles.css'
+import { n, chance } from '../../tests/utils/mocking'
 
 import NodeProjectsTable from './'
-
-const n = (amount: number, fn: any) => new Array(amount).fill(null).map(fn)
-
-const chance = new Chance()
-
-const OUTDATE_STATUS = [
-  'MAJOR',
-  'PREMAJOR',
-  'MINOR',
-  'PREMINOR',
-  'PATCH',
-  'PREPATCH',
-  'PRERELEASE',
-  'UNKNOWN',
-  'UPTODATE'
-]
-
-chance.mixin({
-  dependency: () => ({
-    outdateStatus: chance.pickone(OUTDATE_STATUS)
-  })
-})
-
-chance.mixin({
-  project: () => ({
-    name: chance.word(),
-    pushedAt: chance.date().toString(),
-    npmPackage: {
-      dependencies: n(10, chance.dependency)
-    }
-  })
-})
 
 storiesOf('NodeProjectsTable', module)
   .add('empty', () => <NodeProjectsTable projects={[]} department='frontend' />)
