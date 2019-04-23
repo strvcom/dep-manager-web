@@ -7,7 +7,7 @@ import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 import Loading from '../../components/Loading'
 import NodeLibrariesTable from '../../components/NodeLibrariesTable'
 import NodeProjectsTable from '../../components/NodeProjectsTable'
-import ActualityWidget from '../../containers/LibrariesActualityWidget'
+import ActualityWidget from '../../containers/ActualityWidget'
 
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
 import RecentUpdates from './RecentUpdates'

@@ -4,7 +4,7 @@ import { __, propEq } from 'ramda'
 
 import ToolBar from '../../components/ToolBar'
 import { Wrapper, Content, Sidebar, Input } from './styled'
-import ActualityWidget from '../../containers/LibrariesActualityWidget'
+import ActualityWidget from '../../containers/ActualityWidget'
 import NodeLibraryDependentsTable from '../../components/NodeLibraryDependentsTable'
 import { BidaDepartment } from '../../config/types'
 import Loading from '../../components/Loading'
