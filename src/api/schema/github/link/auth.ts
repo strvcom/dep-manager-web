@@ -1,6 +1,6 @@
 import { ApolloLink } from 'apollo-link'
 
-const link = new ApolloLink((operation, forward) => {
+const link = new ApolloLink((operation: any, forward: any) => {
   const {
     graphqlContext: { headers }
   } = operation.getContext()
@@ -9,7 +9,7 @@ const link = new ApolloLink((operation, forward) => {
     operation.setContext({ headers: { authorization: headers.authorization } })
   }
 
-  return forward!(operation)
+  return forward(operation)
 })
 
 export { link }
