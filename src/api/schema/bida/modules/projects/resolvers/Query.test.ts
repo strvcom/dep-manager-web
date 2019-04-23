@@ -50,6 +50,71 @@ deepDescribe('api/bida/projects/resolvers', () => {
       )
     })
   })
+
+  describe('Query::projects', () => {
+    it('should delegate', () => {
+      const delegateToSchema = jest.fn()
+      const info = { mergeInfo: { delegateToSchema } }
+
+      projects(null, {}, null, info)
+
+      expect(delegateToSchema).toHaveBeenCalledTimes(1)
+    })
+
+    it('should delegate with fixed arguments', () => {
+      const delegateToSchema = jest.fn()
+      const info = { mergeInfo: { delegateToSchema } }
+
+      projects(null, {}, null, info)
+
+      expect(delegateToSchema).toHaveBeenCalledWith(
+        expect.objectContaining({
+          args: { query: 'user:strvcom', type: 'REPOSITORY' }
+        })
+      )
+    })
+
+    it('should delegate with configurable arguments', () => {
+      const delegateToSchema = jest.fn()
+      const args = { archived: true, department: 'FRONTEND', extra: 'value' }
+      const info = { mergeInfo: { delegateToSchema } }
+
+      projects(null, args, null, info)
+
+      expect(delegateToSchema).toHaveBeenCalledWith(
+        expect.objectContaining({
+          args: {
+            query: 'user:strvcom topic:frontend archived:true',
+            type: 'REPOSITORY',
+            extra: 'value'
+          }
+        })
+      )
+    })
+
+    it('should delegate with all arguments', () => {
+      const delegateToSchema = jest.fn()
+      const args = { archived: true, department: 'FRONTEND', extra: 'value' }
+      const info = { schema: 'schema', mergeInfo: { delegateToSchema } }
+
+      projects(null, args, 'context', info)
+
+      expect(delegateToSchema).toHaveBeenCalledWith(
+        expect.objectContaining({
+          info,
+          schema: 'schema',
+          context: 'context',
+          operation: 'query',
+          fieldName: 'search',
+          args: {
+            query: 'user:strvcom topic:frontend archived:true',
+            type: 'REPOSITORY',
+            extra: 'value'
+          }
+        })
+      )
+    })
+  })
 })
 
 declare var deepDescribe: any
