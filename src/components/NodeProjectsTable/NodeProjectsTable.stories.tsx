@@ -6,7 +6,7 @@ import { n, chance } from '../../tests/utils/mocking'
 
 import NodeProjectsTable from './'
 
-storiesOf('NodeProjectsTable', module)
+storiesOf('Tables/NodeProjectsTable', module)
   .add('empty', () => <NodeProjectsTable projects={[]} department='frontend' />)
   .add('filled', () => {
     const amount = Math.max(0, number('Projects', 10))

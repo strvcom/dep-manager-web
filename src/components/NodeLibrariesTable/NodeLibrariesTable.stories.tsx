@@ -7,7 +7,7 @@ import { n, chance } from '../../tests/utils/mocking'
 
 import NodeLibrariesTable from './'
 
-storiesOf('NodeLibrariesTable', module)
+storiesOf('Tables/NodeLibrariesTable', module)
   .add('empty', () => (
     <NodeLibrariesTable libraries={[]} outdates={{ MAJOR: [], MINOR: [] }} />
   ))

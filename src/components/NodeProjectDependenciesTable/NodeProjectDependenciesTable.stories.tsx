@@ -7,7 +7,7 @@ import { BidaDepartment } from '../../config/types'
 
 import NodeProjectDependenciesTable from './'
 
-storiesOf('NodeProjectDependenciesTable', module)
+storiesOf('Tables/NodeProjectDependenciesTable', module)
   .add('empty', () => (
     <NodeProjectDependenciesTable
       dependencies={[]}

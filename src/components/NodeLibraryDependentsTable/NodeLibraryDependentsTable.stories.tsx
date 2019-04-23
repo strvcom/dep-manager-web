@@ -8,7 +8,7 @@ import { BidaDepartment } from '../../config/types'
 
 import NodeLibraryDependentsTable from './'
 
-storiesOf('NodeLibraryDependentsTable', module)
+storiesOf('Tables/NodeLibraryDependentsTable', module)
   .add('empty', () => (
     <NodeLibraryDependentsTable
       department={BidaDepartment.FRONTEND}

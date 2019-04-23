@@ -4,7 +4,7 @@ import { number, text } from '@storybook/addon-knobs'
 
 import ActualityWidget from './'
 
-storiesOf('ActuallityWidget', module).add('default', () => (
+storiesOf('Charts', module).add('ActuallityWidget', () => (
   <ActualityWidget
     title={text('Title', 'Widget title')}
     outdated={number('Outdated', 10)}
