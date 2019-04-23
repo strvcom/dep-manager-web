@@ -1,14 +1,15 @@
 import React from 'react'
+
 import {
   StatusWrapper,
   StatusContainer,
   Percent
 } from '../../routes/Dashboard/widget-styled'
-import Doughnut from '../../components/Charts/Doughnut'
+import Doughnut from '../Charts/Doughnut'
 import WidgetContainer, {
   WidgetTitle,
   WidgetContainerProps
-} from '../../components/Charts/Container'
+} from '../Charts/Container'
 
 export interface ActualityWidgetProps extends WidgetContainerProps {
   title?: string
