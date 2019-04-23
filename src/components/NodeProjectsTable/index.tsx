@@ -14,8 +14,8 @@ import {
   values
 } from 'ramda'
 
-import Table, { Column } from '../../components/Table/index'
-import StatusColumn from '../../components/Table/StatusColumn'
+import Table, { Column } from '../Table/index'
+import StatusColumn from '../Table/StatusColumn'
 import { BidaDepartment } from '../../config/types'
 import * as routes from '../../routes/routes'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
