@@ -1,6 +1,7 @@
 import semver from 'semver'
 import Chance from 'chance'
 import { mergeDeepRight } from 'ramda'
+import { versionDistance } from '../../utils/version-diff'
 
 export const chance = new Chance()
 
@@ -16,10 +17,28 @@ const OUTDATE_STATUS = [
   'UPTODATE'
 ]
 
+const LICENSES = ['MIT', 'Apache', 'GPLv3', 'UNLICENSED']
+
 chance.mixin({
-  dependency: () => ({
-    outdateStatus: chance.pickone(OUTDATE_STATUS)
-  })
+  license: () => chance.pickone(LICENSES)
+})
+
+chance.mixin({
+  outdateStatus: () => chance.pickone(OUTDATE_STATUS)
+})
+
+chance.mixin({
+  dependency: () => {
+    const version = chance.version()
+    const currentVersion = chance.version({ max: version })
+
+    return {
+      id: chance.string(),
+      package: { version, name: chance.word(), license: chance.license() },
+      version: currentVersion,
+      outdateStatus: versionDistance(version, currentVersion)
+    }
+  }
 })
 
 chance.mixin({
@@ -35,7 +54,7 @@ chance.mixin({
 chance.mixin({
   package: (name: string) => ({
     name: name || chance.word(),
-    license: chance.pickone(['MIT', 'Apache', 'GPLv3', 'UNLICENSED'])
+    license: chance.license()
   })
 })
 

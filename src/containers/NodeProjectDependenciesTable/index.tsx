@@ -2,14 +2,14 @@ import React, { memo, useMemo } from 'react'
 import mem from 'mem'
 import { ascend, prop } from 'ramda'
 
-import Badge, { BadgeType } from '../components/Badge'
-import Table, { Column } from '../components/Table'
-import anchorRowRenderer from '../utils/anchorRowRenderer'
-import { isValidLicense } from '../utils/license'
-import { BidaDepartment } from '../config/types'
-import * as routes from '../routes/routes'
+import Badge, { BadgeType } from '../../components/Badge'
+import Table, { Column } from '../../components/Table'
+import anchorRowRenderer from '../../utils/anchorRowRenderer'
+import { isValidLicense } from '../../utils/license'
+import { BidaDepartment } from '../../config/types'
+import * as routes from '../../routes/routes'
 
-import { useSort } from '../hooks/useSort'
+import { useSort } from '../../hooks/useSort'
 
 export interface Props {
   cacheKey?: string
