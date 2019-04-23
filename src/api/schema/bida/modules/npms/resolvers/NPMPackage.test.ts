@@ -9,6 +9,8 @@ __set__('loaders', { analysis: { load } })
 deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
   beforeEach(jest.clearAllMocks)
 
+  const getAnalysis = (metadata: any = {}) => ({ collected: { metadata } })
+
   describe('attachAnalysis', () => {
     it('should attach "analysis" field', async () => {
       const pack = { name: 'name' }
@@ -21,8 +23,6 @@ deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
   })
 
   describe('metadata', () => {
-    const getAnalysis = (metadata: any = {}) => ({ collected: { metadata } })
-
     it('should create a new metadata field resolver', () => {
       const resolver = metadata('field')
 
@@ -91,6 +91,15 @@ deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
         load.mockReturnValueOnce(getAnalysis({ version: 'value' }))
         expect(await resolve({ name: 'name' })).toBe('value')
       })
+    })
+  })
+
+  describe('analysis', () => {
+    it('should resolve analysis for a package', async () => {
+      const { resolve } = NPMPackage.analysis
+      const analysis = getAnalysis({ field: 'value' })
+      load.mockReturnValueOnce(analysis)
+      expect(await resolve({ name: 'name' })).toEqual(analysis)
     })
   })
 })
