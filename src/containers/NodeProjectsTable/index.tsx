@@ -14,13 +14,13 @@ import {
   values
 } from 'ramda'
 
-import Table, { Column } from '../components/Table/index'
-import StatusColumn from '../components/Table/StatusColumn'
-import { BidaDepartment } from '../config/types'
-import * as routes from '../routes/routes'
-import anchorRowRenderer from '../utils/anchorRowRenderer'
+import Table, { Column } from '../../components/Table/index'
+import StatusColumn from '../../components/Table/StatusColumn'
+import { BidaDepartment } from '../../config/types'
+import * as routes from '../../routes/routes'
+import anchorRowRenderer from '../../utils/anchorRowRenderer'
 
-import { useSort, UseSortOptions } from '../hooks/useSort'
+import { useSort, UseSortOptions } from '../../hooks/useSort'
 
 const distances = {
   MAJOR: 'MAJOR',
