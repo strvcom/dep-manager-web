@@ -25,7 +25,14 @@ const typeDefs = gql`
 `
 
 const NPMPackage = {
-  id: ({ id, name }: any) => id || name,
+  id: ({ id, name }: any) => {
+    if (!id && !name) {
+      throw new Error('NPMPackage::id must resolve to a valid value.')
+    }
+
+    return id || name
+  },
+
   dependencies: pipe(
     propOr({}, 'dependencies'),
     // @ts-ignore
