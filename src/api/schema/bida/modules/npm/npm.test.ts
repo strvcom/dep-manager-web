@@ -18,6 +18,26 @@ describe('api/bida/npm', () => {
           expect(() => resolver({})).toThrow('must resolve to a valid value')
         })
       })
+
+      describe('dependencies', () => {
+        const { dependencies: resolver } = npm.resolvers.NPMPackage
+
+        it('should fallback to empty list when no dependencies available', () => {
+          expect(resolver({})).toEqual([])
+        })
+
+        it('should parse dependency map into list of dependencies', () => {
+          const dependencies = {
+            first: '^1.0.0',
+            second: '2.x.x'
+          }
+
+          expect(resolver({ dependencies })).toEqual([
+            { name: 'first', version: '^1.0.0' },
+            { name: 'second', version: '2.x.x' }
+          ])
+        })
+      })
     })
   })
 })
