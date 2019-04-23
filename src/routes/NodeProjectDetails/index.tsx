@@ -9,7 +9,7 @@ import ActualityWidget from '../../containers/LibrariesActualityWidget'
 import RecentUpdates from '../Dashboard/RecentUpdates'
 import { Body } from '../../components/Typography'
 import Loading from '../../components/Loading'
-import NodeProjectDependenciesTable from '../../containers/NodeProjectDependenciesTable'
+import NodeProjectDependenciesTable from '../../components/NodeProjectDependenciesTable'
 import { BidaDepartment } from '../../config/types'
 
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
