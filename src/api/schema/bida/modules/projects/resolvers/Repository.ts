@@ -1,4 +1,4 @@
-const DEPARTMENTS = ['FRONTEND', 'BACKEND', 'ANDROID', 'IOS']
+import { DEPARTMENTS } from '../constants'
 
 /**
  * Repository::departments
