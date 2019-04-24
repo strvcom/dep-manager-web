@@ -14,3 +14,30 @@ global.deepDescribe = (name: string, ...args: any[]) => {
 
   recurse(name.split('/'))
 }
+
+// @ts-ignore
+expect.extend({
+  contextContaining: (received: any, compare: any) => {
+    const clone = { ...compare }
+
+    // improve testing UI.
+    compare.toString = () => JSON.stringify(compare)
+
+    // @ts-ignore
+    const pass = expect
+      .objectContaining(clone)
+      .asymmetricMatch(received.getContext())
+
+    if (pass) {
+      return {
+        message: () => `expected ${received} not to be divisible by teste`,
+        pass: true
+      }
+    } else {
+      return {
+        message: () => `expected ${received} to be divisible by teste`,
+        pass: false
+      }
+    }
+  }
+})

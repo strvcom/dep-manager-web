@@ -4,31 +4,6 @@ import gql from 'graphql-tag'
 import { link as debug, __set__ as __set__debug__ } from './debug'
 import { link as auth, __set__ as __set__auth__ } from './auth'
 
-expect.extend({
-  contextContaining: (received, compare) => {
-    const clone = { ...compare }
-
-    // improve testing UI.
-    compare.toString = () => JSON.stringify(compare)
-
-    const pass = expect
-      .objectContaining(clone)
-      .asymmetricMatch(received.getContext())
-
-    if (pass) {
-      return {
-        message: () => `expected ${received} not to be divisible by teste`,
-        pass: true
-      }
-    } else {
-      return {
-        message: () => `expected ${received} to be divisible by teste`,
-        pass: false
-      }
-    }
-  }
-})
-
 describe('config/client/link', () => {
   beforeEach(jest.clearAllMocks)
 
