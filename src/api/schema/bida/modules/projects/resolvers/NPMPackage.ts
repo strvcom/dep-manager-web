@@ -119,11 +119,10 @@ const visitor = {
  *
  * Resolves the STRV repositories that depend on a given package.
  *
- * Currently, we rely on querying the repositorie's package.json and
+ * Currently, we rely on querying the repositories' package.json and
  * manually iterating each to look for dependencies on the root package.
  * This is not performatic at all. The APIs we have cannot resolve these
- * scenarios efficiently, so we definitely should move this code to an API
- * of our own, with a proper caching data-layer.
+ * scenarios efficiently.
  *
  * @ALERT do NOT rely on pagination info when using this field!
  */
