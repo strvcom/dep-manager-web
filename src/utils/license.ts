@@ -1,10 +1,8 @@
 import { License } from '../config/types'
 
-const licenses = Object.keys(License)
+const regexes = Object.keys(License).map(license => new RegExp(license, 'i'))
 
-export function isValidLicense (license: string) {
-  for (const currentLicense of licenses) {
-    if (license.includes(currentLicense)) return true
-  }
-  return false
-}
+const isValidLicense = (license: string) =>
+  regexes.some(regex => regex.test(license))
+
+export { isValidLicense }
