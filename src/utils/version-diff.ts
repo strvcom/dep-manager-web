@@ -2,10 +2,7 @@ import { curry } from 'ramda'
 import semver, { SemVer } from 'semver'
 
 const versionDistance = curry(
-  (
-    left: string | SemVer | undefined,
-    right: string | SemVer | undefined
-  ): string => {
+  (left?: string | SemVer, right?: string | SemVer): string => {
     if (!left || !right) return 'UNKNOWN'
 
     const coercedLeft = semver.coerce(left)
