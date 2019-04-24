@@ -1,12 +1,20 @@
 import gql from 'graphql-tag'
 import { visit, print } from 'graphql/language'
 
-import { __get__ } from './NPMPackage'
+import { chance } from '../../../../../../tests/utils/mocking'
+import { NPMPackage, __get__, __set__ } from './NPMPackage'
 
+const Query = __get__('Query')
 const dependsOn = __get__('dependsOn')
 const edgeToDependent = __get__('edgeToDependent')
 const isRepositoryField = __get__('isRepositoryField')
 const visitor = __get__('visitor')
+
+const { dependents } = NPMPackage
+const projects = jest.fn()
+
+// inject
+Query.projects = projects
 
 deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
   beforeEach(jest.clearAllMocks)
@@ -158,6 +166,68 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
       `
 
       expect(print(visit(doc, visitor))).toBe(print(expected))
+    })
+  })
+
+  describe('::dependents', () => {
+    const { resolve } = dependents
+
+    const build = () => ({
+      root: { name: 'library', version: '1.0.0' },
+      args: 'args',
+      context: 'context',
+      info: {}
+    })
+
+    const getEdge = (dependencies: string[]) => ({
+      cursor: chance.string(),
+      node: {
+        name: 'repo',
+        npmPackage: {
+          dependencies: dependencies.map(name => ({ package: { name } }))
+        }
+      }
+    })
+
+    it('should delegate to Query::projects', async () => {
+      const { root, args, context, info } = build()
+
+      projects.mockReturnValueOnce({ edges: [] })
+
+      await resolve(root, args, context, info)
+
+      expect(projects).toHaveBeenCalledTimes(1)
+      expect(projects).toHaveBeenCalledWith(null, args, context, { ...info })
+    })
+
+    it('should return a connection shape', async () => {
+      const { root, args, context, info } = build()
+
+      projects.mockReturnValueOnce({ edges: [] })
+
+      const result = await resolve(root, args, context, info)
+
+      expect(result).toHaveProperty('edges', [])
+      expect(result).toHaveProperty('repositoryCount', 0)
+    })
+
+    it('should return only dependents', async () => {
+      const { root, args, context, info } = build()
+
+      const dependent = getEdge(['library', 'second'])
+      const nonDependent = getEdge(['first', 'second'])
+
+      projects.mockReturnValueOnce({ edges: [nonDependent] })
+      const empty = await resolve(root, args, context, info)
+      expect(empty).toHaveProperty('edges', [])
+      expect(empty).toHaveProperty('repositoryCount', 0)
+
+      const { name } = dependent.node
+
+      projects.mockReturnValueOnce({ edges: [nonDependent, dependent] })
+      const found = await resolve(root, args, context, info)
+      expect(found).toHaveProperty('edges.0.node.repository.name', name)
+      expect(found).toHaveProperty('repositoryCount', 1)
     })
   })
 })
