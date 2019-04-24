@@ -42,7 +42,7 @@ const dependentsSelection = gql`
  *
  * @param name Dependence library name
  */
-const dependsOn = (name: string) =>
+const dependsOn = (name: string): boolean =>
   pipe(
     pathOr([], ['node', 'npmPackage', 'dependencies']),
     any(pathEq(['package', 'name'], name))
