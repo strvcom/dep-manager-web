@@ -15,7 +15,7 @@
     "lint": "yarn eslint src",
     "pr": "yarn pull-request",
     "pull-request": "node ./scripts/pull-request.js",
-    "qa": "tsc -p tsconfig.production.json && yarn test",
+    "qa": "tsc -p tsconfig.production.json && yarn test && yarn lint",
     "start": "run-p start:**",
     "start:app": "react-scripts start",
     "start:lambda": "netlify-lambda serve src/lambda --config ./webpack.functions.js",
