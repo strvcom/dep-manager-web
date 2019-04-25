@@ -1,4 +1,4 @@
-import React, { Fragment, memo, useState } from 'react'
+import React, { memo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { prop, propEq } from 'ramda'
 

@@ -1,4 +1,4 @@
-import React, { Fragment, Suspense, memo, useState } from 'react'
+import React, { Suspense, memo, useState } from 'react'
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import ErrorBoundary from 'react-error-boundary'
 
