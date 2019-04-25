@@ -1,0 +1,7 @@
+.storybook
+node_modules
+
+**/*.stories.*
+**/*.test.*
+**/*.d.ts
+
