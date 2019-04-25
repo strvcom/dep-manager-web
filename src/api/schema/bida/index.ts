@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import { print } from 'graphql/language'
 import { over, lensProp } from 'ramda'
 

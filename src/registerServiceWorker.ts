@@ -14,11 +14,11 @@ const isLocalhost = Boolean(
     window.location.hostname === '[::1]' ||
     // 127.0.0.1/8 is considered localhost for IPv4.
     window.location.hostname.match(
-      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/u
     )
 )
 
-function registerValidSW (swUrl: string) {
+function registerValidSW(swUrl: string) {
   navigator.serviceWorker
     .register(swUrl)
     .then(registration => {
@@ -49,7 +49,7 @@ function registerValidSW (swUrl: string) {
     })
 }
 
-function checkValidServiceWorker (swUrl: string) {
+function checkValidServiceWorker(swUrl: string) {
   // Check if the service worker can be found. If it can't reload the page.
   fetch(swUrl)
     .then(response => {
@@ -76,7 +76,7 @@ function checkValidServiceWorker (swUrl: string) {
     })
 }
 
-export function unregister () {
+export function unregister() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready.then(registration => {
       registration.unregister()
@@ -84,7 +84,7 @@ export function unregister () {
   }
 }
 
-export default function register () {
+export default function register() {
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(

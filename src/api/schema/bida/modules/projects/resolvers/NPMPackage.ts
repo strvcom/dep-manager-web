@@ -12,7 +12,7 @@ import {
   pathOr,
   propEq,
   pipe,
-  set
+  set,
 } from 'ramda'
 
 import { Query } from './Query'
@@ -53,14 +53,14 @@ const dependsOn = (name: string): boolean =>
  */
 const edgeToDependent = (name: string, version: string) => ({
   cursor,
-  node
+  node,
 }: any) => ({
   cursor,
   node: {
     __typename: 'Dependent',
     __parent: { name, version },
-    repository: node
-  }
+    repository: node,
+  },
 })
 
 /**
@@ -82,11 +82,11 @@ const visitor = {
    * Alter the selectionSet for the dependents field to include necessary
    * data on the Repository (package.json blob, for instance).
    */
-  leave: (node: any, key: string, parent: any, path: any) => {
+  leave: (node: any, key: string, parentNode: any) => {
     if (
       node.kind === 'SelectionSet' &&
-      parent.name &&
-      parent.name.value === 'dependents'
+      parentNode.name &&
+      parentNode.name.value === 'dependents'
     ) {
       return over(lensProp('selections'), append(dependentsSelection), node)
     }
@@ -97,7 +97,7 @@ const visitor = {
    * selectionSet into GitHub's expectation for Repository type.
    */
   InlineFragment: {
-    leave: (node: any, key: any, path: any) => {
+    leave: (node: any) => {
       if (node.typeCondition.name.value === 'Dependent') {
         const selection = node.selectionSet.selections.find(isRepositoryField)
 
@@ -110,8 +110,8 @@ const visitor = {
           set(lensProp('selectionSet'), selection.selectionSet)
         )(node)
       }
-    }
-  }
+    },
+  },
 }
 
 /**
@@ -140,7 +140,7 @@ const dependents = {
     // reuse Query::projects delegation logic.
     const connection = await Query.projects(null, args, context, {
       ...info,
-      fieldNodes
+      fieldNodes,
     })
 
     // find dependent edges.
@@ -152,7 +152,7 @@ const dependents = {
     connection.repositoryCount = connection.edges.length
 
     return connection
-  }
+  },
 }
 
 export const NPMPackage = { dependents }

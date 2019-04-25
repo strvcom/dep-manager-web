@@ -1,6 +1,5 @@
 import {
   T,
-  __,
   append,
   concat,
   cond,
@@ -24,7 +23,7 @@ import {
   reverse,
   sortBy,
   take,
-  uniqBy
+  uniqBy,
 } from 'ramda'
 
 const infoShape = {
@@ -38,16 +37,16 @@ const infoShape = {
     PREPATCH: [],
     PRERELEASE: [],
     UNKNOWN: [],
-    UPTODATE: []
+    UPTODATE: [],
   },
   uniqueLibraries: [],
-  recentlyUpdated: []
+  recentlyUpdated: [],
 }
 
 const setter = curry(
   (key: string, mapper: (obj: object) => any, obj: object) => ({
     ...obj,
-    [key]: mapper(obj)
+    [key]: mapper(obj),
   })
 )
 
@@ -58,7 +57,7 @@ const merger = (mergeMap: object) =>
       Object.keys(mergeMap)
         .map(key => [
           equals(key),
-          (k: string, l: any, r: any) => mergeMap[key](l, r)
+          (k: string, l: any, r: any) => mergeMap[key](l, r),
         ])
         // default merge-left.
         .concat([[T, nthArg(2)]])
@@ -96,7 +95,7 @@ const buildLibrariesInfo = memoizeWith(
 const mergeLibrariesInfo = pipe(
   merger({
     libraries: concat,
-    outdates: mergeWith(concat)
+    outdates: mergeWith(concat),
   }),
   mergeRight({ libraries: [], outdates: {} })
 )

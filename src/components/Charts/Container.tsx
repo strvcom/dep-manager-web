@@ -6,7 +6,7 @@ import {
   height,
   WidthProps,
   HeightProps,
-  SpaceProps
+  SpaceProps,
 } from 'styled-system'
 import { typography } from '../../styles/themes/mixins'
 
@@ -15,29 +15,7 @@ export type WidgetContainerProps = WidthProps &
   SpaceProps &
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 
-const WidgetContainer = styled(
-  ({
-    // tslint:disable-next-line:no-shadowed-variable
-    width,
-    // tslint:disable-next-line:no-shadowed-variable
-    height,
-    m,
-    mt,
-    mr,
-    mb,
-    ml,
-    mx,
-    my,
-    p,
-    pt,
-    pr,
-    pb,
-    pl,
-    px,
-    py,
-    ...props
-  }: WidgetContainerProps) => <div {...props} />
-)`
+const WidgetContainer = styled.div<WidgetContainerProps>`
   display: flex;
   flex-direction: column;
   padding: 25px 30px;

@@ -12,10 +12,13 @@ import PropTypes from 'prop-types'
 import { client } from './config/client'
 
 if (process.env.NODE_ENV === 'development') {
+  const RouteComponent = Route as any
+
   // fixes react-router erroneous prop-types
-  ;(Route as any).propTypes.component = PropTypes.oneOfType([
+  // eslint-disable-next-line react/forbid-foreign-prop-types
+  RouteComponent.propTypes.component = PropTypes.oneOfType([
     PropTypes.func,
-    PropTypes.object
+    PropTypes.object,
   ])
 }
 

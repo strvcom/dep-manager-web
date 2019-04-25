@@ -4,7 +4,7 @@ import mem from 'mem'
 import {
   ascend,
   filter,
-  length,
+  length as len,
   map,
   path,
   pick,
@@ -12,7 +12,7 @@ import {
   prop,
   propEq,
   sum,
-  values
+  values,
 } from 'ramda'
 
 import Table, { Column } from '../Table'
@@ -27,7 +27,7 @@ import { useSort } from '../../hooks/useSort'
 
 const distances = {
   MAJOR: 'MAJOR',
-  MINOR: 'MINOR'
+  MINOR: 'MINOR',
 }
 
 export interface Props {
@@ -63,7 +63,7 @@ const normalizeLibrary = mem(
       pipe(
         filter(propEq('name', name)),
         // @ts-ignore
-        length
+        len
       ),
       allOutdates
     )
@@ -108,7 +108,7 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
     list,
     cacheKeys,
     defaultSort,
-    initial: { sortBy: 'name', sortDirection: 'ASC' }
+    initial: { sortBy: 'name', sortDirection: 'ASC' },
   })
 
   // renderers.
@@ -124,23 +124,23 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
       rowGetter={rowGetter}
       rowRenderer={renderRow}
     >
-      <Column width={5} flexGrow={5} label='Library Name' dataKey='name' />
+      <Column width={5} flexGrow={5} label="Library Name" dataKey="name" />
 
-      <Column width={2} flexGrow={2} label='Total Used On' dataKey='usage' />
+      <Column width={2} flexGrow={2} label="Total Used On" dataKey="usage" />
 
       <Column
         width={3}
         flexGrow={3}
-        label='Outdated Projects'
-        dataKey='totalOutdates'
+        label="Outdated Projects"
+        dataKey="totalOutdates"
         cellRenderer={renderOutdates}
       />
 
       <Column
         width={1}
         flexGrow={1}
-        label='License'
-        dataKey='license'
+        label="License"
+        dataKey="license"
         cellRenderer={renderLicense}
       />
     </Table>

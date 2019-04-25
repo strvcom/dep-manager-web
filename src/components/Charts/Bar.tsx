@@ -18,7 +18,7 @@ export interface BarProps
   fill: number
 }
 
-const Bar = styled(({ fill, ...props }: BarProps) => <div {...props} />)`
+const Bar = styled.div<BarProps>`
   position: relative;
   margin: 48px 0 24px;
   height: 4px;

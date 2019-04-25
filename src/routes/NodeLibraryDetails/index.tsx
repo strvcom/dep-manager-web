@@ -1,6 +1,6 @@
-import React, { Fragment, memo, useState } from 'react'
+import React, { memo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { __, propEq } from 'ramda'
+import { propEq } from 'ramda'
 
 import ToolBar from '../../components/ToolBar'
 import { Wrapper, Content, Sidebar, Input } from './styled'
@@ -41,7 +41,7 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
         )
 
         return (
-          <Fragment>
+          <>
             <ToolBar title={library.name} subtitle={library.version} />
             <Wrapper>
               <Content>
@@ -51,7 +51,7 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
                     autoFocus
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    placeholder='Search for projects'
+                    placeholder="Search for projects"
                   />
                 </div>
 
@@ -65,14 +65,14 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
 
               <Sidebar>
                 <ActualityWidget
-                  title='Projects Actuality'
+                  title="Projects Actuality"
                   mt={20}
                   outdated={outdated.length}
                   total={library.dependents.edges.length}
                 />
               </Sidebar>
             </Wrapper>
-          </Fragment>
+          </>
         )
       }}
     </AuthenticatedQuery>

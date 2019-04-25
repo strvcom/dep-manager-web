@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { match } from 'react-router-dom'
-import { Location, LocationDescriptor } from 'history'
+import { Location as LocationType, LocationDescriptor } from 'history'
 import { Container, StyledLogoLink, StyledNav, StyledNavLink } from './styled'
 
 export interface NavBarLinkProps {
@@ -12,16 +12,16 @@ export interface NavBarProps {
   children?: React.ReactNode
 }
 export const NavBarLink = (props: NavBarLinkProps) => {
-  const handleIsActive = useCallback((_: match, location: Location) => {
+  const handleIsActive = useCallback((_: match, { pathname }: LocationType) => {
     const path = typeof props.to === 'string' ? props.to : props.to.pathname!
     const [root, basePath] = path.split('/')
-    return location.pathname.startsWith(`${root}/${basePath}`)
+    return pathname.startsWith(`${root}/${basePath}`)
   }, [])
   return (
     <StyledNavLink
       to={props.to}
       isActive={handleIsActive}
-      activeClassName='active'
+      activeClassName="active"
       children={props.children}
     />
   )
@@ -29,7 +29,7 @@ export const NavBarLink = (props: NavBarLinkProps) => {
 
 const NavBar = (props: NavBarProps) => (
   <StyledNav>
-    {props.logo && <StyledLogoLink to='/'>{props.logo}</StyledLogoLink>}
+    {props.logo && <StyledLogoLink to="/">{props.logo}</StyledLogoLink>}
     <Container>{props.children}</Container>
   </StyledNav>
 )

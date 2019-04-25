@@ -4,14 +4,14 @@ import {
   __,
   ascend,
   filter,
-  length,
+  length as len,
   map,
   pick,
   pipe,
   propEq,
   prop,
   sum,
-  values
+  values,
 } from 'ramda'
 
 import Table, { Column } from '../Table/index'
@@ -24,18 +24,18 @@ import { useSort, UseSortOptions } from '../../hooks/useSort'
 
 const distances = {
   MAJOR: 'MAJOR',
-  MINOR: 'MINOR'
+  MINOR: 'MINOR',
 }
 
 const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendProjects,
-  [BidaDepartment.FRONTEND]: routes.frontendProjects
+  [BidaDepartment.FRONTEND]: routes.frontendProjects,
 }
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   day: 'numeric',
-  year: 'numeric'
+  year: 'numeric',
 })
 
 interface Package {
@@ -69,7 +69,7 @@ const getOutdated = (dependencies: any[]) =>
   pipe(
     propEq('outdateStatus'),
     filter(__, dependencies),
-    length
+    len
   )
 
 const sumObject = pipe(
@@ -104,7 +104,7 @@ const normalizeProject = mem(
 const sortDefaults: UseSortOptions = {
   list: [],
   defaultSort: ascend(prop('name')),
-  initial: { sortBy: 'name', sortDirection: 'ASC' }
+  initial: { sortBy: 'name', sortDirection: 'ASC' },
 }
 
 const NodeProjectsTable = ({ projects, department, cacheKey }: Props) => {
@@ -134,19 +134,19 @@ const NodeProjectsTable = ({ projects, department, cacheKey }: Props) => {
       rowGetter={rowGetter}
       rowRenderer={renderRow}
     >
-      <Column width={380} label='Project Name' dataKey='name' />
+      <Column width={380} label="Project Name" dataKey="name" />
 
       <Column
         width={180}
-        label='Last Active'
-        dataKey='pushedAt'
+        label="Last Active"
+        dataKey="pushedAt"
         cellRenderer={renderPushedAt}
       />
 
       <Column
         width={200}
-        label='Outdated Libraries'
-        dataKey='totalOutdated'
+        label="Outdated Libraries"
+        dataKey="totalOutdated"
         cellRenderer={renderOutdated}
       />
     </Table>

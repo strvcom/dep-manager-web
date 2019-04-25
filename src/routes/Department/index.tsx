@@ -16,12 +16,27 @@ const NodeLibraryDetails = React.lazy(() =>
   import(/* webpackChunkName: 'NodeLibraryDetails' */ '../NodeLibraryDetails')
 )
 
-export type DepartmentPageProps = RouteComponentProps<{
+const useNodeProjectDetails = (department: BidaDepartment) =>
+  React.useCallback(
+    (routeProps: RouteComponentProps<{ id: string }>) => (
+      <NodeProjectDetails {...routeProps} department={department} />
+    ),
+    [department]
+  )
+const useNodeLibraryDetails = (department: BidaDepartment) =>
+  React.useCallback(
+    (routeProps: RouteComponentProps<{ id: string }>) => (
+      <NodeLibraryDetails {...routeProps} department={department} />
+    ),
+    [department]
+  )
+
+type DepartmentPageProps = RouteComponentProps<{
   department: string
 }>
 
 const DepartmentPage = React.memo((props: DepartmentPageProps) => {
-  const department = toBidaDepartment(props.match!.params.department)
+  const department = toBidaDepartment(props.match.params.department)
   const renderNodeProjectDetails = useNodeProjectDetails(department)
   const renderNodeLibraryDetails = useNodeLibraryDetails(department)
 
@@ -39,20 +54,5 @@ const DepartmentPage = React.memo((props: DepartmentPageProps) => {
     </Switch>
   )
 })
-
-const useNodeProjectDetails = (department: BidaDepartment) =>
-  React.useCallback(
-    (routeProps: RouteComponentProps<{ id: string }>) => (
-      <NodeProjectDetails {...routeProps} department={department} />
-    ),
-    [department]
-  )
-const useNodeLibraryDetails = (department: BidaDepartment) =>
-  React.useCallback(
-    (routeProps: RouteComponentProps<{ id: string }>) => (
-      <NodeLibraryDetails {...routeProps} department={department} />
-    ),
-    [department]
-  )
 
 export default DepartmentPage

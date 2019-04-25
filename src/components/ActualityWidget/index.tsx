@@ -3,12 +3,12 @@ import React from 'react'
 import {
   StatusWrapper,
   StatusContainer,
-  Percent
+  Percent,
 } from '../../routes/Dashboard/widget-styled'
 import Doughnut from '../Charts/Doughnut'
 import WidgetContainer, {
   WidgetTitle,
-  WidgetContainerProps
+  WidgetContainerProps,
 } from '../Charts/Container'
 
 export interface ActualityWidgetProps extends WidgetContainerProps {
@@ -18,11 +18,11 @@ export interface ActualityWidgetProps extends WidgetContainerProps {
 }
 
 const ActualityWidget = (props: ActualityWidgetProps) => {
-  const { outdated, total, title, ref, ...rest } = props
+  const { outdated, total, title, ...rest } = props
 
   const perc = {
     outdated: Math.round((outdated / total) * 100 * 10) / 10,
-    uptodate: Math.round(((total - outdated) / total) * 100 * 10) / 10
+    uptodate: Math.round(((total - outdated) / total) * 100 * 10) / 10,
   }
 
   return (
