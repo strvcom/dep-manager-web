@@ -4,4 +4,4 @@ node_modules
 **/*.stories.*
 **/*.test.*
 **/*.d.ts
-
+webpack.functions.js

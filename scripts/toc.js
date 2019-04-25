@@ -19,13 +19,13 @@ const mds = glob(docsDir + '/**/*.md')
 try {
   const toc = execSync(`${scriptPath} ${mds.join(' ')}`)
     .toString()
-    .replace(/   /g, '  ')
-    .replace(/Created by (.*)\n/, '')
-    .replace(/\n  /g, '\n')
-    .replace(/\* /g, '- ')
+    .replace(/ {3}/gu, '  ')
+    .replace(/Created by (.*)\n/u, '')
+    .replace(/\n {2}/gu, '\n')
+    .replace(/\* /gu, '- ')
 
   const result = readme.replace(
-    /(<!--toc-start-->)(.|\n)*(<!--toc-end-->)/,
+    /(<!--toc-start-->)(.|\n)*(<!--toc-end-->)/u,
     `$1\n${toc}\n$3`
   )
 

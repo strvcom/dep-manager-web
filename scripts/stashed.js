@@ -6,14 +6,14 @@
 
 const { execSync } = require('child_process')
 const chalk = require('chalk')
-const [$0, $1, ...commands] = process.argv
+const [, , ...commands] = process.argv
 
 const log = text => console.log(chalk.bold('[stashed]: ') + chalk.gray(text))
 
 log('saving uncommitted changes to stash')
 
 const result = execSync('git stash').toString()
-const stashed = !/No local changes to save/.test(result)
+const stashed = !/No local changes to save/u.test(result)
 
 for (const command of commands) {
   try {
