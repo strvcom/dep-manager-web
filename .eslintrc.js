@@ -30,11 +30,16 @@ module.exports = {
     {
       files: ['**/*.test.*'],
       globals: {
-        deepDescribe: false
+        deepDescribe: false,
       },
     },
   ],
   rules: {
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { varsIgnorePattern: '[iI]gnored' },
+    ],
     'react-hooks/exhaustive-deps': false,
     'no-extra-parens': [
       'warn',
