@@ -11,7 +11,6 @@
     "codegen": "apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts",
     "dev-api": "onchange -i -k '**/*.js' '**/*.ts' -- ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' serve-api.ts",
     "eslint": "eslint --ext .js --ext .jsx --ext .ts --ext .tsx",
-    "fix": "prettier-standard src/**/*.ts src/**/*.tsx",
     "postinstall": "patch-package",
     "lint": "yarn eslint src",
     "pr": "yarn pull-request",
@@ -36,8 +35,7 @@
       "git add README.md"
     ],
     "*.{ts,tsx}": [
-      "prettier-standard",
-      "yarn eslint --fix",
+      "prettier-eslint --write",
       "stylelint --fix",
       "git add"
     ],
@@ -158,7 +156,7 @@
     "onchange": "^5.2.0",
     "ora": "^3.4.0",
     "prettier": "^1.15.1",
-    "prettier-standard": "^8.0.1",
+    "prettier-eslint-cli": "^4.7.1",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-hooks-testing-library": "^0.4.1",
     "rimraf": "^2.6.2",
