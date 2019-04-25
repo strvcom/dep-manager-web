@@ -18,7 +18,7 @@ export interface ActualityWidgetProps extends WidgetContainerProps {
 }
 
 const ActualityWidget = (props: ActualityWidgetProps) => {
-  const { outdated, total, title, ...rest } = props
+  const { outdated, total, title, ref: ignored, ...rest } = props
 
   const perc = {
     outdated: Math.round((outdated / total) * 100 * 10) / 10,
