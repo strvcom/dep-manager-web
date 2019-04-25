@@ -21,6 +21,8 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
   const name = decodeURIComponent(match!.params.id)
   const [search, setSearch] = useState('')
 
+  const cacheKey = department + name + search
+
   return (
     <AuthenticatedQuery
       query={NODE_LIBRARY_QUERY}
@@ -59,7 +61,7 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
                   libraryVersion={library.version}
                   dependents={filtered}
                   department={department}
-                  cacheKey={search}
+                  cacheKey={cacheKey}
                 />
               </Content>
 

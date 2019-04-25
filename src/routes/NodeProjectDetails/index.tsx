@@ -25,6 +25,8 @@ const NodeProjectDetails = ({ match, department }: Props) => {
   const name = decodeURIComponent(match!.params.id)
   const [search, setSearch] = useState('')
 
+  const cacheKey = department + name + search
+
   return (
     <AuthenticatedQuery query={PROJECT_QUERY} variables={{ name }}>
       {({ data, loading, error }: any) => {
@@ -48,11 +50,11 @@ const NodeProjectDetails = ({ match, department }: Props) => {
         )
 
         return (
-          <Fragment>
+          <>
             <ToolBar
               title={project.name}
               subtitle={
-                <Anchor target='__blank' href={project.url}>
+                <Anchor target="__blank" href={project.url}>
                   {project.url}
                 </Anchor>
               }
@@ -65,27 +67,27 @@ const NodeProjectDetails = ({ match, department }: Props) => {
                     autoFocus
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    placeholder='Search for libraries'
+                    placeholder="Search for libraries"
                   />
                 </div>
                 <NodeProjectDependenciesTable
                   dependencies={filtered}
                   department={department}
-                  cacheKey={search}
+                  cacheKey={cacheKey}
                 />
               </Content>
               <Sidebar>
                 <RecentUpdates libraries={recentLibraries} />
 
                 <ActualityWidget
-                  title='Libraries Actuality'
+                  title="Libraries Actuality"
                   mt={20}
                   outdated={outdated.length}
                   total={dependencies.length}
                 />
               </Sidebar>
             </Wrapper>
-          </Fragment>
+          </>
         )
       }}
     </AuthenticatedQuery>

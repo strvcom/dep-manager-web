@@ -23,7 +23,7 @@ export interface Props
   }> {}
 
 const distances = {
-  MAJOR: 'MAJOR'
+  MAJOR: 'MAJOR',
 }
 
 const Dashboard = ({ match }: Props) => {
@@ -31,8 +31,10 @@ const Dashboard = ({ match }: Props) => {
 
   const [search, setSearch] = useState('')
 
+  const cacheKey = department + search
+
   return (
-    <Fragment>
+    <>
       <DashboardToolBar
         department={department}
         category={category}
@@ -56,7 +58,7 @@ const Dashboard = ({ match }: Props) => {
               libraries,
               uniqueLibraries,
               outdates,
-              recentlyUpdated
+              recentlyUpdated,
             } = extractLibrariesInfo(projects)
 
             const { [distances.MAJOR]: major } = outdates
@@ -66,17 +68,17 @@ const Dashboard = ({ match }: Props) => {
                 <ProjectsOverviewWidget
                   total={projects.total}
                   archived={archived.total}
-                  width='32%'
+                  width="32%"
                 />
 
                 <ActualityWidget
-                  title='Libraries Actuality'
-                  width='32%'
+                  title="Libraries Actuality"
+                  width="32%"
                   outdated={major.length}
                   total={libraries.length}
                 />
 
-                <RecentUpdates libraries={recentlyUpdated} width='32%' />
+                <RecentUpdates libraries={recentlyUpdated} width="32%" />
               </WidgetContainer>
             )
 
@@ -89,7 +91,7 @@ const Dashboard = ({ match }: Props) => {
                 <NodeLibrariesTable
                   libraries={filtered}
                   outdates={outdates}
-                  cacheKey={search}
+                  cacheKey={cacheKey}
                 />
               )
             }
@@ -103,7 +105,7 @@ const Dashboard = ({ match }: Props) => {
                 <NodeProjectsTable
                   department={department}
                   projects={filtered}
-                  cacheKey={search}
+                  cacheKey={cacheKey}
                 />
               )
             }
@@ -138,7 +140,7 @@ const Dashboard = ({ match }: Props) => {
           }}
         </AuthenticatedQuery>
       </StyledDashboard>
-    </Fragment>
+    </>
   )
 }
 
