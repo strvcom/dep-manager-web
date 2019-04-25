@@ -16,5 +16,14 @@ module.exports = {
   settings: { 'import/resolver': { node: { extensions } } },
   rules: {
     'react-hooks/exhaustive-deps': false,
+    'no-extra-parens': [
+      'warn',
+      'all',
+      {
+        nestedBinaryExpressions: false,
+        returnAssign: false,
+        ignoreJSX: 'all',
+      },
+    ],
   },
 }
