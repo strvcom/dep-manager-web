@@ -15,13 +15,14 @@
     "lint": "yarn eslint src",
     "pr": "yarn pull-request",
     "pull-request": "node ./scripts/pull-request.js",
-    "qa": "yarn lint && tsc -p tsconfig.production.json && yarn test",
+    "qa": "run-p lint type-check test",
     "start": "run-p start:**",
     "start:app": "react-scripts start",
     "start:lambda": "netlify-lambda serve src/lambda --config ./webpack.functions.js",
     "storybook:build": "build-storybook -s public",
     "storybook:start": "start-storybook -p 9009 -s public",
-    "test": "jest"
+    "test": "jest",
+    "type-check": "tsc -p tsconfig.production.json"
   },
   "husky": {
     "hooks": {
