@@ -1,8 +1,9 @@
+/* eslint-disable no-shadow */
 import gql from 'graphql-tag'
 import { visit, print } from 'graphql/language'
 
 import { chance } from '../../../../../../tests/utils/mocking'
-import { NPMPackage, __get__, __set__ } from './NPMPackage'
+import { NPMPackage, __get__ } from './NPMPackage'
 
 const Query = __get__('Query')
 const dependsOn = __get__('dependsOn')
@@ -25,10 +26,10 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
       npmPackage: {
         dependencies: [
           { package: { name: 'first' } },
-          { package: { name: 'second' } }
-        ]
-      }
-    }
+          { package: { name: 'second' } },
+        ],
+      },
+    },
   }
 
   describe('[dependsOn]', () => {
@@ -50,8 +51,8 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
         node: {
           __typename: 'Dependent',
           __parent: { name: 'name', version: '1.0.0' },
-          repository: edge.node
-        }
+          repository: edge.node,
+        },
       })
     })
   })
@@ -176,7 +177,7 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
       root: { name: 'library', version: '1.0.0' },
       args: 'args',
       context: 'context',
-      info: {}
+      info: {},
     })
 
     const getEdge = (dependencies: string[]) => ({
@@ -184,9 +185,9 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
       node: {
         name: 'repo',
         npmPackage: {
-          dependencies: dependencies.map(name => ({ package: { name } }))
-        }
-      }
+          dependencies: dependencies.map(name => ({ package: { name } })),
+        },
+      },
     })
 
     it('should delegate to Query::projects', async () => {
@@ -231,5 +232,3 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
     })
   })
 })
-
-declare var deepDescribe: any

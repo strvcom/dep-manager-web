@@ -48,7 +48,7 @@ describe('routes/Dashboard/helpers', () => {
         const b = { key: 2, b: 2 }
 
         const merge = merger({
-          key: (l: number, r: number) => l + r
+          key: (l: number, r: number) => l + r,
         })
 
         expect(merge(a, b)).toEqual({ key: 3, a: 1, b: 2 })
@@ -64,10 +64,10 @@ describe('routes/Dashboard/helpers', () => {
         npmPackage: {
           dependencies: [
             { package: { name: 'first' } },
-            { package: { name: 'second' } }
-          ]
-        }
-      }
+            { package: { name: 'second' } },
+          ],
+        },
+      },
     }
 
     it('should return empty array when no dependencies', () => {
@@ -98,9 +98,9 @@ describe('routes/Dashboard/helpers', () => {
           { outdateStatus: 'MINOR' },
           { outdateStatus: 'MAJOR' },
           { outdateStatus: 'MINOR' },
-          { outdateStatus: 'PATCH' }
-        ]
-      }
+          { outdateStatus: 'PATCH' },
+        ],
+      },
     }
 
     it('should return empty array when no outdate status found', () => {
@@ -129,10 +129,10 @@ describe('routes/Dashboard/helpers', () => {
           npmPackage: {
             dependencies: [
               { package: { name: 'a' }, outdateStatus: 'UPTODATE' },
-              { package: { name: 'b' }, outdateStatus: 'UPTODATE' }
-            ]
-          }
-        }
+              { package: { name: 'b' }, outdateStatus: 'UPTODATE' },
+            ],
+          },
+        },
       },
       outdates: {
         cursor: uuid(),
@@ -142,18 +142,20 @@ describe('routes/Dashboard/helpers', () => {
               { package: { name: 'a' }, outdateStatus: 'UPTODATE' },
               { package: { name: 'b' }, outdateStatus: 'MAJOR' },
               { package: { name: 'c' }, outdateStatus: 'MINOR' },
-              { package: { name: 'd' }, outdateStatus: 'MAJOR' }
-            ]
-          }
-        }
-      }
+              { package: { name: 'd' }, outdateStatus: 'MAJOR' },
+            ],
+          },
+        },
+      },
     }
 
     it('should return library info keys', () => {
       for (const sample in data) {
-        const info = buildLibrariesInfo(data[sample])
+        if (data.hasOwnProperty(sample)) {
+          const info = buildLibrariesInfo(data[sample])
 
-        expect(Object.keys(info)).toEqual(['libraries', 'outdates'])
+          expect(Object.keys(info)).toEqual(['libraries', 'outdates'])
+        }
       }
     })
 
@@ -215,15 +217,15 @@ describe('routes/Dashboard/helpers', () => {
     it('should combine outdates', () => {
       const left = { outdates: { MAJOR: [{ name: 'a' }] } }
       const right = {
-        outdates: { MAJOR: [{ name: 'b' }], MINOR: [{ name: 'c' }] }
+        outdates: { MAJOR: [{ name: 'b' }], MINOR: [{ name: 'c' }] },
       }
 
       const result = {
         libraries: [],
         outdates: {
           MAJOR: [{ name: 'a' }, { name: 'b' }],
-          MINOR: [{ name: 'c' }]
-        }
+          MINOR: [{ name: 'c' }],
+        },
       }
 
       expect(mergeLibrariesInfo(left, right)).toEqual(result)
@@ -241,7 +243,7 @@ describe('routes/Dashboard/helpers', () => {
       const repeated = [
         { package: { name: 'a' } },
         { package: { name: 'b' } },
-        { package: { name: 'a' } }
+        { package: { name: 'a' } },
       ]
 
       expect(getUniqueDependencies(unique)).toEqual(unique)
@@ -270,7 +272,7 @@ describe('routes/Dashboard/helpers', () => {
         { package: { updatedAt: '2007' } },
         { package: { updatedAt: '2010' } },
         { package: { updatedAt: '2011' } },
-        { package: { updatedAt: '2008' } }
+        { package: { updatedAt: '2008' } },
       ]
 
       expect(libs).toHaveProperty('0.package.updatedAt', '2007')
@@ -302,13 +304,17 @@ describe('routes/Dashboard/helpers', () => {
         edges: [
           {
             cursor: uuid(),
-            node: { npmPackage: { dependencies: [{ package: { name: 'a' } }] } }
+            node: {
+              npmPackage: { dependencies: [{ package: { name: 'a' } }] },
+            },
           },
           {
             cursor: uuid(),
-            node: { npmPackage: { dependencies: [{ package: { name: 'b' } }] } }
-          }
-        ]
+            node: {
+              npmPackage: { dependencies: [{ package: { name: 'b' } }] },
+            },
+          },
+        ],
       }
 
       const info = extractLibrariesInfo(data)
@@ -325,22 +331,22 @@ describe('routes/Dashboard/helpers', () => {
             node: {
               npmPackage: {
                 dependencies: [
-                  { package: { name: 'a' }, outdateStatus: 'MAJOR' }
-                ]
-              }
-            }
+                  { package: { name: 'a' }, outdateStatus: 'MAJOR' },
+                ],
+              },
+            },
           },
           {
             cursor: uuid(),
             node: {
               npmPackage: {
                 dependencies: [
-                  { package: { name: 'a' }, outdateStatus: 'MINOR' }
-                ]
-              }
-            }
-          }
-        ]
+                  { package: { name: 'a' }, outdateStatus: 'MINOR' },
+                ],
+              },
+            },
+          },
+        ],
       }
 
       const info = extractLibrariesInfo(data)
@@ -354,13 +360,17 @@ describe('routes/Dashboard/helpers', () => {
         edges: [
           {
             cursor: uuid(),
-            node: { npmPackage: { dependencies: [{ package: { name: 'a' } }] } }
+            node: {
+              npmPackage: { dependencies: [{ package: { name: 'a' } }] },
+            },
           },
           {
             cursor: uuid(),
-            node: { npmPackage: { dependencies: [{ package: { name: 'a' } }] } }
-          }
-        ]
+            node: {
+              npmPackage: { dependencies: [{ package: { name: 'a' } }] },
+            },
+          },
+        ],
       }
 
       const info = extractLibrariesInfo(data)
@@ -383,12 +393,12 @@ describe('routes/Dashboard/helpers', () => {
                   {
                     package: {
                       name: 'a',
-                      analysis: { collected: { metadata: { date: '2010' } } }
-                    }
-                  }
-                ]
-              }
-            }
+                      analysis: { collected: { metadata: { date: '2010' } } },
+                    },
+                  },
+                ],
+              },
+            },
           },
           {
             cursor: uuid(),
@@ -398,14 +408,14 @@ describe('routes/Dashboard/helpers', () => {
                   {
                     package: {
                       name: 'b',
-                      analysis: { collected: { metadata: { date: '2020' } } }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        ]
+                      analysis: { collected: { metadata: { date: '2020' } } },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
       }
 
       const info = extractLibrariesInfo(data)

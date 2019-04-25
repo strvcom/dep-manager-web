@@ -20,61 +20,61 @@ describe('hooks/useSort', () => {
 
   const sort = (sortBy?: string, sortDirection?: string) => ({
     sortBy,
-    sortDirection
+    sortDirection,
   })
 
-  const config = (
+  const getConfig = (
     sortBy?: string,
     sortDirection?: string,
     defaultSort?: any
   ) => ({
     list,
     defaultSort,
-    sort: sort(sortBy, sortDirection)
+    sort: sort(sortBy, sortDirection),
   })
 
   describe('sorter', () => {
     it('should not sort when empty config', () => {
-      expect(sorter(config())).toEqual(list)
+      expect(sorter(getConfig())).toEqual(list)
     })
 
     it('should sort by provided key', () => {
-      expect(sorter(config('name'))).toEqual(byName)
-      expect(sorter(config('age'))).toEqual(byAge)
-      expect(sorter(config('level'))).toEqual(byLevel)
+      expect(sorter(getConfig('name'))).toEqual(byName)
+      expect(sorter(getConfig('age'))).toEqual(byAge)
+      expect(sorter(getConfig('level'))).toEqual(byLevel)
     })
 
     it('should sort by provided direction', () => {
-      expect(sorter(config('name', 'ASC'))).toEqual(byName)
-      expect(sorter(config('age', 'ASC'))).toEqual(byAge)
-      expect(sorter(config('level', 'ASC'))).toEqual(byLevel)
+      expect(sorter(getConfig('name', 'ASC'))).toEqual(byName)
+      expect(sorter(getConfig('age', 'ASC'))).toEqual(byAge)
+      expect(sorter(getConfig('level', 'ASC'))).toEqual(byLevel)
 
-      expect(sorter(config('name', 'DESC'))).toEqual(reverse(byName))
-      expect(sorter(config('age', 'DESC'))).toEqual(reverse(byAge))
-      expect(sorter(config('level', 'DESC'))).toEqual(byLevelDesc)
+      expect(sorter(getConfig('name', 'DESC'))).toEqual(reverse(byName))
+      expect(sorter(getConfig('age', 'DESC'))).toEqual(reverse(byAge))
+      expect(sorter(getConfig('level', 'DESC'))).toEqual(byLevelDesc)
     })
 
     describe('defaultSort', () => {
       const name = ascend(prop('name'))
 
       it('should fallback to default sort', () => {
-        expect(sorter(config(undefined, undefined, name))).toEqual(byName)
+        expect(sorter(getConfig(undefined, undefined, name))).toEqual(byName)
       })
 
       it('should apply default as last sorting method', () => {
-        expect(sorter(config('level', 'DESC', name))).toEqual([B, C, A])
+        expect(sorter(getConfig('level', 'DESC', name))).toEqual([B, C, A])
       })
     })
   })
 
   it('should return list, sort setter, and current sort config', () => {
     const { result } = renderHook(() => useSort({ list }))
-    const [sorted, setSort, sort] = result.current
+    const [sorted, setSort, state] = result.current
 
     expect(sorted).toBeInstanceOf(Array)
     expect(setSort).toBeInstanceOf(Function)
-    expect(sort).toHaveProperty('sortBy')
-    expect(sort).toHaveProperty('sortDirection')
+    expect(state).toHaveProperty('sortBy')
+    expect(state).toHaveProperty('sortDirection')
   })
 
   it('should return unmodified list at first', () => {

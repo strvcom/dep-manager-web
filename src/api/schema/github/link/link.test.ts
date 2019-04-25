@@ -2,7 +2,7 @@ import { ApolloLink, from, execute, Observable, toPromise } from 'apollo-link'
 import gql from 'graphql-tag'
 
 import { link as debug, __set__ as __set__debug__ } from './debug'
-import { link as auth, __set__ as __set__auth__ } from './auth'
+import { link as auth } from './auth'
 
 describe('api/github/link', () => {
   beforeEach(jest.clearAllMocks)
@@ -72,14 +72,14 @@ describe('api/github/link', () => {
       expect(spies.empty).toHaveBeenCalledWith(
         // @ts-ignore
         expect.contextContaining({
-          graphqlContext: { headers: { name: 'value' } }
+          graphqlContext: { headers: { name: 'value' } },
         })
       )
 
       expect(spies.empty).toHaveBeenCalledWith(
         // @ts-ignore
         expect.not.contextContaining({
-          graphqlContext: { headers: { authorization: 'token' } }
+          graphqlContext: { headers: { authorization: 'token' } },
         })
       )
     })
@@ -94,7 +94,7 @@ describe('api/github/link', () => {
       `
 
       const context = {
-        graphqlContext: { headers: { authorization: 'token' } }
+        graphqlContext: { headers: { authorization: 'token' } },
       }
       await toPromise(execute(link, { query, context }))
 
@@ -103,7 +103,7 @@ describe('api/github/link', () => {
       expect(spies.empty).toHaveBeenCalledWith(
         // @ts-ignore
         expect.contextContaining({
-          graphqlContext: { headers: { authorization: 'token' } }
+          graphqlContext: { headers: { authorization: 'token' } },
         })
       )
     })

@@ -15,5 +15,3 @@ deepDescribe('api/bida/npm/resolvers/Query/npmPackage', () => {
     await expect(resolve(null, { name })).resolves.toEqual(metadata)
   })
 })
-
-declare var deepDescribe: any

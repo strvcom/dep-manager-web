@@ -27,7 +27,7 @@ deepDescribe('api/bida/projects/resolvers', () => {
 
       expect(delegateToSchema).toHaveBeenCalledWith(
         expect.objectContaining({
-          args: { ...args, owner: 'strvcom' }
+          args: { ...args, owner: 'strvcom' },
         })
       )
     })
@@ -45,7 +45,7 @@ deepDescribe('api/bida/projects/resolvers', () => {
           context: 'context',
           operation: 'query',
           fieldName: 'repository',
-          args: { name: 'name', owner: 'strvcom' }
+          args: { name: 'name', owner: 'strvcom' },
         })
       )
     })
@@ -69,7 +69,7 @@ deepDescribe('api/bida/projects/resolvers', () => {
 
       expect(delegateToSchema).toHaveBeenCalledWith(
         expect.objectContaining({
-          args: { query: 'user:strvcom', type: 'REPOSITORY' }
+          args: { query: 'user:strvcom', type: 'REPOSITORY' },
         })
       )
     })
@@ -86,8 +86,8 @@ deepDescribe('api/bida/projects/resolvers', () => {
           args: {
             query: 'user:strvcom topic:frontend archived:true',
             type: 'REPOSITORY',
-            extra: 'value'
-          }
+            extra: 'value',
+          },
         })
       )
     })
@@ -109,12 +109,10 @@ deepDescribe('api/bida/projects/resolvers', () => {
           args: {
             query: 'user:strvcom topic:frontend archived:true',
             type: 'REPOSITORY',
-            extra: 'value'
-          }
+            extra: 'value',
+          },
         })
       )
     })
   })
 })
-
-declare var deepDescribe: any

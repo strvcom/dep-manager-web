@@ -29,5 +29,3 @@ deepDescribe('api/bida/npm/resolvers/NPMDependency/outdateStatus', () => {
     expect(await resolve({ version: '1.0.0' })).toEqual('MAJOR')
   })
 })
-
-declare var deepDescribe: any

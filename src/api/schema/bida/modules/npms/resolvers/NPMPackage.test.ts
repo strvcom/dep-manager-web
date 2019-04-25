@@ -9,7 +9,7 @@ __set__('loaders', { analysis: { load } })
 deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
   beforeEach(jest.clearAllMocks)
 
-  const getAnalysis = (metadata: any = {}) => ({ collected: { metadata } })
+  const getAnalysis = (meta: any = {}) => ({ collected: { metadata: meta } })
 
   describe('attachAnalysis', () => {
     it('should attach "analysis" field', async () => {
@@ -22,10 +22,7 @@ deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
     })
 
     it('should throw when no name provided', async () => {
-      const pack = {}
-      const analysis = { result: 'value' }
-
-      await expect(attachAnalysis(pack)).rejects.toThrow('without "name"')
+      await expect(attachAnalysis({})).rejects.toThrow('without "name"')
     })
   })
 
@@ -110,5 +107,3 @@ deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
     })
   })
 })
-
-declare var deepDescribe: any

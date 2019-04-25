@@ -3,9 +3,11 @@ import toBidaDepartment from './toDepartment'
 
 describe('utils/toDepartment', () => {
   for (const department in BidaDepartment) {
-    it(`should allow ${department}`, () => {
-      expect(toBidaDepartment(department)).toBe(department)
-    })
+    if (BidaDepartment.hasOwnProperty(department)) {
+      it(`should allow ${department}`, () => {
+        expect(toBidaDepartment(department)).toBe(department)
+      })
+    }
   }
 
   it('should parse known departments', () => {
@@ -13,6 +15,6 @@ describe('utils/toDepartment', () => {
   })
 
   it('should throw when invalid department', () => {
-    expect(() => toBidaDepartment('invalid')).toThrow(/not a know department/)
+    expect(() => toBidaDepartment('invalid')).toThrow(/not a know department/u)
   })
 })

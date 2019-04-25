@@ -2,7 +2,7 @@ import { ApolloLink, from, execute, Observable, toPromise } from 'apollo-link'
 import gql from 'graphql-tag'
 
 import { link as debug, __set__ as __set__debug__ } from './debug'
-import { link as auth, __set__ as __set__auth__ } from './auth'
+import { link as auth } from './auth'
 
 describe('config/client/link', () => {
   beforeEach(jest.clearAllMocks)
@@ -65,7 +65,7 @@ describe('config/client/link', () => {
 
       // @ts-ignore
       const expectedContext = expect.contextContaining({
-        headers: { authorization: `bearer value` }
+        headers: { authorization: `bearer value` },
       })
 
       expect(spies.empty).toHaveBeenCalledTimes(1)

@@ -4,7 +4,7 @@ const { departments } = Repository
 
 deepDescribe('api/bida/projects/resolvers/Repository', () => {
   const topics = (...names: string[]) => ({
-    nodes: names.map(name => ({ topic: { name } }))
+    nodes: names.map(name => ({ topic: { name } })),
   })
 
   describe('::departments', () => {
@@ -32,5 +32,3 @@ deepDescribe('api/bida/projects/resolvers/Repository', () => {
     })
   })
 })
-
-declare var deepDescribe: any

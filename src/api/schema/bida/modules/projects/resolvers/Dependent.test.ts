@@ -11,9 +11,9 @@ deepDescribe('api/bida/projects/resolvers', () => {
     npmPackage: {
       dependencies: [
         { package: { name: 'first' }, version: '1.0.0' },
-        { package: { name: 'second' }, version: '2.0.0' }
-      ]
-    }
+        { package: { name: 'second' }, version: '2.0.0' },
+      ],
+    },
   }
 
   const __parent = { name: 'first', version: '0.9.0' }
@@ -49,5 +49,3 @@ deepDescribe('api/bida/projects/resolvers', () => {
     })
   })
 })
-
-declare var deepDescribe: any

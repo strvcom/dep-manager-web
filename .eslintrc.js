@@ -14,18 +14,26 @@ module.exports = {
     // '@strv/eslint-config-typescript/style',
   ],
   settings: { 'import/resolver': { node: { extensions } } },
-  overrides: {
-    files: ['**/*.ts', '**/*.tsx'],
-    parser: '@typescript-eslint/parser',
-    rules: {
-      'import/named': 'off',
-      'import/namespace': 'off',
-      'import/no-duplicates': 'off',
-      'import/no-unresolved': 'off',
-      'no-restricted-globals': 'off',
-      'no-undef': 'off',
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      rules: {
+        'import/named': 'off',
+        'import/namespace': 'off',
+        'import/no-duplicates': 'off',
+        'import/no-unresolved': 'off',
+        'no-restricted-globals': 'off',
+        'no-undef': 'off',
+      },
     },
-  },
+    {
+      files: ['**/*.test.*'],
+      globals: {
+        deepDescribe: false
+      },
+    },
+  ],
   rules: {
     'react-hooks/exhaustive-deps': false,
     'no-extra-parens': [
