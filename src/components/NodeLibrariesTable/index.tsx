@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react'
+import React, { memo, useMemo, FunctionComponent } from 'react'
 import mem from 'mem'
 
 import {
@@ -30,13 +30,33 @@ const distances = {
   MINOR: 'MINOR',
 }
 
-export interface Props {
-  cacheKey?: string // key for verifying memoization
-  libraries: any[]
-  outdates: {
-    MAJOR: any[]
-    MINOR: any[]
+interface IOutdates {
+  [distance: string]: ILibrary[]
+}
+
+interface IOutdateCounts {
+  [distance: string]: number
+}
+
+interface ILibrary {
+  package: {
+    name: string
+    license: string
   }
+}
+
+interface INormalizedLibrary {
+  name: string
+  license: string
+  outdates: IOutdateCounts
+  totalOutdates: number
+  usage: number
+}
+
+interface IProps {
+  cacheKey?: string // key for verifying memoization
+  libraries: ILibrary[]
+  outdates: IOutdates
 }
 
 const defaultSort = ascend(prop('name'))
@@ -55,7 +75,7 @@ const sumOutdates = pipe(
  * Flattens and processes a library data for easier display and sort operations.
  */
 const normalizeLibrary = mem(
-  (library: any, allOutdates: any) => {
+  (library: ILibrary, allOutdates: IOutdates): INormalizedLibrary => {
     const name = library.package.name
     const license = library.package.license
 
@@ -78,21 +98,33 @@ const normalizeLibrary = mem(
 
 const renderRow = anchorRowRenderer(routes.frontendLibraries, prop('name'))
 
-const renderOutdates = ({ rowData: { outdates } }: any) => (
+const renderOutdates = ({
+  rowData: { outdates },
+}: {
+  rowData: { outdates: IOutdateCounts }
+}): JSX.Element => (
   <StatusColumn
     outDated={outdates[distances.MAJOR]}
     alerts={outdates[distances.MINOR]}
   />
 )
 
-const renderLicense = ({ cellData }: any) =>
+const renderLicense = ({
+  cellData,
+}: {
+  cellData?: string
+}): JSX.Element | null =>
   cellData ? (
     <Badge type={!isValidLicense(cellData) ? BadgeType.DANGER : null}>
       {cellData}
     </Badge>
   ) : null
 
-const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
+const NodeLibrariesTable: FunctionComponent<IProps> = ({
+  libraries,
+  outdates,
+  cacheKey,
+}: IProps): JSX.Element => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
@@ -113,7 +145,8 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
 
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }) => sorted[index]
+  const rowGetter = ({ index }: { index: number }): INormalizedLibrary =>
+    sorted[index]
 
   return (
     <Table
@@ -147,6 +180,6 @@ const NodeLibrariesTable = ({ libraries, outdates, cacheKey }: Props) => {
   )
 }
 
-export default memo(NodeLibrariesTable, (prev: Props, next: Props) =>
+export default memo(NodeLibrariesTable, (prev: IProps, next: IProps) =>
   prev.cacheKey ? prev.cacheKey === next.cacheKey : false
 )

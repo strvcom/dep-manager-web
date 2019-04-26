@@ -1,9 +1,23 @@
 import { ascend, prop, reverse } from 'ramda'
 import { renderHook, cleanup, act } from 'react-hooks-testing-library'
 
-import { useSort, __get__ } from './useSort'
+import {
+  useSort,
+  ISort,
+  SortDirection,
+  SortList,
+  Sorter,
+  SortSetter,
+  __get__,
+} from './useSort'
 
 const sorter = __get__('sorter')
+
+interface IConfig {
+  list: SortList
+  sort: ISort
+  defaultSort: Sorter
+}
 
 describe('hooks/useSort', () => {
   afterEach(cleanup)
@@ -18,19 +32,19 @@ describe('hooks/useSort', () => {
   const byLevel = [A, C, B] // draw
   const byLevelDesc = [C, B, A] // draw
 
-  const sort = (sortBy?: string, sortDirection?: string) => ({
+  const sort = (sortBy?: string, sortDirection?: SortDirection): ISort => ({
     sortBy,
     sortDirection,
   })
 
   const getConfig = (
     sortBy?: string,
-    sortDirection?: string,
-    defaultSort?: any
-  ) => ({
+    sortDirection?: SortDirection,
+    defaultSort?: Sorter
+  ): IConfig => ({
     list,
+    sort: { sortBy, sortDirection },
     defaultSort,
-    sort: sort(sortBy, sortDirection),
   })
 
   describe('sorter', () => {
@@ -85,7 +99,7 @@ describe('hooks/useSort', () => {
   })
 
   it('should return sorted list when initial sort provided', () => {
-    const initial: any = { sortBy: 'name', sortDirection: 'ASC' }
+    const initial: ISort = { sortBy: 'name', sortDirection: 'ASC' }
     const { result } = renderHook(() => useSort({ list, initial }))
     expect(result.current[0]).toEqual(byName)
   })
@@ -102,9 +116,9 @@ describe('hooks/useSort', () => {
     const nameDesc = sort('name', 'DESC') // { sortBy: 'name', sortDirection: 'DESC' }
     const age = sort('age', 'ASC') // { sortBy: 'age', sortDirection: 'ASC' }
 
-    let sorted: any
-    let setSort: any
-    let config: any
+    let sorted: SortList
+    let setSort: SortSetter
+    let config: ISort
 
     const { result } = renderHook(() => useSort({ list }))
 

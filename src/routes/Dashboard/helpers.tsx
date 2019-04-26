@@ -44,19 +44,20 @@ const infoShape = {
 }
 
 const setter = curry(
-  (key: string, mapper: (obj: object) => any, obj: object) => ({
+  (key: string, mapper: (obj: object) => object, obj: object) => ({
     ...obj,
     [key]: mapper(obj),
   })
 )
 
-const merger = (mergeMap: object) =>
+const merger = (mergeMap: object): Function =>
   mergeWithKey(
     cond(
       // @ts-ignore
       Object.keys(mergeMap)
         .map(key => [
           equals(key),
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (k: string, l: any, r: any) => mergeMap[key](l, r),
         ])
         // default merge-left.

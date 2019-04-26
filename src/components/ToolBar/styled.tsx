@@ -15,14 +15,14 @@ export const NavBarContainer = styled.div`
   width: 1140px;
 `
 
-interface TitleProps
+interface ITitleProps
   extends React.DetailedHTMLProps<
       React.HTMLAttributes<HTMLHeadingElement>,
       HTMLHeadingElement
     >,
     SpaceProps {}
 
-export const Title = styled.h1<TitleProps>`
+export const Title = styled.h1<ITitleProps>`
   ${typography.title}
   margin: 40px 0 20px;
   ${space};

@@ -3,24 +3,24 @@ import { typography, palette } from '../../styles/themes/mixins'
 
 export enum BadgeType {
   DANGER = 'DANGER',
-  WARNING = 'WARNING'
+  WARNING = 'WARNING',
 }
 
-export interface BadgeProps {
+interface IBadgeProps {
   type?: BadgeType | null
 }
 
-const typeStyle = (background: string, color: string) => css`
+const typeStyle = (background: string, color: string): string => css`
   background-color: ${background};
   color: ${color};
 `
 
 const styles = {
   [BadgeType.DANGER]: typeStyle(palette.palePink, palette.red),
-  [BadgeType.WARNING]: typeStyle(palette.eggShell, palette.ocher)
+  [BadgeType.WARNING]: typeStyle(palette.eggShell, palette.ocher),
 }
 
-const Badge = styled.span`
+const Badge = styled.span<IBadgeProps>`
   display: inline-block;
   padding: 4px 10px;
   border-radius: 2px;
@@ -30,7 +30,7 @@ const Badge = styled.span`
   }
 
   ${typography.tag}
-  ${({ type }: BadgeProps) => (type ? styles[type] : null)}
+  ${({ type }) => type ? styles[type] : null}
 `
 
 export default Badge

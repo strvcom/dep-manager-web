@@ -12,6 +12,7 @@ import PropTypes from 'prop-types'
 import { client } from './config/client'
 
 if (process.env.NODE_ENV === 'development') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const RouteComponent = Route as any
 
   // fixes react-router erroneous prop-types

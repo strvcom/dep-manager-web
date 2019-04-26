@@ -3,32 +3,36 @@ import { ascend, descend, pick, pipe, prop, sortWith } from 'ramda'
 
 const sortDirections = {
   ASC: ascend,
-  DESC: descend
+  DESC: descend,
 }
 
 const defaultInitial = {
   sortBy: undefined,
-  sortDirection: undefined
+  sortDirection: undefined,
 }
 
-type DefaultSorter = (...args: any[]) => any[]
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SortList = any[]
+export type Sorter = (...args: SortList) => number
+export type SortDirection = 'DESC' | 'ASC'
+export type SortSetter = React.Dispatch<React.SetStateAction<ISort>>
 
-interface Sort {
-  sortBy: string | undefined
-  sortDirection: 'DESC' | 'ASC' | undefined
+export interface ISort {
+  sortBy?: string
+  sortDirection?: SortDirection
 }
 
-interface SorterOptions {
-  list: any[]
-  sort: Sort
-  defaultSort?: DefaultSorter
+interface ISorterOptions {
+  list: SortList
+  sort: ISort
+  defaultSort?: Sorter
 }
 
 const sorter = ({
   list,
   sort: { sortBy, sortDirection = 'ASC' },
-  defaultSort
-}: SorterOptions) => {
+  defaultSort,
+}: ISorterOptions): SortList => {
   const sorters = []
 
   if (sortBy) sorters.push(sortDirections[sortDirection](prop(sortBy)))
@@ -37,20 +41,22 @@ const sorter = ({
   return sortWith(sorters, list)
 }
 
-export interface UseSortOptions {
-  list: any[]
-  initial?: Sort
+export interface IUseSortOptions {
+  list: SortList
+  initial?: ISort
   cacheKeys?: string[]
-  defaultSort?: DefaultSorter
+  defaultSort?: Sorter
 }
+
+type IUseSortResult = [SortList, SortSetter, ISort]
 
 const useSort = ({
   list,
   defaultSort,
   initial = defaultInitial,
-  cacheKeys = []
-}: UseSortOptions) => {
-  const [sort, setSortState] = useState<Sort>(initial)
+  cacheKeys = [],
+}: IUseSortOptions): IUseSortResult => {
+  const [sort, setSortState] = useState<ISort>(initial)
 
   const setSort = pipe(
     pick(['sortBy', 'sortDirection']),

@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react'
+import React, { memo, useMemo, FunctionComponent } from 'react'
 import mem from 'mem'
 import {
   __,
@@ -20,7 +20,7 @@ import { BidaDepartment } from '../../config/types'
 import * as routes from '../../routes/routes'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
 
-import { useSort, UseSortOptions } from '../../hooks/useSort'
+import { useSort, IUseSortOptions } from '../../hooks/useSort'
 
 const distances = {
   MAJOR: 'MAJOR',
@@ -38,34 +38,50 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 })
 
-interface Package {
+interface IPackage {
   outdateStatus: string
 }
 
-interface Project {
+interface IProject {
   name: string
+  pushedAt: string
   npmPackage: null | {
-    dependencies: Package[]
+    dependencies: IPackage[]
   }
 }
 
-interface Props {
+interface IProps {
   cacheKey?: string
-  projects: Project[]
+  projects: IProject[]
   department: string
 }
 
-const renderPushedAt = ({ cellData }: any) =>
-  cellData ? dateFormatter.format(Date.parse(cellData)) : null
+interface IOutdatedCounts {
+  [distance: string]: number
+}
 
-const renderOutdated = ({ rowData: { outdated } }: any) => (
+interface INormalizedProject {
+  name: string
+  pushedAt: string
+  outdated: IOutdatedCounts
+  totalOutdated: number
+}
+
+const renderPushedAt = ({ cellData }: { cellData?: string }): string =>
+  !cellData ? '' : dateFormatter.format(Date.parse(cellData))
+
+const renderOutdated = ({
+  rowData: { outdated },
+}: {
+  rowData: { outdated: IOutdatedCounts }
+}): JSX.Element => (
   <StatusColumn
     outDated={outdated[distances.MAJOR]}
     alerts={outdated[distances.MINOR]}
   />
 )
 
-const getOutdated = (dependencies: any[]) =>
+const getOutdated = (dependencies: IPackage[]): number =>
   pipe(
     propEq('outdateStatus'),
     filter(__, dependencies),
@@ -86,7 +102,7 @@ const sumOutdates = pipe(
  * Flattens and processes a project data for easier display and sort operations.
  */
 const normalizeProject = mem(
-  (project: any) => {
+  (project: IProject): INormalizedProject => {
     const name = project.name
     const pushedAt = project.pushedAt
 
@@ -101,13 +117,17 @@ const normalizeProject = mem(
   { cacheKey: prop('name') }
 )
 
-const sortDefaults: UseSortOptions = {
+const sortDefaults: IUseSortOptions = {
   list: [],
   defaultSort: ascend(prop('name')),
   initial: { sortBy: 'name', sortDirection: 'ASC' },
 }
 
-const NodeProjectsTable = ({ projects, department, cacheKey }: Props) => {
+const NodeProjectsTable: FunctionComponent<IProps> = ({
+  projects,
+  department,
+  cacheKey,
+}: IProps): JSX.Element => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
@@ -121,7 +141,9 @@ const NodeProjectsTable = ({ projects, department, cacheKey }: Props) => {
 
   const [sorted, setSort, sort] = useSort({ ...sortDefaults, list, cacheKeys })
 
-  const rowGetter = ({ index }: { index: number }) => sorted[index]
+  const rowGetter = ({ index }: { index: number }): INormalizedProject =>
+    sorted[index]
+
   const baseURL = departmentBaseURLs[department.toUpperCase()]
   const renderRow = baseURL ? anchorRowRenderer(baseURL, 'name') : undefined
 
@@ -153,6 +175,6 @@ const NodeProjectsTable = ({ projects, department, cacheKey }: Props) => {
   )
 }
 
-export default memo(NodeProjectsTable, (prev: Props, next: Props) =>
+export default memo(NodeProjectsTable, (prev: IProps, next: IProps) =>
   prev.cacheKey ? prev.cacheKey === next.cacheKey : false
 )

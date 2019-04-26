@@ -6,6 +6,7 @@ import introspection from './introspection.json'
 import { link } from './link'
 
 // type forcing
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const introspectedSchema: any = introspection
 
 /**
@@ -13,7 +14,7 @@ const introspectedSchema: any = introspection
  */
 const schema = makeRemoteExecutableSchema({
   schema: buildClientSchema(introspectedSchema),
-  link
+  link,
 })
 
 export { schema }

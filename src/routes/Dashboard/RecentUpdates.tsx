@@ -1,29 +1,38 @@
-import React, { memo } from 'react'
+import React, { memo, FunctionComponent } from 'react'
 
 import WidgetContainer, {
   WidgetContainerProps,
-  WidgetTitle
+  WidgetTitle,
 } from '../../components/Charts/Container'
 
 import { Items, ItemLink, TitleContainer, UpdatedTime } from './widget-styled'
 
-export interface RecentUpdatesProps
-  extends Pick<WidgetContainerProps, 'width'> {
-  libraries: any[]
+interface ILibrary {
+  id: string
+  name: string
+  version: string
+  updatedAt?: string
+}
+
+interface IProps extends Pick<WidgetContainerProps, 'width'> {
+  libraries: ILibrary[]
 }
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
   month: 'short',
   day: 'numeric',
-  year: 'numeric'
+  year: 'numeric',
 })
 
-const RecentUpdates = ({ width, libraries }: RecentUpdatesProps) => (
+const RecentUpdates: FunctionComponent<IProps> = ({
+  width,
+  libraries,
+}: IProps): JSX.Element => (
   <WidgetContainer width={width}>
     <WidgetTitle>Recent Updates</WidgetTitle>
     <Items>
       {libraries.map(lib => (
-        <ItemLink to='#' key={lib.id}>
+        <ItemLink to="#" key={lib.id}>
           <TitleContainer>
             <span>{lib.name}</span>
             <span>{lib.version}</span>

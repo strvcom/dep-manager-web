@@ -1,9 +1,32 @@
+interface IProject {
+  name: string
+}
+
+export interface IProjectEdge {
+  cursor: string
+  node: IProject
+}
+
+interface IProjectsConnection {
+  edges: IProjectEdge[]
+}
+
+export interface IProjectsArgs {
+  department: string
+  archived: boolean
+}
+
 /**
  * Query::projects
  *
  * Resolves all projects of the provided department inside strvcom org.
  */
-const projects = (root: any, args: any, context: any, info: any) => {
+const projects = (
+  root: null,
+  args: IProjectsArgs,
+  context: any,
+  info: any
+): IProjectsConnection => {
   const { department, archived, ...search } = args
   const { schema, mergeInfo } = info
 
@@ -26,8 +49,12 @@ const projects = (root: any, args: any, context: any, info: any) => {
     context,
     operation: 'query',
     fieldName: 'search',
-    args: { type, query, ...search }
+    args: { type, query, ...search },
   })
+}
+
+interface IProjectArgs {
+  name: string
 }
 
 /**
@@ -35,7 +62,12 @@ const projects = (root: any, args: any, context: any, info: any) => {
  *
  * Resolves a project inside strvcom org based on name.
  */
-const project = (root: any, { name }: any, context: any, info: any) => {
+const project = (
+  root: null,
+  { name }: IProjectArgs,
+  context: any,
+  info: any
+): IProject => {
   const { schema, mergeInfo } = info
 
   const owner = 'strvcom'
@@ -46,7 +78,7 @@ const project = (root: any, { name }: any, context: any, info: any) => {
     context,
     operation: 'query',
     fieldName: 'repository',
-    args: { name, owner }
+    args: { name, owner },
   })
 }
 

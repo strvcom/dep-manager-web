@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import { ReactComponent as Logo } from '../../assets/logo.svg'
 import { LoginButton, Container } from './styled'
 import { authenticate } from '../../config/auth'
 import { ThemeProvider } from '../../styles/styled'
 import darkTheme from '../../styles/themes/dark'
 
-const Login = () => (
+const Login: FunctionComponent = (): JSX.Element => (
   <ThemeProvider theme={darkTheme}>
     <Container>
       <Logo />

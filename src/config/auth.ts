@@ -11,7 +11,7 @@ if (!REACT_APP_NETLIFY_SITE_ID) {
 
 const authenticator = new Netlify({ site_id: REACT_APP_NETLIFY_SITE_ID })
 
-interface NetlifyResponse {
+interface INetlifyResponse {
   token: string
   scope: string
 }
@@ -19,10 +19,10 @@ interface NetlifyResponse {
 const provider = 'github'
 const scope = 'read:gpg_key,read:org,read:public_key,read:repo_hook,repo,user'
 
-export const authenticate = () =>
+export const authenticate = (): void =>
   authenticator.authenticate(
     { provider, scope },
-    (err, data: NetlifyResponse) => {
+    (err, data: INetlifyResponse) => {
       if (err) {
         alert('Could not authenticate. Try again later.')
         return console.error(err)

@@ -1,21 +1,27 @@
 import React from 'react'
 import styled, { keyframes } from '../../styles/styled'
 
-const draw = (percent: number) => keyframes`
+const draw = (percent: number): string => keyframes`
   to {
     stroke-dasharray: ${percent} ${100 - percent};
     stroke-dashoffset: ${25 + percent};
   }
 `
 
-export interface CircleProps extends React.SVGProps<SVGCircleElement> {
+interface ICircleProps extends React.SVGProps<SVGCircleElement> {
   percent: number
 }
-export const Circle = styled.circle<CircleProps>`
+
+export const Circle = styled.circle<ICircleProps>`
   animation: ${({ percent }) => draw(percent)} 1s ease forwards;
 `
 
-const Doughnut = ({ size = 64, percent = 0 }: DoughnutChartProps) => (
+export interface IDoughnutProps {
+  size?: number
+  percent?: number
+}
+
+const Doughnut = ({ size = 64, percent = 0 }: IDoughnutProps): JSX.Element => (
   <svg width={size} viewBox="0 0 42 42">
     <circle cx="21" cy="21" r="15.91549430918954" fill="#fff" />
     <circle
@@ -39,10 +45,5 @@ const Doughnut = ({ size = 64, percent = 0 }: DoughnutChartProps) => (
     />
   </svg>
 )
-
-export interface DoughnutChartProps {
-  size?: number
-  percent?: number
-}
 
 export default React.memo(Doughnut)

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { boolean, text } from '@storybook/addon-knobs'
 
@@ -9,13 +9,13 @@ storiesOf('ToolBar', module).add('default', () => (
     title={text('Title', 'Nice Title')}
     subtitle={text('Subtitle', 'This is the subtitle')}
     links={
-      boolean('Show links', true) ? (
-        <Fragment>
-          <ToolBarLink to='/first'>{text('First', 'First')}</ToolBarLink>
-          <ToolBarLink to='/second'>{text('Second', 'Second')}</ToolBarLink>
-          <ToolBarLink to='/third'>{text('Third', 'Third')}</ToolBarLink>
-        </Fragment>
-      ) : null
+      boolean('Show links', true) ? 
+        <>
+          <ToolBarLink to="/first">{text('First', 'First')}</ToolBarLink>
+          <ToolBarLink to="/second">{text('Second', 'Second')}</ToolBarLink>
+          <ToolBarLink to="/third">{text('Third', 'Third')}</ToolBarLink>
+        </>
+       : null
     }
   />
 ))

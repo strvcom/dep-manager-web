@@ -1,14 +1,17 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import { Route, RouteProps, Redirect } from 'react-router-dom'
 import { LocationDescriptor } from 'history'
 
 import CurrentUserContainer from './CurrentUserContainer'
 
-export interface PublicRouteProps extends RouteProps {
+interface IProps extends RouteProps {
   redirect?: LocationDescriptor
 }
 
-const PublicRoute = ({ redirect, ...rest }: PublicRouteProps) => (
+const PublicRoute: FunctionComponent<IProps> = ({
+  redirect,
+  ...rest
+}: IProps): JSX.Element => (
   <CurrentUserContainer>
     {({ user, loading }) =>
       loading ? null : user && redirect ? (

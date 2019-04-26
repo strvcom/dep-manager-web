@@ -1,10 +1,21 @@
-import React from 'react'
-import { Query } from 'react-apollo'
+import React, { FunctionComponent, ReactNode } from 'react'
+import { Query, QueryResult, OperationVariables } from 'react-apollo'
 import { useLocalStorage } from '@rehooks/local-storage'
 
 import { GITHUB_TOKEN_KEY } from '../../config/env'
 
-const AuthenticatedQuery = ({ skip, context, ...rest }: any) => {
+interface IProps {
+  skip?: boolean
+  context?: object
+  children: (result: QueryResult<any, OperationVariables>) => ReactNode
+  query: any
+}
+
+const AuthenticatedQuery: FunctionComponent<IProps> = ({
+  skip,
+  context,
+  ...rest
+}: IProps): JSX.Element => {
   const [token] = useLocalStorage(GITHUB_TOKEN_KEY)
 
   return (

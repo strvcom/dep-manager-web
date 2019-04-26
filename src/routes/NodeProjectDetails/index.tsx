@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useState, FunctionComponent } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { prop, propEq } from 'ramda'
 
@@ -17,12 +17,21 @@ import { getRecentlyUpdated } from '../Dashboard/helpers'
 
 import { PROJECT_QUERY } from './query.gql'
 
-export interface Props extends RouteComponentProps<{ id: string }> {
+export interface IProps extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
 }
 
-const NodeProjectDetails = ({ match, department }: Props) => {
-  const name = decodeURIComponent(match!.params.id)
+interface IDependency {
+  package: {
+    name: string
+  }
+}
+
+const NodeProjectDetails: FunctionComponent<IProps> = ({
+  match,
+  department,
+}: IProps): JSX.Element => {
+  const name = decodeURIComponent(match.params.id)
   const [search, setSearch] = useState('')
 
   const cacheKey = department + name + search
@@ -45,7 +54,7 @@ const NodeProjectDetails = ({ match, department }: Props) => {
           prop('package')
         )
 
-        const filtered = dependencies.filter((dependency: any) =>
+        const filtered = dependencies.filter((dependency: IDependency) =>
           dependency.package.name.includes(search)
         )
 
@@ -64,7 +73,6 @@ const NodeProjectDetails = ({ match, department }: Props) => {
                 <Body>Project libraries</Body>
                 <div>
                   <Input
-                    autoFocus
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     placeholder="Search for libraries"

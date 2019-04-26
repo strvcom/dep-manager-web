@@ -1,6 +1,6 @@
 import { BidaDepartment } from '../config/types'
 
-const toBidaDepartment = (str: string) => {
+const toBidaDepartment = (str: string): BidaDepartment => {
   const department = str.toUpperCase()
 
   if (!BidaDepartment[department]) {

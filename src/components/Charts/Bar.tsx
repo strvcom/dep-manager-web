@@ -1,7 +1,7 @@
 import React from 'react'
 import styled, { keyframes } from '../../styles/styled'
 
-const grow = (maxWidth: number) => keyframes`
+const grow = (maxWidth: number): string => keyframes`
   from {
     width: 0%;
   }
@@ -10,7 +10,7 @@ const grow = (maxWidth: number) => keyframes`
   }
 `
 
-export interface BarProps
+interface IBarProps
   extends React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
@@ -18,7 +18,7 @@ export interface BarProps
   fill: number
 }
 
-const Bar = styled.div<BarProps>`
+const Bar = styled.div<IBarProps>`
   position: relative;
   margin: 48px 0 24px;
   height: 4px;

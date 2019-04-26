@@ -1,6 +1,6 @@
 // @ts-ignore
-global.deepDescribe = (name: string, ...args: any[]) => {
-  const recurse = (names: string[]) => {
+global.deepDescribe = (name: string, describer: () => void) => {
+  const recurse = (names: string[]): void => {
     const curr = names.shift()
 
     if (names.length) {
@@ -8,16 +8,20 @@ global.deepDescribe = (name: string, ...args: any[]) => {
       describe(curr, () => recurse(names))
     } else {
       // @ts-ignore
-      describe(curr, ...args)
+      describe(curr, describer)
     }
   }
 
   recurse(name.split('/'))
 }
 
+interface IContext {
+  [k: string]: any // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
 // @ts-ignore
 expect.extend({
-  contextContaining: (received: any, compare: any) => {
+  contextContaining: (received: IContext, compare: IContext) => {
     const clone = { ...compare }
 
     // improve testing UI.
@@ -31,13 +35,13 @@ expect.extend({
     if (pass) {
       return {
         message: () => `expected ${received} not to be divisible by teste`,
-        pass: true
+        pass: true,
       }
     } else {
       return {
         message: () => `expected ${received} to be divisible by teste`,
-        pass: false
+        pass: false,
       }
     }
-  }
+  },
 })

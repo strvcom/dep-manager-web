@@ -1,4 +1,4 @@
-import { visit } from 'graphql/language'
+import { visit, ASTNode, FieldNode, InlineFragmentNode } from 'graphql/language'
 import gql from 'graphql-tag'
 
 import {
@@ -15,7 +15,7 @@ import {
   set,
 } from 'ramda'
 
-import { Query } from './Query'
+import { Query, IProjectsArgs, IProjectEdge } from './Query'
 
 const dependentsSelection = gql`
   fragment RepositoryDependencies on SearchResultItemConnection {
@@ -42,19 +42,39 @@ const dependentsSelection = gql`
  *
  * @param name Dependence library name
  */
-const dependsOn = (name: string): boolean =>
+const dependsOn = (name: string): (() => boolean) =>
   pipe(
     pathOr([], ['node', 'npmPackage', 'dependencies']),
     any(pathEq(['package', 'name'], name))
   )
 
+interface IRepository {
+  name: string
+}
+
+export interface IDependentNode {
+  __typename: string
+  __parent: {
+    name: string
+    version: string
+  }
+  repository: IRepository
+}
+
+interface IDependentEdge {
+  cursor: string
+  node: IDependentNode
+}
+
+type IEdgeToDependent = (repository: IProjectEdge) => IDependentEdge
+
 /**
  * Normalize a Repository edge into an Dependent edge (with meta-data info)
  */
-const edgeToDependent = (name: string, version: string) => ({
+const edgeToDependent = (name: string, version: string): IEdgeToDependent => ({
   cursor,
   node,
-}: any) => ({
+}) => ({
   cursor,
   node: {
     __typename: 'Dependent',
@@ -82,7 +102,7 @@ const visitor = {
    * Alter the selectionSet for the dependents field to include necessary
    * data on the Repository (package.json blob, for instance).
    */
-  leave: (node: any, key: string, parentNode: any) => {
+  leave: (node: ASTNode, key: string, parentNode: FieldNode) => {
     if (
       node.kind === 'SelectionSet' &&
       parentNode.name &&
@@ -97,9 +117,11 @@ const visitor = {
    * selectionSet into GitHub's expectation for Repository type.
    */
   InlineFragment: {
-    leave: (node: any) => {
-      if (node.typeCondition.name.value === 'Dependent') {
-        const selection = node.selectionSet.selections.find(isRepositoryField)
+    leave: (node: InlineFragmentNode) => {
+      if (node.typeCondition && node.typeCondition.name.value === 'Dependent') {
+        const selection = node.selectionSet.selections.find(
+          isRepositoryField
+        ) as FieldNode
 
         // skip this Dependent fragment entirely, when not
         // requesting repository data.
@@ -112,6 +134,11 @@ const visitor = {
       }
     },
   },
+}
+
+interface INPMPackage {
+  name: string
+  version: string
 }
 
 /**
@@ -129,8 +156,8 @@ const visitor = {
 const dependents = {
   fragment: `... on NPMPackage { name version }`,
   resolve: async (
-    { name, version }: any,
-    args: any,
+    { name, version }: INPMPackage,
+    args: IProjectsArgs,
     context: any,
     info: any
   ) => {
@@ -138,20 +165,20 @@ const dependents = {
     const fieldNodes = visit(info.fieldNodes, visitor)
 
     // reuse Query::projects delegation logic.
-    const connection = await Query.projects(null, args, context, {
+    const projectsConnection = await Query.projects(null, args, context, {
       ...info,
       fieldNodes,
     })
 
     // find dependent edges.
-    connection.edges = connection.edges
+    const edges = projectsConnection.edges
       .filter(dependsOn(name))
       .map(edgeToDependent(name, version))
 
     // "fix" counts.
-    connection.repositoryCount = connection.edges.length
+    const repositoryCount = edges.length
 
-    return connection
+    return { edges, repositoryCount }
   },
 }
 

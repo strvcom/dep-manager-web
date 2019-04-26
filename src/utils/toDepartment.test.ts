@@ -2,11 +2,14 @@ import { BidaDepartment } from '../config/types'
 import toBidaDepartment from './toDepartment'
 
 describe('utils/toDepartment', () => {
+  const allows = (department: string): void =>
+    it(`should allow ${department}`, () => {
+      expect(toBidaDepartment(department)).toBe(department)
+    })
+
   for (const department in BidaDepartment) {
     if (BidaDepartment.hasOwnProperty(department)) {
-      it(`should allow ${department}`, () => {
-        expect(toBidaDepartment(department)).toBe(department)
-      })
+      allows(department)
     }
   }
 

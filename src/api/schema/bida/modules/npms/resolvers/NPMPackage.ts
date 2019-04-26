@@ -3,10 +3,15 @@ import { combineResolvers, pipeResolvers } from 'graphql-resolvers'
 
 import * as loaders from '../loaders'
 
+interface INPMPackage {
+  name: string
+  analysis: object
+}
+
 /**
  * Load analysis and inject into package object.
  */
-const attachAnalysis = async (root: any) => {
+const attachAnalysis = async (root: INPMPackage): Promise<INPMPackage> => {
   if (!root.name) {
     throw new Error('Cannot load package analysis without "name".')
   }
@@ -16,10 +21,23 @@ const attachAnalysis = async (root: any) => {
   return { ...root, analysis: result }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type IResolverFunction = () => any
+
+type IResolver =
+  | IResolverFunction
+  | {
+      fragment?: string
+      resolve: IResolverFunction
+    }
+
 /**
  * Factory for scalar package field resolvers based on NPMS metadata.
  */
-const metadata = (field: string, transform: any = identity) => ({
+const metadata = (
+  field: string,
+  transform: Function = identity
+): IResolver => ({
   fragment: `... on NPMPackage { name }`,
   resolve: pipeResolvers(
     combineResolvers(
@@ -32,7 +50,7 @@ const metadata = (field: string, transform: any = identity) => ({
       )
     ),
     transform
-  )
+  ),
 })
 
 /**
@@ -51,7 +69,7 @@ const version = metadata('version')
  */
 const analysis = {
   fragment: `... on NPMPackage { name }`,
-  resolve: pipeResolvers(attachAnalysis, prop('analysis'))
+  resolve: pipeResolvers(attachAnalysis, prop('analysis')),
 }
 
 export const NPMPackage = {
@@ -60,5 +78,5 @@ export const NPMPackage = {
   private: _private,
   updatedAt,
   version,
-  analysis
+  analysis,
 }

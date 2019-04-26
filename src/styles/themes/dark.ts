@@ -1,10 +1,10 @@
-import Theme, { palette } from './mixins'
+import ITheme, { palette } from './mixins'
 
-const darkTheme: Theme = {
+const darkTheme: ITheme = {
   backgroundColor: palette.black,
   primaryColor: palette.white,
   primaryColorAccent: palette.black,
-  secondaryColor: undefined!,
-  secondaryColorAccent: undefined!
+  secondaryColor: undefined,
+  secondaryColorAccent: undefined,
 }
 export default darkTheme

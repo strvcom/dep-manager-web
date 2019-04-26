@@ -1,31 +1,30 @@
-import React, { Fragment, memo } from 'react'
+import React, { memo, FunctionComponent } from 'react'
 import ToolBar, { ToolBarLink } from '../../components/ToolBar'
 import { Input } from './styled'
 
-interface DashboardToolBarProps {
+interface IProps {
   department: string
   category: string
   search: string
   setSearch: (input: string) => void
 }
 
-const DashboardToolBar = ({
+const DashboardToolBar: FunctionComponent<IProps> = ({
   department,
   category,
   search,
-  setSearch
-}: DashboardToolBarProps) => (
+  setSearch,
+}: IProps): JSX.Element => (
   <ToolBar
-    title='Dashboard'
+    title="Dashboard"
     links={
-      <Fragment>
+      <>
         <ToolBarLink to={`/${department}/libraries`}>Libraries</ToolBarLink>
         <ToolBarLink to={`/${department}/projects`}>Projects</ToolBarLink>
-      </Fragment>
+      </>
     }
     children={
       <Input
-        autoFocus
         value={search}
         onChange={e => setSearch(e.target.value)}
         placeholder={`Search ${category}`}

@@ -7,7 +7,7 @@ import { n, chance } from '../../tests/utils/mocking'
 import NodeProjectsTable from './'
 
 storiesOf('Tables/NodeProjectsTable', module)
-  .add('empty', () => <NodeProjectsTable projects={[]} department='frontend' />)
+  .add('empty', () => <NodeProjectsTable projects={[]} department="frontend" />)
   .add('filled', () => {
     const amount = Math.max(0, number('Projects', 10))
     const projects: any = n(amount, chance.project)
@@ -16,7 +16,7 @@ storiesOf('Tables/NodeProjectsTable', module)
       <NodeProjectsTable
         cacheKey={chance.string()}
         projects={projects}
-        department='frontend'
+        department="frontend"
       />
     )
   })

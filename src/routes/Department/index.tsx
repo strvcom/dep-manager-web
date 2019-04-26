@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import { Switch, Route, RouteComponentProps } from 'react-router-dom'
 import * as routes from '../routes'
 import toBidaDepartment from '../../utils/toDepartment'
@@ -16,20 +16,21 @@ const NodeLibraryDetails = React.lazy(() =>
   import(/* webpackChunkName: 'NodeLibraryDetails' */ '../NodeLibraryDetails')
 )
 
-const useNodeProjectDetails = (department: BidaDepartment) =>
+const useNodeProjectDetails = (department: BidaDepartment): FunctionComponent =>
   React.useCallback(
     (routeProps: RouteComponentProps<{ id: string }>) => (
       <NodeProjectDetails {...routeProps} department={department} />
     ),
     [department]
-  )
-const useNodeLibraryDetails = (department: BidaDepartment) =>
+  ) as FunctionComponent
+
+const useNodeLibraryDetails = (department: BidaDepartment): FunctionComponent =>
   React.useCallback(
     (routeProps: RouteComponentProps<{ id: string }>) => (
       <NodeLibraryDetails {...routeProps} department={department} />
     ),
     [department]
-  )
+  ) as FunctionComponent
 
 type DepartmentPageProps = RouteComponentProps<{
   department: string

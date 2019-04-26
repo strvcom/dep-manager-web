@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react'
+import React, { memo, useMemo, FunctionComponent } from 'react'
 import mem from 'mem'
 import { ascend, path, prop } from 'ramda'
 
@@ -11,9 +11,24 @@ import * as routes from '../../routes/routes'
 
 import { useSort } from '../../hooks/useSort'
 
-export interface Props {
+interface IDependent {
+  node: {
+    version: string
+    repository: {
+      name: string
+    }
+  }
+}
+
+interface INormalizedDependent {
+  name: string
+  version: string
+  distance: string
+}
+
+interface IProps {
   cacheKey?: string
-  dependents: any[]
+  dependents: IDependent[]
   libraryVersion: string
   department: BidaDepartment
 }
@@ -22,15 +37,24 @@ const defaultSort = ascend(prop('name'))
 
 const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendProjects,
-  [BidaDepartment.FRONTEND]: routes.frontendProjects
+  [BidaDepartment.FRONTEND]: routes.frontendProjects,
 }
 
 const versionBadgeType = {
   MAJOR: BadgeType.DANGER,
-  MINOR: BadgeType.WARNING
+  MINOR: BadgeType.WARNING,
 }
 
-const renderVersion = ({ rowData: { distance, version } }: any) => (
+interface IRenderVersion {
+  rowData: {
+    distance: string
+    version: string
+  }
+}
+
+const renderVersion = ({
+  rowData: { distance, version },
+}: IRenderVersion): JSX.Element => (
   <Badge type={versionBadgeType[distance]}>{version}</Badge>
 )
 
@@ -38,20 +62,20 @@ const renderVersion = ({ rowData: { distance, version } }: any) => (
  * Flattens and processes a dependent data for easier display and sort operations.
  */
 const normalize = mem(
-  (dependent: any, libraryVersion: string) => ({
+  (dependent: IDependent, libraryVersion: string) => ({
     name: dependent.node.repository.name,
     version: dependent.node.version,
-    distance: versionDistance(libraryVersion, dependent.node.version)
+    distance: versionDistance(libraryVersion, dependent.node.version),
   }),
   { cacheKey: path(['node', 'id']) }
 )
 
-const NodeLibraryDependentsTable = ({
+const NodeLibraryDependentsTable: FunctionComponent<IProps> = ({
   cacheKey,
   dependents,
   libraryVersion,
-  department
-}: Props) => {
+  department,
+}: IProps): JSX.Element => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
@@ -66,12 +90,13 @@ const NodeLibraryDependentsTable = ({
     list,
     cacheKeys,
     defaultSort,
-    initial: { sortBy: 'name', sortDirection: 'ASC' }
+    initial: { sortBy: 'name', sortDirection: 'ASC' },
   })
 
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }) => sorted[index]
+  const rowGetter = ({ index }: { index: number }): INormalizedDependent =>
+    sorted[index]
 
   const baseURL = departmentBaseURLs[department]
   const rowRenderer = baseURL
@@ -87,19 +112,19 @@ const NodeLibraryDependentsTable = ({
       rowGetter={rowGetter}
       rowRenderer={rowRenderer}
     >
-      <Column width={380} label='Project Name' dataKey='name' />
+      <Column width={380} label="Project Name" dataKey="name" />
 
       <Column
         disableSort
         width={280}
-        dataKey='distance'
-        label='Used Version'
+        dataKey="distance"
+        label="Used Version"
         cellRenderer={renderVersion}
       />
     </Table>
   )
 }
 
-export default memo(NodeLibraryDependentsTable, (prev: Props, next: Props) =>
+export default memo(NodeLibraryDependentsTable, (prev: IProps, next: IProps) =>
   prev.cacheKey ? prev.cacheKey === next.cacheKey : false
 )

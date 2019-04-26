@@ -6,20 +6,25 @@ import {
   NavBarContainer,
   Title,
   Subtitle,
-  Wrapper
+  Wrapper,
 } from './styled'
 
-export interface ToolBarProps {
+interface IToolBarProps {
   title?: React.ReactNode
   subtitle?: React.ReactNode
   links?: React.ReactNode
   children?: React.ReactNode
 }
 
-const ToolBar = ({ title, subtitle, links, children }: ToolBarProps) => (
+const ToolBar = ({
+  title,
+  subtitle,
+  links,
+  children,
+}: IToolBarProps): JSX.Element => (
   <StyledNavBar>
     <NavBarContainer>
-      {title && <Title mb='10px'>{title}</Title>}
+      {title && <Title mb="10px">{title}</Title>}
       {subtitle && <Subtitle>{subtitle}</Subtitle>}
 
       <Wrapper>

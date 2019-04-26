@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 import * as Virtual from 'react-virtualized'
 import { Wrapper, StyledTable } from './styled'
@@ -219,9 +220,10 @@ export interface TableProps {
    * Sort function to be called if a sortable header is clicked.
    * ({ sortBy: string, sortDirection: SortDirection }): void
    */
-  sort?: (
-    info: { sortBy: string; sortDirection: Virtual.SortDirectionType }
-  ) => void
+  sort?: (info: {
+    sortBy: string
+    sortDirection: Virtual.SortDirectionType
+  }) => void
   /** Table data is currently sorted by this :dataKey (if it is sorted at all) */
   sortBy?: string
   /** Table data is currently sorted in this direction (if it is sorted at all) */
@@ -255,7 +257,7 @@ const Table = (props: TableProps) => {
   )
 }
 Table.defaultProps = {
-  noRowsRenderer: () => null
+  noRowsRenderer: () => null,
 }
 
 export interface TableCellProps<T extends keyof RowData, RowData = {}>

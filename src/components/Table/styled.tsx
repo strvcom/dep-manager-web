@@ -8,13 +8,14 @@ export const Wrapper = styled.section`
   flex: 1 1 auto;
 `
 
-const rowClassName = ({ index }: Virtual.Index) => (index >= 0 ? 'row' : '')
+const rowClassName = ({ index }: Virtual.Index): string =>
+  index >= 0 ? 'row' : ''
 
 export const StyledTable = styled(
   React.memo((props: Virtual.TableProps) => (
     <Virtual.Table
       {...props}
-      headerClassName='header'
+      headerClassName="header"
       rowClassName={rowClassName}
     />
   ))

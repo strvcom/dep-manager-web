@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import Login from './Login'
 import NavBar, { NavBarLink } from '../containers/NavBar'
 import { Redirect, Switch, Route } from 'react-router-dom'
@@ -14,8 +14,8 @@ import Department from './Department'
 
 const PrivatePage = React.memo(() => (
   <ThemeProvider theme={lightTheme}>
-    <React.Fragment>
-      <NavBar logo={<Logo height='16' />}>
+    <>
+      <NavBar logo={<Logo height="16" />}>
         <NavBarLink to={routes.frontendLibraries}>Frontend</NavBarLink>
         <NavBarLink to={routes.backendLibraries}>Backend</NavBarLink>
         <NavBarLink to={routes.iosLibraries}>iOS</NavBarLink>
@@ -26,11 +26,11 @@ const PrivatePage = React.memo(() => (
           <Route path={routes.department} component={Department} />
         </ErrorBoundary>
       </React.Suspense>
-    </React.Fragment>
+    </>
   </ThemeProvider>
 ))
 
-const App = () => (
+const App: FunctionComponent = (): JSX.Element => (
   <Switch>
     <PublicRoute redirect={routes.root} path={routes.login} component={Login} />
     <Redirect exact from={routes.root} to={routes.frontendLibraries} />

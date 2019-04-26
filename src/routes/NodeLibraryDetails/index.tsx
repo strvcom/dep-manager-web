@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useState, FunctionComponent } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { propEq } from 'ramda'
 
@@ -13,12 +13,23 @@ import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 
 import { NODE_LIBRARY_QUERY } from './query.gql'
 
-export interface Props extends RouteComponentProps<{ id: string }> {
+export interface IProps extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
 }
 
-const NodeLibraryDetails = ({ match, department }: Props) => {
-  const name = decodeURIComponent(match!.params.id)
+interface IDependentEdge {
+  node: {
+    repository: {
+      name: string
+    }
+  }
+}
+
+const NodeLibraryDetails: FunctionComponent<IProps> = ({
+  match,
+  department,
+}: IProps): JSX.Element => {
+  const name = decodeURIComponent(match.params.id)
   const [search, setSearch] = useState('')
 
   const cacheKey = department + name + search
@@ -38,8 +49,8 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
           propEq('outdatedStatus', 'MAJOR')
         )
 
-        const filtered = library.dependents.edges.filter(({ node }: any) =>
-          node.repository.name.includes(search)
+        const filtered = library.dependents.edges.filter(
+          ({ node }: IDependentEdge) => node.repository.name.includes(search)
         )
 
         return (
@@ -50,7 +61,6 @@ const NodeLibraryDetails = ({ match, department }: Props) => {
                 <h2>Library projects</h2>
                 <div>
                   <Input
-                    autoFocus
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     placeholder="Search for projects"

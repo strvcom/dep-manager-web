@@ -22,7 +22,8 @@ const LICENSES = ['MIT', 'Apache', 'GPLv3', 'UNLICENSED']
 /**
  * Create an array of N using a callback FN.
  */
-export const n = (amount: number, fn: any) =>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const n = (amount: number, fn: () => any): any[] =>
   new Array(amount).fill(null).map(() => fn())
 
 chance.mixin({
@@ -65,22 +66,29 @@ chance.mixin({
 })
 
 chance.mixin({
-  library: (...args: any[]) => ({
-    package: chance.package(...args),
+  library: (name: string) => ({
+    package: chance.package(name),
   }),
 })
 
-const versionDefaults = {
+interface IVersionOptions {
+  constraint?: {
+    [diff: string]: { min: number, max: number }
+  }
+  max?: string
+}
+
+const versionDefaults: IVersionOptions = {
   constraint: {
     major: { min: 0, max: 5 },
     minor: { min: 0, max: 20 },
     patch: { min: 0, max: 20 },
   },
-  max: null,
+  max: undefined,
 }
 
 chance.mixin({
-  version: (options: any = {}) => {
+  version: (options: IVersionOptions = {}) => {
     const { constraint, max } = mergeDeepRight(versionDefaults, options)
 
     const major = chance.integer(constraint.major)
@@ -94,7 +102,7 @@ chance.mixin({
 })
 
 chance.mixin({
-  dependent: ({ maxVersion }: any = {}) => ({
+  dependent: ({ maxVersion }: { maxVersion?: string } = {}) => ({
     node: {
       id: chance.string(),
       version: chance.version({ max: maxVersion }),

@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react'
+import React, { memo, useMemo, FunctionComponent } from 'react'
 import mem from 'mem'
 import { ascend, prop } from 'ramda'
 
@@ -11,37 +11,65 @@ import * as routes from '../../routes/routes'
 
 import { useSort } from '../../hooks/useSort'
 
-export interface Props {
+interface IDependency {
+  outdateStatus: string
+  version: string
+  package: {
+    name: string
+    version: string
+    license: string
+  }
+}
+
+interface INormalizedDependency {
+  outdateStatus: string
+  currentVersion: string
+  name: string
+  version: string
+  license: string
+}
+
+interface IProps {
   cacheKey?: string
-  dependencies: any[]
+  dependencies: IDependency[]
   department: BidaDepartment
 }
 
 const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendLibraries,
-  [BidaDepartment.FRONTEND]: routes.frontendLibraries
+  [BidaDepartment.FRONTEND]: routes.frontendLibraries,
 }
 
 const defaultSort = ascend(prop('name'))
 
 const versionBadgeType = {
   MAJOR: BadgeType.DANGER,
-  MINOR: BadgeType.WARNING
+  MINOR: BadgeType.WARNING,
+}
+
+interface IRenderVersion {
+  rowData: {
+    currentVersion: string
+    outdateStatus: string
+  }
 }
 
 const renderVersion = mem(
-  ({ rowData: { currentVersion, outdateStatus } }: any) => (
+  ({
+    rowData: { currentVersion, outdateStatus },
+  }: IRenderVersion): JSX.Element => (
     <Badge type={versionBadgeType[outdateStatus]}>{currentVersion}</Badge>
   ),
   {
-    cacheKey: ({ rowData: { version, outdateStatus } }: any) =>
-      version + outdateStatus
+    cacheKey: ({
+      rowData: { currentVersion, outdateStatus },
+    }: IRenderVersion): string => currentVersion + outdateStatus,
   }
 )
 
 const renderLicense = mem(
-  ({ cellData: license }: any) =>
-    license && (
+  ({ cellData: license }: { cellData?: string }): JSX.Element | null =>
+    !license ? null : (
       <Badge type={!isValidLicense(license) ? BadgeType.DANGER : null}>
         {license}
       </Badge>
@@ -53,21 +81,21 @@ const renderLicense = mem(
  * Flattens and processes a dependency data for easier display and sort operations.
  */
 const normalize = mem(
-  (dependency: any) => ({
+  (dependency: IDependency): INormalizedDependency => ({
     outdateStatus: dependency.outdateStatus,
     currentVersion: dependency.version,
     name: dependency.package.name,
     version: dependency.package.version,
-    license: dependency.package.license
+    license: dependency.package.license,
   }),
   { cacheKey: prop('id') }
 )
 
-const NodeProjectDependenciesTable = ({
+const NodeProjectDependenciesTable: FunctionComponent<IProps> = ({
   cacheKey,
   dependencies,
-  department
-}: Props) => {
+  department,
+}: IProps): JSX.Element => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
@@ -79,12 +107,13 @@ const NodeProjectDependenciesTable = ({
     list,
     cacheKeys,
     defaultSort,
-    initial: { sortBy: 'name', sortDirection: 'ASC' }
+    initial: { sortBy: 'name', sortDirection: 'ASC' },
   })
 
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }) => sorted[index]
+  const rowGetter = ({ index }: { index: number }): INormalizedDependency =>
+    sorted[index]
 
   const baseURL = departmentBaseURLs[department]
   const rowRenderer = baseURL
@@ -100,33 +129,35 @@ const NodeProjectDependenciesTable = ({
       rowGetter={rowGetter}
       rowRenderer={rowRenderer}
     >
-      <Column width={380} label='Library Name' dataKey='name' />
+      <Column width={380} label="Library Name" dataKey="name" />
 
       <Column
         width={280}
-        label='Up To Date Version'
-        dataKey='version'
+        label="Up To Date Version"
+        dataKey="version"
         disableSort
       />
 
       <Column
         width={280}
-        label='Current version'
-        dataKey='currentVersion'
+        label="Current version"
+        dataKey="currentVersion"
         cellRenderer={renderVersion}
         disableSort
       />
 
       <Column
         width={150}
-        label='License'
-        dataKey='license'
+        label="License"
+        dataKey="license"
         cellRenderer={renderLicense}
       />
     </Table>
   )
 }
 
-export default memo(NodeProjectDependenciesTable, (prev: Props, next: Props) =>
-  prev.cacheKey ? prev.cacheKey === next.cacheKey : false
+export default memo(
+  NodeProjectDependenciesTable,
+  (prev: IProps, next: IProps) =>
+    prev.cacheKey ? prev.cacheKey === next.cacheKey : false
 )

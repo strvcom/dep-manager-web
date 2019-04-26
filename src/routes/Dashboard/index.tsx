@@ -1,4 +1,4 @@
-import React, { Suspense, memo, useState } from 'react'
+import React, { Suspense, memo, useState, FunctionComponent } from 'react'
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import ErrorBoundary from 'react-error-boundary'
 
@@ -16,19 +16,33 @@ import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
 import { extractLibrariesInfo } from './helpers'
 import { DASHBOARD_QUERY } from './query.gql'
 
-export interface Props
-  extends RouteComponentProps<{
-    department: string
-    category: string
-  }> {}
+type IProps = RouteComponentProps<{
+  department: string
+  category: string
+}>
+
+interface IProject {
+  name: string
+}
+
+interface ILibrary {
+  package: {
+    name: string
+  }
+}
+
+interface IProjectEdge {
+  node: IProject
+}
 
 const distances = {
   MAJOR: 'MAJOR',
 }
 
-const Dashboard = ({ match }: Props) => {
-  const { department, category } = match!.params
-
+const Dashboard: FunctionComponent<IProps> = ({
+  match,
+}: IProps): JSX.Element => {
+  const { department, category } = match.params
   const [search, setSearch] = useState('')
 
   const cacheKey = department + search
@@ -47,7 +61,7 @@ const Dashboard = ({ match }: Props) => {
           query={DASHBOARD_QUERY}
           variables={{ department: department.toUpperCase() }}
         >
-          {({ data, loading, error }: any) => {
+          {({ data, loading, error }: any): JSX.Element => {
             if (error) throw error
             if (loading) return <Loading />
 
@@ -63,7 +77,7 @@ const Dashboard = ({ match }: Props) => {
 
             const { [distances.MAJOR]: major } = outdates
 
-            const renderWidgets = () => (
+            const renderWidgets = (): JSX.Element => (
               <WidgetContainer>
                 <ProjectsOverviewWidget
                   total={projects.total}
@@ -82,9 +96,9 @@ const Dashboard = ({ match }: Props) => {
               </WidgetContainer>
             )
 
-            const renderLibraries = () => {
+            const renderLibraries = (): JSX.Element => {
               const filtered = uniqueLibraries.filter(
-                ({ package: { name } }: any) => name.includes(search)
+                ({ package: { name } }: ILibrary) => name.includes(search)
               )
 
               return (
@@ -96,10 +110,10 @@ const Dashboard = ({ match }: Props) => {
               )
             }
 
-            const renderProjects = () => {
+            const renderProjects = (): JSX.Element => {
               const filtered = projects.edges
-                .map(({ node }: any) => node)
-                .filter(({ name }: any) => name.includes(search))
+                .map(({ node }: IProjectEdge) => node)
+                .filter(({ name }: IProject): boolean => name.includes(search))
 
               return (
                 <NodeProjectsTable

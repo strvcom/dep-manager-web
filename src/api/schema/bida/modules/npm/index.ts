@@ -24,8 +24,14 @@ const typeDefs = gql`
   }
 `
 
+interface INPMPackage {
+  id?: string
+  name: string
+  version: string
+}
+
 const NPMPackage = {
-  id: ({ id, name }: any) => {
+  id: ({ id, name }: INPMPackage): string => {
     if (!id && !name) {
       throw new Error('NPMPackage::id must resolve to a valid value.')
     }
@@ -38,11 +44,11 @@ const NPMPackage = {
     // @ts-ignore
     toPairs,
     map(zipObj(['name', 'version']))
-  )
+  ),
 }
 
 const NPMDependency = {
-  id: ({ name, version }: any) => {
+  id: ({ name, version }: INPMPackage) => {
     if (!name) {
       throw new Error('NPMDependency::id must have a name available.')
     }
@@ -54,7 +60,7 @@ const NPMDependency = {
     return `${name}@${version}`
   },
 
-  package: omit(['version'])
+  package: omit(['version']),
 }
 
 const Repository = {
@@ -76,8 +82,8 @@ const Repository = {
       pathOr(null, ['npmPackageJSON', 'text']),
       // @ts-ignore
       when(Boolean, JSON.parse)
-    )
-  }
+    ),
+  },
 }
 
 const resolvers = { NPMPackage, NPMDependency, Repository }

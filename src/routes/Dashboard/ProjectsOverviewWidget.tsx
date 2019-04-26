@@ -1,22 +1,21 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import { Status, Count } from './widget-styled'
 import Bar from '../../components/Charts/Bar'
 import WidgetContainer, {
   WidgetContainerProps,
-  WidgetTitle
+  WidgetTitle,
 } from '../../components/Charts/Container'
 
-export interface ProjectsOverviewWidgetProps
-  extends Pick<WidgetContainerProps, 'width'> {
+interface IProps extends Pick<WidgetContainerProps, 'width'> {
   total: number
   archived: number
 }
 
-const ProjectsOverviewWidget = ({
+const ProjectsOverviewWidget: FunctionComponent<IProps> = ({
   width,
   total,
-  archived
-}: ProjectsOverviewWidgetProps) => {
+  archived,
+}: IProps): JSX.Element => {
   const active = total - archived
   return (
     <WidgetContainer width={width}>

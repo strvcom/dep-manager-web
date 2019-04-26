@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 
 import {
   StatusWrapper,
@@ -11,13 +11,15 @@ import WidgetContainer, {
   WidgetContainerProps,
 } from '../Charts/Container'
 
-export interface ActualityWidgetProps extends WidgetContainerProps {
+interface IActualityWidgetProps extends WidgetContainerProps {
   title?: string
   outdated: number
   total: number
 }
 
-const ActualityWidget = (props: ActualityWidgetProps) => {
+const ActualityWidget: FunctionComponent<IActualityWidgetProps> = (
+  props: IActualityWidgetProps
+): JSX.Element => {
   const { outdated, total, title, ref: ignored, ...rest } = props
 
   const perc = {

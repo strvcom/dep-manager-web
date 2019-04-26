@@ -1,5 +1,17 @@
 import { DEPARTMENTS } from '../constants'
 
+interface ITopicsConnection {
+  nodes: Array<{
+    topic: {
+      name: string
+    }
+  }>
+}
+
+interface IRepository {
+  repositoryTopics: ITopicsConnection
+}
+
 /**
  * Repository::departments
  *
@@ -17,11 +29,11 @@ const departments = {
       }
     }
   `,
-  resolve: ({ repositoryTopics }: any) =>
+  resolve: ({ repositoryTopics }: IRepository): string[] =>
     repositoryTopics.nodes
-      .map(({ topic: { name } }: any) => name)
-      .map((name: string) => name.toUpperCase())
-      .filter((name: string) => DEPARTMENTS.includes(name))
+      .map(({ topic: { name } }) => name)
+      .map(name => name.toUpperCase())
+      .filter(name => DEPARTMENTS.includes(name)),
 }
 
 export const Repository = { departments }
