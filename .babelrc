@@ -3,8 +3,7 @@
 
   "plugins": [
     "ramda",
-    "styled-components",
-    "import-graphql"
+    "styled-components"
   ],
 
   "env": { "test": { "plugins": ["rewire"] } }
