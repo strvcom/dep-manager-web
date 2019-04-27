@@ -1,2 +1,0 @@
-// override config.
-module.exports = {}
