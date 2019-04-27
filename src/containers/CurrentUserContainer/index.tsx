@@ -1,34 +1,36 @@
-import React, { FunctionComponent } from 'react'
+import React from 'react'
 import { QueryResult } from 'react-apollo'
 
 import AuthenticatedQuery from '../AuthenticatedQuery'
 import { CURRENT_USER_QUERY } from './query.gql'
 
-interface IChildrenArgument {
-  user?: object
-  loading: boolean
-}
-
-interface IProps {
-  children: (result: IChildrenArgument) => JSX.Element
-}
-
 interface IData {
   user: { id: string, name: string } | undefined
 }
 
-interface IResult extends QueryResult {
+interface IResult {
   data: IData
-  loading: boolean
 }
 
-const CurrentUserContainer: FunctionComponent<IProps> = ({
+interface IChildrenResult
+  extends QueryResult<{
+    user?: object
+  }> {
+  user?: object
+}
+
+type IChildren = (result: IChildrenResult) => React.ReactNode
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CurrentUserContainer = ({
   children,
   ...rest
-}: IProps): JSX.Element => (
+}: {
+  children: IChildren
+}): JSX.Element => (
   <AuthenticatedQuery query={CURRENT_USER_QUERY} {...rest}>
-    {({ data: { user } = { user: undefined }, loading, ...result }: IResult) =>
-      children({ user, loading, ...result })
+    {({ data: { user } = { user: undefined }, ...result }: IResult) =>
+      children({ user, ...result } as IChildrenResult)
     }
   </AuthenticatedQuery>
 )

@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components'
+import styled, { css, FlattenSimpleInterpolation } from 'styled-components'
 import { typography, palette } from '../../styles/themes/mixins'
 
 export enum BadgeType {
@@ -10,7 +10,10 @@ interface IBadgeProps {
   type?: BadgeType | null
 }
 
-const typeStyle = (background: string, color: string): string => css`
+const typeStyle = (
+  background: string,
+  color: string
+): FlattenSimpleInterpolation => css`
   background-color: ${background};
   color: ${color};
 `
@@ -20,7 +23,7 @@ const styles = {
   [BadgeType.WARNING]: typeStyle(palette.eggShell, palette.ocher),
 }
 
-const Badge = styled.span<IBadgeProps>`
+const Badge = styled.span`
   display: inline-block;
   padding: 4px 10px;
   border-radius: 2px;
@@ -30,7 +33,7 @@ const Badge = styled.span<IBadgeProps>`
   }
 
   ${typography.tag}
-  ${({ type }) => type ? styles[type] : null}
+  ${({ type }: IBadgeProps) => type ? styles[type] : null}
 `
 
 export default Badge

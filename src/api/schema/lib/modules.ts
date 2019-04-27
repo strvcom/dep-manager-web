@@ -1,24 +1,10 @@
 import { mergeDeepRight } from 'ramda'
-
-type Resolver = (...args: any[]) => any
-
-interface IDependedentResolver {
-  fragment: string
-  resolve: Resolver
-}
-
-// IResolvers not working
-interface IResolvers {
-  [type: string]: {
-    [field: string]: IDependedentResolver | Resolver
-  }
-}
+import { IResolvers } from 'graphql-tools'
 
 export interface IGraphQLModule {
   typeDefs?: string // printed AST
   resolvers?: IResolvers
 }
-
 /**
  * Combines two GraphQL modules (typeDefs + resolvers) into one.
  */

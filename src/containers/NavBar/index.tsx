@@ -3,12 +3,8 @@ import { match } from 'react-router-dom'
 import { Location as LocationType, LocationDescriptor } from 'history'
 import { Container, StyledLogoLink, StyledNav, StyledNavLink } from './styled'
 
-export interface INavBarLinkProps {
+interface INavBarLinkProps {
   to: LocationDescriptor
-  children?: React.ReactNode
-}
-export interface INavBarProps {
-  logo?: React.ReactNode
   children?: React.ReactNode
 }
 
@@ -37,7 +33,12 @@ export const NavBarLink: FunctionComponent<INavBarLinkProps> = (
   )
 }
 
-const NavBar: FunctionComponent<INavBarLinkProps> = (
+interface INavBarProps {
+  logo?: React.ReactNode
+  children?: React.ReactNode
+}
+
+const NavBar: FunctionComponent<INavBarProps> = (
   props: INavBarProps
 ): JSX.Element => (
   <StyledNav>

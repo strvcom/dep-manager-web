@@ -1,8 +1,10 @@
-import React, { FunctionComponent } from 'react'
+import React from 'react'
 import { Switch, Route, RouteComponentProps } from 'react-router-dom'
 import * as routes from '../routes'
 import toBidaDepartment from '../../utils/toDepartment'
 import { BidaDepartment } from '../../config/types'
+
+type RouteRenderer<P> = (props: RouteComponentProps<P>) => React.ReactNode
 
 const Dashboard = React.lazy(() =>
   import(/* webpackChunkName: 'Dashboard' */ '../Dashboard')
@@ -16,21 +18,25 @@ const NodeLibraryDetails = React.lazy(() =>
   import(/* webpackChunkName: 'NodeLibraryDetails' */ '../NodeLibraryDetails')
 )
 
-const useNodeProjectDetails = (department: BidaDepartment): FunctionComponent =>
+const useNodeProjectDetails = (
+  department: BidaDepartment
+): RouteRenderer<{ id: string }> =>
   React.useCallback(
     (routeProps: RouteComponentProps<{ id: string }>) => (
       <NodeProjectDetails {...routeProps} department={department} />
     ),
     [department]
-  ) as FunctionComponent
+  )
 
-const useNodeLibraryDetails = (department: BidaDepartment): FunctionComponent =>
+const useNodeLibraryDetails = (
+  department: BidaDepartment
+): RouteRenderer<{ id: string }> =>
   React.useCallback(
     (routeProps: RouteComponentProps<{ id: string }>) => (
       <NodeLibraryDetails {...routeProps} department={department} />
     ),
     [department]
-  ) as FunctionComponent
+  )
 
 type DepartmentPageProps = RouteComponentProps<{
   department: string

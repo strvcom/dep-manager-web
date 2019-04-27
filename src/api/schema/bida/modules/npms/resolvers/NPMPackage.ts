@@ -1,5 +1,6 @@
 import { identity, path, prop } from 'ramda'
 import { combineResolvers, pipeResolvers } from 'graphql-resolvers'
+import { IResolverOptions } from 'graphql-tools'
 
 import * as loaders from '../loaders'
 
@@ -21,23 +22,13 @@ const attachAnalysis = async (root: INPMPackage): Promise<INPMPackage> => {
   return { ...root, analysis: result }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type IResolverFunction = () => any
-
-type IResolver =
-  | IResolverFunction
-  | {
-      fragment?: string
-      resolve: IResolverFunction
-    }
-
 /**
  * Factory for scalar package field resolvers based on NPMS metadata.
  */
 const metadata = (
   field: string,
   transform: Function = identity
-): IResolver => ({
+): IResolverOptions => ({
   fragment: `... on NPMPackage { name }`,
   resolve: pipeResolvers(
     combineResolvers(

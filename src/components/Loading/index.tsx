@@ -1,5 +1,6 @@
-import React from 'react'
-import styled, { keyframes } from '../../styles/styled'
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+import styled, { keyframes } from 'styled-components'
 
 const loading = keyframes`
   0%,
@@ -14,21 +15,18 @@ const loading = keyframes`
   }
 `
 
-interface IBarLoaderProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {
-  duration: number
-  size: number
+interface IProps {
+  color?: string
+  duration?: number
+  size?: number
 }
 
-const BarLoader = styled.div<IBarLoaderProps>`
+const BarLoader = styled.div`
   animation: ${loading} 1s infinite ease-in-out;
-  animation-delay: ${props => `${props.duration * -0.16}s`};
-  background: ${props => props.color};
-  color: ${props => props.color};
-  font-size: ${props => `${props.size}px`};
+  animation-delay: ${(props: IProps) => `${props.duration! * -0.16}s`};
+  background: ${(props: IProps) => props.color};
+  color: ${(props: IProps) => props.color};
+  font-size: ${(props: IProps) => `${props.size}px`};
   height: 4em;
   margin: 88px auto;
   position: relative;
@@ -38,8 +36,8 @@ const BarLoader = styled.div<IBarLoaderProps>`
 
   &:before {
     animation: ${loading} 1s infinite ease-in-out;
-    animation-delay: ${props => `${props.duration * -0.32}s`};
-    background: ${props => props.color};
+    animation-delay: ${(props: IProps) => `${props.duration! * -0.32}s`};
+    background: ${(props: IProps) => props.color};
     content: '';
     height: 4em;
     left: -1.5em;
@@ -50,8 +48,8 @@ const BarLoader = styled.div<IBarLoaderProps>`
 
   &:after {
     animation: ${loading} 1s infinite ease-in-out;
-    animation-delay: ${props => `${props.duration * 0.08}s`};
-    background: ${props => props.color};
+    animation-delay: ${(props: IProps) => `${props.duration! * 0.08}s`};
+    background: ${(props: IProps) => props.color};
     content: '';
     height: 4em;
     left: 1.5em;

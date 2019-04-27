@@ -1,7 +1,7 @@
 import React from 'react'
-import styled, { keyframes } from '../../styles/styled'
+import styled, { keyframes, Keyframes } from 'styled-components'
 
-const draw = (percent: number): string => keyframes`
+const draw = (percent: number): Keyframes => keyframes`
   to {
     stroke-dasharray: ${percent} ${100 - percent};
     stroke-dashoffset: ${25 + percent};
@@ -12,8 +12,8 @@ interface ICircleProps extends React.SVGProps<SVGCircleElement> {
   percent: number
 }
 
-export const Circle = styled.circle<ICircleProps>`
-  animation: ${({ percent }) => draw(percent)} 1s ease forwards;
+export const Circle = styled.circle`
+  animation: ${({ percent }: ICircleProps) => draw(percent)} 1s ease forwards;
 `
 
 export interface IDoughnutProps {

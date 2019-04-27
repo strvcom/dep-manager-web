@@ -1,7 +1,6 @@
-import React from 'react'
-import styled, { keyframes } from '../../styles/styled'
+import styled, { keyframes, Keyframes } from 'styled-components'
 
-const grow = (maxWidth: number): string => keyframes`
+const grow = (maxWidth: number): Keyframes => keyframes`
   from {
     width: 0%;
   }
@@ -10,19 +9,16 @@ const grow = (maxWidth: number): string => keyframes`
   }
 `
 
-interface IBarProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {
+interface IBarProps {
   fill: number
 }
 
-const Bar = styled.div<IBarProps>`
+const Bar = styled.div`
   position: relative;
   margin: 48px 0 24px;
   height: 4px;
   background-color: rgba(17, 21, 23, 0.15);
+
   &::after {
     content: '';
     display: block;
@@ -31,7 +27,7 @@ const Bar = styled.div<IBarProps>`
     top: 0;
     left: 0;
     height: 4px;
-    animation: ${({ fill }) => grow(fill || 0)} 1s ease forwards;
+    animation: ${({ fill }: IBarProps) => grow(fill || 0)} 1s ease forwards;
   }
 `
 
