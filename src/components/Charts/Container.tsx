@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from '../../styles/styled'
+import styled from 'styled-components'
 import {
   space,
   width,

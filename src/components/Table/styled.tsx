@@ -1,6 +1,6 @@
 import React from 'react'
-import styled from '../../styles/styled'
 import * as Virtual from 'react-virtualized'
+import styled from 'styled-components'
 import { typography } from '../../styles/themes/mixins'
 
 export const Wrapper = styled.section`

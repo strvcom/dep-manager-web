@@ -1,4 +1,4 @@
-import styled from '../../styles/styled'
+import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
 export const StyledDashboard = styled.main`

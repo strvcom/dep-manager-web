@@ -1,4 +1,4 @@
-import styled from '../../styles/styled'
+import styled from 'styled-components'
 import { typography } from '../../styles/themes/mixins'
 
 interface IButtonProps {

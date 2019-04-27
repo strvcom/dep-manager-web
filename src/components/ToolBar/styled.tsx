@@ -1,4 +1,4 @@
-import styled from '../../styles/styled'
+import styled from 'styled-components'
 import React from 'react'
 import { space, SpaceProps } from 'styled-system'
 import { typography } from '../../styles/themes/mixins'
