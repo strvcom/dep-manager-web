@@ -1,5 +1,6 @@
 import React, { Fragment, memo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
+import gql from 'graphql-tag'
 import { __, propEq } from 'ramda'
 
 import ToolBar from '../../components/ToolBar'
@@ -11,7 +12,31 @@ import Loading from '../../components/Loading'
 
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 
-import { NODE_LIBRARY_QUERY } from './query.gql'
+const NODE_LIBRARY_QUERY = gql`
+  query NODE_LIBRARY_QUERY($name: String!, $department: BidaDepartment!) {
+    library: npmPackage(name: $name) {
+      id
+      name
+      version
+
+      dependents(first: 100, department: $department) {
+        edges {
+          node {
+            ... on Dependent {
+              id
+              version
+              outdateStatus
+              repository {
+                id
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`
 
 export interface Props extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
