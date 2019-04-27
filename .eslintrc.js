@@ -33,6 +33,13 @@ module.exports = {
         deepDescribe: false,
       },
     },
+    {
+      files: ['**/*.test.*', '**/*.stories.*'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/explicit-function-return-type': 'off',
+      },
+    },
   ],
   rules: {
     'no-unused-vars': 'off',
