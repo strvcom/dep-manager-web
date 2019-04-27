@@ -74,6 +74,7 @@
     "graphql-resolvers": "^0.3.2",
     "graphql-tag": "^2.10.0",
     "graphql-tools": "^4.0.4",
+    "history": "^4.9.0",
     "isomorphic-fetch": "^2.2.1",
     "mem": "^4.3.0",
     "netlify-auth-providers": "^1.0.0-alpha5",
