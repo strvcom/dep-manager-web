@@ -1,6 +1,7 @@
 import React, { Fragment, memo, useState } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
 import { prop, propEq } from 'ramda'
+import gql from 'graphql-tag'
 
 import ToolBar from '../../components/ToolBar'
 import Anchor from '../../components/Anchor'
@@ -15,7 +16,30 @@ import { BidaDepartment } from '../../config/types'
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 import { getRecentlyUpdated } from '../Dashboard/helpers'
 
-import { PROJECT_QUERY } from './query.gql'
+const PROJECT_QUERY = gql`
+  query PROJECT_QUERY($name: String!) {
+    project(name: $name) {
+      id
+      url
+      name
+      npmPackage {
+        id
+        dependencies {
+          id
+          version
+          outdateStatus
+          package {
+            id
+            name
+            license
+            version
+            updatedAt
+          }
+        }
+      }
+    }
+  }
+`
 
 export interface Props extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
