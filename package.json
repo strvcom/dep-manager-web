@@ -9,7 +9,6 @@
     "build:app": "tsc -p tsconfig.production.json && NODE_ENV=production react-scripts build",
     "build:lambda": "netlify-lambda build src/lambda --config ./webpack.functions.js",
     "codegen": "apollo codegen:generate __generated-types --target typescript --includes=src/**/* --globalTypesFile src/data/__generated-types.ts",
-    "dev-api": "onchange -i -k '**/*.js' '**/*.ts' -- ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' serve-api.ts",
     "eslint": "eslint --ext .js --ext .jsx --ext .ts --ext .tsx",
     "postinstall": "patch-package",
     "lint": "run-p lint:**",
