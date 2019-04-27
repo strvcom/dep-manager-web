@@ -153,6 +153,7 @@
   },
   "resolutions": {
     "caniuse-lite": "1.0.30000957",
+    "eslint-plugin-react": "^7.12.4",
     "graphql": "14.2.1"
   }
 }
