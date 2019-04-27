@@ -1,6 +1,0 @@
-query CURRENT_USER_QUERY {
-  user: viewer {
-    id
-    name
-  }
-}
