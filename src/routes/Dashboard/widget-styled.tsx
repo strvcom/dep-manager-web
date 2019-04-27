@@ -9,6 +9,7 @@ export const ItemLink = styled(Link)`
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+
   &:hover {
     background: rgba(0, 0, 0, 0.1);
   }
@@ -27,11 +28,11 @@ export const TitleContainer = styled.div`
 `
 
 export const Status = styled.section`
+  ${typography.subtitle}
   display: flex;
   justify-content: space-between;
-  ${typography.subtitle}
   color: ${props => props.theme.primaryColor};
-  `
+`
 
 export const Count = styled.span`
   opacity: 0.5;

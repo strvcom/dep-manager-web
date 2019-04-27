@@ -27,6 +27,7 @@ export const StyledNavLink = styled(NavLink)`
   box-sizing: border-box;
   cursor: pointer;
   opacity: 0.75;
+
   &.active {
     border-bottom: 2px solid ${props => props.theme.secondaryColor};
     opacity: 1;

@@ -25,10 +25,12 @@ export const StyledTable = styled(
     display: flex;
     align-items: center;
   }
+
   .row {
     ${typography.body}
     cursor: pointer;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
     &:hover {
       background: rgba(0, 0, 0, 0.1);
     }

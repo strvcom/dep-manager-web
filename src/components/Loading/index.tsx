@@ -9,6 +9,7 @@ const loading = keyframes`
     box-shadow: 0 0;
     height: 4em;
   }
+
   40% {
     box-shadow: 0 -2em;
     height: 5em;
@@ -34,7 +35,7 @@ const BarLoader = styled.div`
   transform: translateZ(0);
   width: 1em;
 
-  &:before {
+  &::before {
     animation: ${loading} 1s infinite ease-in-out;
     animation-delay: ${(props: IProps) => `${props.duration! * -0.32}s`};
     background: ${(props: IProps) => props.color};
@@ -46,7 +47,7 @@ const BarLoader = styled.div`
     width: 1em;
   }
 
-  &:after {
+  &::after {
     animation: ${loading} 1s infinite ease-in-out;
     animation-delay: ${(props: IProps) => `${props.duration! * 0.08}s`};
     background: ${(props: IProps) => props.color};

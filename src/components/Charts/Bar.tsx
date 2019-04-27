@@ -4,6 +4,7 @@ const grow = (maxWidth: number): Keyframes => keyframes`
   from {
     width: 0%;
   }
+
   to {
     width: ${maxWidth}%;
   }
