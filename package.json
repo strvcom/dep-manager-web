@@ -27,8 +27,8 @@
     "storybook:build": "build-storybook -s public",
     "storybook:start": "start-storybook -p 9009 -s public",
     "test": "jest",
-    "type-check": "tsc -p tsconfig.production.json",
-    "ts": "ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' "
+    "ts": "ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' ",
+    "type-check": "tsc -p tsconfig.production.json"
   },
   "husky": {
     "hooks": {
@@ -37,19 +37,25 @@
     }
   },
   "lint-staged": {
-    "*.md": [
-      "node ./scripts/toc.js",
-      "git add README.md"
+    "ignore": [
+      "**/graphql-types.ts",
+      "**/graphql-types/*"
     ],
-    "*.{ts,tsx}": [
-      "prettier-eslint --write",
-      "stylelint",
-      "git add"
-    ],
-    "package.json": [
-      "yarn sort-package-json",
-      "git add"
-    ]
+    "linters": {
+      "*.md": [
+        "node ./scripts/toc.js",
+        "git add README.md"
+      ],
+      "*.{ts,tsx}": [
+        "prettier-eslint --write",
+        "stylelint",
+        "git add"
+      ],
+      "package.json": [
+        "yarn sort-package-json",
+        "git add"
+      ]
+    }
   },
   "browserslist": [
     ">0.2%",
