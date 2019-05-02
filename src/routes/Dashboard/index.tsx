@@ -1,6 +1,7 @@
 import React, { Suspense, memo, useState, FunctionComponent } from 'react'
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import ErrorBoundary from 'react-error-boundary'
+import { pipe, prop, map, filter, includes } from 'ramda'
 
 import * as routes from '../routes'
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
@@ -14,30 +15,33 @@ import RecentUpdates from './RecentUpdates'
 import DashboardToolBar from './DashboardToolBar'
 import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
 import { extractLibrariesInfo } from './helpers'
-import DASHBOARD_QUERY from './query.gql'
+
+import {
+  BidaDepartment,
+  SemverOutdateStatus as distances,
+} from '../../generated/types'
+
+import DASHBOARD_QUERY, { DASHBOARD_QUERYQueryData as IData } from './query.gql'
+
+type IVariables = IData.Variables
+type IRepository = IData.ProjectsEdgesNodeRepository
+type ILibrary = IData.ProjectsEdgesNodeRepositoryNpmPackageDependencies
 
 type IProps = RouteComponentProps<{
   department: string
   category: string
 }>
 
-interface IProject {
-  name: string
-}
-
-interface ILibrary {
-  package: {
-    name: string
-  }
-}
-
-interface IProjectEdge {
-  node: IProject
-}
-
-const distances = {
-  MAJOR: 'MAJOR',
-}
+const filterProjects = (search: string): Function =>
+  pipe(
+    map(prop('node')),
+    filter(
+      pipe(
+        prop('name'),
+        includes(search)
+      )
+    )
+  )
 
 const Dashboard: FunctionComponent<IProps> = ({
   match,
@@ -57,13 +61,13 @@ const Dashboard: FunctionComponent<IProps> = ({
       />
 
       <StyledDashboard>
-        <AuthenticatedQuery
+        <AuthenticatedQuery<IData, IVariables>
           query={DASHBOARD_QUERY}
-          variables={{ department: department.toUpperCase() }}
-        >
-          {({ data, loading, error }: any): JSX.Element => {
+          variables={{ department: department.toUpperCase() as BidaDepartment }}
+          children={({ data, loading, error }): React.ReactNode => {
             if (error) throw error
             if (loading) return <Loading />
+            if (!data) return null
 
             const { projects, archived } = data
 
@@ -111,9 +115,9 @@ const Dashboard: FunctionComponent<IProps> = ({
             }
 
             const renderProjects = (): JSX.Element => {
-              const filtered = projects.edges
-                .map(({ node }: IProjectEdge) => node)
-                .filter(({ name }: IProject): boolean => name.includes(search))
+              const filtered = filterProjects(search)(
+                projects.edges
+              ) as IRepository[]
 
               return (
                 <NodeProjectsTable
@@ -152,7 +156,7 @@ const Dashboard: FunctionComponent<IProps> = ({
               </Suspense>
             )
           }}
-        </AuthenticatedQuery>
+        />
       </StyledDashboard>
     </>
   )
