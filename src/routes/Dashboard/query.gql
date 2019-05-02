@@ -1,3 +1,5 @@
+#import "../../components/NodeProjectsTable/fragment.gql"
+
 query DASHBOARD_QUERY($department: BidaDepartment!) {
   projects(first: 50, department: $department) {
     total: repositoryCount
@@ -7,23 +9,9 @@ query DASHBOARD_QUERY($department: BidaDepartment!) {
         ... on Repository {
           id
           name
-          pushedAt
-          npmPackage {
-            id
-            dependencies {
-              id
-              name
-              outdateStatus
-              package {
-                id
-                name
-                version
-                license
-                updatedAt
-              }
-            }
-          }
         }
+
+        ...NodeProjectsTable_projects
       }
     }
   }
