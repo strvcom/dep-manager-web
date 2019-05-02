@@ -19,11 +19,11 @@ interface IProps extends Pick<QueryProps, Exclude<keyof QueryProps, 'query'>> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CurrentUserContainer = ({ children, ...rest }: IProps): JSX.Element => (
   <AuthenticatedQuery<CURRENT_USER_QUERYQueryData>
+    {...rest}
     query={CURRENT_USER_QUERY}
     children={({ data: { user } = { user: undefined }, ...result }) =>
       children({ user, ...result } as IChildrenResult)
     }
-    {...rest}
   />
 )
 
