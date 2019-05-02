@@ -6,7 +6,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "build": "run-p build:app build:lambda && yarn build:analysis",
     "build:analysis": "mkdir build -p build/.dev && source-map-explorer 'build/static/js/*.js' --html > build/.dev/bundle-analysis.html",
-    "build:app": "tsc -p tsconfig.production.json && NODE_ENV=production react-scripts build",
+    "build:app": "yarn type-check && NODE_ENV=production react-scripts build",
     "build:graphql": "yarn build:graphql:schema && yarn build:graphql:types",
     "build:graphql:schema": "yarn ts scripts/build-schema.js",
     "build:graphql:types": "apollo codegen:generate graphql-types --target typescript --globalTypesFile src/config/graphql-types.ts",
