@@ -15,7 +15,7 @@ import { BidaDepartment } from '../../config/types'
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 import { getRecentlyUpdated } from '../Dashboard/helpers'
 
-import { PROJECT_QUERY } from './query.gql'
+import PROJECT_QUERY from './query.gql'
 
 export interface IProps extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment

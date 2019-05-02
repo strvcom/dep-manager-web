@@ -14,7 +14,7 @@ import RecentUpdates from './RecentUpdates'
 import DashboardToolBar from './DashboardToolBar'
 import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
 import { extractLibrariesInfo } from './helpers'
-import { DASHBOARD_QUERY } from './query.gql'
+import DASHBOARD_QUERY from './query.gql'
 
 type IProps = RouteComponentProps<{
   department: string

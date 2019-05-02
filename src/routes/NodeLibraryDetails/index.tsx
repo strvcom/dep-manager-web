@@ -11,7 +11,7 @@ import Loading from '../../components/Loading'
 
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 
-import { NODE_LIBRARY_QUERY } from './query.gql'
+import NODE_LIBRARY_QUERY from './query.gql'
 
 export interface IProps extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
