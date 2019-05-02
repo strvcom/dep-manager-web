@@ -1,0 +1,20 @@
+fragment NodeProjectsTable_projects on Repository {
+  id
+  name
+  pushedAt
+  npmPackage {
+    id
+    dependencies {
+      id
+      name
+      outdateStatus
+      package {
+        id
+        name
+        version
+        license
+        updatedAt
+      }
+    }
+  }
+}

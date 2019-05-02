@@ -22,10 +22,11 @@ import anchorRowRenderer from '../../utils/anchorRowRenderer'
 
 import { useSort, IUseSortOptions } from '../../hooks/useSort'
 
-const distances = {
-  MAJOR: 'MAJOR',
-  MINOR: 'MINOR',
-}
+import { SemverOutdateStatus as distances } from '../../generated/types'
+import { NodeProjectsTable_projectsFragmentData } from './fragment.gql'
+
+type IProject = NodeProjectsTable_projectsFragmentData
+type IDependency = NodeProjectsTable_projectsFragmentData.NpmPackageDependencies
 
 const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendProjects,
@@ -38,18 +39,6 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 })
 
-interface IPackage {
-  outdateStatus: string
-}
-
-interface IProject {
-  name: string
-  pushedAt: string
-  npmPackage: null | {
-    dependencies: IPackage[]
-  }
-}
-
 interface IProps {
   cacheKey?: string
   projects: IProject[]
@@ -60,9 +49,7 @@ interface IOutdatedCounts {
   [distance: string]: number
 }
 
-interface INormalizedProject {
-  name: string
-  pushedAt: string
+interface INormalizedProject extends Pick<IProject, 'name' | 'pushedAt'> {
   outdated: IOutdatedCounts
   totalOutdated: number
 }
@@ -81,7 +68,7 @@ const renderOutdated = ({
   />
 )
 
-const getOutdated = (dependencies: IPackage[]): number =>
+const getOutdated = (dependencies: (IDependency | null)[]): number =>
   pipe(
     propEq('outdateStatus'),
     filter(__, dependencies),
