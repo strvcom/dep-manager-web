@@ -16,7 +16,7 @@ export interface DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_depen
   __typename: "NPMPackage";
   id: string;
   name: string;
-  version: string | null;
+  version: string;
   license: string | null;
   updatedAt: string | null;
 }

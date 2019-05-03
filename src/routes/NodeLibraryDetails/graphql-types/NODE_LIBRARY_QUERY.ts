@@ -51,7 +51,7 @@ export interface NODE_LIBRARY_QUERY_library {
   __typename: "NPMPackage";
   id: string;
   name: string;
-  version: string | null;
+  version: string;
   dependents: NODE_LIBRARY_QUERY_library_dependents;
 }
 
