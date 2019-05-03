@@ -196,6 +196,62 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
 
       expect(print(visit(doc, visitor))).toBe(print(expected))
     })
+
+    it('should append requested repository data when injecting metadata', () => {
+      const doc = gql`
+        {
+          package {
+            dependents {
+              name
+              edges {
+                node {
+                  ... on Dependent {
+                    repository {
+                      id
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `
+
+      const expected = gql`
+        {
+          package {
+            dependents {
+              name
+              edges {
+                node {
+                  ... on Repository {
+                    id
+                  }
+                }
+              }
+
+              edges {
+                node {
+                  ... on Repository {
+                    name
+                    npmPackage {
+                      dependencies {
+                        version
+                        package {
+                          name
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      `
+
+      expect(print(visit(doc, visitor))).toBe(print(expected))
+    })
   })
 
   describe('::dependents', () => {
