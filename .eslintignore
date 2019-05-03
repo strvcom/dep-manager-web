@@ -2,4 +2,6 @@
 node_modules
 
 **/*.d.ts
+**/graphql-types/**/*
+src/generated/**/*
 webpack.functions.js
