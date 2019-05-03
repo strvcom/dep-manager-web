@@ -12,17 +12,17 @@ export interface PROJECT_QUERY_project_npmPackage_dependencies_package {
   __typename: "NPMPackage";
   id: string;
   name: string;
-  license: string | null;
   version: string;
   updatedAt: string | null;
+  license: string | null;
 }
 
 export interface PROJECT_QUERY_project_npmPackage_dependencies {
   __typename: "NPMDependency";
+  package: PROJECT_QUERY_project_npmPackage_dependencies_package;
   id: string;
   version: string;
   outdateStatus: SemverOutdateStatus | null;
-  package: PROJECT_QUERY_project_npmPackage_dependencies_package;
 }
 
 export interface PROJECT_QUERY_project_npmPackage {

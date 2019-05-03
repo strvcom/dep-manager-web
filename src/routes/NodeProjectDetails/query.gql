@@ -1,3 +1,6 @@
+#import "../../components/NodeProjectDependenciesTable/fragment.gql"
+#import "../../components/RecentUpdates/fragment.gql"
+
 query PROJECT_QUERY($name: String!) {
   project(name: $name) {
     id
@@ -6,16 +9,11 @@ query PROJECT_QUERY($name: String!) {
     npmPackage {
       id
       dependencies {
-        id
-        version
-        outdateStatus
         package {
-          id
-          name
-          license
-          version
-          updatedAt
+          ...RecentUpdates_library
         }
+
+        ...NodeProjectsDependenciesTable_dependencies
       }
     }
   }

@@ -1,12 +1,12 @@
 import React, { memo, useState, FunctionComponent } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { prop, propEq } from 'ramda'
+import { prop } from 'ramda'
 
 import ToolBar from '../../components/ToolBar'
 import Anchor from '../../components/Anchor'
 import { Wrapper, Content, Sidebar, Input } from './styled'
 import ActualityWidget from '../../components/ActualityWidget'
-import RecentUpdates from '../Dashboard/RecentUpdates'
+import RecentUpdates from '../../components/RecentUpdates'
 import { Body } from '../../components/Typography'
 import Loading from '../../components/Loading'
 import NodeProjectDependenciesTable from '../../components/NodeProjectDependenciesTable'
@@ -17,14 +17,15 @@ import { getRecentlyUpdated } from '../Dashboard/helpers'
 
 import PROJECT_QUERY from './query.gql'
 
+import {
+  PROJECT_QUERY as IData,
+  PROJECT_QUERYVariables as IVariables,
+  PROJECT_QUERY_project_npmPackage_dependencies as IDependency,
+  PROJECT_QUERY_project_npmPackage_dependencies_package as IPackage,
+} from './graphql-types/PROJECT_QUERY'
+
 export interface IProps extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
-}
-
-interface IDependency {
-  package: {
-    name: string
-  }
 }
 
 const NodeProjectDetails: FunctionComponent<IProps> = ({
@@ -37,22 +38,22 @@ const NodeProjectDetails: FunctionComponent<IProps> = ({
   const cacheKey = department + name + search
 
   return (
-    <AuthenticatedQuery query={PROJECT_QUERY} variables={{ name }}>
-      {({ data, loading, error }: any) => {
+    <AuthenticatedQuery<IData, IVariables>
+      query={PROJECT_QUERY}
+      variables={{ name }}
+      children={({ data, loading, error }) => {
         if (error) throw error
         if (loading) return <Loading />
+        if (!data) return null
 
         const { project } = data
 
-        const dependencies = project.npmPackage
+        const dependencies = (project.npmPackage
           ? project.npmPackage.dependencies
-          : []
+          : []) as IDependency[]
 
-        const outdated = dependencies.filter(propEq('outdateStatus', 'MAJOR'))
-
-        const recentLibraries = getRecentlyUpdated(dependencies).map(
-          prop('package')
-        )
+        const outdated = dependencies.filter(({ outdateStatus }) => outdateStatus === 'MAJOR')
+        const recentLibraries = getRecentlyUpdated(dependencies).map(prop('package')) as IPackage[]
 
         const filtered = dependencies.filter((dependency: IDependency) =>
           dependency.package.name.includes(search)
@@ -98,7 +99,7 @@ const NodeProjectDetails: FunctionComponent<IProps> = ({
           </>
         )
       }}
-    </AuthenticatedQuery>
+    />
   )
 }
 
