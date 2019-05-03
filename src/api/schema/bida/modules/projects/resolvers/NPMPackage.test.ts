@@ -76,7 +76,7 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
     })
   })
 
-  describe('[visitor]', () => {
+  describe.only('[visitor]', () => {
     it('should not alter non-Dependent queries', () => {
       const doc = gql`
         {
@@ -124,34 +124,6 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
           ... on Repository {
             name
           }
-        }
-      `
-
-      expect(print(visit(doc, visitor))).toBe(print(expected))
-    })
-
-    it('should transform named Dependent fragments into Repository fragments', () => {
-      const doc = gql`
-        {
-          other
-          ...NamedFragment
-        }
-
-        fragment NamedFragment on Dependent {
-          repository {
-            name
-          }
-        }
-      `
-
-      const expected = gql`
-        {
-          other
-          ...NamedFragment
-        }
-
-        fragment NamedFragment on Repository {
-          name
         }
       `
 
