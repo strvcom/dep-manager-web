@@ -52,7 +52,7 @@ export interface NODE_LIBRARY_QUERY_library {
   id: string;
   name: string;
   version: string | null;
-  dependents: NODE_LIBRARY_QUERY_library_dependents | null;
+  dependents: NODE_LIBRARY_QUERY_library_dependents;
 }
 
 export interface NODE_LIBRARY_QUERY {

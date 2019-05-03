@@ -5672,7 +5672,7 @@ type NPMPackage {
   private: Boolean
   description: String
   analysis: NPMSAnalysis
-  dependents(after: String, before: String, first: Int, last: Int, archived: Boolean, department: BidaDepartment): SearchResultItemConnection
+  dependents(after: String, before: String, first: Int, last: Int, archived: Boolean, department: BidaDepartment): SearchResultItemConnection!
 }
 
 type NPMSAnalysis {
@@ -9948,7 +9948,7 @@ type Repository implements Node & ProjectOwner & RegistryPackageOwner & Subscrib
     last: Int
   ): UserConnection!
   npmPackage: NPMPackage
-  departments: [BidaDepartment]
+  departments: [BidaDepartment]!
 }
 
 """The affiliation of a user to a repository"""
