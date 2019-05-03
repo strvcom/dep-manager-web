@@ -15,7 +15,7 @@ const typeDefs = gql`
   type NPMPackage {
     id: String!
     name: String!
-    version: String
+    version: String!
     dependencies: [NPMDependency]!
   }
 
@@ -60,6 +60,7 @@ const NPMDependency = {
     return `${name}@${version}`
   },
 
+  // @TODO: deprecated?
   package: omit(['version']),
 }
 

@@ -29,7 +29,7 @@ const typeDefs = gql`
   extend union SearchResultItem = Dependent
 
   extend type Repository {
-    departments: [BidaDepartment]
+    departments: [BidaDepartment]!
   }
 
   extend type NPMPackage {
@@ -40,7 +40,7 @@ const typeDefs = gql`
       last: Int
       archived: Boolean
       department: BidaDepartment
-    ): SearchResultItemConnection
+    ): SearchResultItemConnection!
   }
 
   extend type Query {

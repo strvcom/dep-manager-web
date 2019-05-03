@@ -13,7 +13,7 @@ export interface PROJECT_QUERY_project_npmPackage_dependencies_package {
   id: string;
   name: string;
   license: string | null;
-  version: string | null;
+  version: string;
   updatedAt: string | null;
 }
 

@@ -5665,7 +5665,7 @@ type NPMDependency {
 type NPMPackage {
   id: String!
   name: String!
-  version: String
+  version: String!
   dependencies: [NPMDependency]!
   license: String
   updatedAt: String
