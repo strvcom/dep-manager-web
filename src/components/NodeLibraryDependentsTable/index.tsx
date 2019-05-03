@@ -11,14 +11,7 @@ import * as routes from '../../routes/routes'
 
 import { useSort } from '../../hooks/useSort'
 
-interface IDependent {
-  node: {
-    version: string
-    repository: {
-      name: string
-    }
-  }
-}
+import { NodeLibraryDependentsTable_dependents as IDependent } from './graphql-types/NodeLibraryDependentsTable_dependents'
 
 interface INormalizedDependent {
   name: string
@@ -63,9 +56,9 @@ const renderVersion = ({
  */
 const normalize = mem(
   (dependent: IDependent, libraryVersion: string) => ({
-    name: dependent.node.repository.name,
-    version: dependent.node.version,
-    distance: versionDistance(libraryVersion, dependent.node.version),
+    name: dependent.repository.name,
+    version: dependent.version,
+    distance: versionDistance(libraryVersion, dependent.version),
   }),
   { cacheKey: path(['node', 'id']) }
 )
