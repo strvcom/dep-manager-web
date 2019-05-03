@@ -1,6 +1,6 @@
 import React, { memo, useState, FunctionComponent } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { propEq } from 'ramda'
+import { prop } from 'ramda'
 
 import ToolBar from '../../components/ToolBar'
 import { Wrapper, Content, Sidebar, Input } from './styled'
@@ -13,16 +13,14 @@ import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
 
 import NODE_LIBRARY_QUERY from './query.gql'
 
+import {
+  NODE_LIBRARY_QUERY as IData,
+  NODE_LIBRARY_QUERYVariables as IVariables,
+  NODE_LIBRARY_QUERY_library_dependents_edges_node_Dependent as IDependent,
+} from './graphql-types/NODE_LIBRARY_QUERY'
+
 export interface IProps extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
-}
-
-interface IDependentEdge {
-  node: {
-    repository: {
-      name: string
-    }
-  }
 }
 
 const NodeLibraryDetails: FunctionComponent<IProps> = ({
@@ -35,22 +33,24 @@ const NodeLibraryDetails: FunctionComponent<IProps> = ({
   const cacheKey = department + name + search
 
   return (
-    <AuthenticatedQuery
+    <AuthenticatedQuery<IData, IVariables>
       query={NODE_LIBRARY_QUERY}
       variables={{ name, department }}
-    >
-      {({ data, loading, error }: any) => {
+      children={({ data, loading, error }) => {
         if (error) throw error
         if (loading) return <Loading />
+        if (!data || !data.library) return null
 
         const { library } = data
 
-        const outdated = library.dependents.edges.filter(
-          propEq('outdatedStatus', 'MAJOR')
+        const dependents = (library.dependents.edges || []).map(
+          prop('node')
+        ) as IDependent[]
+        const outdated = dependents.filter(
+          ({ outdateStatus }) => outdateStatus === 'MAJOR'
         )
-
-        const filtered = library.dependents.edges.filter(
-          ({ node }: IDependentEdge) => node.repository.name.includes(search)
+        const filtered = dependents.filter(({ repository }) =>
+          repository.name.includes(search)
         )
 
         return (
@@ -80,14 +80,14 @@ const NodeLibraryDetails: FunctionComponent<IProps> = ({
                   title="Projects Actuality"
                   mt={20}
                   outdated={outdated.length}
-                  total={library.dependents.edges.length}
+                  total={dependents.length}
                 />
               </Sidebar>
             </Wrapper>
           </>
         )
       }}
-    </AuthenticatedQuery>
+    />
   )
 }
 
