@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import { BidaDepartment, SemverOutdateStatus } from "./../../../config/graphql-types";
+import { BidaDepartment, SemverOutdateStatus } from "./../../../generated/graphql-types";
 
 // ====================================================
 // GraphQL query operation: NODE_LIBRARY_QUERY

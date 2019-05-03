@@ -4,7 +4,7 @@ module.exports = {
     excludes: ['src/api/**/*'],
     service: {
       name: 'bida-schema',
-      localSchemaFile: './generated/schema.graphql'
+      localSchemaFile: './src/generated/schema.graphql'
     }
   }
 }

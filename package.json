@@ -9,7 +9,7 @@
     "build:app": "yarn type-check && NODE_ENV=production react-scripts build",
     "build:graphql": "yarn build:graphql:schema && yarn build:graphql:types",
     "build:graphql:schema": "yarn ts scripts/build-schema.js",
-    "build:graphql:types": "apollo codegen:generate graphql-types --target typescript --globalTypesFile src/config/graphql-types.ts",
+    "build:graphql:types": "apollo client:codegen graphql-types --target typescript --globalTypesFile src/generated/graphql-types.ts",
     "build:lambda": "netlify-lambda build src/lambda --config ./webpack.functions.js",
     "build:schema": "yarn ts scripts/build-schema.js",
     "codegen": "apollo codegen:generate --target typescript",
