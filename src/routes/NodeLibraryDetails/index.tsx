@@ -43,15 +43,9 @@ const NodeLibraryDetails: FunctionComponent<IProps> = ({
 
         const { library } = data
 
-        const dependents = (library.dependents.edges || []).map(
-          prop('node')
-        ) as IDependent[]
-        const outdated = dependents.filter(
-          ({ outdateStatus }) => outdateStatus === 'MAJOR'
-        )
-        const filtered = dependents.filter(({ repository }) =>
-          repository.name.includes(search)
-        )
+        const dependents = (library.dependents.edges || []).map(prop('node')) as IDependent[]
+        const outdated = dependents.filter(({ outdateStatus }) => outdateStatus === 'MAJOR')
+        const filtered = dependents.filter(({ repository }) => repository.name.includes(search))
 
         return (
           <>
