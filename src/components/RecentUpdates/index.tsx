@@ -1,18 +1,9 @@
 import React, { memo, FunctionComponent } from 'react'
 
-import WidgetContainer, {
-  WidgetContainerProps,
-  WidgetTitle,
-} from '../../components/Charts/Container'
+import WidgetContainer, { WidgetContainerProps, WidgetTitle } from '../Charts/Container'
+import { Items, ItemLink, TitleContainer, UpdatedTime } from '../../routes/Dashboard/widget-styled'
 
-import { Items, ItemLink, TitleContainer, UpdatedTime } from './widget-styled'
-
-interface ILibrary {
-  id: string
-  name: string
-  version: string
-  updatedAt?: string
-}
+import { RecentUpdates_library as ILibrary } from './graphql-types/RecentUpdates_library'
 
 interface IProps extends Pick<WidgetContainerProps, 'width'> {
   libraries: ILibrary[]
@@ -24,10 +15,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 })
 
-const RecentUpdates: FunctionComponent<IProps> = ({
-  width,
-  libraries,
-}: IProps): JSX.Element => (
+const RecentUpdates: FunctionComponent<IProps> = ({ width, libraries }: IProps): JSX.Element => (
   <WidgetContainer width={width}>
     <WidgetTitle>Recent Updates</WidgetTitle>
     <Items>
@@ -38,9 +26,7 @@ const RecentUpdates: FunctionComponent<IProps> = ({
             <span>{lib.version}</span>
           </TitleContainer>
           {lib.updatedAt && (
-            <UpdatedTime>
-              {dateFormatter.format(new Date(lib.updatedAt))}
-            </UpdatedTime>
+            <UpdatedTime>{dateFormatter.format(new Date(lib.updatedAt))}</UpdatedTime>
           )}
         </ItemLink>
       ))}

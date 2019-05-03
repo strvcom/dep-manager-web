@@ -9,17 +9,14 @@ import Loading from '../../components/Loading'
 import NodeLibrariesTable from '../../components/NodeLibrariesTable'
 import NodeProjectsTable from '../../components/NodeProjectsTable'
 import ActualityWidget from '../../components/ActualityWidget'
+import RecentUpdates from '../../components/RecentUpdates'
 
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
-import RecentUpdates from './RecentUpdates'
 import DashboardToolBar from './DashboardToolBar'
 import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
 import { extractLibrariesInfo } from './helpers'
 
-import {
-  BidaDepartment,
-  SemverOutdateStatus as distances,
-} from '../../generated/graphql-types'
+import { BidaDepartment, SemverOutdateStatus as distances } from '../../generated/graphql-types'
 
 import DASHBOARD_QUERY from './query.gql'
 
@@ -46,9 +43,7 @@ const filterProjects = (search: string): Function =>
     )
   )
 
-const Dashboard: FunctionComponent<IProps> = ({
-  match,
-}: IProps): JSX.Element => {
+const Dashboard: FunctionComponent<IProps> = ({ match }: IProps): JSX.Element => {
   const { department, category } = match.params
   const [search, setSearch] = useState('')
 
@@ -75,12 +70,9 @@ const Dashboard: FunctionComponent<IProps> = ({
             const { projects, archived } = data
 
             // heavy processing here:
-            const {
-              libraries,
-              uniqueLibraries,
-              outdates,
-              recentlyUpdated,
-            } = extractLibrariesInfo(projects)
+            const { libraries, uniqueLibraries, outdates, recentlyUpdated } = extractLibrariesInfo(
+              projects
+            )
 
             const { [distances.MAJOR]: major } = outdates
 
@@ -104,23 +96,17 @@ const Dashboard: FunctionComponent<IProps> = ({
             )
 
             const renderLibraries = (): JSX.Element => {
-              const filtered = uniqueLibraries.filter(
-                ({ package: { name } }: ILibrary) => name.includes(search)
+              const filtered = uniqueLibraries.filter(({ package: { name } }: ILibrary) =>
+                name.includes(search)
               )
 
               return (
-                <NodeLibrariesTable
-                  libraries={filtered}
-                  outdates={outdates}
-                  cacheKey={cacheKey}
-                />
+                <NodeLibrariesTable libraries={filtered} outdates={outdates} cacheKey={cacheKey} />
               )
             }
 
             const renderProjects = (): JSX.Element => {
-              const filtered = filterProjects(search)(
-                projects.edges
-              ) as IRepository[]
+              const filtered = filterProjects(search)(projects.edges) as IRepository[]
 
               return (
                 <NodeProjectsTable
@@ -135,24 +121,12 @@ const Dashboard: FunctionComponent<IProps> = ({
               <Suspense fallback={<Loading />}>
                 <ErrorBoundary>
                   <TableContainer>
-                    <Route
-                      exact
-                      path={routes.dashboard}
-                      render={renderWidgets}
-                    />
+                    <Route exact path={routes.dashboard} render={renderWidgets} />
 
                     <Switch>
-                      <Route
-                        exact
-                        path={routes.libraries}
-                        render={renderLibraries}
-                      />
+                      <Route exact path={routes.libraries} render={renderLibraries} />
 
-                      <Route
-                        exact
-                        path={routes.projects}
-                        render={renderProjects}
-                      />
+                      <Route exact path={routes.projects} render={renderProjects} />
                     </Switch>
                   </TableContainer>
                 </ErrorBoundary>
