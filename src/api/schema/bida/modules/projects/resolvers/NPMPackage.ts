@@ -8,6 +8,7 @@ import {
   lensPath,
   lensProp,
   over,
+  path,
   pathEq,
   pathOr,
   propEq,
@@ -119,17 +120,26 @@ const visitor = {
   InlineFragment: {
     leave: (node: InlineFragmentNode) => {
       if (node.typeCondition && node.typeCondition.name.value === 'Dependent') {
-        const selection = node.selectionSet.selections.find(
+        const selections = node.selectionSet.selections.filter(
           isRepositoryField
-        ) as FieldNode
+        ) as FieldNode[]
 
         // skip this Dependent fragment entirely, when not
         // requesting repository data.
-        if (!selection) return null
+        if (!selections.length) return null
+
+        const selectionSet = {
+          kind: 'SelectionSet',
+          selections: [].concat(
+            // @ts-ignore
+            ...selections.map(path(['selectionSet', 'selections']))
+          ),
+        }
 
         return pipe(
           set(lensPath(['typeCondition', 'name', 'value']), 'Repository'),
-          set(lensProp('selectionSet'), selection.selectionSet)
+          // @ts-ignore
+          set(lensProp('selectionSet'), selectionSet)
         )(node)
       }
     },
