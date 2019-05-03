@@ -3,14 +3,16 @@ import { QueryResult, QueryProps } from 'react-apollo'
 
 import AuthenticatedQuery from '../AuthenticatedQuery'
 
-import CURRENT_USER_QUERY, {
-  CURRENT_USER_QUERYQueryData,
-  CURRENT_USER_QUERYQueryPartialData,
-} from './query.gql'
+import CURRENT_USER_QUERY from './query.gql'
 
-interface IChildrenResult
-  extends QueryResult,
-    CURRENT_USER_QUERYQueryPartialData {}
+import {
+  CURRENT_USER_QUERY as IData,
+  CURRENT_USER_QUERY_user as IUser,
+} from './graphql-types/CURRENT_USER_QUERY'
+
+interface IChildrenResult extends QueryResult {
+  user?: IUser
+}
 
 interface IProps extends Pick<QueryProps, Exclude<keyof QueryProps, 'query'>> {
   children: (result: IChildrenResult) => JSX.Element | null
@@ -18,7 +20,7 @@ interface IProps extends Pick<QueryProps, Exclude<keyof QueryProps, 'query'>> {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CurrentUserContainer = ({ children, ...rest }: IProps): JSX.Element => (
-  <AuthenticatedQuery<CURRENT_USER_QUERYQueryData>
+  <AuthenticatedQuery<IData>
     {...rest}
     query={CURRENT_USER_QUERY}
     children={({ data: { user } = { user: undefined }, ...result }) =>

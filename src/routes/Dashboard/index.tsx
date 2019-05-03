@@ -19,13 +19,16 @@ import { extractLibrariesInfo } from './helpers'
 import {
   BidaDepartment,
   SemverOutdateStatus as distances,
-} from '../../generated/types'
+} from '../../generated/graphql-types'
 
-import DASHBOARD_QUERY, { DASHBOARD_QUERYQueryData as IData } from './query.gql'
+import DASHBOARD_QUERY from './query.gql'
 
-type IVariables = IData.Variables
-type IRepository = IData.ProjectsEdgesNodeRepository
-type ILibrary = IData.ProjectsEdgesNodeRepositoryNpmPackageDependencies
+import {
+  DASHBOARD_QUERY as IData,
+  DASHBOARD_QUERYVariables as IVariables,
+  DASHBOARD_QUERY_projects_edges_node_Repository as IRepository,
+  DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_dependencies as ILibrary,
+} from './graphql-types/DASHBOARD_QUERY'
 
 type IProps = RouteComponentProps<{
   department: string

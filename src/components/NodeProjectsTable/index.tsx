@@ -22,7 +22,7 @@ import anchorRowRenderer from '../../utils/anchorRowRenderer'
 
 import { useSort, IUseSortOptions } from '../../hooks/useSort'
 
-import { SemverOutdateStatus as distances } from '../../generated/types'
+import { SemverOutdateStatus as distances } from '../../generated/graphql-types'
 import { NodeProjectsTable_projectsFragmentData } from './fragment.gql'
 
 type IProject = NodeProjectsTable_projectsFragmentData
