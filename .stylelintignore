@@ -1,2 +1,5 @@
 **/*.gql
+**/*.graphql
 **/*.json
+
+src/generated/**/*
