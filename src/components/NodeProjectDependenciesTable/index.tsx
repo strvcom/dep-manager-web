@@ -2,8 +2,8 @@ import React, { memo, useMemo, FunctionComponent } from 'react'
 import mem from 'mem'
 import { ascend, prop } from 'ramda'
 
-import Badge, { BadgeType } from '..//Badge'
-import Table, { Column } from '..//Table'
+import Badge, { BadgeType } from '../Badge'
+import Table, { Column } from '../Table'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
 import { isValidLicense } from '../../utils/license'
 import { BidaDepartment } from '../../config/types'
@@ -11,22 +11,17 @@ import * as routes from '../../routes/routes'
 
 import { useSort } from '../../hooks/useSort'
 
-interface IDependency {
-  outdateStatus: string
-  version: string
-  package: {
-    name: string
-    version: string
-    license: string
-  }
-}
+import {
+  NodeProjectsDependenciesTable_dependencies as IDependency,
+  NodeProjectsDependenciesTable_dependencies_package as IPackage,
+} from './graphql-types/NodeProjectsDependenciesTable_dependencies'
 
 interface INormalizedDependency {
-  outdateStatus: string
-  currentVersion: string
-  name: string
-  version: string
-  license: string
+  outdateStatus: IDependency['outdateStatus']
+  currentVersion: IDependency['version']
+  name: IPackage['name']
+  version: IPackage['version']
+  license: IPackage['license']
 }
 
 interface IProps {
@@ -55,24 +50,19 @@ interface IRenderVersion {
 }
 
 const renderVersion = mem(
-  ({
-    rowData: { currentVersion, outdateStatus },
-  }: IRenderVersion): JSX.Element => (
+  ({ rowData: { currentVersion, outdateStatus } }: IRenderVersion): JSX.Element => (
     <Badge type={versionBadgeType[outdateStatus]}>{currentVersion}</Badge>
   ),
   {
-    cacheKey: ({
-      rowData: { currentVersion, outdateStatus },
-    }: IRenderVersion): string => currentVersion + outdateStatus,
+    cacheKey: ({ rowData: { currentVersion, outdateStatus } }: IRenderVersion): string =>
+      currentVersion + outdateStatus,
   }
 )
 
 const renderLicense = mem(
   ({ cellData: license }: { cellData?: string }): JSX.Element | null =>
     !license ? null : (
-      <Badge type={!isValidLicense(license) ? BadgeType.DANGER : null}>
-        {license}
-      </Badge>
+      <Badge type={!isValidLicense(license) ? BadgeType.DANGER : null}>{license}</Badge>
     ),
   { cacheKey: prop('cellData') }
 )
@@ -112,13 +102,10 @@ const NodeProjectDependenciesTable: FunctionComponent<IProps> = ({
 
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }): INormalizedDependency =>
-    sorted[index]
+  const rowGetter = ({ index }: { index: number }): INormalizedDependency => sorted[index]
 
   const baseURL = departmentBaseURLs[department]
-  const rowRenderer = baseURL
-    ? anchorRowRenderer(baseURL, prop('name'))
-    : undefined
+  const rowRenderer = baseURL ? anchorRowRenderer(baseURL, prop('name')) : undefined
 
   return (
     <Table
@@ -131,12 +118,7 @@ const NodeProjectDependenciesTable: FunctionComponent<IProps> = ({
     >
       <Column width={380} label="Library Name" dataKey="name" />
 
-      <Column
-        width={280}
-        label="Up To Date Version"
-        dataKey="version"
-        disableSort
-      />
+      <Column width={280} label="Up To Date Version" dataKey="version" disableSort />
 
       <Column
         width={280}
@@ -146,18 +128,11 @@ const NodeProjectDependenciesTable: FunctionComponent<IProps> = ({
         disableSort
       />
 
-      <Column
-        width={150}
-        label="License"
-        dataKey="license"
-        cellRenderer={renderLicense}
-      />
+      <Column width={150} label="License" dataKey="license" cellRenderer={renderLicense} />
     </Table>
   )
 }
 
-export default memo(
-  NodeProjectDependenciesTable,
-  (prev: IProps, next: IProps) =>
-    prev.cacheKey ? prev.cacheKey === next.cacheKey : false
+export default memo(NodeProjectDependenciesTable, (prev: IProps, next: IProps) =>
+  prev.cacheKey ? prev.cacheKey === next.cacheKey : false
 )
