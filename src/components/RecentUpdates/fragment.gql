@@ -1,0 +1,6 @@
+fragment RecentUpdates_library on NPMPackage {
+  id
+  name
+  version
+  updatedAt
+}
