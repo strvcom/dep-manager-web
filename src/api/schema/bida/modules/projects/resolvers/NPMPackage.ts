@@ -1,4 +1,10 @@
-import { visit, ASTNode, FieldNode, InlineFragmentNode } from 'graphql/language'
+import {
+  visit,
+  ASTNode,
+  FieldNode,
+  InlineFragmentNode,
+  FragmentDefinitionNode,
+} from 'graphql/language'
 import gql from 'graphql-tag'
 
 import {
@@ -92,6 +98,38 @@ const isRepositoryField = both(
   pathEq(['name', 'value'], 'repository')
 )
 
+/*
+ * Find the Dependent::repository field when present, and adapt it's
+ * selectionSet into GitHub's expectation for Repository type.
+ */
+const onLeaveFragment = (
+  node: InlineFragmentNode | FragmentDefinitionNode
+): FieldNode | null | undefined => {
+  if (node.typeCondition && node.typeCondition.name.value === 'Dependent') {
+    const selections = node.selectionSet.selections.filter(
+      isRepositoryField
+    ) as FieldNode[]
+
+    // skip this Dependent fragment entirely, when not
+    // requesting repository data.
+    if (!selections.length) return null
+
+    const selectionSet = {
+      kind: 'SelectionSet',
+      selections: [].concat(
+        // @ts-ignore
+        ...selections.map(path(['selectionSet', 'selections']))
+      ),
+    }
+
+    return pipe(
+      set(lensPath(['typeCondition', 'name', 'value']), 'Repository'),
+      // @ts-ignore
+      set(lensProp('selectionSet'), selectionSet)
+    )(node)
+  }
+}
+
 /**
  * An AST visitor to adapt request of dependents field on-to GitHub search
  * API requirements.
@@ -113,37 +151,8 @@ const visitor = {
     }
   },
 
-  /**
-   * Find the Dependent::repository field when present, and adapt it's
-   * selectionSet into GitHub's expectation for Repository type.
-   */
-  InlineFragment: {
-    leave: (node: InlineFragmentNode) => {
-      if (node.typeCondition && node.typeCondition.name.value === 'Dependent') {
-        const selections = node.selectionSet.selections.filter(
-          isRepositoryField
-        ) as FieldNode[]
-
-        // skip this Dependent fragment entirely, when not
-        // requesting repository data.
-        if (!selections.length) return null
-
-        const selectionSet = {
-          kind: 'SelectionSet',
-          selections: [].concat(
-            // @ts-ignore
-            ...selections.map(path(['selectionSet', 'selections']))
-          ),
-        }
-
-        return pipe(
-          set(lensPath(['typeCondition', 'name', 'value']), 'Repository'),
-          // @ts-ignore
-          set(lensProp('selectionSet'), selectionSet)
-        )(node)
-      }
-    },
-  },
+  InlineFragment: { leave: onLeaveFragment },
+  FragmentDefinition: { leave: onLeaveFragment },
 }
 
 interface INPMPackage {

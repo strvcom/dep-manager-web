@@ -106,7 +106,7 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
       expect(print(visit(doc, visitor))).toBe(print(expected))
     })
 
-    it('should transform Dependent fragments into Repository fragments', () => {
+    it('should transform inline Dependent fragments into Repository fragments', () => {
       const doc = gql`
         {
           other
@@ -124,6 +124,34 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
           ... on Repository {
             name
           }
+        }
+      `
+
+      expect(print(visit(doc, visitor))).toBe(print(expected))
+    })
+
+    it('should transform named Dependent fragments into Repository fragments', () => {
+      const doc = gql`
+        {
+          other
+          ...NamedFragment
+        }
+
+        fragment NamedFragment on Dependent {
+          repository {
+            name
+          }
+        }
+      `
+
+      const expected = gql`
+        {
+          other
+          ...NamedFragment
+        }
+
+        fragment NamedFragment on Repository {
+          name
         }
       `
 
