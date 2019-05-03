@@ -3,7 +3,7 @@ import {
   ASTNode,
   FieldNode,
   InlineFragmentNode,
-  FragmentDefinitionNode,
+  FragmentSpreadNode,
 } from 'graphql/language'
 import gql from 'graphql-tag'
 
@@ -98,38 +98,6 @@ const isRepositoryField = both(
   pathEq(['name', 'value'], 'repository')
 )
 
-/*
- * Find the Dependent::repository field when present, and adapt it's
- * selectionSet into GitHub's expectation for Repository type.
- */
-const onLeaveFragment = (
-  node: InlineFragmentNode | FragmentDefinitionNode
-): FieldNode | null | undefined => {
-  if (node.typeCondition && node.typeCondition.name.value === 'Dependent') {
-    const selections = node.selectionSet.selections.filter(
-      isRepositoryField
-    ) as FieldNode[]
-
-    // skip this Dependent fragment entirely, when not
-    // requesting repository data.
-    if (!selections.length) return null
-
-    const selectionSet = {
-      kind: 'SelectionSet',
-      selections: [].concat(
-        // @ts-ignore
-        ...selections.map(path(['selectionSet', 'selections']))
-      ),
-    }
-
-    return pipe(
-      set(lensPath(['typeCondition', 'name', 'value']), 'Repository'),
-      // @ts-ignore
-      set(lensProp('selectionSet'), selectionSet)
-    )(node)
-  }
-}
-
 /**
  * An AST visitor to adapt request of dependents field on-to GitHub search
  * API requirements.
@@ -151,8 +119,39 @@ const visitor = {
     }
   },
 
-  InlineFragment: { leave: onLeaveFragment },
-  FragmentDefinition: { leave: onLeaveFragment },
+  /**
+   * Find the Dependent::repository field when present, and adapt it's
+   * selectionSet into GitHub's expectation for Repository type.
+   */
+  InlineFragment: {
+    leave: (
+      node: InlineFragmentNode
+    ): InlineFragmentNode | null | undefined => {
+      if (node.typeCondition && node.typeCondition.name.value === 'Dependent') {
+        const selections = node.selectionSet.selections.filter(
+          isRepositoryField
+        ) as FieldNode[]
+
+        // skip this Dependent fragment entirely, when not
+        // requesting repository data.
+        if (!selections.length) return null
+
+        const selectionSet = {
+          kind: 'SelectionSet',
+          selections: [].concat(
+            // @ts-ignore
+            ...selections.map(path(['selectionSet', 'selections']))
+          ),
+        }
+
+        return pipe(
+          set(lensPath(['typeCondition', 'name', 'value']), 'Repository'),
+          // @ts-ignore
+          set(lensProp('selectionSet'), selectionSet)
+        )(node)
+      }
+    },
+  },
 }
 
 interface INPMPackage {
@@ -180,8 +179,31 @@ const dependents = {
     context: any,
     info: any
   ) => {
+    /**
+     * Find the Dependent named fragments and transform into inline fragments.
+     */
+    const inlinedFragments = visit(info.fieldNodes, {
+      FragmentSpread: {
+        leave: (
+          node: FragmentSpreadNode
+        ): InlineFragmentNode | null | undefined => {
+          const fragment = info.fragments[node.name.value]
+
+          if (
+            fragment.typeCondition &&
+            fragment.typeCondition.name.value === 'Dependent'
+          ) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { name, loc, ...fragmentNode } = fragment
+
+            return { ...fragmentNode, kind: 'InlineFragment' }
+          }
+        },
+      },
+    })
+
     // transform request selection.
-    const fieldNodes = visit(info.fieldNodes, visitor)
+    const fieldNodes = visit(inlinedFragments, visitor)
 
     // reuse Query::projects delegation logic.
     const projectsConnection = await Query.projects(null, args, context, {
