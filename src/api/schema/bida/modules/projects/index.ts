@@ -19,7 +19,7 @@ const typeDefs = gql`
   }
 
   type Dependent {
-    id: String!
+    id: ID!
     name: String!
     version: String!
     outdateStatus: SemverOutdateStatus!
