@@ -23,10 +23,10 @@ import anchorRowRenderer from '../../utils/anchorRowRenderer'
 import { useSort, IUseSortOptions } from '../../hooks/useSort'
 
 import { SemverOutdateStatus as distances } from '../../generated/graphql-types'
-import { NodeProjectsTable_projectsFragmentData } from './fragment.gql'
-
-type IProject = NodeProjectsTable_projectsFragmentData
-type IDependency = NodeProjectsTable_projectsFragmentData.NpmPackageDependencies
+import {
+  NodeProjectsTable_projects as IProject,
+  NodeProjectsTable_projects_npmPackage_dependencies as IDependency,
+} from './graphql-types/NodeProjectsTable_projects'
 
 const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendProjects,
@@ -95,7 +95,6 @@ const normalizeProject = mem(
 
     const dependencies =
       (project.npmPackage && project.npmPackage.dependencies) || []
-
     const outdated = map(getOutdated(dependencies), distances)
     const totalOutdated = sumOutdates(outdated)
 
@@ -128,10 +127,9 @@ const NodeProjectsTable: FunctionComponent<IProps> = ({
 
   const [sorted, setSort, sort] = useSort({ ...sortDefaults, list, cacheKeys })
 
+  const baseURL = departmentBaseURLs[department.toUpperCase()]
   const rowGetter = ({ index }: { index: number }): INormalizedProject =>
     sorted[index]
-
-  const baseURL = departmentBaseURLs[department.toUpperCase()]
   const renderRow = baseURL ? anchorRowRenderer(baseURL, 'name') : undefined
 
   return (
