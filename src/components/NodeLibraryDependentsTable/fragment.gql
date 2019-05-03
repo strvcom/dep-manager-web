@@ -1,0 +1,9 @@
+fragment NodeLibraryDependentsTable_dependents on Dependent {
+  id
+  version
+  outdateStatus
+  repository {
+    id
+    name
+  }
+}

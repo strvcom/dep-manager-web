@@ -1,3 +1,5 @@
+#import "../../components/NodeLibraryDependentsTable/fragment.gql"
+
 query NODE_LIBRARY_QUERY($name: String!, $department: BidaDepartment!) {
   library: npmPackage(name: $name) {
     id
@@ -9,13 +11,13 @@ query NODE_LIBRARY_QUERY($name: String!, $department: BidaDepartment!) {
         node {
           ... on Dependent {
             id
-            version
             outdateStatus
             repository {
-              id
               name
             }
           }
+
+          ...NodeLibraryDependentsTable_dependents
         }
       }
     }

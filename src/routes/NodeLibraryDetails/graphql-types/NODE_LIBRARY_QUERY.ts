@@ -14,19 +14,19 @@ export interface NODE_LIBRARY_QUERY_library_dependents_edges_node_Issue {
 
 export interface NODE_LIBRARY_QUERY_library_dependents_edges_node_Dependent_repository {
   __typename: "Repository";
-  id: string;
   /**
    * The name of the repository.
    */
   name: string;
+  id: string;
 }
 
 export interface NODE_LIBRARY_QUERY_library_dependents_edges_node_Dependent {
   __typename: "Dependent";
   id: string;
-  version: string;
   outdateStatus: SemverOutdateStatus;
   repository: NODE_LIBRARY_QUERY_library_dependents_edges_node_Dependent_repository;
+  version: string;
 }
 
 export type NODE_LIBRARY_QUERY_library_dependents_edges_node = NODE_LIBRARY_QUERY_library_dependents_edges_node_Issue | NODE_LIBRARY_QUERY_library_dependents_edges_node_Dependent;
