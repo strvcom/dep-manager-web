@@ -14,6 +14,29 @@ module.exports = {
     // '@strv/eslint-config-typescript/style',
   ],
   settings: { 'import/resolver': { node: { extensions } } },
+  rules: {
+    'max-len': [
+      'error',
+      {
+        code: 100,
+        ignoreComments: true,
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true,
+      },
+    ],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '[iI]gnored' }],
+    'react-hooks/exhaustive-deps': false,
+    'no-extra-parens': [
+      'warn',
+      'all',
+      {
+        nestedBinaryExpressions: false,
+        returnAssign: false,
+        ignoreJSX: 'all',
+      },
+    ],
+  },
   overrides: [
     {
       files: ['**/*.ts', '**/*.tsx'],
@@ -41,30 +64,4 @@ module.exports = {
       },
     },
   ],
-  rules: {
-    'max-len': [
-      'error',
-      {
-        code: 100,
-        ignoreComments: true,
-        ignoreStrings: true,
-        ignoreTemplateLiterals: true,
-      },
-    ],
-    'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      { varsIgnorePattern: '[iI]gnored' },
-    ],
-    'react-hooks/exhaustive-deps': false,
-    'no-extra-parens': [
-      'warn',
-      'all',
-      {
-        nestedBinaryExpressions: false,
-        returnAssign: false,
-        ignoreJSX: 'all',
-      },
-    ],
-  },
 }
