@@ -6,21 +6,21 @@ import CurrentUserContainer from './CurrentUserContainer'
 
 interface IProps extends RouteProps {
   redirect?: LocationDescriptor
+  loading?: React.ReactNode
 }
 
-const PublicRoute: FunctionComponent<IProps> = ({
-  redirect,
-  ...rest
-}: IProps): JSX.Element => (
+const PublicRoute: FunctionComponent<IProps> = ({ redirect, loading, ...rest }: IProps) => (
   <CurrentUserContainer>
-    {({ user, loading }) =>
-      loading ? null : user && redirect ? (
-        <Redirect to={redirect} />
-      ) : (
-        <Route {...rest} />
-      )
-    }
+    {({ user, loading: isLoading }) => {
+      if (isLoading) return loading
+
+      return user && redirect ? <Redirect to={redirect} /> : <Route {...rest} />
+    }}
   </CurrentUserContainer>
 )
+
+PublicRoute.defaultProps = {
+  loading: null,
+}
 
 export default PublicRoute
