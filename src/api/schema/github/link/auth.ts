@@ -1,8 +1,8 @@
-import { ApolloLink } from 'apollo-link'
+import { ApolloNonTerminalLink } from '../../../../utils/apollo-types'
 
-const link = new ApolloLink((operation: any, forward: any) => {
+const link = new ApolloNonTerminalLink((operation, forward) => {
   const {
-    graphqlContext: { headers }
+    graphqlContext: { headers },
   } = operation.getContext()
 
   if (headers && headers.authorization) {
