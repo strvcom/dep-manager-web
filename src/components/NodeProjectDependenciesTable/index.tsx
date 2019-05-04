@@ -50,7 +50,7 @@ interface IRenderVersion {
 }
 
 const renderVersion = mem(
-  ({ rowData: { currentVersion, outdateStatus } }: IRenderVersion): JSX.Element => (
+  ({ rowData: { currentVersion, outdateStatus } }: IRenderVersion) => (
     <Badge type={versionBadgeType[outdateStatus]}>{currentVersion}</Badge>
   ),
   {
@@ -60,7 +60,7 @@ const renderVersion = mem(
 )
 
 const renderLicense = mem(
-  ({ cellData: license }: { cellData?: string }): JSX.Element | null =>
+  ({ cellData: license }: { cellData?: string }) =>
     !license ? null : (
       <Badge type={!isValidLicense(license) ? BadgeType.DANGER : null}>{license}</Badge>
     ),
@@ -85,7 +85,7 @@ const NodeProjectDependenciesTable: FunctionComponent<IProps> = ({
   cacheKey,
   dependencies,
   department,
-}: IProps): JSX.Element => {
+}: IProps) => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []

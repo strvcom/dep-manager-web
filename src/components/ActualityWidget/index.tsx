@@ -1,15 +1,8 @@
 import React, { FunctionComponent } from 'react'
 
-import {
-  StatusWrapper,
-  StatusContainer,
-  Percent,
-} from '../../routes/Dashboard/widget-styled'
+import { StatusWrapper, StatusContainer, Percent } from '../../routes/Dashboard/widget-styled'
 import Doughnut from '../Charts/Doughnut'
-import WidgetContainer, {
-  WidgetTitle,
-  WidgetContainerProps,
-} from '../Charts/Container'
+import WidgetContainer, { WidgetTitle, WidgetContainerProps } from '../Charts/Container'
 
 interface IActualityWidgetProps extends WidgetContainerProps {
   title?: string
@@ -19,7 +12,7 @@ interface IActualityWidgetProps extends WidgetContainerProps {
 
 const ActualityWidget: FunctionComponent<IActualityWidgetProps> = (
   props: IActualityWidgetProps
-): JSX.Element => {
+) => {
   const { outdated, total, title, ref: ignored, ...rest } = props
 
   const perc = {

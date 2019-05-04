@@ -5,7 +5,7 @@ import { authenticate } from '../../config/auth'
 import { ThemeProvider } from 'styled-components'
 import darkTheme from '../../styles/themes/dark'
 
-const Login: FunctionComponent = (): JSX.Element => (
+const Login: FunctionComponent = () => (
   <ThemeProvider theme={darkTheme}>
     <Container>
       <Logo />

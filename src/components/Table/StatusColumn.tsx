@@ -11,7 +11,7 @@ interface IStatusColumnProps {
 const StatusColumn: FunctionComponent<IStatusColumnProps> = ({
   alerts = 0,
   outDated = 0,
-}: IStatusColumnProps): JSX.Element | null =>
+}: IStatusColumnProps) =>
   alerts && outDated ? 
     <>
       {outDated ? <Badge type={DANGER}>{outDated} Outdated</Badge> : null}

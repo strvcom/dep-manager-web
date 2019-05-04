@@ -8,9 +8,7 @@ interface INavBarLinkProps {
   children?: React.ReactNode
 }
 
-export const NavBarLink: FunctionComponent<INavBarLinkProps> = (
-  props: INavBarLinkProps
-): JSX.Element => {
+export const NavBarLink: FunctionComponent<INavBarLinkProps> = (props: INavBarLinkProps) => {
   const handleIsActive = useCallback((_: match, { pathname }: LocationType) => {
     const path = typeof props.to === 'string' ? props.to : props.to.pathname
 
@@ -38,9 +36,7 @@ interface INavBarProps {
   children?: React.ReactNode
 }
 
-const NavBar: FunctionComponent<INavBarProps> = (
-  props: INavBarProps
-): JSX.Element => (
+const NavBar: FunctionComponent<INavBarProps> = (props: INavBarProps) => (
   <StyledNav>
     {props.logo && <StyledLogoLink to="/">{props.logo}</StyledLogoLink>}
     <Container>{props.children}</Container>

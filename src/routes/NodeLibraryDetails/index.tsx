@@ -23,10 +23,7 @@ export interface IProps extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
 }
 
-const NodeLibraryDetails: FunctionComponent<IProps> = ({
-  match,
-  department,
-}: IProps): JSX.Element => {
+const NodeLibraryDetails: FunctionComponent<IProps> = ({ match, department }: IProps) => {
   const name = decodeURIComponent(match.params.id)
   const [search, setSearch] = useState('')
 

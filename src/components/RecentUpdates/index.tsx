@@ -15,7 +15,7 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 })
 
-const RecentUpdates: FunctionComponent<IProps> = ({ width, libraries }: IProps): JSX.Element => (
+const RecentUpdates: FunctionComponent<IProps> = ({ width, libraries }: IProps) => (
   <WidgetContainer width={width}>
     <WidgetTitle>Recent Updates</WidgetTitle>
     <Items>

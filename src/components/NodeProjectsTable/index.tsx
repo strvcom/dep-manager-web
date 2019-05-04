@@ -57,15 +57,8 @@ interface INormalizedProject extends Pick<IProject, 'name' | 'pushedAt'> {
 const renderPushedAt = ({ cellData }: { cellData?: string }): string =>
   !cellData ? '' : dateFormatter.format(Date.parse(cellData))
 
-const renderOutdated = ({
-  rowData: { outdated },
-}: {
-  rowData: { outdated: IOutdatedCounts }
-}): JSX.Element => (
-  <StatusColumn
-    outDated={outdated[distances.MAJOR]}
-    alerts={outdated[distances.MINOR]}
-  />
+const renderOutdated = ({ rowData: { outdated } }: { rowData: { outdated: IOutdatedCounts } }) => (
+  <StatusColumn outDated={outdated[distances.MAJOR]} alerts={outdated[distances.MINOR]} />
 )
 
 const getOutdated = (dependencies: (IDependency | null)[]): number =>
@@ -93,8 +86,7 @@ const normalizeProject = mem(
     const name = project.name
     const pushedAt = project.pushedAt
 
-    const dependencies =
-      (project.npmPackage && project.npmPackage.dependencies) || []
+    const dependencies = (project.npmPackage && project.npmPackage.dependencies) || []
     const outdated = map(getOutdated(dependencies), distances)
     const totalOutdated = sumOutdates(outdated)
 
@@ -113,7 +105,7 @@ const NodeProjectsTable: FunctionComponent<IProps> = ({
   projects,
   department,
   cacheKey,
-}: IProps): JSX.Element => {
+}: IProps) => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
@@ -128,8 +120,7 @@ const NodeProjectsTable: FunctionComponent<IProps> = ({
   const [sorted, setSort, sort] = useSort({ ...sortDefaults, list, cacheKeys })
 
   const baseURL = departmentBaseURLs[department.toUpperCase()]
-  const rowGetter = ({ index }: { index: number }): INormalizedProject =>
-    sorted[index]
+  const rowGetter = ({ index }: { index: number }): INormalizedProject => sorted[index]
   const renderRow = baseURL ? anchorRowRenderer(baseURL, 'name') : undefined
 
   return (
@@ -143,12 +134,7 @@ const NodeProjectsTable: FunctionComponent<IProps> = ({
     >
       <Column width={380} label="Project Name" dataKey="name" />
 
-      <Column
-        width={180}
-        label="Last Active"
-        dataKey="pushedAt"
-        cellRenderer={renderPushedAt}
-      />
+      <Column width={180} label="Last Active" dataKey="pushedAt" cellRenderer={renderPushedAt} />
 
       <Column
         width={200}

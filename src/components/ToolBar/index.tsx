@@ -1,13 +1,6 @@
 import React from 'react'
 
-import {
-  Nav,
-  StyledNavBar,
-  NavBarContainer,
-  Title,
-  Subtitle,
-  Wrapper,
-} from './styled'
+import { Nav, StyledNavBar, NavBarContainer, Title, Subtitle, Wrapper } from './styled'
 
 interface IToolBarProps {
   title?: React.ReactNode
@@ -16,12 +9,7 @@ interface IToolBarProps {
   children?: React.ReactNode
 }
 
-const ToolBar = ({
-  title,
-  subtitle,
-  links,
-  children,
-}: IToolBarProps): JSX.Element => (
+const ToolBar = ({ title, subtitle, links, children }: IToolBarProps) => (
   <StyledNavBar>
     <NavBarContainer>
       {title && <Title mb="10px">{title}</Title>}

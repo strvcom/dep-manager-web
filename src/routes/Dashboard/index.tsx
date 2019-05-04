@@ -43,7 +43,7 @@ const filterProjects = (search: string): Function =>
     )
   )
 
-const Dashboard: FunctionComponent<IProps> = ({ match }: IProps): JSX.Element => {
+const Dashboard: FunctionComponent<IProps> = ({ match }: IProps) => {
   const { department, category } = match.params
   const [search, setSearch] = useState('')
 
@@ -76,7 +76,7 @@ const Dashboard: FunctionComponent<IProps> = ({ match }: IProps): JSX.Element =>
 
             const { [distances.MAJOR]: major } = outdates
 
-            const renderWidgets = (): JSX.Element => (
+            const renderWidgets = () => (
               <WidgetContainer>
                 <ProjectsOverviewWidget
                   total={projects.total}
@@ -95,7 +95,7 @@ const Dashboard: FunctionComponent<IProps> = ({ match }: IProps): JSX.Element =>
               </WidgetContainer>
             )
 
-            const renderLibraries = (): JSX.Element => {
+            const renderLibraries = () => {
               const filtered = uniqueLibraries.filter(({ package: { name } }: ILibrary) =>
                 name.includes(search)
               )
@@ -105,7 +105,7 @@ const Dashboard: FunctionComponent<IProps> = ({ match }: IProps): JSX.Element =>
               )
             }
 
-            const renderProjects = (): JSX.Element => {
+            const renderProjects = () => {
               const filtered = filterProjects(search)(projects.edges) as IRepository[]
 
               return (

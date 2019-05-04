@@ -11,12 +11,9 @@ interface IProps extends Pick<WidgetContainerProps, 'width'> {
   archived: number
 }
 
-const ProjectsOverviewWidget: FunctionComponent<IProps> = ({
-  width,
-  total,
-  archived,
-}: IProps): JSX.Element => {
+const ProjectsOverviewWidget: FunctionComponent<IProps> = ({ width, total, archived }: IProps) => {
   const active = total - archived
+
   return (
     <WidgetContainer width={width}>
       <WidgetTitle>Projects Overview</WidgetTitle>

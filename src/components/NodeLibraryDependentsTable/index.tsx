@@ -45,9 +45,7 @@ interface IRenderVersion {
   }
 }
 
-const renderVersion = ({
-  rowData: { distance, version },
-}: IRenderVersion): JSX.Element => (
+const renderVersion = ({ rowData: { distance, version } }: IRenderVersion) => (
   <Badge type={versionBadgeType[distance]}>{version}</Badge>
 )
 
@@ -68,14 +66,11 @@ const NodeLibraryDependentsTable: FunctionComponent<IProps> = ({
   dependents,
   libraryVersion,
   department,
-}: IProps): JSX.Element => {
+}: IProps) => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
-  const list = useMemo(
-    () => dependents.map(dep => normalize(dep, libraryVersion)),
-    cacheKeys
-  )
+  const list = useMemo(() => dependents.map(dep => normalize(dep, libraryVersion)), cacheKeys)
 
   // state
 
@@ -88,13 +83,10 @@ const NodeLibraryDependentsTable: FunctionComponent<IProps> = ({
 
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }): INormalizedDependent =>
-    sorted[index]
+  const rowGetter = ({ index }: { index: number }): INormalizedDependent => sorted[index]
 
   const baseURL = departmentBaseURLs[department]
-  const rowRenderer = baseURL
-    ? anchorRowRenderer(baseURL, prop('name'))
-    : undefined
+  const rowRenderer = baseURL ? anchorRowRenderer(baseURL, prop('name')) : undefined
 
   return (
     <Table

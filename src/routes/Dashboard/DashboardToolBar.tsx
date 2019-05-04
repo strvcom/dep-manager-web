@@ -14,7 +14,7 @@ const DashboardToolBar: FunctionComponent<IProps> = ({
   category,
   search,
   setSearch,
-}: IProps): JSX.Element => (
+}: IProps) => (
   <ToolBar
     title="Dashboard"
     links={

@@ -98,33 +98,20 @@ const normalizeLibrary = mem(
 
 const renderRow = anchorRowRenderer(routes.frontendLibraries, prop('name'))
 
-const renderOutdates = ({
-  rowData: { outdates },
-}: {
-  rowData: { outdates: IOutdateCounts }
-}): JSX.Element => (
-  <StatusColumn
-    outDated={outdates[distances.MAJOR]}
-    alerts={outdates[distances.MINOR]}
-  />
+const renderOutdates = ({ rowData: { outdates } }: { rowData: { outdates: IOutdateCounts } }) => (
+  <StatusColumn outDated={outdates[distances.MAJOR]} alerts={outdates[distances.MINOR]} />
 )
 
-const renderLicense = ({
-  cellData,
-}: {
-  cellData?: string
-}): JSX.Element | null =>
+const renderLicense = ({ cellData }: { cellData?: string }) =>
   cellData ? (
-    <Badge type={!isValidLicense(cellData) ? BadgeType.DANGER : null}>
-      {cellData}
-    </Badge>
+    <Badge type={!isValidLicense(cellData) ? BadgeType.DANGER : null}>{cellData}</Badge>
   ) : null
 
 const NodeLibrariesTable: FunctionComponent<IProps> = ({
   libraries,
   outdates,
   cacheKey,
-}: IProps): JSX.Element => {
+}: IProps) => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
@@ -145,8 +132,7 @@ const NodeLibrariesTable: FunctionComponent<IProps> = ({
 
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }): INormalizedLibrary =>
-    sorted[index]
+  const rowGetter = ({ index }: { index: number }): INormalizedLibrary => sorted[index]
 
   return (
     <Table

@@ -21,7 +21,7 @@ export interface IDoughnutProps {
   percent?: number
 }
 
-const Doughnut = ({ size = 64, percent = 0 }: IDoughnutProps): JSX.Element => (
+const Doughnut = ({ size = 64, percent = 0 }: IDoughnutProps) => (
   <svg width={size} viewBox="0 0 42 42">
     <circle cx="21" cy="21" r="15.91549430918954" fill="#fff" />
     <circle

@@ -30,15 +30,11 @@ const PrivatePage = React.memo(() => (
   </ThemeProvider>
 ))
 
-const App: FunctionComponent = (): JSX.Element => (
+const App: FunctionComponent = () => (
   <Switch>
     <PublicRoute redirect={routes.root} path={routes.login} component={Login} />
     <Redirect exact from={routes.root} to={routes.frontendLibraries} />
-    <PrivateRoute
-      redirect={routes.login}
-      path={routes.root}
-      component={PrivatePage}
-    />
+    <PrivateRoute redirect={routes.login} path={routes.root} component={PrivatePage} />
   </Switch>
 )
 
