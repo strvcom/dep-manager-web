@@ -1,5 +1,4 @@
 import { ApolloLink, RequestHandler, Operation, NextLink } from 'apollo-link'
-import { ReturnType } from 'utility-types'
 
 type NonTerminalRequestHandler = (
   operation: Operation,
