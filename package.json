@@ -101,7 +101,8 @@
     "react-virtualized": "^9.21.0",
     "semver": "^5.6.0",
     "styled-components": "^4.1.1",
-    "styled-system": "^2.2.1"
+    "styled-system": "^2.2.1",
+    "utility-types": "^3.6.1"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^5.0.6",
