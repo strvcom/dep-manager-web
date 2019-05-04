@@ -25,8 +25,6 @@ module.exports = {
       },
     ],
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '[iI]gnored' }],
-    'react-hooks/exhaustive-deps': false,
     'no-extra-parens': [
       'warn',
       'all',
@@ -36,6 +34,9 @@ module.exports = {
         ignoreJSX: 'all',
       },
     ],
+    'react-hooks/exhaustive-deps': false,
+    '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '[iI]gnored' }],
+    '@typescript-eslint/explicit-function-return-type': 'off',
   },
   overrides: [
     {
