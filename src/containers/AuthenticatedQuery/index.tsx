@@ -5,22 +5,12 @@ import { useLocalStorage } from '@rehooks/local-storage'
 import { GITHUB_TOKEN_KEY } from '../../config/env'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function AuthenticatedQuery<IData = any, IVariables = any>({
-  skip,
-  context,
-  ...rest
-}: QueryProps<IData, IVariables>): JSX.Element {
+function AuthenticatedQuery<IData = any, IVariables = any>(props: QueryProps<IData, IVariables>) {
   const [token] = useLocalStorage(GITHUB_TOKEN_KEY)
+  const skip = props.skip || !token
+  const context = { token, ...props.context }
 
-  class AuthQuery extends Query<IData, IVariables> {}
-
-  return (
-    <AuthQuery
-      skip={skip || !token}
-      context={{ token, ...context }}
-      {...rest}
-    />
-  )
+  return <Query<IData, IVariables> {...props} skip={skip} context={context} />
 }
 
 export default AuthenticatedQuery
