@@ -15,6 +15,7 @@ module.exports = {
   ],
   settings: { 'import/resolver': { node: { extensions } } },
   rules: {
+    'prefer-named-capture-group': 'off',
     'max-len': [
       'error',
       {
