@@ -6,26 +6,22 @@ import { FieldTransform, getTypeName } from '../../lib/transform'
 /*
  * Normalize connections to avoid empty edges (not realistic).
  */
-const transformEdgesFields = new FieldTransform('edges', /Connection$/u, (field, { builder }) => {
-  const name = getTypeName(field.type)
-
-  return builder.buildField({
+const transformEdgesFields = new FieldTransform('edges', /Connection$/u, (field, { builder }) =>
+  builder.buildField({
     ...field.astNode as FieldDefinitionNode,
-    type: parseType(`[${name}!]!`),
+    type: parseType(`[${getTypeName(field.type)}!]!`),
   })
-})
+)
 
 /*
  * Normalize connections to avoid empty nodes (not realistic).
  */
-const transformNodesFields = new FieldTransform('nodes', /Connection$/u, (field, { builder }) => {
-  const name = getTypeName(field.type)
-
-  return builder.buildField({
+const transformNodesFields = new FieldTransform('nodes', /Connection$/u, (field, { builder }) =>
+  builder.buildField({
     ...field.astNode as FieldDefinitionNode,
-    type: parseType(`[${name}!]!`),
+    type: parseType(`[${getTypeName(field.type)}!]!`),
   })
-})
+)
 
 /*
  * Normalize edges to avoid empty node (not realistic).
