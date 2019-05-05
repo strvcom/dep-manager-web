@@ -57,10 +57,7 @@ export interface DASHBOARD_QUERY_projects_edges {
    * A cursor for use in pagination.
    */
   cursor: string;
-  /**
-   * The item at the end of the edge.
-   */
-  node: DASHBOARD_QUERY_projects_edges_node | null;
+  node: DASHBOARD_QUERY_projects_edges_node;
 }
 
 export interface DASHBOARD_QUERY_projects {
@@ -69,10 +66,7 @@ export interface DASHBOARD_QUERY_projects {
    * The number of repositories that matched the search query.
    */
   total: number;
-  /**
-   * A list of edges.
-   */
-  edges: (DASHBOARD_QUERY_projects_edges | null)[] | null;
+  edges: DASHBOARD_QUERY_projects_edges[];
 }
 
 export interface DASHBOARD_QUERY_archived {

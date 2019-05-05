@@ -33,18 +33,12 @@ export type NODE_LIBRARY_QUERY_library_dependents_edges_node = NODE_LIBRARY_QUER
 
 export interface NODE_LIBRARY_QUERY_library_dependents_edges {
   __typename: "SearchResultItemEdge";
-  /**
-   * The item at the end of the edge.
-   */
-  node: NODE_LIBRARY_QUERY_library_dependents_edges_node | null;
+  node: NODE_LIBRARY_QUERY_library_dependents_edges_node;
 }
 
 export interface NODE_LIBRARY_QUERY_library_dependents {
   __typename: "SearchResultItemConnection";
-  /**
-   * A list of edges.
-   */
-  edges: (NODE_LIBRARY_QUERY_library_dependents_edges | null)[] | null;
+  edges: NODE_LIBRARY_QUERY_library_dependents_edges[];
 }
 
 export interface NODE_LIBRARY_QUERY_library {
