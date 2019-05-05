@@ -37,7 +37,7 @@ const build = (typeDefs: DocumentNode, transforms: Transform[] = []) =>
 
 describe('api/github/transforms', () => {
   describe('connections', () => {
-    it('should make edges required', () => {
+    it('should make connection::edges non-null', () => {
       const transformed = build(
         gql`
           type EntityEdge {
@@ -66,6 +66,33 @@ describe('api/github/transforms', () => {
 
         type SemiEntityConnection {
           edges: [EntityEdge!]!
+        }
+      `)
+
+      expect(printSchema(transformed)).toBe(printSchema(expected))
+    })
+
+    it('should make connection::nodes non-null', () => {
+      const transformed = build(
+        gql`
+          type Entity {
+            field: String!
+          }
+
+          type EntityConnection {
+            nodes: [Entity]
+          }
+        `,
+        [transformConnections]
+      )
+
+      const expected = build(gql`
+        type Entity {
+          field: String!
+        }
+
+        type EntityConnection {
+          nodes: [Entity!]!
         }
       `)
 
