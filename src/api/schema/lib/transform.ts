@@ -70,13 +70,13 @@ class FieldTransform {
  */
 const getTypeName = (type: GraphQLOutputType) => {
   const name = type.toString()
-  const matched = name.match(/([a-z]*)/giu)
+  const matched = name.match(/([a-z]+)/giu)
 
   if (!matched) {
     throw new Error(`Could not resolve type name from "${name}"`)
   }
 
-  return matched[1]
+  return matched[0]
 }
 
 export { FieldTransform, getTypeName }
