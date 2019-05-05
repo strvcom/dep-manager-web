@@ -27,6 +27,16 @@ const transformNodesFields = new FieldTransform('nodes', /Connection$/u, (field,
   })
 })
 
-const transform = composeTransforms(transformEdgesFields, transformNodesFields)
+/*
+ * Normalize edges to avoid empty node (not realistic).
+ */
+const transformNodeFields = new FieldTransform('node', /Edge$/u, (field, { builder }) =>
+  builder.buildField({
+    ...field.astNode as FieldDefinitionNode,
+    type: parseType(`${getTypeName(field.type)}!`),
+  })
+)
+
+const transform = composeTransforms(transformEdgesFields, transformNodesFields, transformNodeFields)
 
 export { transform }
