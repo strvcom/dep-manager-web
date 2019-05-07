@@ -160,13 +160,14 @@
     "stylelint": "^9.9.0",
     "ts-loader": "^5.3.1",
     "ts-node": "^8.0.3",
-    "typescript": "^3.2.2",
+    "typescript": "3.3.x",
     "typescript-styled-plugin": "^0.13.0",
     "uuid": "^3.3.2"
   },
   "resolutions": {
     "caniuse-lite": "1.0.30000957",
     "eslint-plugin-react": "^7.12.4",
-    "graphql": "14.2.1"
+    "graphql": "14.2.1",
+    "typescript": "3.3.4000"
   }
 }
