@@ -1,14 +1,18 @@
-version: '2'
+version: '3'
 
 services:
   app:
     image: dep-manager-web
+    container_name: dep-manager-web
     build:
-      context: ./docker/
-    network_mode: 'host'
+      context: .
+    command: ['/bin/bash']
     volumes:
       - $HOME/.ssh:/home/node/.ssh
       - $HOME/.gitconfig:/home/node/.gitconfig
-      - $HOME/.now:/home/node/.now
       - $PWD:/home/node/app
       - $PWD/docker/.bash_history:/home/node/.bash_history
+      - $PWD/docker/.bashrc:/home/node/.bashrc
+    ports:
+      - 3000:3000
+      - 34567:34567
