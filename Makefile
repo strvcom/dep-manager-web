@@ -1,22 +1,15 @@
+SHELL := /bin/bash
 .PHONY: run build in stop clean
-
-SHELL := /bin/bash # Use bash syntax
-
-# Configure environment.
-# ----------------------
-
-export USER_ID=$(shell id -u)
-
-
-# Task declarations.
-# ------------------
 
 run:
 	touch docker/.bash_history
 	docker-compose run --service-ports --rm app
 
+start:
+	docker-compose run --service-ports --rm app yarn start
+
 build:
-	docker-compose -f docker-compose.yml up -d
+	docker-compose build
 
 in:
 	docker exec -it $(shell docker-compose ps -q app) /bin/bash
@@ -26,6 +19,6 @@ stop:
 
 clean:
 	docker-compose down
-	docker rmi dep-manager-web
+	docker-compose down --remove-orphans -v --rmi all
 
 default: run
