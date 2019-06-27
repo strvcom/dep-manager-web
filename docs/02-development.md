@@ -29,13 +29,7 @@ make run
 yarn
 ```
 
-**Set environment**
-
-```sh
-cp .env.development .env
-```
-
-Modify `.env` [accordingly](#environment-variables).
+> If needed, modify `.env` [accordingly](#environment-variables).
 
 **Run locally**
 
@@ -53,7 +47,7 @@ As the API and App are isolated parts, you can run them without the other as fol
 
 Both are useful when you are developing independent parts of the application.
 
-> Keep in mind in the case of the _App_ your are still going to need an API running somewhere. The nice thing is that can be any of your already deployed environments. For instance, you can: `REACT_APP_GRAPHQL_ENDPOINT=https://[netlify-deploy-url]/.netlify/functions/graphql yarn start:app` to use a remote API source.
+> Keep in mind in the case of the `start:app` your are still going to need an API running somewhere. The nice thing is that you can use any of your already deployed environments. For instance, you can: `REACT_APP_GRAPHQL_ENDPOINT=https://[netlify-deploy-url]/.netlify/functions/graphql yarn start:app` to use a remote API source.
 
 ## Environment Variables
 
@@ -71,9 +65,9 @@ You can define these variables either by prefixing any command, or by setting a 
 
 ### Branch
 
-1. All new branchs must start from `master` branch;
+1. All new branches must start from `master` branch;
 2. Every branch refers to an existing issue on GitHub;
-3. Each new feature or bug fix must be developet in it's own branch;
+3. Each new feature or bug fix must be developed in it's own branch;
 4. Branches must follow these naming conventions:
 
     **Feature/Bug**: `issue/[issue]--[short-description]`
@@ -104,7 +98,7 @@ We can transform an _issue_ into a _pull-request_.
 
 GitHub does not provide a way to do that through the UI, but that's documented on APIs. GitHub's [official CLI](https://github.com/github/hub) does support it.
 
-There is a script to facilitate this process: `yarn pull-request`. This will guide you to create a pull-request, or turn an issue into one.
+There is a script to facilitate this process: `yarn pull-request`. This will either guide you to create a pull-request, or turn an issue into one.
 
 #### _Rebase and merge_
 
