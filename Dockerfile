@@ -21,6 +21,9 @@ FROM node:12.2.0-alpine as build
     # unzip
 
   USER node
+
+  # Ensure directory is owned by user "node"
+  RUN mkdir /home/node/app
   WORKDIR /home/node/app
 
 
