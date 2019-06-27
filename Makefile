@@ -1,6 +1,9 @@
 SHELL := /bin/bash
 .PHONY: run build in stop clean
 
+install:
+	docker-compose run --service-ports --rm app yarn
+
 run:
 	touch docker/.bash_history
 	docker-compose run --service-ports --rm app
