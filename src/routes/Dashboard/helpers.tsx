@@ -24,9 +24,30 @@ import {
   sortBy,
   take,
   uniqBy,
+  filter,
+  includes,
+  defaultTo,
 } from 'ramda'
 
-const infoShape = {
+import {
+  DASHBOARD_QUERY_projects_edges_node_Repository as Repository,
+  DASHBOARD_QUERY_projects_edges as Projects,
+  DASHBOARD_QUERY_projects_edges_node as ProjectsNode,
+  DASHBOARD_QUERY_projects_edges_node as Project,
+  DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_dependencies as NPMDependency,
+  DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_dependencies_package as NPMPackage,
+} from './graphql-types/DASHBOARD_QUERY'
+import { SemverOutdateStatus } from '../../generated/graphql-types'
+import propEq from 'ramda/es/propEq'
+
+interface Info {
+  libraries: NPMDependency[]
+  outdates: Record<SemverOutdateStatus, NPMPackage[]>
+  uniqueLibraries: NPMDependency[]
+  recentlyUpdated: NPMPackage[]
+}
+
+const infoShape: Info = {
   libraries: [],
   outdates: {
     MAJOR: [],
@@ -44,49 +65,53 @@ const infoShape = {
 }
 
 const setter = curry(
-  (key: string, mapper: (obj: object) => object, obj: object) => ({
+  <O extends object, K extends keyof O>(key: K, mapper: (obj: O) => unknown, obj: O) => ({
     ...obj,
     [key]: mapper(obj),
   })
 )
 
-const merger = (mergeMap: object): Function =>
+const merger = (mergeMap: Record<string, <L, R>(l: L, r: R) => unknown>) =>
   mergeWithKey(
-    cond(
-      // @ts-ignore
-      Object.keys(mergeMap)
-        .map(key => [
-          equals(key),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (k: string, l: any, r: any) => mergeMap[key](l, r),
-        ])
-        // default merge-left.
-        .concat([[T, nthArg(2)]])
-    )
-  )
+    cond([
+      ...Object.keys(mergeMap).map(
+        key =>
+          [equals(key), (k: string, l: unknown, r: unknown) => mergeMap[key](l, r)] as [
+            ReturnType<typeof equals>,
+            ReturnType<typeof nthArg>
+          ]
+      ),
+      [T, nthArg(2)],
+    ])
+  ) as <L, R>(l: L, r: R) => L & R
 
-const getDependencies = pathOr([], ['npmPackage', 'dependencies'])
+const getDependencies = pipe<Project, Array<NPMDependency | null>, NPMDependency[]>(
+  pathOr([], ['npmPackage', 'dependencies']),
+  filter(Boolean) as (array: Array<NPMDependency | null>) => Array<NPMDependency>
+)
 
-const getOutdates = pipe(
+const getOutdates = pipe<
+  Info,
+  NPMDependency[],
+  Record<string, NPMDependency[]>,
+  Record<string, NPMPackage[]>
+>(
   propOr([], 'libraries'),
-  // @ts-ignore
-  reduceBy(
-    // @ts-ignore
-    flip(append),
-    // @ts-ignore
+  reduceBy<NPMDependency, NPMDependency[]>(
+    flip<NPMDependency, NPMDependency[], NPMDependency[]>(append),
     [],
-    prop('outdateStatus')
+    propOr(SemverOutdateStatus.UNKNOWN, 'outdateStatus')
   ),
-  map(map(prop('package')))
+  (map(map(prop('package'))) as unknown) as (
+    rec: Record<string, NPMDependency[]>
+  ) => Record<string, NPMPackage[]>
 )
 
 // this operation can be expensive... memoization for the rescue.
 const buildLibrariesInfo = memoizeWith(
   prop('cursor'),
-  pipe(
-    // @ts-ignore
+  pipe<Projects, Project, Info, Info, Pick<Info, 'libraries' | 'outdates'>>(
     prop('node'),
-    // @ts-ignore
     setter('libraries', getDependencies),
     setter('outdates', getOutdates),
     pick(['libraries', 'outdates'])
@@ -101,50 +126,61 @@ const mergeLibrariesInfo = pipe(
   mergeRight({ libraries: [], outdates: {} })
 )
 
-// @ts-ignore
 const getUniqueDependencies = uniqBy(path(['package', 'name']))
 
-export const getRecentlyUpdated = pipe(
-  // @ts-ignore
-  sortBy(path(['package', 'updatedAt'])),
-  // @ts-ignore
+export const getRecentlyUpdated = pipe<
+  NPMDependency[],
+  NPMDependency[],
+  NPMDependency[],
+  NPMDependency[]
+>(
+  sortBy(pathOr(Number.POSITIVE_INFINITY, ['package', 'updatedAt'])),
   reverse,
-  // @ts-ignore
   take(10)
 )
 
-const calcUniqueLibraries = setter(
+const calcUniqueLibraries: (info: Info) => Info = setter(
   'uniqueLibraries',
   pipe(
     propOr([], 'libraries'),
-    // @ts-ignore
     getUniqueDependencies
   )
 )
 
-const calcRecentlyUpdated = setter(
-  // @ts-ignore
+const calcRecentlyUpdated: (info: Info) => Info = setter(
   'recentlyUpdated',
   pipe(
     propOr([], 'uniqueLibraries'),
     getRecentlyUpdated,
-    // @ts-ignore
     map(prop('package'))
   )
 )
 
-// @ts-ignore
-const extractLibrariesInfo = pipe(
-  // @ts-ignore
-  propOr([], 'edges'),
-  // @ts-ignore
+const extractLibrariesInfo = pipe<
+  Projects[],
+  Projects[],
+  Array<Pick<Info, 'libraries' | 'outdates'>>,
+  Info,
+  Info,
+  Info
+>(
+  defaultTo([]),
   map(buildLibrariesInfo),
-  // @ts-ignore
   reduce(mergeLibrariesInfo, infoShape),
-
-  // @ts-ignore
   calcUniqueLibraries,
   calcRecentlyUpdated
 )
 
-export { extractLibrariesInfo }
+const filterProjectsBySearch = (search: string) =>
+  pipe<Projects[], ProjectsNode[], Repository[], Repository[]>(
+    map(prop('node')),
+    filter(propEq('__typename', 'Repository')),
+    filter(
+      pipe<Repository, string, boolean>(
+        prop('name'),
+        includes(search)
+      )
+    )
+  )
+
+export { extractLibrariesInfo, filterProjectsBySearch }

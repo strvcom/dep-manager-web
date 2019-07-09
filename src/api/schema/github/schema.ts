@@ -1,4 +1,4 @@
-import { buildClientSchema } from 'graphql'
+import { buildClientSchema, IntrospectionQuery } from 'graphql'
 import { makeRemoteExecutableSchema } from 'graphql-tools'
 
 import introspection from './introspection.json'
@@ -6,8 +6,7 @@ import introspection from './introspection.json'
 import { link } from './link'
 
 // type forcing
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const introspectedSchema: any = introspection
+const introspectedSchema = (introspection as unknown) as IntrospectionQuery
 
 /**
  * Creates a remote schema based on GitHub GraphQL API.

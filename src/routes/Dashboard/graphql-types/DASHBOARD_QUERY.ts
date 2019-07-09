@@ -32,7 +32,7 @@ export interface DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_depen
 export interface DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage {
   __typename: "NPMPackage";
   id: string;
-  dependencies: (DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_dependencies | null)[];
+  dependencies: DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_dependencies[];
 }
 
 export interface DASHBOARD_QUERY_projects_edges_node_Repository {

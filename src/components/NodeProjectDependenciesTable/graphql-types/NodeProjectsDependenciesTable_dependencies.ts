@@ -22,5 +22,6 @@ export interface NodeProjectsDependenciesTable_dependencies {
   id: string;
   version: string;
   outdateStatus: SemverOutdateStatus | null;
+  name: string;
   package: NodeProjectsDependenciesTable_dependencies_package;
 }

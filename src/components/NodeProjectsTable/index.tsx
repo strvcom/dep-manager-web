@@ -1,18 +1,6 @@
 import React, { memo, useMemo, FunctionComponent } from 'react'
 import mem from 'mem'
-import {
-  __,
-  ascend,
-  filter,
-  length as len,
-  map,
-  pick,
-  pipe,
-  propEq,
-  prop,
-  sum,
-  values,
-} from 'ramda'
+import { ascend, length as len, map, pick, pipe, propEq, prop, sum, values, Functor } from 'ramda'
 
 import Table, { Column } from '../Table/index'
 import StatusColumn from '../Table/StatusColumn'
@@ -61,21 +49,19 @@ const renderOutdated = ({ rowData: { outdated } }: { rowData: { outdated: IOutda
   <StatusColumn outDated={outdated[distances.MAJOR]} alerts={outdated[distances.MINOR]} />
 )
 
-const getOutdated = (dependencies: (IDependency | null)[]): number =>
-  pipe(
+const getOutdated = (dependencies: Array<IDependency | null>) =>
+  pipe<string, (value: IDependency | null) => boolean, Array<IDependency | null>, number>(
     propEq('outdateStatus'),
-    filter(__, dependencies),
+    propEqFilter => dependencies.filter(propEqFilter),
     len
   )
 
-const sumObject = pipe(
-  values,
-  sum
-)
-
 const sumOutdates = pipe(
   pick(Object.values(distances)),
-  sumObject
+  pipe<object, number[], number>(
+    values,
+    sum
+  )
 )
 
 /**
@@ -87,7 +73,9 @@ const normalizeProject = mem(
     const pushedAt = project.pushedAt
 
     const dependencies = (project.npmPackage && project.npmPackage.dependencies) || []
-    const outdated = map(getOutdated(dependencies), distances)
+    const outdated = (map(getOutdated(dependencies), (distances as unknown) as Functor<
+      distances
+    >) as unknown) as IOutdatedCounts
     const totalOutdated = sumOutdates(outdated)
 
     return { name, pushedAt, outdated, totalOutdated }

@@ -1,17 +1,17 @@
-interface IProject {
+export interface Project {
   name: string
 }
 
-export interface IProjectEdge {
+export interface ProjectEdge {
   cursor: string
-  node: IProject
+  node: Project
 }
 
-interface IProjectsConnection {
-  edges: IProjectEdge[]
+interface ProjectsConnection {
+  edges: ProjectEdge[]
 }
 
-export interface IProjectsArgs {
+export interface ProjectsArgs {
   department: string
   archived: boolean
 }
@@ -23,10 +23,10 @@ export interface IProjectsArgs {
  */
 const projects = (
   root: null,
-  args: IProjectsArgs,
-  context: any,
+  args: ProjectsArgs,
+  context: unknown,
   info: any
-): IProjectsConnection => {
+): ProjectsConnection => {
   const { department, archived, ...search } = args
   const { schema, mergeInfo } = info
 
@@ -62,12 +62,7 @@ interface IProjectArgs {
  *
  * Resolves a project inside strvcom org based on name.
  */
-const project = (
-  root: null,
-  { name }: IProjectArgs,
-  context: any,
-  info: any
-): IProject => {
+const project = (root: null, { name }: IProjectArgs, context: any, info: any): Project => {
   const { schema, mergeInfo } = info
 
   const owner = 'strvcom'

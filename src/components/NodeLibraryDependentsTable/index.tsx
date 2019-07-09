@@ -86,7 +86,7 @@ const NodeLibraryDependentsTable: FunctionComponent<IProps> = ({
   const rowGetter = ({ index }: { index: number }): INormalizedDependent => sorted[index]
 
   const baseURL = departmentBaseURLs[department]
-  const rowRenderer = baseURL ? anchorRowRenderer(baseURL, prop('name')) : undefined
+  const rowRenderer = baseURL ? anchorRowRenderer<'name'>(baseURL, prop('name')) : undefined
 
   return (
     <Table

@@ -27,7 +27,7 @@ const attachAnalysis = async (root: INPMPackage): Promise<INPMPackage> => {
  */
 const metadata = (
   field: string,
-  transform: Function = identity
+  transform: <Value>(value: Value) => unknown = identity
 ): IResolverOptions => ({
   fragment: `... on NPMPackage { name }`,
   resolve: pipeResolvers(
@@ -35,10 +35,7 @@ const metadata = (
       // first, try and grab an existing value.
       prop(field),
       // then, load from NPMS analysis as a fallback.
-      pipeResolvers(
-        attachAnalysis,
-        path(['analysis', 'collected', 'metadata', field])
-      )
+      pipeResolvers(attachAnalysis, path(['analysis', 'collected', 'metadata', field]))
     ),
     transform
   ),

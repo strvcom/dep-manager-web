@@ -4,6 +4,7 @@ import {
   FieldNode,
   InlineFragmentNode,
   FragmentSpreadNode,
+  SelectionNode,
 } from 'graphql/language'
 import gql from 'graphql-tag'
 
@@ -14,7 +15,6 @@ import {
   lensPath,
   lensProp,
   over,
-  path,
   pathEq,
   pathOr,
   propEq,
@@ -22,7 +22,8 @@ import {
   set,
 } from 'ramda'
 
-import { Query, IProjectsArgs, IProjectEdge } from './Query'
+import { Query, ProjectsArgs, ProjectEdge } from './Query'
+import { GraphQLResolveInfo } from 'graphql'
 
 const dependentsSelection = gql`
   fragment RepositoryDependencies on SearchResultItemConnection {
@@ -49,54 +50,49 @@ const dependentsSelection = gql`
  *
  * @param name Dependence library name
  */
-const dependsOn = (name: string): (() => boolean) =>
-  pipe(
+const dependsOn = (name: string) =>
+  pipe<ProjectEdge, unknown[], boolean>(
     pathOr([], ['node', 'npmPackage', 'dependencies']),
     any(pathEq(['package', 'name'], name))
   )
 
-interface IRepository {
+export interface Repository {
   name: string
+  npmPackage: NPMPackage
 }
 
-export interface IDependentNode {
+export interface DependentNode {
   __typename: string
   __parent: {
     name: string
     version: string
   }
-  repository: IRepository
+  repository: Repository
 }
 
-interface IDependentEdge {
+interface DependentEdge {
   cursor: string
-  node: IDependentNode
+  node: DependentNode
 }
 
-type IEdgeToDependent = (repository: IProjectEdge) => IDependentEdge
+type EdgeToDependent = (repository: ProjectEdge) => DependentEdge
 
 /**
  * Normalize a Repository edge into an Dependent edge (with meta-data info)
  */
-const edgeToDependent = (name: string, version: string): IEdgeToDependent => ({
-  cursor,
-  node,
-}) => ({
+const edgeToDependent = (name: string, version: string): EdgeToDependent => ({ cursor, node }) => ({
   cursor,
   node: {
     __typename: 'Dependent',
     __parent: { name, version },
-    repository: node,
+    repository: node as Repository,
   },
 })
 
 /**
  * Verifies if an AST node is a Dependent::repository field.
  */
-const isRepositoryField = both(
-  propEq('kind', 'Field'),
-  pathEq(['name', 'value'], 'repository')
-)
+const isRepositoryField = both(propEq('kind', 'Field'), pathEq(['name', 'value'], 'repository'))
 
 /**
  * An AST visitor to adapt request of dependents field on-to GitHub search
@@ -110,11 +106,7 @@ const visitor = {
    * data on the Repository (package.json blob, for instance).
    */
   leave: (node: ASTNode, key: string, parentNode: FieldNode) => {
-    if (
-      node.kind === 'SelectionSet' &&
-      parentNode.name &&
-      parentNode.name.value === 'dependents'
-    ) {
+    if (node.kind === 'SelectionSet' && parentNode.name && parentNode.name.value === 'dependents') {
       return over(lensProp('selections'), append(dependentsSelection), node)
     }
   },
@@ -124,13 +116,9 @@ const visitor = {
    * selectionSet into GitHub's expectation for Repository type.
    */
   InlineFragment: {
-    leave: (
-      node: InlineFragmentNode
-    ): InlineFragmentNode | null | undefined => {
+    leave: (node: InlineFragmentNode): InlineFragmentNode | null | undefined => {
       if (node.typeCondition && node.typeCondition.name.value === 'Dependent') {
-        const selections = node.selectionSet.selections.filter(
-          isRepositoryField
-        ) as FieldNode[]
+        const selections = node.selectionSet.selections.filter(isRepositoryField) as FieldNode[]
 
         // skip this Dependent fragment entirely, when not
         // requesting repository data.
@@ -138,25 +126,17 @@ const visitor = {
 
         const selectionSet = {
           kind: 'SelectionSet',
-          selections: [].concat(
-            // @ts-ignore
-            ...selections.map(path(['selectionSet', 'selections']))
+          selections: selections.flatMap(
+            pathOr<ReadonlyArray<SelectionNode>>([], ['selectionSet', 'selections'])
           ),
         }
-
         return pipe(
           set(lensPath(['typeCondition', 'name', 'value']), 'Repository'),
-          // @ts-ignore
           set(lensProp('selectionSet'), selectionSet)
         )(node)
       }
     },
   },
-}
-
-interface INPMPackage {
-  name: string
-  version: string
 }
 
 /**
@@ -174,25 +154,20 @@ interface INPMPackage {
 const dependents = {
   fragment: `... on NPMPackage { name version }`,
   resolve: async (
-    { name, version }: INPMPackage,
-    args: IProjectsArgs,
-    context: any,
-    info: any
+    { name, version }: NPMPackage,
+    args: ProjectsArgs,
+    context: unknown,
+    info: GraphQLResolveInfo
   ) => {
     /**
      * Find the Dependent named fragments and transform into inline fragments.
      */
-    const inlinedFragments = visit(info.fieldNodes, {
+    const inlinedFragments = visit((info.fieldNodes as unknown) as FieldNode, {
       FragmentSpread: {
-        leave: (
-          node: FragmentSpreadNode
-        ): InlineFragmentNode | null | undefined => {
+        leave: (node: FragmentSpreadNode): InlineFragmentNode | null | undefined => {
           const fragment = info.fragments[node.name.value]
 
-          if (
-            fragment.typeCondition &&
-            fragment.typeCondition.name.value === 'Dependent'
-          ) {
+          if (fragment.typeCondition && fragment.typeCondition.name.value === 'Dependent') {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { name, loc, ...fragmentNode } = fragment
 
@@ -223,4 +198,12 @@ const dependents = {
   },
 }
 
+interface NPMPackage {
+  name: string
+  version: string
+  dependencies: Array<{
+    name: string
+    version: string
+  }>
+}
 export const NPMPackage = { dependents }

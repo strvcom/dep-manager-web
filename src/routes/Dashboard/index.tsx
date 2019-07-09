@@ -1,7 +1,6 @@
-import React, { Suspense, memo, useState, FunctionComponent } from 'react'
+import React, { Suspense, memo, useState } from 'react'
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import ErrorBoundary from 'react-error-boundary'
-import { pipe, prop, map, filter, includes } from 'ramda'
 
 import * as routes from '../routes'
 import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
@@ -14,36 +13,23 @@ import RecentUpdates from '../../components/RecentUpdates'
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
 import DashboardToolBar from './DashboardToolBar'
 import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
-import { extractLibrariesInfo } from './helpers'
+import { extractLibrariesInfo, filterProjectsBySearch } from './helpers'
 
 import { BidaDepartment, SemverOutdateStatus as distances } from '../../generated/graphql-types'
 
 import DASHBOARD_QUERY from './query.gql'
 
 import {
-  DASHBOARD_QUERY as IData,
-  DASHBOARD_QUERYVariables as IVariables,
-  DASHBOARD_QUERY_projects_edges_node_Repository as IRepository,
-  DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_dependencies as ILibrary,
+  DASHBOARD_QUERY as Data,
+  DASHBOARD_QUERYVariables as Variables,
 } from './graphql-types/DASHBOARD_QUERY'
 
-type IProps = RouteComponentProps<{
+export type DashboarProps = RouteComponentProps<{
   department: string
   category: string
 }>
 
-const filterProjects = (search: string): Function =>
-  pipe(
-    map(prop('node')),
-    filter(
-      pipe(
-        prop('name'),
-        includes(search)
-      )
-    )
-  )
-
-const Dashboard: FunctionComponent<IProps> = ({ match }: IProps) => {
+const Dashboard = ({ match }: DashboarProps) => {
   const { department, category } = match.params
   const [search, setSearch] = useState('')
 
@@ -59,7 +45,7 @@ const Dashboard: FunctionComponent<IProps> = ({ match }: IProps) => {
       />
 
       <StyledDashboard>
-        <AuthenticatedQuery<IData, IVariables>
+        <AuthenticatedQuery<Data, Variables>
           query={DASHBOARD_QUERY}
           variables={{ department: department.toUpperCase() as BidaDepartment }}
           children={({ data, loading, error }): React.ReactNode => {
@@ -69,11 +55,9 @@ const Dashboard: FunctionComponent<IProps> = ({ match }: IProps) => {
 
             const { projects, archived } = data
 
-            // heavy processing here:
             const { libraries, uniqueLibraries, outdates, recentlyUpdated } = extractLibrariesInfo(
-              projects
+              projects.edges
             )
-
             const { [distances.MAJOR]: major } = outdates
 
             const renderWidgets = () => (
@@ -96,18 +80,16 @@ const Dashboard: FunctionComponent<IProps> = ({ match }: IProps) => {
             )
 
             const renderLibraries = () => {
-              const filtered = uniqueLibraries.filter(({ package: { name } }: ILibrary) =>
+              const filtered = uniqueLibraries.filter(({ package: { name } }) =>
                 name.includes(search)
               )
-
               return (
                 <NodeLibrariesTable libraries={filtered} outdates={outdates} cacheKey={cacheKey} />
               )
             }
 
             const renderProjects = () => {
-              const filtered = filterProjects(search)(projects.edges) as IRepository[]
-
+              const filtered = filterProjectsBySearch(search)(projects.edges)
               return (
                 <NodeProjectsTable
                   department={department}

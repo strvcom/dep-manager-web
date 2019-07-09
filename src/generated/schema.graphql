@@ -5542,7 +5542,7 @@ type NPMPackage {
   id: String!
   name: String!
   version: String!
-  dependencies: [NPMDependency]!
+  dependencies: [NPMDependency!]!
   license: String
   updatedAt: String
   private: Boolean

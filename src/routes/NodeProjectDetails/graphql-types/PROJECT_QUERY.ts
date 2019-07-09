@@ -23,12 +23,13 @@ export interface PROJECT_QUERY_project_npmPackage_dependencies {
   id: string;
   version: string;
   outdateStatus: SemverOutdateStatus | null;
+  name: string;
 }
 
 export interface PROJECT_QUERY_project_npmPackage {
   __typename: "NPMPackage";
   id: string;
-  dependencies: (PROJECT_QUERY_project_npmPackage_dependencies | null)[];
+  dependencies: PROJECT_QUERY_project_npmPackage_dependencies[];
 }
 
 export interface PROJECT_QUERY_project {

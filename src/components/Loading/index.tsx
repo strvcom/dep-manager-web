@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import styled, { keyframes } from 'styled-components'
 
 const loading = keyframes`
@@ -16,18 +14,22 @@ const loading = keyframes`
   }
 `
 
-interface IProps {
+interface BarLoaderProps {
   color?: string
   duration?: number
   size?: number
 }
 
-const BarLoader = styled.div`
+const color = (props: BarLoaderProps) => props.color
+const duration = (multiplier: number) => (props: BarLoaderProps) =>
+  `${(props.duration || 0) * multiplier}s`
+
+const BarLoader = styled('div')<BarLoaderProps>`
   animation: ${loading} 1s infinite ease-in-out;
-  animation-delay: ${(props: IProps) => `${props.duration! * -0.16}s`};
-  background: ${(props: IProps) => props.color};
-  color: ${(props: IProps) => props.color};
-  font-size: ${(props: IProps) => `${props.size}px`};
+  animation-delay: ${duration(-0.16)};
+  background: ${color};
+  color: ${color};
+  font-size: ${({ size }) => size}px;
   height: 4em;
   margin: 88px auto;
   position: relative;
@@ -37,8 +39,8 @@ const BarLoader = styled.div`
 
   &::before {
     animation: ${loading} 1s infinite ease-in-out;
-    animation-delay: ${(props: IProps) => `${props.duration! * -0.32}s`};
-    background: ${(props: IProps) => props.color};
+    animation-delay: ${duration(-0.32)};
+    background: ${color};
     content: '';
     height: 4em;
     left: -1.5em;
@@ -49,8 +51,8 @@ const BarLoader = styled.div`
 
   &::after {
     animation: ${loading} 1s infinite ease-in-out;
-    animation-delay: ${(props: IProps) => `${props.duration! * 0.08}s`};
-    background: ${(props: IProps) => props.color};
+    animation-delay: ${duration(0.08)};
+    background: ${color};
     content: '';
     height: 4em;
     left: 1.5em;
