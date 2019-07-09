@@ -1,7 +1,9 @@
-import { NPMDependency, __set__ } from './NPMDependency'
+import { NPMDependency } from './NPMDependency'
+import { analysis } from '../loaders'
 
-const load = jest.fn()
-__set__('loaders', { analysis: { load } })
+jest.mock('../loaders', () => ({ analysis: { load: jest.fn() } }))
+
+const { load } = analysis
 
 deepDescribe('api/bida/npm/resolvers/NPMDependency/outdateStatus', () => {
   beforeEach(jest.clearAllMocks)

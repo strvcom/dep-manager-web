@@ -183,4 +183,16 @@ const filterProjectsBySearch = (search: string) =>
     )
   )
 
+// @tests
+export {
+  setter,
+  merger,
+  getDependencies,
+  getOutdates,
+  buildLibrariesInfo,
+  mergeLibrariesInfo,
+  getUniqueDependencies,
+  infoShape,
+}
+
 export { extractLibrariesInfo, filterProjectsBySearch }

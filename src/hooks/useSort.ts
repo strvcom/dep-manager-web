@@ -69,4 +69,7 @@ const useSort = ({
   return [sorted, setSort, sort]
 }
 
+// @tests
+export { sorter }
+
 export { useSort }

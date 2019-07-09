@@ -1,6 +1,5 @@
-import { Dependent, __get__ } from './Dependent'
+import { Dependent, getVersion } from './Dependent'
 
-const getVersion = __get__('getVersion')
 const { version, name, id, outdateStatus } = Dependent
 
 deepDescribe('api/bida/projects/resolvers', () => {

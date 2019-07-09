@@ -3,13 +3,15 @@ import gql from 'graphql-tag'
 import { visit, print } from 'graphql/language'
 
 import { chance } from '../../../../../../tests/utils/mocking'
-import { NPMPackage, __get__ } from './NPMPackage'
 
-const Query = __get__('Query')
-const dependsOn = __get__('dependsOn')
-const edgeToDependent = __get__('edgeToDependent')
-const isRepositoryField = __get__('isRepositoryField')
-const visitor = __get__('visitor')
+import {
+  NPMPackage,
+  Query,
+  dependsOn,
+  edgeToDependent,
+  isRepositoryField,
+  visitor,
+} from './NPMPackage'
 
 const { dependents } = NPMPackage
 const projects = jest.fn()
@@ -24,10 +26,7 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
     cursor: '123456',
     node: {
       npmPackage: {
-        dependencies: [
-          { package: { name: 'first' } },
-          { package: { name: 'second' } },
-        ],
+        dependencies: [{ package: { name: 'first' } }, { package: { name: 'second' } }],
       },
     },
   }
@@ -76,7 +75,7 @@ deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
     })
   })
 
-  describe.only('[visitor]', () => {
+  describe('[visitor]', () => {
     it('should not alter non-Dependent queries', () => {
       const doc = gql`
         {

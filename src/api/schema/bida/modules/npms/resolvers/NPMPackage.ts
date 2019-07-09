@@ -60,6 +60,9 @@ const analysis = {
   resolve: pipeResolvers(attachAnalysis, prop('analysis')),
 }
 
+// @tests
+export { attachAnalysis, metadata }
+
 export const NPMPackage = {
   license,
   description,

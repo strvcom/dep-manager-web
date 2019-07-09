@@ -43,4 +43,7 @@ const id = ({ __parent, repository }: DependentNode): string =>
 const outdateStatus = ({ __parent, repository }: DependentNode): string =>
   versionDistance(getVersion(__parent.name, repository), __parent.version)
 
+// @tests
+export { getVersion }
+
 export const Dependent = { id, name, version, outdateStatus }

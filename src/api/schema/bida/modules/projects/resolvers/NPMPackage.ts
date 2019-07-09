@@ -206,4 +206,8 @@ interface NPMPackage {
     version: string
   }>
 }
+
+// @tests
+export { Query, dependsOn, edgeToDependent, isRepositoryField, visitor }
+
 export const NPMPackage = { dependents }

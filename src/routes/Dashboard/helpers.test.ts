@@ -1,16 +1,18 @@
 import 'jest'
 import uuid from 'uuid/v4'
 
-import { extractLibrariesInfo, getRecentlyUpdated, __get__ } from './helpers'
-
-const setter = __get__('setter')
-const merger = __get__('merger')
-const getDependencies = __get__('getDependencies')
-const getOutdates = __get__('getOutdates')
-const buildLibrariesInfo = __get__('buildLibrariesInfo')
-const mergeLibrariesInfo = __get__('mergeLibrariesInfo')
-const getUniqueDependencies = __get__('getUniqueDependencies')
-const infoShape = __get__('infoShape')
+import {
+  extractLibrariesInfo,
+  getRecentlyUpdated,
+  setter,
+  merger,
+  getDependencies,
+  getOutdates,
+  buildLibrariesInfo,
+  mergeLibrariesInfo,
+  getUniqueDependencies,
+  infoShape,
+} from './helpers'
 
 describe('routes/Dashboard/helpers', () => {
   describe('fn', () => {
@@ -62,10 +64,7 @@ describe('routes/Dashboard/helpers', () => {
       empty: { npmPackage: { dependencies: [] } },
       fulfiled: {
         npmPackage: {
-          dependencies: [
-            { package: { name: 'first' } },
-            { package: { name: 'second' } },
-          ],
+          dependencies: [{ package: { name: 'first' } }, { package: { name: 'second' } }],
         },
       },
     }
@@ -77,14 +76,8 @@ describe('routes/Dashboard/helpers', () => {
 
     it('should return dependency packages', () => {
       expect(getDependencies(data.fulfiled).length).toBe(2)
-      expect(getDependencies(data.fulfiled)).toHaveProperty(
-        '0.package.name',
-        'first'
-      )
-      expect(getDependencies(data.fulfiled)).toHaveProperty(
-        '1.package.name',
-        'second'
-      )
+      expect(getDependencies(data.fulfiled)).toHaveProperty('0.package.name', 'first')
+      expect(getDependencies(data.fulfiled)).toHaveProperty('1.package.name', 'second')
     })
   })
 
@@ -330,9 +323,7 @@ describe('routes/Dashboard/helpers', () => {
             cursor: uuid(),
             node: {
               npmPackage: {
-                dependencies: [
-                  { package: { name: 'a' }, outdateStatus: 'MAJOR' },
-                ],
+                dependencies: [{ package: { name: 'a' }, outdateStatus: 'MAJOR' }],
               },
             },
           },
@@ -340,9 +331,7 @@ describe('routes/Dashboard/helpers', () => {
             cursor: uuid(),
             node: {
               npmPackage: {
-                dependencies: [
-                  { package: { name: 'a' }, outdateStatus: 'MINOR' },
-                ],
+                dependencies: [{ package: { name: 'a' }, outdateStatus: 'MINOR' }],
               },
             },
           },

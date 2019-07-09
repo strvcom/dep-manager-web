@@ -1,17 +1,7 @@
 import { ascend, prop, reverse } from 'ramda'
 import { renderHook, cleanup, act } from 'react-hooks-testing-library'
 
-import {
-  useSort,
-  ISort,
-  SortDirection,
-  SortList,
-  Sorter,
-  SortSetter,
-  __get__,
-} from './useSort'
-
-const sorter = __get__('sorter')
+import { useSort, ISort, SortDirection, SortList, Sorter, SortSetter, sorter } from './useSort'
 
 interface IConfig {
   list: SortList

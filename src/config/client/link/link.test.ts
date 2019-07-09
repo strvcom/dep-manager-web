@@ -1,8 +1,16 @@
 import { ApolloLink, from, execute, Observable, toPromise } from 'apollo-link'
 import gql from 'graphql-tag'
+import getLog from 'debug'
 
-import { link as debug, __set__ as __set__debug__ } from './debug'
+import { link as debug } from './debug'
 import { link as auth } from './auth'
+
+jest.mock('debug', () => {
+  const log = jest.fn()
+  return () => log
+})
+
+const log = getLog('')
 
 describe('config/client/link', () => {
   beforeEach(jest.clearAllMocks)
@@ -20,9 +28,6 @@ describe('config/client/link', () => {
           field
         }
       `
-
-      const log = jest.fn()
-      __set__debug__('debug', log)
 
       await toPromise(execute(link, { query, variables }))
 
