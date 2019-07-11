@@ -116,11 +116,12 @@ const NodeLibrariesTable: FunctionComponent<NodeLibrariesTableProps> = ({
 
   // state
 
-  const [sorted, setSort, sort] = useSort({
+  const [sorted, setSort, { sortBy, sortDirection }] = useSort({
     list,
     cacheKeys,
     defaultSort,
-    initial: { sortBy: 'name', sortDirection: 'ASC' },
+    sortBy: 'name',
+    sortDirection: 'ASC',
   })
 
   // renderers.
@@ -130,8 +131,8 @@ const NodeLibrariesTable: FunctionComponent<NodeLibrariesTableProps> = ({
   return (
     <Table
       sort={setSort}
-      sortBy={sort.sortBy}
-      sortDirection={sort.sortDirection}
+      sortBy={sortBy}
+      sortDirection={sortDirection}
       rowCount={libraries.length}
       rowGetter={rowGetter}
       rowRenderer={renderRow}

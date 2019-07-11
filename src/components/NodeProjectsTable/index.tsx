@@ -1,4 +1,4 @@
-import React, { memo, useMemo, FunctionComponent } from 'react'
+import React, { memo, useMemo } from 'react'
 import mem from 'mem'
 import { ascend, length as len, map, pick, pipe, propEq, prop, sum, values, Functor } from 'ramda'
 
@@ -8,11 +8,11 @@ import { BidaDepartment } from '../../config/types'
 import * as routes from '../../routes/routes'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
 
-import { useSort, IUseSortOptions } from '../../hooks/useSort'
+import { useSort, UseSortOptions } from '../../hooks/useSort'
 
 import { SemverOutdateStatus as distances } from '../../generated/graphql-types'
 import {
-  NodeProjectsTable_projects as IProject,
+  NodeProjectsTable_projects as Project,
   NodeProjectsTable_projects_npmPackage_dependencies as IDependency,
 } from './graphql-types/NodeProjectsTable_projects'
 
@@ -27,9 +27,9 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 })
 
-interface IProps {
+interface NodeProjectsTableProps {
   cacheKey?: string
-  projects: IProject[]
+  projects: Project[]
   department: string
 }
 
@@ -37,7 +37,7 @@ interface IOutdatedCounts {
   [distance: string]: number
 }
 
-interface INormalizedProject extends Pick<IProject, 'name' | 'pushedAt'> {
+interface NormalizedProject extends Pick<Project, 'name' | 'pushedAt'> {
   outdated: IOutdatedCounts
   totalOutdated: number
 }
@@ -68,7 +68,7 @@ const sumOutdates = pipe(
  * Flattens and processes a project data for easier display and sort operations.
  */
 const normalizeProject = mem(
-  (project: IProject): INormalizedProject => {
+  (project: Project): NormalizedProject => {
     const name = project.name
     const pushedAt = project.pushedAt
 
@@ -83,17 +83,14 @@ const normalizeProject = mem(
   { cacheKey: prop('name') }
 )
 
-const sortDefaults: IUseSortOptions = {
+const sortDefaults: UseSortOptions<NormalizedProject> = {
   list: [],
   defaultSort: ascend(prop('name')),
-  initial: { sortBy: 'name', sortDirection: 'ASC' },
+  sortBy: 'name',
+  sortDirection: 'ASC',
 }
 
-const NodeProjectsTable: FunctionComponent<IProps> = ({
-  projects,
-  department,
-  cacheKey,
-}: IProps) => {
+const NodeProjectsTable = ({ projects, department, cacheKey }: NodeProjectsTableProps) => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
@@ -105,17 +102,17 @@ const NodeProjectsTable: FunctionComponent<IProps> = ({
 
   // state
 
-  const [sorted, setSort, sort] = useSort({ ...sortDefaults, list, cacheKeys })
+  const [sorted, setSort, { sortBy, sortDirection }] = useSort({ ...sortDefaults, list, cacheKeys })
 
   const baseURL = departmentBaseURLs[department.toUpperCase()]
-  const rowGetter = ({ index }: { index: number }): INormalizedProject => sorted[index]
+  const rowGetter = ({ index }: { index: number }): NormalizedProject => sorted[index]
   const renderRow = baseURL ? anchorRowRenderer(baseURL, 'name') : undefined
 
   return (
     <Table
       sort={setSort}
-      sortBy={sort.sortBy}
-      sortDirection={sort.sortDirection}
+      sortBy={sortBy}
+      sortDirection={sortDirection}
       rowCount={projects.length}
       rowGetter={rowGetter}
       rowRenderer={renderRow}
@@ -134,6 +131,8 @@ const NodeProjectsTable: FunctionComponent<IProps> = ({
   )
 }
 
-export default memo(NodeProjectsTable, (prev: IProps, next: IProps) =>
-  prev.cacheKey ? prev.cacheKey === next.cacheKey : false
+export default memo(
+  NodeProjectsTable,
+  ({ cacheKey: prev }: NodeProjectsTableProps, { cacheKey: next }: NodeProjectsTableProps) =>
+    prev ? prev === next : false
 )

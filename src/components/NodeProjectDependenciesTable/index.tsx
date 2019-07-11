@@ -97,7 +97,8 @@ const NodeProjectDependenciesTable: FunctionComponent<IProps> = ({
     list,
     cacheKeys,
     defaultSort,
-    initial: { sortBy: 'name', sortDirection: 'ASC' },
+    sortBy: 'name',
+    sortDirection: 'ASC',
   })
 
   // renderers.

@@ -16,11 +16,14 @@ const getBuilder = (schema: GraphQLSchema) =>
   // @ts-ignore ASTDefinitionBuilder is wrongly typed in @types/graphql.
   new ASTDefinitionBuilder({}, name => schema.getType(name))
 
-export type FieldConfig = GraphQLFieldConfig<any, any>
+export type FieldConfig = GraphQLFieldConfig<unknown, unknown>
 
 type FieldTransformHandler = (
   field: FieldConfig,
-  context: { type: GraphQLObjectType; builder: ASTDefinitionBuilder }
+  context: {
+    type: GraphQLObjectType
+    builder: ASTDefinitionBuilder
+  }
 ) => FieldConfig
 
 class FieldTransform {
