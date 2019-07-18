@@ -1,11 +1,4 @@
 {
   "presets": ["@strv/react-scripts/babel"],
-
-  "plugins": [
-    "ramda",
-    "styled-components",
-    "import-graphql"
-  ],
-
-  "env": { "test": { "plugins": ["rewire"] } }
+  "plugins": ["ramda", "styled-components", "import-graphql"]
 }

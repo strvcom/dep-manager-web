@@ -18,7 +18,6 @@ interface IProps extends Omit<QueryProps<IData>, 'query' | 'children'> {
   children: (result: IChildrenResult) => React.ReactNode
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CurrentUserContainer = ({ children, ...rest }: IProps) => (
   <AuthenticatedQuery<IData>
     {...rest}

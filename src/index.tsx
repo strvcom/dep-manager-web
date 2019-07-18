@@ -12,15 +12,9 @@ import PropTypes from 'prop-types'
 import { client } from './config/client'
 
 if (process.env.NODE_ENV === 'development') {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const RouteComponent = Route as any
-
-  // fixes react-router erroneous prop-types
+  // Fix bug of errouneous prop-types on Route component
   // eslint-disable-next-line react/forbid-foreign-prop-types
-  RouteComponent.propTypes.component = PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.object,
-  ])
+  Route.propTypes.component = PropTypes.oneOfType([PropTypes.func, PropTypes.object])
 }
 
 ReactDOM.render(

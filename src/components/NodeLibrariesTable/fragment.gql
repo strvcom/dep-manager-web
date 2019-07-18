@@ -1,0 +1,8 @@
+fragment NodeLibraryTable_Library on NPMDependency {
+  id
+  package {
+    id
+    name
+    license
+  }
+}

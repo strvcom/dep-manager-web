@@ -71,14 +71,14 @@ chance.mixin({
   }),
 })
 
-interface IVersionOptions {
+interface VersionOptions {
   constraint?: {
     [diff: string]: { min: number, max: number }
   }
   max?: string
 }
 
-const versionDefaults: IVersionOptions = {
+const versionDefaults: VersionOptions = {
   constraint: {
     major: { min: 0, max: 5 },
     minor: { min: 0, max: 20 },
@@ -88,8 +88,8 @@ const versionDefaults: IVersionOptions = {
 }
 
 chance.mixin({
-  version: (options: IVersionOptions = {}) => {
-    const { constraint, max } = mergeDeepRight(versionDefaults, options)
+  version: (options: VersionOptions = {}) => {
+    const { constraint = {}, max } = mergeDeepRight(versionDefaults, options)
 
     const major = chance.integer(constraint.major)
     const minor = chance.integer(constraint.minor)

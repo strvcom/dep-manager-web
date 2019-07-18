@@ -24,50 +24,42 @@ import { isValidLicense } from '../../utils/license'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
 
 import { useSort } from '../../hooks/useSort'
+import {
+  NodeLibraryTable_Library,
+  NodeLibraryTable_Library_package,
+} from './graphql-types/NodeLibraryTable_Library'
 
-const distances = {
-  MAJOR: 'MAJOR',
-  MINOR: 'MINOR',
+enum Distances {
+  MAJOR = 'MAJOR',
+  MINOR = 'MINOR',
 }
 
-interface IOutdates {
-  [distance: string]: ILibrary[]
-}
+type Outdates = Record<string, NodeLibraryTable_Library_package[]>
+type OutdateCounts = Record<string, number>
 
-interface IOutdateCounts {
-  [distance: string]: number
-}
-
-interface ILibrary {
-  package: {
-    name: string
-    license: string
-  }
-}
-
-interface INormalizedLibrary {
+interface NormalizedLibrary {
   name: string
   license: string
-  outdates: IOutdateCounts
+  outdates: OutdateCounts
   totalOutdates: number
   usage: number
 }
 
-interface IProps {
+export interface NodeLibrariesTableProps {
   cacheKey?: string // key for verifying memoization
-  libraries: ILibrary[]
-  outdates: IOutdates
+  libraries: NodeLibraryTable_Library[]
+  outdates: Outdates
 }
 
 const defaultSort = ascend(prop('name'))
 
-const sumObject = pipe(
+const sumObject = pipe<Record<Distances, number>, number[], number>(
   values,
   sum
 )
 
-const sumOutdates = pipe(
-  pick(Object.values(distances)),
+const sumOutdates = pipe<OutdateCounts, OutdateCounts, number>(
+  pick(Object.values(Distances)) as (obj: object) => Record<Distances, number>,
   sumObject
 )
 
@@ -75,31 +67,32 @@ const sumOutdates = pipe(
  * Flattens and processes a library data for easier display and sort operations.
  */
 const normalizeLibrary = mem(
-  (library: ILibrary, allOutdates: IOutdates): INormalizedLibrary => {
+  (library: NodeLibraryTable_Library, allOutdates: Outdates): NormalizedLibrary => {
     const name = library.package.name
-    const license = library.package.license
+    const license = library.package.license || ''
 
-    const outdates = map(
-      pipe(
+    const outdates: OutdateCounts = map(
+      pipe<NodeLibraryTable_Library_package[], NodeLibraryTable_Library_package[], number>(
         filter(propEq('name', name)),
-        // @ts-ignore
         len
       ),
       allOutdates
     )
-
-    const totalOutdates = sumOutdates(outdates)
-    const usage = sumObject(outdates)
-
-    return { name, license, outdates, totalOutdates, usage }
+    return {
+      name,
+      license,
+      outdates,
+      totalOutdates: sumOutdates(outdates),
+      usage: sumObject(outdates),
+    }
   },
   { cacheKey: path(['package', 'name']) }
 )
 
-const renderRow = anchorRowRenderer(routes.frontendLibraries, prop('name'))
+const renderRow = anchorRowRenderer<'name'>(routes.frontendLibraries, prop('name'))
 
-const renderOutdates = ({ rowData: { outdates } }: { rowData: { outdates: IOutdateCounts } }) => (
-  <StatusColumn outDated={outdates[distances.MAJOR]} alerts={outdates[distances.MINOR]} />
+const renderOutdates = ({ rowData: { outdates } }: { rowData: { outdates: OutdateCounts } }) => (
+  <StatusColumn outDated={outdates[Distances.MAJOR]} alerts={outdates[Distances.MINOR]} />
 )
 
 const renderLicense = ({ cellData }: { cellData?: string }) =>
@@ -107,11 +100,11 @@ const renderLicense = ({ cellData }: { cellData?: string }) =>
     <Badge type={!isValidLicense(cellData) ? BadgeType.DANGER : null}>{cellData}</Badge>
   ) : null
 
-const NodeLibrariesTable: FunctionComponent<IProps> = ({
+const NodeLibrariesTable: FunctionComponent<NodeLibrariesTableProps> = ({
   libraries,
   outdates,
   cacheKey,
-}: IProps) => {
+}: NodeLibrariesTableProps) => {
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
@@ -123,22 +116,23 @@ const NodeLibrariesTable: FunctionComponent<IProps> = ({
 
   // state
 
-  const [sorted, setSort, sort] = useSort({
+  const [sorted, setSort, { sortBy, sortDirection }] = useSort({
     list,
     cacheKeys,
     defaultSort,
-    initial: { sortBy: 'name', sortDirection: 'ASC' },
+    sortBy: 'name',
+    sortDirection: 'ASC',
   })
 
   // renderers.
 
-  const rowGetter = ({ index }: { index: number }): INormalizedLibrary => sorted[index]
+  const rowGetter = ({ index }: { index: number }): NormalizedLibrary => sorted[index]
 
   return (
     <Table
       sort={setSort}
-      sortBy={sort.sortBy}
-      sortDirection={sort.sortDirection}
+      sortBy={sortBy}
+      sortDirection={sortDirection}
       rowCount={libraries.length}
       rowGetter={rowGetter}
       rowRenderer={renderRow}
@@ -166,6 +160,8 @@ const NodeLibrariesTable: FunctionComponent<IProps> = ({
   )
 }
 
-export default memo(NodeLibrariesTable, (prev: IProps, next: IProps) =>
-  prev.cacheKey ? prev.cacheKey === next.cacheKey : false
+export default memo(
+  NodeLibrariesTable,
+  (prev: NodeLibrariesTableProps, next: NodeLibrariesTableProps) =>
+    prev.cacheKey ? prev.cacheKey === next.cacheKey : false
 )

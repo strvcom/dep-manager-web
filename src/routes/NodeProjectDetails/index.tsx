@@ -1,6 +1,6 @@
 import React, { memo, useState, FunctionComponent } from 'react'
 import { RouteComponentProps } from 'react-router-dom'
-import { prop } from 'ramda'
+import { prop, pathOr } from 'ramda'
 
 import ToolBar from '../../components/ToolBar'
 import Anchor from '../../components/Anchor'
@@ -20,9 +20,15 @@ import PROJECT_QUERY from './query.gql'
 import {
   PROJECT_QUERY as IData,
   PROJECT_QUERYVariables as IVariables,
-  PROJECT_QUERY_project_npmPackage_dependencies as IDependency,
+  PROJECT_QUERY_project_npmPackage_dependencies as Dependency,
   PROJECT_QUERY_project_npmPackage_dependencies_package as IPackage,
+  PROJECT_QUERY_project as Project,
 } from './graphql-types/PROJECT_QUERY'
+
+const getDependencies: (project: Project) => Dependency[] = pathOr<Dependency[]>(
+  [],
+  ['npmPackage', 'dependencies']
+)
 
 export interface IProps extends RouteComponentProps<{ id: string }> {
   department: BidaDepartment
@@ -44,15 +50,12 @@ const NodeProjectDetails: FunctionComponent<IProps> = ({ match, department }: IP
         if (!data) return null
 
         const { project } = data
-
-        const dependencies = (project.npmPackage
-          ? project.npmPackage.dependencies
-          : []) as IDependency[]
+        const dependencies = getDependencies(project)
 
         const outdated = dependencies.filter(({ outdateStatus }) => outdateStatus === 'MAJOR')
         const recentLibraries = getRecentlyUpdated(dependencies).map(prop('package')) as IPackage[]
 
-        const filtered = dependencies.filter((dependency: IDependency) =>
+        const filtered = dependencies.filter((dependency: Dependency) =>
           dependency.package.name.includes(search)
         )
 

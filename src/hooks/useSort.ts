@@ -1,72 +1,64 @@
 import { useMemo, useState } from 'react'
 import { ascend, descend, pick, pipe, prop, sortWith } from 'ramda'
+import { SortDirectionType } from 'react-virtualized'
 
 const sortDirections = {
   ASC: ascend,
   DESC: descend,
 }
 
-const defaultInitial = {
-  sortBy: undefined,
-  sortDirection: undefined,
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type SortList = any[]
-export type Sorter = (...args: SortList) => number
-export type SortDirection = 'DESC' | 'ASC'
-export type SortSetter = React.Dispatch<React.SetStateAction<ISort>>
-
-export interface ISort {
+interface CommonSortOptions {
   sortBy?: string
-  sortDirection?: SortDirection
+  sortDirection?: SortDirectionType
 }
 
-interface ISorterOptions {
-  list: SortList
-  sort: ISort
-  defaultSort?: Sorter
+interface SorterOptions<T> extends CommonSortOptions {
+  list: T[]
+  defaultSort?: SortFunction<T>
 }
 
-const sorter = ({
-  list,
-  sort: { sortBy, sortDirection = 'ASC' },
-  defaultSort,
-}: ISorterOptions): SortList => {
-  const sorters = []
+type SortFunction<T> = (a: T, b: T) => number
 
-  if (sortBy) sorters.push(sortDirections[sortDirection](prop(sortBy)))
+const sorter = <T>({ list, sortBy, sortDirection = 'ASC', defaultSort }: SorterOptions<T>): T[] => {
+  const sorters: SortFunction<T>[] = []
+  if (sortBy) {
+    const directionSorter = sortDirections[sortDirection]
+    sorters.push(directionSorter(prop(sortBy)))
+  }
   if (defaultSort) sorters.push(defaultSort)
 
   return sortWith(sorters, list)
 }
 
-export interface IUseSortOptions {
-  list: SortList
-  initial?: ISort
+export type SortOptionsSetter = React.Dispatch<React.SetStateAction<CommonSortOptions>>
+
+export interface UseSortOptions<T> extends CommonSortOptions {
+  list: T[]
   cacheKeys?: string[]
-  defaultSort?: Sorter
+  defaultSort?: SortFunction<T>
 }
 
-type IUseSortResult = [SortList, SortSetter, ISort]
-
-const useSort = ({
+const useSort = <T>({
   list,
   defaultSort,
-  initial = defaultInitial,
   cacheKeys = [],
-}: IUseSortOptions): IUseSortResult => {
-  const [sort, setSortState] = useState<ISort>(initial)
+  sortBy,
+  sortDirection,
+}: UseSortOptions<T>): [T[], SortOptionsSetter, CommonSortOptions] => {
+  const [sortOptions, setSortState] = useState<CommonSortOptions>({ sortBy, sortDirection })
 
   const setSort = pipe(
     pick(['sortBy', 'sortDirection']),
     setSortState
   )
 
-  const sortCache = cacheKeys.concat(Object.values(sort))
-  const sorted = useMemo(() => sorter({ list, sort, defaultSort }), sortCache)
+  const sortCache = cacheKeys.concat(Object.values(sortOptions))
+  const sorted = useMemo(() => sorter({ list, defaultSort, ...sortOptions }), sortCache)
 
-  return [sorted, setSort, sort]
+  return [sorted, setSort, sortOptions]
 }
+
+// @tests
+export { sorter }
 
 export { useSort }

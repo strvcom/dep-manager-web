@@ -1,9 +1,6 @@
-import { Query, __set__ } from './Query'
+import { Query } from './Query'
 
-const load = jest.fn()
 const { projects, project } = Query
-
-__set__('loaders', { analysis: { load } })
 
 deepDescribe('api/bida/projects/resolvers', () => {
   beforeEach(jest.clearAllMocks)

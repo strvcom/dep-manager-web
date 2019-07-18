@@ -1,20 +1,15 @@
-import React, { memo, FunctionComponent } from 'react'
+import React, { memo } from 'react'
 import ToolBar, { ToolBarLink } from '../../components/ToolBar'
 import { Input } from './styled'
 
-interface IProps {
+interface DashboardToolBarProps {
   department: string
   category: string
   search: string
   setSearch: (input: string) => void
 }
 
-const DashboardToolBar: FunctionComponent<IProps> = ({
-  department,
-  category,
-  search,
-  setSearch,
-}: IProps) => (
+const DashboardToolBar = ({ department, category, search, setSearch }: DashboardToolBarProps) => (
   <ToolBar
     title="Dashboard"
     links={

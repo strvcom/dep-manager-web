@@ -28,7 +28,7 @@ export interface NodeProjectsTable_projects_npmPackage_dependencies {
 export interface NodeProjectsTable_projects_npmPackage {
   __typename: "NPMPackage";
   id: string;
-  dependencies: (NodeProjectsTable_projects_npmPackage_dependencies | null)[];
+  dependencies: NodeProjectsTable_projects_npmPackage_dependencies[];
 }
 
 export interface NodeProjectsTable_projects {

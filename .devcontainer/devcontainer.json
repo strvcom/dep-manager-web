@@ -1,0 +1,11 @@
+{
+	"name": "Bida app container",
+	"dockerFile": "Dockerfile",
+	"appPort": [3000, 34567],
+	"postCreateCommand": "yarn install",
+	"extensions": [
+		"dbaeumer.vscode-eslint",
+		"kumar-harsh.graphql-for-vscode",
+		"apollographql.vscode-apollo"
+	]
+}

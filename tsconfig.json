@@ -5,12 +5,16 @@
     "preserveConstEnums": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "noEmitOnError": false,
     "suppressImplicitAnyIndexErrors": true,
     "moduleResolution": "node",
     "module": "esnext",
     "target": "esnext",
     "jsx": "preserve",
-    "lib": ["es2017", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "skipLibCheck": true,
     "strictFunctionTypes": true,
     "allowUnreachableCode": true,

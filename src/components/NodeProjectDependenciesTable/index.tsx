@@ -64,7 +64,7 @@ const renderLicense = mem(
     !license ? null : (
       <Badge type={!isValidLicense(license) ? BadgeType.DANGER : null}>{license}</Badge>
     ),
-  { cacheKey: prop('cellData') }
+  { cacheKey: prop('cellData') as (obj: { cellData?: string }) => string | undefined }
 )
 
 /**
@@ -97,7 +97,8 @@ const NodeProjectDependenciesTable: FunctionComponent<IProps> = ({
     list,
     cacheKeys,
     defaultSort,
-    initial: { sortBy: 'name', sortDirection: 'ASC' },
+    sortBy: 'name',
+    sortDirection: 'ASC',
   })
 
   // renderers.
@@ -105,7 +106,7 @@ const NodeProjectDependenciesTable: FunctionComponent<IProps> = ({
   const rowGetter = ({ index }: { index: number }): INormalizedDependency => sorted[index]
 
   const baseURL = departmentBaseURLs[department]
-  const rowRenderer = baseURL ? anchorRowRenderer(baseURL, prop('name')) : undefined
+  const rowRenderer = baseURL ? anchorRowRenderer<'name'>(baseURL, prop('name')) : undefined
 
   return (
     <Table

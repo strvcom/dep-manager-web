@@ -1,10 +1,9 @@
-import { NPMPackage, __get__, __set__ } from './NPMPackage'
+import { NPMPackage, attachAnalysis, metadata } from './NPMPackage'
+import { analysis as analysisLoader } from '../loaders'
 
-const load = jest.fn()
-const attachAnalysis = __get__('attachAnalysis')
-const metadata = __get__('metadata')
+jest.mock('../loaders', () => ({ analysis: { load: jest.fn() } }))
 
-__set__('loaders', { analysis: { load } })
+const { load } = analysisLoader
 
 deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
   beforeEach(jest.clearAllMocks)

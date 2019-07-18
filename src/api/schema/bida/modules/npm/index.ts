@@ -3,7 +3,7 @@
  */
 
 import gql from 'graphql-tag'
-import { pathOr, pipe, propOr, toPairs, zipObj, map, omit, when } from 'ramda'
+import { pathOr, pipe, propOr, toPairs, zipObj, map, omit } from 'ramda'
 
 const typeDefs = gql`
   type NPMDependency {
@@ -16,7 +16,7 @@ const typeDefs = gql`
     id: String!
     name: String!
     version: String!
-    dependencies: [NPMDependency]!
+    dependencies: [NPMDependency!]!
   }
 
   extend type Repository {
@@ -24,14 +24,20 @@ const typeDefs = gql`
   }
 `
 
-interface INPMPackage {
-  id?: string
+interface NPMPackage {
+  id: string
+  name: string
+  version: string
+  dependencies: NPMDependency[]
+}
+interface NPMDependency {
+  id: string
   name: string
   version: string
 }
 
 const NPMPackage = {
-  id: ({ id, name }: INPMPackage): string => {
+  id: ({ id, name }: NPMPackage): string => {
     if (!id && !name) {
       throw new Error('NPMPackage::id must resolve to a valid value.')
     }
@@ -39,16 +45,15 @@ const NPMPackage = {
     return id || name
   },
 
-  dependencies: pipe(
+  dependencies: pipe<NPMPackage, NPMDependency[], [string, NPMDependency][], unknown>(
     propOr({}, 'dependencies'),
-    // @ts-ignore
     toPairs,
     map(zipObj(['name', 'version']))
   ),
 }
 
 const NPMDependency = {
-  id: ({ name, version }: INPMPackage) => {
+  id: ({ name, version }: NPMPackage) => {
     if (!name) {
       throw new Error('NPMDependency::id must have a name available.')
     }
@@ -78,11 +83,9 @@ const Repository = {
         }
       }
     `,
-    resolve: pipe(
-      // @ts-ignore
+    resolve: pipe<object, string | null, NPMPackage>(
       pathOr(null, ['npmPackageJSON', 'text']),
-      // @ts-ignore
-      when(Boolean, JSON.parse)
+      str => str && JSON.parse(str)
     ),
   },
 }

@@ -2,6 +2,7 @@ fragment NodeProjectsDependenciesTable_dependencies on NPMDependency {
   id
   version
   outdateStatus
+  name
   package {
     id
     name
