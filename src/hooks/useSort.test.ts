@@ -1,12 +1,12 @@
 import { ascend, prop, reverse } from 'ramda'
 import { renderHook, cleanup, act } from 'react-hooks-testing-library'
+import { SortDirectionType } from 'react-virtualized'
 
-import { useSort, ISort, SortDirection, SortList, Sorter, SortSetter, sorter } from './useSort'
+import { useSort, sorter, SortFunction, CommonSortOptions, SortOptionsSetter } from './useSort'
 
-interface IConfig {
-  list: SortList
-  sort: ISort
-  defaultSort: Sorter
+interface Config<T = unknown> extends CommonSortOptions {
+  list: T[]
+  defaultSort: SortFunction<unknown>
 }
 
 describe('hooks/useSort', () => {
@@ -22,18 +22,19 @@ describe('hooks/useSort', () => {
   const byLevel = [A, C, B] // draw
   const byLevelDesc = [C, B, A] // draw
 
-  const sort = (sortBy?: string, sortDirection?: SortDirection): ISort => ({
+  const sort = (sortBy?: string, sortDirection?: SortDirectionType): CommonSortOptions => ({
     sortBy,
     sortDirection,
   })
 
   const getConfig = (
     sortBy?: string,
-    sortDirection?: SortDirection,
-    defaultSort?: Sorter
-  ): IConfig => ({
+    sortDirection?: SortDirectionType,
+    defaultSort?: SortFunction<unknown>
+  ): Config => ({
     list,
-    sort: { sortBy, sortDirection },
+    sortBy,
+    sortDirection,
     defaultSort,
   })
 
@@ -89,8 +90,8 @@ describe('hooks/useSort', () => {
   })
 
   it('should return sorted list when initial sort provided', () => {
-    const initial: ISort = { sortBy: 'name', sortDirection: 'ASC' }
-    const { result } = renderHook(() => useSort({ list, initial }))
+    const initial: CommonSortOptions = { sortBy: 'name', sortDirection: 'ASC' }
+    const { result } = renderHook(() => useSort({ list, ...initial }))
     expect(result.current[0]).toEqual(byName)
   })
 
@@ -106,9 +107,9 @@ describe('hooks/useSort', () => {
     const nameDesc = sort('name', 'DESC') // { sortBy: 'name', sortDirection: 'DESC' }
     const age = sort('age', 'ASC') // { sortBy: 'age', sortDirection: 'ASC' }
 
-    let sorted: SortList
-    let setSort: SortSetter
-    let config: ISort
+    let sorted: unknown[]
+    let setSort: SortOptionsSetter
+    let config: CommonSortOptions
 
     const { result } = renderHook(() => useSort({ list }))
 
