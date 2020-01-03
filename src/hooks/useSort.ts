@@ -7,17 +7,17 @@ const sortDirections = {
   DESC: descend,
 }
 
-interface CommonSortOptions {
+export interface CommonSortOptions {
   sortBy?: string
   sortDirection?: SortDirectionType
 }
 
-interface SorterOptions<T> extends CommonSortOptions {
+export interface SorterOptions<T> extends CommonSortOptions {
   list: T[]
   defaultSort?: SortFunction<T>
 }
 
-type SortFunction<T> = (a: T, b: T) => number
+export type SortFunction<T> = (a: T, b: T) => number
 
 const sorter = <T>({ list, sortBy, sortDirection = 'ASC', defaultSort }: SorterOptions<T>): T[] => {
   const sorters: SortFunction<T>[] = []
