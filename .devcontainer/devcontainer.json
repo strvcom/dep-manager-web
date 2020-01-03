@@ -2,10 +2,17 @@
 	"name": "Bida app container",
 	"dockerFile": "Dockerfile",
 	"appPort": [3000, 34567],
-	"postCreateCommand": "yarn install",
 	"extensions": [
 		"dbaeumer.vscode-eslint",
 		"kumar-harsh.graphql-for-vscode",
 		"apollographql.vscode-apollo"
-	]
+	],
+	"runArgs": [
+		"-u", "node",
+		"-v", "bida-app-node_modules:/workspace/node_modules",
+		"-v", "${env:HOME}${env:USERPROFILE}/.ssh:/root/.ssh-localhost:ro"
+	],
+	"postCreateCommand": "sudo chown node:node node_modules",
+	"workspaceMount": "src=${localWorkspaceFolder},dst=/workspace,type=bind,consistency=cached",
+	"workspaceFolder": "/workspace"
 }
