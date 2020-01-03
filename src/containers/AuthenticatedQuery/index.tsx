@@ -1,10 +1,10 @@
 import React from 'react'
-import { Query, QueryProps, OperationVariables } from 'react-apollo'
+import { Query, QueryProps, OperationVariables as OV } from 'react-apollo'
 import { useLocalStorage } from '@rehooks/local-storage'
 
 import { GITHUB_TOKEN_KEY } from '../../config/env'
 
-function AuthenticatedQuery<Data = any, Variables extends OperationVariables = OperationVariables>(
+function AuthenticatedQuery<Data = unknown, Variables extends OV = OV>(
   props: QueryProps<Data, Variables>
 ) {
   const [token] = useLocalStorage(GITHUB_TOKEN_KEY)
