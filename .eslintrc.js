@@ -13,8 +13,17 @@ module.exports = {
     '@strv/eslint-config-typescript',
     // '@strv/eslint-config-typescript/style',
   ],
-  settings: { 'import/resolver': { node: { extensions } } },
+  settings: {
+    'import/resolver': { node: { extensions } },
+    'import/ignore': [
+      'node_modules',
+      '.(json|css)$'
+    ]
+  },
   rules: {
+    "import/extensions": [{
+      'json':  'always'
+    }],
     'prefer-named-capture-group': 'off',
     'max-len': [
       'error',
