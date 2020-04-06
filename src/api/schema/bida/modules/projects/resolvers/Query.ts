@@ -1,4 +1,6 @@
+import { set, lensPath, identity } from 'ramda'
 import { GraphQLResolveInfo } from 'graphql'
+import { GITHUB_OAUTH_TOKEN } from '../../../../../../config/env'
 
 export interface Project {
   name: string
@@ -17,6 +19,11 @@ export interface ProjectsArgs {
   department: string
   archived: boolean
 }
+
+// override authorization token to one with access to all STRV repos.
+const authorize = GITHUB_OAUTH_TOKEN
+  ? set(lensPath(['headers', 'authorization']), `Bearer ${GITHUB_OAUTH_TOKEN}`)
+  : identity
 
 /**
  * Query::projects
@@ -43,7 +50,7 @@ const projects = (root: null, args: ProjectsArgs, context: unknown, info: GraphQ
   return mergeInfo.delegateToSchema<ProjectsConnection>({
     info,
     schema,
-    context,
+    context: authorize(context),
     operation: 'query',
     fieldName: 'search',
     args: { type, query, ...search },
@@ -72,7 +79,7 @@ const project = (
   return mergeInfo.delegateToSchema<Project>({
     info,
     schema,
-    context,
+    context: authorize(context),
     operation: 'query',
     fieldName: 'repository',
     args: { name, owner },
