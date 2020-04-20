@@ -1,6 +1,5 @@
-import { set, lensPath, identity } from 'ramda'
 import { GraphQLResolveInfo } from 'graphql'
-import { GITHUB_OAUTH_TOKEN } from '../../../../../../config/env'
+import { authorize } from '../../../../github/auth'
 
 export interface Project {
   name: string
@@ -20,17 +19,17 @@ export interface ProjectsArgs {
   archived: boolean
 }
 
-// override authorization token to one with access to all STRV repos.
-const authorize = GITHUB_OAUTH_TOKEN
-  ? set(lensPath(['headers', 'authorization']), `Bearer ${GITHUB_OAUTH_TOKEN}`)
-  : identity
-
 /**
  * Query::projects
  *
  * Resolves all projects of the provided department inside strvcom org.
  */
-const projects = (root: null, args: ProjectsArgs, context: unknown, info: GraphQLResolveInfo) => {
+const projects = async (
+  root: null,
+  args: ProjectsArgs,
+  context: object,
+  info: GraphQLResolveInfo
+) => {
   const { department, archived, ...search } = args
   const { schema, mergeInfo } = info
 
@@ -50,7 +49,7 @@ const projects = (root: null, args: ProjectsArgs, context: unknown, info: GraphQ
   return mergeInfo.delegateToSchema<ProjectsConnection>({
     info,
     schema,
-    context: authorize(context),
+    context: await authorize(context),
     operation: 'query',
     fieldName: 'search',
     args: { type, query, ...search },
