@@ -1,26 +1,31 @@
 import { Query } from './Query'
 
+jest.mock('../../../../github/auth', () => ({
+  authorize: context => context,
+}))
+
 const { projects, project } = Query
 
+// @ts-ignore
 deepDescribe('api/bida/projects/resolvers', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('Query::project', () => {
-    it('should delegate', () => {
+    it('should delegate', async () => {
       const delegateToSchema = jest.fn()
       const info = { mergeInfo: { delegateToSchema } }
 
-      project(null, {}, null, info)
+      await project(null, {}, null, info)
 
       expect(delegateToSchema).toHaveBeenCalledTimes(1)
     })
 
-    it('should append owner to arguments', () => {
+    it('should append owner to arguments', async () => {
       const delegateToSchema = jest.fn()
       const args = { name: 'name' }
       const info = { mergeInfo: { delegateToSchema } }
 
-      project(null, { name: 'name' }, null, info)
+      await project(null, { name: 'name' }, null, info)
 
       expect(delegateToSchema).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -29,11 +34,11 @@ deepDescribe('api/bida/projects/resolvers', () => {
       )
     })
 
-    it('should delegate with all arguments', () => {
+    it('should delegate with all arguments', async () => {
       const delegateToSchema = jest.fn()
       const info = { schema: 'schema', mergeInfo: { delegateToSchema } }
 
-      project(null, { name: 'name' }, 'context', info)
+      await project(null, { name: 'name' }, 'context', info)
 
       expect(delegateToSchema).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -49,20 +54,20 @@ deepDescribe('api/bida/projects/resolvers', () => {
   })
 
   describe('Query::projects', () => {
-    it('should delegate', () => {
+    it('should delegate', async () => {
       const delegateToSchema = jest.fn()
       const info = { mergeInfo: { delegateToSchema } }
 
-      projects(null, {}, null, info)
+      await projects(null, {}, null, info)
 
       expect(delegateToSchema).toHaveBeenCalledTimes(1)
     })
 
-    it('should delegate with fixed arguments', () => {
+    it('should delegate with fixed arguments', async () => {
       const delegateToSchema = jest.fn()
       const info = { mergeInfo: { delegateToSchema } }
 
-      projects(null, {}, null, info)
+      await projects(null, {}, null, info)
 
       expect(delegateToSchema).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -71,12 +76,12 @@ deepDescribe('api/bida/projects/resolvers', () => {
       )
     })
 
-    it('should delegate with configurable arguments', () => {
+    it('should delegate with configurable arguments', async () => {
       const delegateToSchema = jest.fn()
       const args = { archived: true, department: 'FRONTEND', extra: 'value' }
       const info = { mergeInfo: { delegateToSchema } }
 
-      projects(null, args, null, info)
+      await projects(null, args, null, info)
 
       expect(delegateToSchema).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -89,12 +94,12 @@ deepDescribe('api/bida/projects/resolvers', () => {
       )
     })
 
-    it('should delegate with all arguments', () => {
+    it('should delegate with all arguments', async () => {
       const delegateToSchema = jest.fn()
       const args = { archived: true, department: 'FRONTEND', extra: 'value' }
       const info = { schema: 'schema', mergeInfo: { delegateToSchema } }
 
-      projects(null, args, 'context', info)
+      await projects(null, args, 'context', info)
 
       expect(delegateToSchema).toHaveBeenCalledWith(
         expect.objectContaining({

@@ -65,7 +65,12 @@ interface IProjectArgs {
  *
  * Resolves a project inside strvcom org based on name.
  */
-const project = (root: null, { name }: IProjectArgs, context: object, info: GraphQLResolveInfo) => {
+const project = async (
+  root: null,
+  { name }: IProjectArgs,
+  context: object,
+  info: GraphQLResolveInfo
+) => {
   const { schema, mergeInfo } = info
 
   const owner = 'strvcom'
@@ -73,7 +78,7 @@ const project = (root: null, { name }: IProjectArgs, context: object, info: Grap
   return mergeInfo.delegateToSchema<Project>({
     info,
     schema,
-    context: authorize(context),
+    context: await authorize(context),
     operation: 'query',
     fieldName: 'repository',
     args: { name, owner },

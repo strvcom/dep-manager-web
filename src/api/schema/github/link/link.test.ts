@@ -69,16 +69,14 @@ describe('api/github/link', () => {
         }
       `
 
-      const context = { graphqlContext: { headers: { name: 'value' } } }
+      const context = { graphqlContext: {} }
       await toPromise(execute(link, { query, context }))
 
       expect(spies.empty).toHaveBeenCalledTimes(1)
 
       expect(spies.empty).toHaveBeenCalledWith(
         // @ts-ignore
-        expect.contextContaining({
-          graphqlContext: { aws: { event: { headers: { name: 'value' } } } },
-        })
+        expect.contextContaining({ graphqlContext: {} })
       )
 
       expect(spies.empty).toHaveBeenCalledWith(
