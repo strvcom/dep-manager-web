@@ -13,9 +13,11 @@ const requiredEnvVars = [
   'GITHUB_APP_INSTALLATION_ID',
 ]
 
-for (const name of requiredEnvVars) {
-  if (!env[name]) {
-    throw new Error(`"${name}" environment variable is required`)
+if (env.NODE_ENV === 'production') {
+  for (const name of requiredEnvVars) {
+    if (!env[name]) {
+      throw new Error(`"${name}" environment variable is required`)
+    }
   }
 }
 
