@@ -156,7 +156,7 @@ const dependents = {
   resolve: async (
     { name, version }: NPMPackage,
     args: ProjectsArgs,
-    context: unknown,
+    context: object,
     info: GraphQLResolveInfo
   ) => {
     /**

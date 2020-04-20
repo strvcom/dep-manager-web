@@ -23,7 +23,6 @@ const server = new ApolloServer({
   introspection: true,
   // eslint-disable-next-line no-shadow
   context: ({ event, context }: ILambdaArguments) => ({
-    headers: event.headers,
     functionName: context.functionName,
     aws: { event, context },
   }),

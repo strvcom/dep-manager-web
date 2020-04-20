@@ -56,7 +56,7 @@ describe('api/github/link', () => {
       )
       expect(spies.empty).toHaveBeenCalledWith(
         // @ts-ignore
-        expect.not.contextContaining({ graphqlContext: { headers: {} } })
+        expect.not.contextContaining({ graphqlContext: { aws: { event: { headers: {} } } } })
       )
     })
 
@@ -77,14 +77,14 @@ describe('api/github/link', () => {
       expect(spies.empty).toHaveBeenCalledWith(
         // @ts-ignore
         expect.contextContaining({
-          graphqlContext: { headers: { name: 'value' } },
+          graphqlContext: { aws: { event: { headers: { name: 'value' } } } },
         })
       )
 
       expect(spies.empty).toHaveBeenCalledWith(
         // @ts-ignore
         expect.not.contextContaining({
-          graphqlContext: { headers: { authorization: 'token' } },
+          graphqlContext: { aws: { event: { headers: { authorization: 'token' } } } },
         })
       )
     })
@@ -99,7 +99,7 @@ describe('api/github/link', () => {
       `
 
       const context = {
-        graphqlContext: { headers: { authorization: 'token' } },
+        graphqlContext: { aws: { event: { headers: { authorization: 'token' } } } },
       }
       await toPromise(execute(link, { query, context }))
 
@@ -108,7 +108,7 @@ describe('api/github/link', () => {
       expect(spies.empty).toHaveBeenCalledWith(
         // @ts-ignore
         expect.contextContaining({
-          graphqlContext: { headers: { authorization: 'token' } },
+          graphqlContext: { aws: { event: { headers: { authorization: 'token' } } } },
         })
       )
     })

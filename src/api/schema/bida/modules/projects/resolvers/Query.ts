@@ -66,12 +66,7 @@ interface IProjectArgs {
  *
  * Resolves a project inside strvcom org based on name.
  */
-const project = (
-  root: null,
-  { name }: IProjectArgs,
-  context: unknown,
-  info: GraphQLResolveInfo
-) => {
+const project = (root: null, { name }: IProjectArgs, context: object, info: GraphQLResolveInfo) => {
   const { schema, mergeInfo } = info
 
   const owner = 'strvcom'
