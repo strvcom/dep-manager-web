@@ -4,9 +4,7 @@ import Netlify from 'netlify-auth-providers'
 import { REACT_APP_NETLIFY_SITE_ID, GITHUB_TOKEN_KEY } from './env'
 
 if (!REACT_APP_NETLIFY_SITE_ID) {
-  throw new Error(
-    `You must define REACT_APP_NETLIFY_SITE_ID env in order to start the application`
-  )
+  throw new Error(`You must define REACT_APP_NETLIFY_SITE_ID env in order to start the application`)
 }
 
 const authenticator = new Netlify({ site_id: REACT_APP_NETLIFY_SITE_ID })
@@ -20,14 +18,11 @@ const provider = 'github'
 const scope = 'read:gpg_key,read:org,read:public_key,read:repo_hook,repo,user'
 
 export const authenticate = (): void =>
-  authenticator.authenticate(
-    { provider, scope },
-    (err, data: INetlifyResponse) => {
-      if (err) {
-        alert('Could not authenticate. Try again later.')
-        return console.error(err)
-      }
-
-      writeStorage(GITHUB_TOKEN_KEY, data.token)
+  authenticator.authenticate({ provider, scope }, (err, data: INetlifyResponse) => {
+    if (err) {
+      alert('Could not authenticate. Try again later.')
+      return console.error(err)
     }
-  )
+
+    writeStorage(GITHUB_TOKEN_KEY, data.token)
+  })
