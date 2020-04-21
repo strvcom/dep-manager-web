@@ -21,14 +21,17 @@ if (env.NODE_ENV === 'production') {
   }
 }
 
-const octokit = new Octokit()
+const userOctokit = new Octokit()
 
-const auth = createAppAuth({
-  id: env.GITHUB_APP_ID,
-  privateKey: env.GITHUB_APP_PRIVATE_KEY,
-  installationId: env.GITHUB_APP_INSTALLATION_ID,
-  clientId: env.GITHUB_APP_CLIENT_ID,
-  clientSecret: env.GITHUB_APP_CLIENT_SECRET,
+const appOctokit = new Octokit({
+  authStrategy: createAppAuth,
+  auth: {
+    id: env.GITHUB_APP_ID,
+    privateKey: env.GITHUB_APP_PRIVATE_KEY,
+    installationId: env.GITHUB_APP_INSTALLATION_ID,
+    clientId: env.GITHUB_APP_CLIENT_ID,
+    clientSecret: env.GITHUB_APP_CLIENT_SECRET,
+  },
 })
 
 const authorize = async (context: object) => {
@@ -39,15 +42,22 @@ const authorize = async (context: object) => {
   }
 
   try {
-    const membership = await octokit.orgs.getMembershipForAuthenticatedUser({
-      org: env.GITHUB_ORG_ID,
+    const user = await userOctokit.users.getAuthenticated({
       headers: { authorization: userToken },
+    })
+
+    const membership = await appOctokit.orgs.getMembership({
+      org: env.GITHUB_ORG_ID,
+      username: user.data.login,
     })
 
     if (membership.data.state !== 'active') {
       throw new Error('Membership not found')
     }
-    const { token: installationToken } = await auth({ type: 'installation' })
+
+    const { token: installationToken } = (await appOctokit.auth({ type: 'installation' })) as {
+      token: string
+    }
 
     return set(context, 'headers.authorization', `Bearer ${installationToken}`)
   } catch (err) {
