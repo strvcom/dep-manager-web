@@ -50,7 +50,8 @@ const authorize = async (context: object) => {
     const { token: installationToken } = await auth({ type: 'installation' })
 
     return set(context, 'headers.authorization', `Bearer ${installationToken}`)
-  } catch {
+  } catch (err) {
+    console.error(err)
     throw new Error(`Not authorized to access ${env.GITHUB_ORG_ID} repositories.`)
   }
 }
