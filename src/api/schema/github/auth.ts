@@ -21,13 +21,15 @@ if (env.NODE_ENV === 'production') {
   }
 }
 
+const privateKey = (env.GITHUB_APP_PRIVATE_KEY || '').split('\\n').join('\n')
+
 const userOctokit = new Octokit()
 
 const appOctokit = new Octokit({
   authStrategy: createAppAuth,
   auth: {
     id: env.GITHUB_APP_ID,
-    privateKey: env.GITHUB_APP_PRIVATE_KEY,
+    privateKey,
     installationId: env.GITHUB_APP_INSTALLATION_ID,
     clientId: env.GITHUB_APP_CLIENT_ID,
     clientSecret: env.GITHUB_APP_CLIENT_SECRET,
