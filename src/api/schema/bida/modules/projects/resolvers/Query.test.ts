@@ -1,9 +1,5 @@
 import { Query } from './Query'
 
-jest.mock('../../../../github/auth', () => ({
-  authorize: context => context,
-}))
-
 const { projects, project } = Query
 
 // @ts-ignore
