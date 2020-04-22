@@ -1,5 +1,4 @@
 import { GraphQLResolveInfo } from 'graphql'
-import { authorize } from '../../../../github/auth'
 
 export interface Project {
   name: string
@@ -24,12 +23,7 @@ export interface ProjectsArgs {
  *
  * Resolves all projects of the provided department inside strvcom org.
  */
-const projects = async (
-  root: null,
-  args: ProjectsArgs,
-  context: object,
-  info: GraphQLResolveInfo
-) => {
+const projects = (root: null, args: ProjectsArgs, context: object, info: GraphQLResolveInfo) => {
   const { department, archived, ...search } = args
   const { schema, mergeInfo } = info
 
@@ -49,7 +43,7 @@ const projects = async (
   return mergeInfo.delegateToSchema<ProjectsConnection>({
     info,
     schema,
-    context: await authorize(context),
+    context,
     operation: 'query',
     fieldName: 'search',
     args: { type, query, ...search },
@@ -65,12 +59,7 @@ interface IProjectArgs {
  *
  * Resolves a project inside strvcom org based on name.
  */
-const project = async (
-  root: null,
-  { name }: IProjectArgs,
-  context: object,
-  info: GraphQLResolveInfo
-) => {
+const project = (root: null, { name }: IProjectArgs, context: object, info: GraphQLResolveInfo) => {
   const { schema, mergeInfo } = info
 
   const owner = 'strvcom'
@@ -78,7 +67,7 @@ const project = async (
   return mergeInfo.delegateToSchema<Project>({
     info,
     schema,
-    context: await authorize(context),
+    context,
     operation: 'query',
     fieldName: 'repository',
     args: { name, owner },

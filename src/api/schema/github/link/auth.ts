@@ -1,15 +1,8 @@
-import { ApolloNonTerminalLink } from '../../../../utils/apollo-types'
+// import { get } from 'lodash'
+import { ApolloLink } from 'apollo-link'
+import { setContext } from 'apollo-link-context'
+import { authorize } from '../app'
 
-const link = new ApolloNonTerminalLink((operation, forward) => {
-  const {
-    graphqlContext: { aws },
-  } = operation.getContext()
-
-  if (aws && aws.event.headers && aws.event.headers.authorization) {
-    operation.setContext({ headers: { authorization: aws.event.headers.authorization } })
-  }
-
-  return forward(operation)
-})
+const link = setContext((_request, context) => authorize(context)) as ApolloLink
 
 export { link }

@@ -36,8 +36,14 @@ const appOctokit = new Octokit({
   },
 })
 
+/**
+ * @todo: we should generate a custom JWT containing username, membership, etc
+ * to avoid having to ask for it all the time.
+ *
+ * @todo: cache installation token locally, until it's valid.
+ */
 const authorize = async (context: object) => {
-  const userToken = get(context, 'aws.event.headers.authorization')
+  const userToken = get(context, 'graphqlContext.aws.event.headers.authorization')
 
   if (!userToken) {
     throw new Error('No authorization token provided')
