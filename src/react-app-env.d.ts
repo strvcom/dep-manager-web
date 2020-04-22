@@ -6,7 +6,6 @@ declare namespace NodeJS {
     NODE_ENV: 'development' | 'production'
     REACT_APP_GRAPHQL_ENDPOINT: 'string'
     PUBLIC_URL: string
-    GITHUB_OAUTH_TOKEN: string
     GITHUB_TOKEN_KEY: string
   }
 }
