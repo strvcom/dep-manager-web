@@ -1,9 +1,9 @@
 import scope from 'debug'
-import { ApolloNonTerminalLink } from '../../../../utils/apollo-types'
+import { ApolloLink } from 'apollo-link'
 
 const debug = scope('bida:api:github')
 
-const link = new ApolloNonTerminalLink((operation, forward) => {
+const link = new ApolloLink((operation, forward) => {
   const { operationName, variables } = operation
 
   debug('delegating to GitHub: %s %o', operationName, variables)
