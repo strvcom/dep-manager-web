@@ -4,6 +4,17 @@
     "ramda",
     "styled-components",
     "import-graphql",
-    "@babel/plugin-proposal-optional-chaining"
+    "@babel/plugin-proposal-optional-chaining",
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "~root": "./",
+          "~app": "./src",
+          "~api": "./src/api",
+          "~generated": "./src/_generated"
+        }
+      }
+    ]
   ]
 }

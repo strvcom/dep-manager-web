@@ -139,6 +139,7 @@
     "@types/styled-system": "^3.0.6",
     "apollo": "^2.8.1",
     "babel-plugin-import-graphql": "^2.7.0",
+    "babel-plugin-module-resolver": "^4.0.0",
     "babel-plugin-ramda": "^1.6.3",
     "babel-plugin-styled-components": "^1.9.4",
     "babel-polyfill": "^6.26.0",

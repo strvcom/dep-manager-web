@@ -27,7 +27,13 @@
     "noEmit": true,
     "typeRoots": ["src/@types"],
     "plugins": [{ "name": "typescript-styled-plugin" }],
-    "rootDirs": ["src", "stories"]
+    "baseUrl": "./",
+    "paths": {
+      "~root/*": ["*"],
+      "~app/*": ["./src/*"],
+      "~api/*": ["./src/api/*"],
+      "~generated/*": ["./src/_generated/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "src/**/*.test.ts"]
