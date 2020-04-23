@@ -64,12 +64,10 @@ const infoShape: Info = {
   recentlyUpdated: [],
 }
 
-const setter = curry(
-  <O extends object, K extends keyof O>(key: K, mapper: (obj: O) => unknown, obj: O) => ({
-    ...obj,
-    [key]: mapper(obj),
-  })
-)
+const setter = curry((key: string, mapper: (obj: any) => unknown, obj) => ({
+  ...obj,
+  [key]: mapper(obj),
+}))
 
 const merger = (mergeMap: Record<string, <L, R>(l: L, r: R) => unknown>) =>
   mergeWithKey(
