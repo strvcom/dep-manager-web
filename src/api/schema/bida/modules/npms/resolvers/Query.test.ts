@@ -6,7 +6,7 @@ jest.mock('../loaders', () => ({ analysis: { load: jest.fn() } }))
 const { load } = analysis
 const { npmPackage: resolve } = Query
 
-deepDescribe('api/bida/npm/resolvers/Query/npmPackage', () => {
+describe('api/bida/npm/resolvers/Query/npmPackage', () => {
   it('should extract metadata', async () => {
     const name = 'name'
     const metadata = { name: 'name', version: '1.0.0' }

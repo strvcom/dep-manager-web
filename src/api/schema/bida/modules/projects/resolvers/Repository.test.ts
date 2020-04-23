@@ -2,7 +2,7 @@ import { Repository } from './Repository'
 
 const { departments } = Repository
 
-deepDescribe('api/bida/projects/resolvers/Repository', () => {
+describe('api/bida/projects/resolvers/Repository', () => {
   const topics = (...names: string[]) => ({
     nodes: names.map(name => ({ topic: { name } })),
   })

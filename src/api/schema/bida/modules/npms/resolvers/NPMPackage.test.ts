@@ -5,7 +5,7 @@ jest.mock('../loaders', () => ({ analysis: { load: jest.fn() } }))
 
 const { load } = analysisLoader
 
-deepDescribe('api/bida/npm/resolvers/NPMPackage', () => {
+describe('api/bida/npm/resolvers/NPMPackage', () => {
   beforeEach(jest.clearAllMocks)
 
   const getAnalysis = (meta: any = {}) => ({ collected: { metadata: meta } })

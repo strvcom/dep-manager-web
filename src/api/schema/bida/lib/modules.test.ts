@@ -10,7 +10,7 @@ describe('api/lib/modules', () => {
     const a = { typeDefs: 'a' }
     const b = { typeDefs: 'b' }
 
-    expect(combine(a, b).typeDefs).toBe('a\nb')
+    expect(combine(a, b).typeDefs).toBe('a \n b')
   })
 
   it('should combine resolver types', () => {

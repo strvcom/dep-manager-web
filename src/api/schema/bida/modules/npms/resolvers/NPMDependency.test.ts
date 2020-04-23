@@ -5,7 +5,7 @@ jest.mock('../loaders', () => ({ analysis: { load: jest.fn() } }))
 
 const { load } = analysis
 
-deepDescribe('api/bida/npm/resolvers/NPMDependency/outdateStatus', () => {
+describe('api/bida/npm/resolvers/NPMDependency/outdateStatus', () => {
   beforeEach(jest.clearAllMocks)
 
   const { resolve } = NPMDependency.outdateStatus

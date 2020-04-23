@@ -3,7 +3,7 @@ import { Query } from './Query'
 const { projects, project } = Query
 
 // @ts-ignore
-deepDescribe('api/bida/projects/resolvers', () => {
+describe('api/bida/projects/resolvers', () => {
   beforeEach(jest.clearAllMocks)
 
   describe('Query::project', () => {

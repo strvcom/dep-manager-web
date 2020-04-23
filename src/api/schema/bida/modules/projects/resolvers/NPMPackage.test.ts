@@ -19,7 +19,7 @@ const projects = jest.fn()
 // inject
 Query.projects = projects
 
-deepDescribe('api/bida/projects/resolvers/NPMPackage', () => {
+describe('api/bida/projects/resolvers/NPMPackage', () => {
   beforeEach(jest.clearAllMocks)
 
   const edge = {

@@ -2,7 +2,7 @@ import { Dependent, getVersion } from './Dependent'
 
 const { version, name, id, outdateStatus } = Dependent
 
-deepDescribe('api/bida/projects/resolvers', () => {
+describe('api/bida/projects/resolvers', () => {
   beforeEach(jest.clearAllMocks)
 
   const repository = {
