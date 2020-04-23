@@ -1,6 +1,6 @@
 import { GraphQLSchema, GraphQLObjectType, GraphQLFieldConfig, GraphQLOutputType } from 'graphql'
 import { ASTDefinitionBuilder } from 'graphql/utilities/buildASTSchema'
-import { visitSchema, VisitSchemaKind } from 'graphql-tools/dist/transforms/visitSchema'
+import { visitSchema, VisitSchemaKind } from 'graphql-tools'
 
 // type normalization
 

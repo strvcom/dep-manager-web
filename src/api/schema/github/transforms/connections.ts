@@ -1,6 +1,4 @@
 import { parseType, FieldDefinitionNode } from 'graphql'
-import { composeTransforms } from 'graphql-tools/dist/transforms/transforms'
-
 import { FieldTransform, getTypeName } from '../../lib/transform'
 
 /*
@@ -33,6 +31,6 @@ const transformNodeFields = new FieldTransform('node', /Edge$/u, (field, { build
   })
 )
 
-const transform = composeTransforms(transformEdgesFields, transformNodesFields, transformNodeFields)
+const transforms = [transformEdgesFields, transformNodesFields, transformNodeFields]
 
-export { transform }
+export { transforms }
