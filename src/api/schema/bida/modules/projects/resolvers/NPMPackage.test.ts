@@ -2,7 +2,7 @@
 import gql from 'graphql-tag'
 import { visit, print } from 'graphql/language'
 
-import { chance } from '../../../../../../tests/utils/mocking'
+import { chance } from '~app/tests/utils/mocking'
 
 import {
   NPMPackage,

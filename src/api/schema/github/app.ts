@@ -2,7 +2,7 @@ import { set, get } from 'lodash'
 import { createAppAuth } from '@octokit/auth-app'
 import { Octokit } from '@octokit/rest'
 
-import * as env from '../../../config/env'
+import * as env from '~app/config/env'
 
 const requiredEnvVars = [
   'GITHUB_ORG_ID',

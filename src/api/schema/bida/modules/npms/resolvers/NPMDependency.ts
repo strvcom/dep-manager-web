@@ -1,7 +1,7 @@
 import { path } from 'ramda'
 import { IResolverOptions } from 'graphql-tools'
 
-import { versionDistance } from '../../../../../../utils/version-diff'
+import { versionDistance } from '~app/utils/version-diff'
 import * as loaders from '../loaders'
 
 interface NPMDependency {

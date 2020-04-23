@@ -1,7 +1,7 @@
 import { pathEq } from 'ramda'
 import mem from 'mem'
 
-import { versionDistance } from '../../../../../../utils/version-diff'
+import { versionDistance } from '~app/utils/version-diff'
 import { DependentNode, Repository } from './NPMPackage'
 
 const getVersion = mem(
