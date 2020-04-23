@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql'
+import { IGraphQLToolsResolveInfo } from 'graphql-tools'
 
 export interface Project {
   name: string
@@ -23,7 +23,12 @@ export interface ProjectsArgs {
  *
  * Resolves all projects of the provided department inside strvcom org.
  */
-const projects = (root: null, args: ProjectsArgs, context: object, info: GraphQLResolveInfo) => {
+const projects = (
+  root: null,
+  args: ProjectsArgs,
+  context: object,
+  info: IGraphQLToolsResolveInfo
+) => {
   const { department, archived, ...search } = args
   const { schema, mergeInfo } = info
 
@@ -59,12 +64,17 @@ interface IProjectArgs {
  *
  * Resolves a project inside strvcom org based on name.
  */
-const project = (root: null, { name }: IProjectArgs, context: object, info: GraphQLResolveInfo) => {
+const project = (
+  root: null,
+  { name }: IProjectArgs,
+  context: object,
+  info: IGraphQLToolsResolveInfo
+) => {
   const { schema, mergeInfo } = info
 
   const owner = 'strvcom'
 
-  return mergeInfo.delegateToSchema<Project>({
+  return mergeInfo?.delegateToSchema<Project>({
     info,
     schema,
     context,

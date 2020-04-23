@@ -23,7 +23,7 @@ import {
 } from 'ramda'
 
 import { Query, ProjectsArgs, ProjectEdge } from './Query'
-import { GraphQLResolveInfo } from 'graphql'
+import { IGraphQLToolsResolveInfo } from 'graphql-tools'
 
 const dependentsSelection = gql`
   fragment RepositoryDependencies on SearchResultItemConnection {
@@ -157,7 +157,7 @@ const dependents = {
     { name, version }: NPMPackage,
     args: ProjectsArgs,
     context: object,
-    info: GraphQLResolveInfo
+    info: IGraphQLToolsResolveInfo
   ) => {
     /**
      * Find the Dependent named fragments and transform into inline fragments.

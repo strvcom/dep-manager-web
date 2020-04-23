@@ -30,6 +30,7 @@ const metadata = (
   transform: <Value>(value: Value) => unknown = identity
 ): IResolverOptions => ({
   fragment: `... on NPMPackage { name }`,
+  // @ts-ignore
   resolve: pipeResolvers(
     combineResolvers(
       // first, try and grab an existing value.

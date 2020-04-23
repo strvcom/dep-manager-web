@@ -22,7 +22,7 @@ const OUTDATE_STATUS = [
   'PREPATCH',
   'PRERELEASE',
   'UNKNOWN',
-  'UPTODATE'
+  'UPTODATE',
 ]
 
 const typeDefs = gql`
