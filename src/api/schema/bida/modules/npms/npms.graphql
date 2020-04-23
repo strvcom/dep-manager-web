@@ -1,0 +1,71 @@
+"""
+Enumerator that indicates a version distance.
+"""
+enum SemverOutdateStatus {
+  MAJOR
+  PREMAJOR
+  MINOR
+  PREMINOR
+  PATCH
+  PREPATCH
+  PRERELEASE
+  UNKNOWN
+  UPTODATE
+}
+
+# type NPMSLinks {
+#   npm: String
+#   homepage: String
+#   repository: String
+#   bugs: String
+# }
+
+# type NPMSUser {
+#   email: String
+#   username: String
+# }
+
+type NPMSMetadata {
+  name: String!
+  version: String!
+  description: String!
+  date: String!
+  license: String!
+  # scope: String
+  # keywords: String[]
+  # publisher: NPMSUser
+  # maintainers: NPMSUser[]
+  # repository: NPMSRepository
+  # links: NPMSLinks
+  # dependencies: NPMDependency
+  # releases: Release[]
+}
+
+type NPMSCollected {
+  metadata: NPMSMetadata!
+}
+
+type NPMSAnalysis {
+  id: String!
+  analyzedAt: String!
+  collected: NPMSCollected
+  # evaluation: NPMSEvaluation!
+  # score: NPMSScore!
+}
+
+extend type NPMPackage {
+  license: String
+  updatedAt: String
+  private: Boolean
+  description: String
+  analysis: NPMSAnalysis
+}
+
+extend type NPMDependency {
+  package: NPMPackage!
+  outdateStatus: SemverOutdateStatus
+}
+
+extend type Query {
+  npmPackage(name: String!): NPMPackage
+}

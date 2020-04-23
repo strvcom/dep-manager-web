@@ -1,0 +1,53 @@
+"""
+Enumerator that indicates types of projects this application acknowledges
+"""
+enum BidaDepartment {
+  FRONTEND
+  BACKEND
+  ANDROID
+  IOS
+}
+
+type Dependent {
+  id: ID!
+  name: String!
+  version: String!
+  outdateStatus: SemverOutdateStatus!
+  repository: Repository!
+}
+
+extend union SearchResultItem = Dependent
+
+extend type Repository {
+  departments: [BidaDepartment]!
+}
+
+extend type NPMPackage {
+  dependents(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    archived: Boolean
+    department: BidaDepartment
+  ): SearchResultItemConnection!
+}
+
+extend type Query {
+  """
+  Search projects within a department
+  """
+  projects(
+    after: String
+    before: String
+    first: Int
+    last: Int
+    archived: Boolean
+    department: BidaDepartment
+  ): SearchResultItemConnection!
+
+  """
+  Lookup a project by name
+  """
+  project(name: String!): Repository!
+}

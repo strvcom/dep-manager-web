@@ -2,27 +2,8 @@
  * This module holds NPM asset resolving based on GitHub blob.
  */
 
-import gql from 'graphql-tag'
 import { pathOr, pipe, propOr, toPairs, zipObj, map, omit } from 'ramda'
-
-const typeDefs = gql`
-  type NPMDependency {
-    id: String!
-    name: String!
-    version: String!
-  }
-
-  type NPMPackage {
-    id: String!
-    name: String!
-    version: String!
-    dependencies: [NPMDependency!]!
-  }
-
-  extend type Repository {
-    npmPackage: NPMPackage
-  }
-`
+import typeDefs from './npm.graphql'
 
 interface NPMPackage {
   id: string
