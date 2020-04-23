@@ -1,0 +1,23 @@
+overwrite: true
+schema:
+  - node_modules/@octokit/graphql-schema/schema.graphql
+  - ./src/api/**/*.graphql
+documents: './src/**/*.gql'
+generates:
+  ./src/@generated/types.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+      - typescript-operations
+    config:
+      nonOptionalTypename: true
+      defaultMapper: tsdef#DeepPartial<{T}>
+      contextType: ~api/types#ResolverContextType
+
+  # ./src/@generated/schema.graphql:
+  #   plugins:
+  #     - schema-ast
+
+  ./src/@generated/fragment-matcher-introspection.ts:
+    plugins:
+      - fragment-matcher

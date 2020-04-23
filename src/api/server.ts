@@ -1,7 +1,7 @@
 import { APIGatewayEvent, Context as AWSContext } from 'aws-lambda'
 import { ApolloServer } from 'apollo-server-lambda'
 import { schema } from './schema'
-import { SchemaContext } from './context'
+import { ResolverContextType } from './types'
 
 const { ENGINE_API_KEY } = process.env
 
@@ -13,7 +13,7 @@ interface ContextArguments {
 const server = new ApolloServer({
   schema,
   introspection: true,
-  context: ({ event, context }: ContextArguments): SchemaContext => ({
+  context: ({ event, context }: ContextArguments): ResolverContextType => ({
     aws: { event, context },
   }),
   // optional

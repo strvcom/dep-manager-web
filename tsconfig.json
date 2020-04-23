@@ -32,7 +32,7 @@
       "~root/*": ["*"],
       "~app/*": ["./src/*"],
       "~api/*": ["./src/api/*"],
-      "~generated/*": ["./src/_generated/*"]
+      "~generated/*": ["./src/@generated/*"]
     }
   },
   "include": ["src"],
