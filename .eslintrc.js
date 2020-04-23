@@ -1,7 +1,5 @@
 'use strict'
 
-const { rules: typescriptRules } = require('@strv/eslint-config-typescript')
-
 const jsExtensions = ['.js', '.json', '.mjs', '.es', '.node', '.jsx']
 const tsExtensions = ['.ts', '.d.ts', '.tsx']
 const extensions = [...jsExtensions, ...tsExtensions]
@@ -15,15 +13,10 @@ module.exports = {
   ],
   settings: {
     'import/resolver': { node: { extensions } },
-    'import/ignore': [
-      'node_modules',
-      '.(json|css)$'
-    ]
+    'import/ignore': ['node_modules', '.(json|css)$'],
   },
   rules: {
-    "import/extensions": [{
-      'json':  'always'
-    }],
+    'import/extensions': [{ json: 'always' }],
     'prefer-named-capture-group': 'off',
     'max-len': [
       'error',
@@ -34,15 +27,12 @@ module.exports = {
         ignoreTemplateLiterals: true,
       },
     ],
+    'no-shadow': ['error', { allow: ['event'] }],
     'no-unused-vars': 'off',
     'no-extra-parens': [
       'warn',
       'all',
-      {
-        nestedBinaryExpressions: false,
-        returnAssign: false,
-        ignoreJSX: 'all',
-      },
+      { nestedBinaryExpressions: false, returnAssign: false, ignoreJSX: 'all' },
     ],
     'react-hooks/exhaustive-deps': false,
     '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '[iI]gnored' }],
