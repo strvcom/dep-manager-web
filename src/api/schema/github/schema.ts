@@ -1,18 +1,16 @@
-import { buildClientSchema, IntrospectionQuery } from 'graphql'
+import { buildClientSchema } from 'graphql'
 import { makeRemoteExecutableSchema } from 'graphql-tools'
-
-import introspection from './introspection.json'
+import { schema as gitHubSchema } from '@octokit/graphql-schema'
 
 import { link } from './link'
 
 // type forcing
-const introspectedSchema = (introspection as unknown) as IntrospectionQuery
 
 /**
  * Creates a remote schema based on GitHub GraphQL API.
  */
 const schema = makeRemoteExecutableSchema({
-  schema: buildClientSchema(introspectedSchema),
+  schema: buildClientSchema(gitHubSchema.json),
   link,
 })
 
