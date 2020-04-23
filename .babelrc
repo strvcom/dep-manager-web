@@ -1,4 +1,9 @@
 {
   "presets": ["@strv/react-scripts/babel"],
-  "plugins": ["ramda", "styled-components", "import-graphql"]
+  "plugins": [
+    "ramda",
+    "styled-components",
+    "import-graphql",
+    "@babel/plugin-proposal-optional-chaining"
+  ]
 }
