@@ -1,12 +1,15 @@
+import { NonNilProps } from 'tsdef'
 import { mergeDeepRight } from 'ramda'
-import { IResolvers } from 'graphql-tools'
 import { print, ASTNode } from 'graphql/language'
-// import { IResolverObject } from 'apollo-server-lambda'
+import { Resolvers } from '~generated/types'
+import { ResolverContextType } from '~api/types'
 
 export interface IGraphQLModule {
   typeDefs?: string // printed AST
-  resolvers?: IResolvers
+  resolvers?: Resolvers<ResolverContextType>
 }
+
+export type SchemaDefinition = NonNilProps<IGraphQLModule>
 
 const stringify = (typeDefs: string | ASTNode = '') =>
   typeof typeDefs === 'string' ? typeDefs : print(typeDefs)
@@ -14,7 +17,7 @@ const stringify = (typeDefs: string | ASTNode = '') =>
 /**
  * Combines two GraphQL modules (typeDefs + resolvers) into one.
  */
-const combine = (left: IGraphQLModule, right: IGraphQLModule): IGraphQLModule => ({
+const combine = (left: IGraphQLModule, right: IGraphQLModule) => ({
   // combine typeDefs strings into one.
   typeDefs: `${stringify(left.typeDefs)} \n ${stringify(right.typeDefs)}`,
   // combine resolvers into one.
