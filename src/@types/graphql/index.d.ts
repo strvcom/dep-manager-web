@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLSchema } from 'graphql'
-import { Transform, IGraphQLToolsResolveInfo } from 'graphql-tools'
+import { Transform } from 'graphql-tools'
 
 declare module 'graphql/type/definition' {
   interface GraphQLResolveInfo {
@@ -10,7 +10,7 @@ declare module 'graphql/type/definition' {
         fieldName: string
         args?: unknown
         context: unknown
-        info: IGraphQLToolsResolveInfo
+        info: GraphQLResolveInfo
         transforms?: Array<Transform>
       }): Promise<Result>
     }
