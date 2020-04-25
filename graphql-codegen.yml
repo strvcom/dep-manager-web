@@ -13,6 +13,7 @@ generates:
       nonOptionalTypename: true
       defaultMapper: tsdef#DeepPartial<{T}>
       contextType: ~api/types#ResolverContextType
+      customResolverFn: ~api/types#ResolverFn
 
   # ./src/@generated/schema.graphql:
   #   plugins:
