@@ -25,7 +25,6 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "noEmit": true,
-    "typeRoots": ["src/@types"],
     "plugins": [{ "name": "typescript-styled-plugin" }],
     "baseUrl": "./",
     "paths": {
