@@ -1,0 +1,863 @@
+diff --git a/node_modules/@graphql-codegen/typescript-resolvers/index.cjs.js b/node_modules/@graphql-codegen/typescript-resolvers/index.cjs.js
+index 6393e69..451e7f5 100644
+--- a/node_modules/@graphql-codegen/typescript-resolvers/index.cjs.js
++++ b/node_modules/@graphql-codegen/typescript-resolvers/index.cjs.js
+@@ -1,152 +1,190 @@
+-'use strict';
++'use strict'
+ 
+-Object.defineProperty(exports, '__esModule', { value: true });
++Object.defineProperty(exports, '__esModule', { value: true })
+ 
+-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
++function _interopDefault(ex) {
++  return ex && typeof ex === 'object' && 'default' in ex ? ex['default'] : ex
++}
+ 
+-const common = require('@graphql-toolkit/common');
+-const visitorPluginCommon = require('@graphql-codegen/visitor-plugin-common');
+-const pluginHelpers = require('@graphql-codegen/plugin-helpers');
+-const graphql = require('graphql');
+-const autoBind = _interopDefault(require('auto-bind'));
+-const typescript = require('@graphql-codegen/typescript');
++const common = require('@graphql-toolkit/common')
++const visitorPluginCommon = require('@graphql-codegen/visitor-plugin-common')
++const pluginHelpers = require('@graphql-codegen/plugin-helpers')
++const graphql = require('graphql')
++const autoBind = _interopDefault(require('auto-bind'))
++const typescript = require('@graphql-codegen/typescript')
+ 
+ class TypeScriptResolversVisitor extends visitorPluginCommon.BaseResolversVisitor {
+-    constructor(pluginConfig, schema) {
+-        super(pluginConfig, {
+-            avoidOptionals: visitorPluginCommon.getConfigValue(pluginConfig.avoidOptionals, false),
+-            useIndexSignature: visitorPluginCommon.getConfigValue(pluginConfig.useIndexSignature, false),
+-            wrapFieldDefinitions: visitorPluginCommon.getConfigValue(pluginConfig.wrapFieldDefinitions, false),
+-        }, schema);
+-        autoBind(this);
+-        this.setVariablesTransformer(new typescript.TypeScriptOperationVariablesToObject(this.scalars, this.convertName, this.config.avoidOptionals, this.config.immutableTypes, null, [], this.config.enumPrefix, this.config.enumValues));
+-        if (this.config.useIndexSignature) {
+-            this._declarationBlockConfig = {
+-                blockTransformer(block) {
+-                    return `ResolversObject<${block}>`;
+-                },
+-            };
+-        }
+-    }
+-    formatRootResolver(schemaTypeName, resolverType) {
+-        return `${schemaTypeName}${this.config.avoidOptionals ? '' : '?'}: ${resolverType},`;
+-    }
+-    clearOptional(str) {
+-        if (str.startsWith('Maybe')) {
+-            return str.replace(/Maybe<(.*?)>$/, '$1');
+-        }
+-        return str;
+-    }
+-    ListType(node) {
+-        return `Maybe<${super.ListType(node)}>`;
+-    }
+-    wrapWithListType(str) {
+-        return `${this.config.immutableTypes ? 'ReadonlyArray' : 'Array'}<${str}>`;
++  constructor(pluginConfig, schema) {
++    super(
++      pluginConfig,
++      {
++        avoidOptionals: visitorPluginCommon.getConfigValue(pluginConfig.avoidOptionals, false),
++        useIndexSignature: visitorPluginCommon.getConfigValue(
++          pluginConfig.useIndexSignature,
++          false
++        ),
++        wrapFieldDefinitions: visitorPluginCommon.getConfigValue(
++          pluginConfig.wrapFieldDefinitions,
++          false
++        ),
++      },
++      schema
++    )
++    autoBind(this)
++    this.setVariablesTransformer(
++      new typescript.TypeScriptOperationVariablesToObject(
++        this.scalars,
++        this.convertName,
++        this.config.avoidOptionals,
++        this.config.immutableTypes,
++        null,
++        [],
++        this.config.enumPrefix,
++        this.config.enumValues
++      )
++    )
++    if (this.config.useIndexSignature) {
++      this._declarationBlockConfig = {
++        blockTransformer(block) {
++          return `ResolversObject<${block}>`
++        },
++      }
+     }
+-    getParentTypeForSignature(node) {
+-        if (this._federation.isResolveReferenceField(node) && this.config.wrapFieldDefinitions) {
+-            return 'UnwrappedObject<ParentType>';
+-        }
+-        return 'ParentType';
++  }
++  formatRootResolver(schemaTypeName, resolverType) {
++    return `${schemaTypeName}${this.config.avoidOptionals ? '' : '?'}: ${resolverType},`
++  }
++  clearOptional(str) {
++    if (str.startsWith('Maybe')) {
++      return str.replace(/Maybe<(.*?)>$/, '$1')
+     }
+-    NamedType(node) {
+-        return `Maybe<${super.NamedType(node)}>`;
+-    }
+-    NonNullType(node) {
+-        const baseValue = super.NonNullType(node);
+-        return this.clearOptional(baseValue);
+-    }
+-    getPunctuation(declarationKind) {
+-        return ';';
++    return str
++  }
++  ListType(node) {
++    return `Maybe<${super.ListType(node)}>`
++  }
++  wrapWithListType(str) {
++    return `${this.config.immutableTypes ? 'ReadonlyArray' : 'Array'}<${str}>`
++  }
++  getParentTypeForSignature(node) {
++    if (this._federation.isResolveReferenceField(node) && this.config.wrapFieldDefinitions) {
++      return 'UnwrappedObject<ParentType>'
+     }
++    return 'ParentType'
++  }
++  NamedType(node) {
++    return `Maybe<${super.NamedType(node)}>`
++  }
++  NonNullType(node) {
++    const baseValue = super.NonNullType(node)
++    return this.clearOptional(baseValue)
++  }
++  getPunctuation(declarationKind) {
++    return ';'
++  }
+ }
+ 
+ const plugin = (schema, documents, config) => {
+-    const imports = [];
+-    if (!config.customResolveInfo) {
+-        imports.push('GraphQLResolveInfo');
+-    }
+-    const showUnusedMappers = typeof config.showUnusedMappers === 'boolean' ? config.showUnusedMappers : true;
+-    const noSchemaStitching = typeof config.noSchemaStitching === 'boolean' ? config.noSchemaStitching : false;
+-    if (config.noSchemaStitching === false) {
+-        // eslint-disable-next-line no-console
+-        console.warn(`The default behavior of 'noSchemaStitching' will be reversed in the next major release. Support for Schema Stitching will be disabled by default.`);
+-    }
+-    const indexSignature = config.useIndexSignature
+-        ? [
+-            'export type WithIndex<TObject> = TObject & Record<string, any>;',
+-            'export type ResolversObject<TObject> = WithIndex<TObject>;',
+-        ].join('\n')
+-        : '';
+-    const transformedSchema = config.federation ? pluginHelpers.addFederationReferencesToSchema(schema) : schema;
+-    const visitor = new TypeScriptResolversVisitor(config, transformedSchema);
+-    const printedSchema = config.federation
+-        ? common.printSchemaWithDirectives(transformedSchema)
+-        : graphql.printSchema(transformedSchema);
+-    const astNode = graphql.parse(printedSchema);
+-    // runs visitor
+-    const visitorResult = graphql.visit(astNode, { leave: visitor });
+-    const prepend = [];
+-    const defsToInclude = [];
+-    const stitchingResolverType = `
++  const imports = []
++  if (!config.customResolveInfo) {
++    imports.push('GraphQLResolveInfo')
++  }
++  const showUnusedMappers =
++    typeof config.showUnusedMappers === 'boolean' ? config.showUnusedMappers : true
++  const noSchemaStitching =
++    typeof config.noSchemaStitching === 'boolean' ? config.noSchemaStitching : false
++  if (config.noSchemaStitching === false) {
++    // eslint-disable-next-line no-console
++    console.warn(
++      `The default behavior of 'noSchemaStitching' will be reversed in the next major release. Support for Schema Stitching will be disabled by default.`
++    )
++  }
++  const indexSignature = config.useIndexSignature
++    ? [
++        'export type WithIndex<TObject> = TObject & Record<string, any>;',
++        'export type ResolversObject<TObject> = WithIndex<TObject>;',
++      ].join('\n')
++    : ''
++  const transformedSchema = config.federation
++    ? pluginHelpers.addFederationReferencesToSchema(schema)
++    : schema
++  const visitor = new TypeScriptResolversVisitor(config, transformedSchema)
++  const printedSchema = config.federation
++    ? common.printSchemaWithDirectives(transformedSchema)
++    : graphql.printSchema(transformedSchema)
++  const astNode = graphql.parse(printedSchema)
++  // runs visitor
++  const visitorResult = graphql.visit(astNode, { leave: visitor })
++  const prepend = []
++  const defsToInclude = []
++  const stitchingResolverType = `
+ export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
+   fragment: string;
+   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+ };
+-`;
+-    const resolverType = `export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =`;
+-    const resolverFnUsage = `ResolverFn<TResult, TParent, TContext, TArgs>`;
+-    const stitchingResolverUsage = `StitchingResolver<TResult, TParent, TContext, TArgs>`;
+-    if (visitor.hasFederation()) {
+-        if (visitor.config.wrapFieldDefinitions) {
+-            defsToInclude.push(`export type UnwrappedObject<T> = {
++`
++  const resolverType = `export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =`
++  const resolverFnUsage = `ResolverFn<TResult, TParent, TContext, TArgs>`
++  const stitchingResolverUsage = `StitchingResolver<TResult, TParent, TContext, TArgs>`
++  if (visitor.hasFederation()) {
++    if (visitor.config.wrapFieldDefinitions) {
++      defsToInclude.push(`export type UnwrappedObject<T> = {
+         [P in keyof T]: T[P] extends infer R | Promise<infer R> | (() => infer R2 | Promise<infer R2>)
+           ? R & R2 : T[P]
+-      };`);
+-        }
+-        defsToInclude.push(`export type ReferenceResolver<TResult, TReference, TContext> = (
++      };`)
++    }
++    defsToInclude.push(`export type ReferenceResolver<TResult, TReference, TContext> = (
+       reference: TReference,
+       context: TContext,
+       info: GraphQLResolveInfo
+-    ) => Promise<TResult> | TResult;`);
++    ) => Promise<TResult> | TResult;`)
++  }
++  if (noSchemaStitching) {
++    // Resolver = ResolverFn;
++    defsToInclude.push(`${resolverType} ${resolverFnUsage};`)
++  } else {
++    // StitchingResolver
++    // Resolver =
++    // | ResolverFn
++    // | StitchingResolver;
++    defsToInclude.push(
++      [
++        stitchingResolverType,
++        resolverType,
++        `  | ${resolverFnUsage}`,
++        `  | ${stitchingResolverUsage};`,
++      ].join('\n')
++    )
++  }
++  if (config.customResolverFn) {
++    const parsedMapper = visitorPluginCommon.parseMapper(config.customResolverFn)
++    if (parsedMapper.isExternal) {
++      if (parsedMapper.default) {
++        prepend.push(`import ResolverFn from '${parsedMapper.source}';`)
++      } else {
++        prepend.push(
++          `import { ${parsedMapper.import} ${
++            parsedMapper.import !== 'ResolverFn' ? 'as ResolverFn ' : ''
++          }} from '${parsedMapper.source}';`
++        )
++      }
++      prepend.push(``)
++    } else {
++      prepend.push(
++        `export type ResolverFn<TResult, TParent, TContext, TArgs> = ${parsedMapper.type}`
++      )
+     }
+-    if (noSchemaStitching) {
+-        // Resolver = ResolverFn;
+-        defsToInclude.push(`${resolverType} ${resolverFnUsage};`);
+-    }
+-    else {
+-        // StitchingResolver
+-        // Resolver =
+-        // | ResolverFn
+-        // | StitchingResolver;
+-        defsToInclude.push([stitchingResolverType, resolverType, `  | ${resolverFnUsage}`, `  | ${stitchingResolverUsage};`].join('\n'));
+-    }
+-    if (config.customResolverFn) {
+-        const parsedMapper = visitorPluginCommon.parseMapper(config.customResolverFn);
+-        if (parsedMapper.isExternal) {
+-            if (parsedMapper.default) {
+-                prepend.push(`import ResolverFn from '${parsedMapper.source}';`);
+-            }
+-            else {
+-                prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'ResolverFn' ? 'as ResolverFn ' : ''}} from '${parsedMapper.source}';`);
+-            }
+-            prepend.push(`export { ResolverFn };`);
+-        }
+-        else {
+-            prepend.push(`export type ResolverFn<TResult, TParent, TContext, TArgs> = ${parsedMapper.type}`);
+-        }
+-    }
+-    else {
+-        const defaultResolverFn = `
++  } else {
++    const defaultResolverFn = `
+ export type ResolverFn<TResult, TParent, TContext, TArgs> = (
+   parent: TParent,
+   args: TArgs,
+   context: TContext,
+   info: GraphQLResolveInfo
+-) => Promise<TResult> | TResult;`;
+-        defsToInclude.push(defaultResolverFn);
+-    }
+-    const header = `${indexSignature}
++) => Promise<TResult> | TResult;`
++    defsToInclude.push(defaultResolverFn)
++  }
++  const header = `${indexSignature}
+ 
+ ${visitor.getResolverTypeWrapperSignature()}
+ 
+@@ -201,46 +239,55 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
+   context: TContext,
+   info: GraphQLResolveInfo
+ ) => TResult | Promise<TResult>;
+-`;
+-    const resolversTypeMapping = visitor.buildResolversTypes();
+-    const resolversParentTypeMapping = visitor.buildResolversParentTypes();
+-    const { getRootResolver, getAllDirectiveResolvers, mappersImports, unusedMappers, hasScalars } = visitor;
+-    if (hasScalars()) {
+-        imports.push('GraphQLScalarType', 'GraphQLScalarTypeConfig');
+-    }
+-    if (showUnusedMappers && unusedMappers.length) {
+-        // eslint-disable-next-line no-console
+-        console.warn(`Unused mappers: ${unusedMappers.join(',')}`);
++`
++  const resolversTypeMapping = visitor.buildResolversTypes()
++  const resolversParentTypeMapping = visitor.buildResolversParentTypes()
++  const {
++    getRootResolver,
++    getAllDirectiveResolvers,
++    mappersImports,
++    unusedMappers,
++    hasScalars,
++  } = visitor
++  if (hasScalars()) {
++    imports.push('GraphQLScalarType', 'GraphQLScalarTypeConfig')
++  }
++  if (showUnusedMappers && unusedMappers.length) {
++    // eslint-disable-next-line no-console
++    console.warn(`Unused mappers: ${unusedMappers.join(',')}`)
++  }
++  if (imports.length) {
++    prepend.push(`import { ${imports.join(', ')} } from 'graphql';`)
++  }
++  if (config.customResolveInfo) {
++    const parsedMapper = visitorPluginCommon.parseMapper(config.customResolveInfo)
++    if (parsedMapper.isExternal) {
++      if (parsedMapper.default) {
++        prepend.push(`import GraphQLResolveInfo from '${parsedMapper.source}'`)
++      }
++      prepend.push(
++        `import { ${parsedMapper.import} ${
++          parsedMapper.import !== 'GraphQLResolveInfo' ? 'as GraphQLResolveInfo' : ''
++        } } from '${parsedMapper.source}';`
++      )
++    } else {
++      prepend.push(`type GraphQLResolveInfo = ${parsedMapper.type}`)
+     }
+-    if (imports.length) {
+-        prepend.push(`import { ${imports.join(', ')} } from 'graphql';`);
+-    }
+-    if (config.customResolveInfo) {
+-        const parsedMapper = visitorPluginCommon.parseMapper(config.customResolveInfo);
+-        if (parsedMapper.isExternal) {
+-            if (parsedMapper.default) {
+-                prepend.push(`import GraphQLResolveInfo from '${parsedMapper.source}'`);
+-            }
+-            prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'GraphQLResolveInfo' ? 'as GraphQLResolveInfo' : ''} } from '${parsedMapper.source}';`);
+-        }
+-        else {
+-            prepend.push(`type GraphQLResolveInfo = ${parsedMapper.type}`);
+-        }
+-    }
+-    prepend.push(...mappersImports, ...visitor.globalDeclarations);
+-    return {
+-        prepend,
+-        content: [
+-            header,
+-            resolversTypeMapping,
+-            resolversParentTypeMapping,
+-            ...visitorResult.definitions.filter(d => typeof d === 'string'),
+-            getRootResolver(),
+-            getAllDirectiveResolvers(),
+-        ].join('\n'),
+-    };
+-};
++  }
++  prepend.push(...mappersImports, ...visitor.globalDeclarations)
++  return {
++    prepend,
++    content: [
++      header,
++      resolversTypeMapping,
++      resolversParentTypeMapping,
++      ...visitorResult.definitions.filter((d) => typeof d === 'string'),
++      getRootResolver(),
++      getAllDirectiveResolvers(),
++    ].join('\n'),
++  }
++}
+ 
+-exports.TypeScriptResolversVisitor = TypeScriptResolversVisitor;
+-exports.plugin = plugin;
++exports.TypeScriptResolversVisitor = TypeScriptResolversVisitor
++exports.plugin = plugin
+ //# sourceMappingURL=index.cjs.js.map
+diff --git a/node_modules/@graphql-codegen/typescript-resolvers/index.cjs.js.map b/node_modules/@graphql-codegen/typescript-resolvers/index.cjs.js.map
+index c376204..e895779 100644
+--- a/node_modules/@graphql-codegen/typescript-resolvers/index.cjs.js.map
++++ b/node_modules/@graphql-codegen/typescript-resolvers/index.cjs.js.map
+@@ -1 +1,24 @@
+-{"version":3,"file":"index.cjs.js","sources":["../../../dist/plugins/typescript/resolvers/src/visitor.js","../../../dist/plugins/typescript/resolvers/src/index.js"],"sourcesContent":["import autoBind from 'auto-bind';\nimport { BaseResolversVisitor, getConfigValue, } from '@graphql-codegen/visitor-plugin-common';\nimport { TypeScriptOperationVariablesToObject } from '@graphql-codegen/typescript';\nexport class TypeScriptResolversVisitor extends BaseResolversVisitor {\n    constructor(pluginConfig, schema) {\n        super(pluginConfig, {\n            avoidOptionals: getConfigValue(pluginConfig.avoidOptionals, false),\n            useIndexSignature: getConfigValue(pluginConfig.useIndexSignature, false),\n            wrapFieldDefinitions: getConfigValue(pluginConfig.wrapFieldDefinitions, false),\n        }, schema);\n        autoBind(this);\n        this.setVariablesTransformer(new TypeScriptOperationVariablesToObject(this.scalars, this.convertName, this.config.avoidOptionals, this.config.immutableTypes, null, [], this.config.enumPrefix, this.config.enumValues));\n        if (this.config.useIndexSignature) {\n            this._declarationBlockConfig = {\n                blockTransformer(block) {\n                    return `ResolversObject<${block}>`;\n                },\n            };\n        }\n    }\n    formatRootResolver(schemaTypeName, resolverType) {\n        return `${schemaTypeName}${this.config.avoidOptionals ? '' : '?'}: ${resolverType},`;\n    }\n    clearOptional(str) {\n        if (str.startsWith('Maybe')) {\n            return str.replace(/Maybe<(.*?)>$/, '$1');\n        }\n        return str;\n    }\n    ListType(node) {\n        return `Maybe<${super.ListType(node)}>`;\n    }\n    wrapWithListType(str) {\n        return `${this.config.immutableTypes ? 'ReadonlyArray' : 'Array'}<${str}>`;\n    }\n    getParentTypeForSignature(node) {\n        if (this._federation.isResolveReferenceField(node) && this.config.wrapFieldDefinitions) {\n            return 'UnwrappedObject<ParentType>';\n        }\n        return 'ParentType';\n    }\n    NamedType(node) {\n        return `Maybe<${super.NamedType(node)}>`;\n    }\n    NonNullType(node) {\n        const baseValue = super.NonNullType(node);\n        return this.clearOptional(baseValue);\n    }\n    getPunctuation(declarationKind) {\n        return ';';\n    }\n}\n//# sourceMappingURL=visitor.js.map","import { printSchemaWithDirectives } from '@graphql-toolkit/common';\nimport { parseMapper } from '@graphql-codegen/visitor-plugin-common';\nimport { addFederationReferencesToSchema } from '@graphql-codegen/plugin-helpers';\nimport { parse, visit, printSchema } from 'graphql';\nimport { TypeScriptResolversVisitor } from './visitor';\nexport const plugin = (schema, documents, config) => {\n    const imports = [];\n    if (!config.customResolveInfo) {\n        imports.push('GraphQLResolveInfo');\n    }\n    const showUnusedMappers = typeof config.showUnusedMappers === 'boolean' ? config.showUnusedMappers : true;\n    const noSchemaStitching = typeof config.noSchemaStitching === 'boolean' ? config.noSchemaStitching : false;\n    if (config.noSchemaStitching === false) {\n        // eslint-disable-next-line no-console\n        console.warn(`The default behavior of 'noSchemaStitching' will be reversed in the next major release. Support for Schema Stitching will be disabled by default.`);\n    }\n    const indexSignature = config.useIndexSignature\n        ? [\n            'export type WithIndex<TObject> = TObject & Record<string, any>;',\n            'export type ResolversObject<TObject> = WithIndex<TObject>;',\n        ].join('\\n')\n        : '';\n    const transformedSchema = config.federation ? addFederationReferencesToSchema(schema) : schema;\n    const visitor = new TypeScriptResolversVisitor(config, transformedSchema);\n    const printedSchema = config.federation\n        ? printSchemaWithDirectives(transformedSchema)\n        : printSchema(transformedSchema);\n    const astNode = parse(printedSchema);\n    // runs visitor\n    const visitorResult = visit(astNode, { leave: visitor });\n    const prepend = [];\n    const defsToInclude = [];\n    const stitchingResolverType = `\nexport type StitchingResolver<TResult, TParent, TContext, TArgs> = {\n  fragment: string;\n  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;\n};\n`;\n    const resolverType = `export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =`;\n    const resolverFnUsage = `ResolverFn<TResult, TParent, TContext, TArgs>`;\n    const stitchingResolverUsage = `StitchingResolver<TResult, TParent, TContext, TArgs>`;\n    if (visitor.hasFederation()) {\n        if (visitor.config.wrapFieldDefinitions) {\n            defsToInclude.push(`export type UnwrappedObject<T> = {\n        [P in keyof T]: T[P] extends infer R | Promise<infer R> | (() => infer R2 | Promise<infer R2>)\n          ? R & R2 : T[P]\n      };`);\n        }\n        defsToInclude.push(`export type ReferenceResolver<TResult, TReference, TContext> = (\n      reference: TReference,\n      context: TContext,\n      info: GraphQLResolveInfo\n    ) => Promise<TResult> | TResult;`);\n    }\n    if (noSchemaStitching) {\n        // Resolver = ResolverFn;\n        defsToInclude.push(`${resolverType} ${resolverFnUsage};`);\n    }\n    else {\n        // StitchingResolver\n        // Resolver =\n        // | ResolverFn\n        // | StitchingResolver;\n        defsToInclude.push([stitchingResolverType, resolverType, `  | ${resolverFnUsage}`, `  | ${stitchingResolverUsage};`].join('\\n'));\n    }\n    if (config.customResolverFn) {\n        const parsedMapper = parseMapper(config.customResolverFn);\n        if (parsedMapper.isExternal) {\n            if (parsedMapper.default) {\n                prepend.push(`import ResolverFn from '${parsedMapper.source}';`);\n            }\n            else {\n                prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'ResolverFn' ? 'as ResolverFn ' : ''}} from '${parsedMapper.source}';`);\n            }\n            prepend.push(`export { ResolverFn };`);\n        }\n        else {\n            prepend.push(`export type ResolverFn<TResult, TParent, TContext, TArgs> = ${parsedMapper.type}`);\n        }\n    }\n    else {\n        const defaultResolverFn = `\nexport type ResolverFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => Promise<TResult> | TResult;`;\n        defsToInclude.push(defaultResolverFn);\n    }\n    const header = `${indexSignature}\n\n${visitor.getResolverTypeWrapperSignature()}\n\n${defsToInclude.join('\\n')}\n\nexport type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;\n\nexport type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => TResult | Promise<TResult>;\n\nexport interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {\n  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;\n  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;\n}\n\nexport interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {\n  subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;\n  resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;\n}\n\nexport type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =\n  | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>\n  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;\n\nexport type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =\n  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)\n  | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;\n\nexport type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (\n  parent: TParent,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => Maybe<TTypes> | Promise<Maybe<TTypes>>;\n\nexport type isTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;\n\nexport type NextResolverFn<T> = () => Promise<T>;\n\nexport type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (\n  next: NextResolverFn<TResult>,\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => TResult | Promise<TResult>;\n`;\n    const resolversTypeMapping = visitor.buildResolversTypes();\n    const resolversParentTypeMapping = visitor.buildResolversParentTypes();\n    const { getRootResolver, getAllDirectiveResolvers, mappersImports, unusedMappers, hasScalars } = visitor;\n    if (hasScalars()) {\n        imports.push('GraphQLScalarType', 'GraphQLScalarTypeConfig');\n    }\n    if (showUnusedMappers && unusedMappers.length) {\n        // eslint-disable-next-line no-console\n        console.warn(`Unused mappers: ${unusedMappers.join(',')}`);\n    }\n    if (imports.length) {\n        prepend.push(`import { ${imports.join(', ')} } from 'graphql';`);\n    }\n    if (config.customResolveInfo) {\n        const parsedMapper = parseMapper(config.customResolveInfo);\n        if (parsedMapper.isExternal) {\n            if (parsedMapper.default) {\n                prepend.push(`import GraphQLResolveInfo from '${parsedMapper.source}'`);\n            }\n            prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'GraphQLResolveInfo' ? 'as GraphQLResolveInfo' : ''} } from '${parsedMapper.source}';`);\n        }\n        else {\n            prepend.push(`type GraphQLResolveInfo = ${parsedMapper.type}`);\n        }\n    }\n    prepend.push(...mappersImports, ...visitor.globalDeclarations);\n    return {\n        prepend,\n        content: [\n            header,\n            resolversTypeMapping,\n            resolversParentTypeMapping,\n            ...visitorResult.definitions.filter(d => typeof d === 'string'),\n            getRootResolver(),\n            getAllDirectiveResolvers(),\n        ].join('\\n'),\n    };\n};\nexport { TypeScriptResolversVisitor };\n//# sourceMappingURL=index.js.map"],"names":["BaseResolversVisitor","getConfigValue","TypeScriptOperationVariablesToObject","addFederationReferencesToSchema","printSchemaWithDirectives","printSchema","parse","visit","parseMapper"],"mappings":"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"}
+\ No newline at end of file
++{
++  "version": 3,
++  "file": "index.cjs.js",
++  "sources": [
++    "../../../dist/plugins/typescript/resolvers/src/visitor.js",
++    "../../../dist/plugins/typescript/resolvers/src/index.js"
++  ],
++  "sourcesContent": [
++    "import autoBind from 'auto-bind';\nimport { BaseResolversVisitor, getConfigValue, } from '@graphql-codegen/visitor-plugin-common';\nimport { TypeScriptOperationVariablesToObject } from '@graphql-codegen/typescript';\nexport class TypeScriptResolversVisitor extends BaseResolversVisitor {\n    constructor(pluginConfig, schema) {\n        super(pluginConfig, {\n            avoidOptionals: getConfigValue(pluginConfig.avoidOptionals, false),\n            useIndexSignature: getConfigValue(pluginConfig.useIndexSignature, false),\n            wrapFieldDefinitions: getConfigValue(pluginConfig.wrapFieldDefinitions, false),\n        }, schema);\n        autoBind(this);\n        this.setVariablesTransformer(new TypeScriptOperationVariablesToObject(this.scalars, this.convertName, this.config.avoidOptionals, this.config.immutableTypes, null, [], this.config.enumPrefix, this.config.enumValues));\n        if (this.config.useIndexSignature) {\n            this._declarationBlockConfig = {\n                blockTransformer(block) {\n                    return `ResolversObject<${block}>`;\n                },\n            };\n        }\n    }\n    formatRootResolver(schemaTypeName, resolverType) {\n        return `${schemaTypeName}${this.config.avoidOptionals ? '' : '?'}: ${resolverType},`;\n    }\n    clearOptional(str) {\n        if (str.startsWith('Maybe')) {\n            return str.replace(/Maybe<(.*?)>$/, '$1');\n        }\n        return str;\n    }\n    ListType(node) {\n        return `Maybe<${super.ListType(node)}>`;\n    }\n    wrapWithListType(str) {\n        return `${this.config.immutableTypes ? 'ReadonlyArray' : 'Array'}<${str}>`;\n    }\n    getParentTypeForSignature(node) {\n        if (this._federation.isResolveReferenceField(node) && this.config.wrapFieldDefinitions) {\n            return 'UnwrappedObject<ParentType>';\n        }\n        return 'ParentType';\n    }\n    NamedType(node) {\n        return `Maybe<${super.NamedType(node)}>`;\n    }\n    NonNullType(node) {\n        const baseValue = super.NonNullType(node);\n        return this.clearOptional(baseValue);\n    }\n    getPunctuation(declarationKind) {\n        return ';';\n    }\n}\n//# sourceMappingURL=visitor.js.map",
++    "import { printSchemaWithDirectives } from '@graphql-toolkit/common';\nimport { parseMapper } from '@graphql-codegen/visitor-plugin-common';\nimport { addFederationReferencesToSchema } from '@graphql-codegen/plugin-helpers';\nimport { parse, visit, printSchema } from 'graphql';\nimport { TypeScriptResolversVisitor } from './visitor';\nexport const plugin = (schema, documents, config) => {\n    const imports = [];\n    if (!config.customResolveInfo) {\n        imports.push('GraphQLResolveInfo');\n    }\n    const showUnusedMappers = typeof config.showUnusedMappers === 'boolean' ? config.showUnusedMappers : true;\n    const noSchemaStitching = typeof config.noSchemaStitching === 'boolean' ? config.noSchemaStitching : false;\n    if (config.noSchemaStitching === false) {\n        // eslint-disable-next-line no-console\n        console.warn(`The default behavior of 'noSchemaStitching' will be reversed in the next major release. Support for Schema Stitching will be disabled by default.`);\n    }\n    const indexSignature = config.useIndexSignature\n        ? [\n            'export type WithIndex<TObject> = TObject & Record<string, any>;',\n            'export type ResolversObject<TObject> = WithIndex<TObject>;',\n        ].join('\\n')\n        : '';\n    const transformedSchema = config.federation ? addFederationReferencesToSchema(schema) : schema;\n    const visitor = new TypeScriptResolversVisitor(config, transformedSchema);\n    const printedSchema = config.federation\n        ? printSchemaWithDirectives(transformedSchema)\n        : printSchema(transformedSchema);\n    const astNode = parse(printedSchema);\n    // runs visitor\n    const visitorResult = visit(astNode, { leave: visitor });\n    const prepend = [];\n    const defsToInclude = [];\n    const stitchingResolverType = `\nexport type StitchingResolver<TResult, TParent, TContext, TArgs> = {\n  fragment: string;\n  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;\n};\n`;\n    const resolverType = `export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =`;\n    const resolverFnUsage = `ResolverFn<TResult, TParent, TContext, TArgs>`;\n    const stitchingResolverUsage = `StitchingResolver<TResult, TParent, TContext, TArgs>`;\n    if (visitor.hasFederation()) {\n        if (visitor.config.wrapFieldDefinitions) {\n            defsToInclude.push(`export type UnwrappedObject<T> = {\n        [P in keyof T]: T[P] extends infer R | Promise<infer R> | (() => infer R2 | Promise<infer R2>)\n          ? R & R2 : T[P]\n      };`);\n        }\n        defsToInclude.push(`export type ReferenceResolver<TResult, TReference, TContext> = (\n      reference: TReference,\n      context: TContext,\n      info: GraphQLResolveInfo\n    ) => Promise<TResult> | TResult;`);\n    }\n    if (noSchemaStitching) {\n        // Resolver = ResolverFn;\n        defsToInclude.push(`${resolverType} ${resolverFnUsage};`);\n    }\n    else {\n        // StitchingResolver\n        // Resolver =\n        // | ResolverFn\n        // | StitchingResolver;\n        defsToInclude.push([stitchingResolverType, resolverType, `  | ${resolverFnUsage}`, `  | ${stitchingResolverUsage};`].join('\\n'));\n    }\n    if (config.customResolverFn) {\n        const parsedMapper = parseMapper(config.customResolverFn);\n        if (parsedMapper.isExternal) {\n            if (parsedMapper.default) {\n                prepend.push(`import ResolverFn from '${parsedMapper.source}';`);\n            }\n            else {\n                prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'ResolverFn' ? 'as ResolverFn ' : ''}} from '${parsedMapper.source}';`);\n            }\n            prepend.push(``);\n        }\n        else {\n            prepend.push(`export type ResolverFn<TResult, TParent, TContext, TArgs> = ${parsedMapper.type}`);\n        }\n    }\n    else {\n        const defaultResolverFn = `\nexport type ResolverFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => Promise<TResult> | TResult;`;\n        defsToInclude.push(defaultResolverFn);\n    }\n    const header = `${indexSignature}\n\n${visitor.getResolverTypeWrapperSignature()}\n\n${defsToInclude.join('\\n')}\n\nexport type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;\n\nexport type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => TResult | Promise<TResult>;\n\nexport interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {\n  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;\n  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;\n}\n\nexport interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {\n  subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;\n  resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;\n}\n\nexport type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =\n  | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>\n  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;\n\nexport type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =\n  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)\n  | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;\n\nexport type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (\n  parent: TParent,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => Maybe<TTypes> | Promise<Maybe<TTypes>>;\n\nexport type isTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;\n\nexport type NextResolverFn<T> = () => Promise<T>;\n\nexport type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (\n  next: NextResolverFn<TResult>,\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => TResult | Promise<TResult>;\n`;\n    const resolversTypeMapping = visitor.buildResolversTypes();\n    const resolversParentTypeMapping = visitor.buildResolversParentTypes();\n    const { getRootResolver, getAllDirectiveResolvers, mappersImports, unusedMappers, hasScalars } = visitor;\n    if (hasScalars()) {\n        imports.push('GraphQLScalarType', 'GraphQLScalarTypeConfig');\n    }\n    if (showUnusedMappers && unusedMappers.length) {\n        // eslint-disable-next-line no-console\n        console.warn(`Unused mappers: ${unusedMappers.join(',')}`);\n    }\n    if (imports.length) {\n        prepend.push(`import { ${imports.join(', ')} } from 'graphql';`);\n    }\n    if (config.customResolveInfo) {\n        const parsedMapper = parseMapper(config.customResolveInfo);\n        if (parsedMapper.isExternal) {\n            if (parsedMapper.default) {\n                prepend.push(`import GraphQLResolveInfo from '${parsedMapper.source}'`);\n            }\n            prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'GraphQLResolveInfo' ? 'as GraphQLResolveInfo' : ''} } from '${parsedMapper.source}';`);\n        }\n        else {\n            prepend.push(`type GraphQLResolveInfo = ${parsedMapper.type}`);\n        }\n    }\n    prepend.push(...mappersImports, ...visitor.globalDeclarations);\n    return {\n        prepend,\n        content: [\n            header,\n            resolversTypeMapping,\n            resolversParentTypeMapping,\n            ...visitorResult.definitions.filter(d => typeof d === 'string'),\n            getRootResolver(),\n            getAllDirectiveResolvers(),\n        ].join('\\n'),\n    };\n};\nexport { TypeScriptResolversVisitor };\n//# sourceMappingURL=index.js.map"
++  ],
++  "names": [
++    "BaseResolversVisitor",
++    "getConfigValue",
++    "TypeScriptOperationVariablesToObject",
++    "addFederationReferencesToSchema",
++    "printSchemaWithDirectives",
++    "printSchema",
++    "parse",
++    "visit",
++    "parseMapper"
++  ],
++  "mappings": "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"
++}
+diff --git a/node_modules/@graphql-codegen/typescript-resolvers/index.esm.js b/node_modules/@graphql-codegen/typescript-resolvers/index.esm.js
+index 0511f45..7cb94ea 100644
+--- a/node_modules/@graphql-codegen/typescript-resolvers/index.esm.js
++++ b/node_modules/@graphql-codegen/typescript-resolvers/index.esm.js
+@@ -1,146 +1,178 @@
+-import { printSchemaWithDirectives } from '@graphql-toolkit/common';
+-import { BaseResolversVisitor, getConfigValue, parseMapper } from '@graphql-codegen/visitor-plugin-common';
+-import { addFederationReferencesToSchema } from '@graphql-codegen/plugin-helpers';
+-import { printSchema, parse, visit } from 'graphql';
+-import autoBind from 'auto-bind';
+-import { TypeScriptOperationVariablesToObject } from '@graphql-codegen/typescript';
++import { printSchemaWithDirectives } from '@graphql-toolkit/common'
++import {
++  BaseResolversVisitor,
++  getConfigValue,
++  parseMapper,
++} from '@graphql-codegen/visitor-plugin-common'
++import { addFederationReferencesToSchema } from '@graphql-codegen/plugin-helpers'
++import { printSchema, parse, visit } from 'graphql'
++import autoBind from 'auto-bind'
++import { TypeScriptOperationVariablesToObject } from '@graphql-codegen/typescript'
+ 
+ class TypeScriptResolversVisitor extends BaseResolversVisitor {
+-    constructor(pluginConfig, schema) {
+-        super(pluginConfig, {
+-            avoidOptionals: getConfigValue(pluginConfig.avoidOptionals, false),
+-            useIndexSignature: getConfigValue(pluginConfig.useIndexSignature, false),
+-            wrapFieldDefinitions: getConfigValue(pluginConfig.wrapFieldDefinitions, false),
+-        }, schema);
+-        autoBind(this);
+-        this.setVariablesTransformer(new TypeScriptOperationVariablesToObject(this.scalars, this.convertName, this.config.avoidOptionals, this.config.immutableTypes, null, [], this.config.enumPrefix, this.config.enumValues));
+-        if (this.config.useIndexSignature) {
+-            this._declarationBlockConfig = {
+-                blockTransformer(block) {
+-                    return `ResolversObject<${block}>`;
+-                },
+-            };
+-        }
++  constructor(pluginConfig, schema) {
++    super(
++      pluginConfig,
++      {
++        avoidOptionals: getConfigValue(pluginConfig.avoidOptionals, false),
++        useIndexSignature: getConfigValue(pluginConfig.useIndexSignature, false),
++        wrapFieldDefinitions: getConfigValue(pluginConfig.wrapFieldDefinitions, false),
++      },
++      schema
++    )
++    autoBind(this)
++    this.setVariablesTransformer(
++      new TypeScriptOperationVariablesToObject(
++        this.scalars,
++        this.convertName,
++        this.config.avoidOptionals,
++        this.config.immutableTypes,
++        null,
++        [],
++        this.config.enumPrefix,
++        this.config.enumValues
++      )
++    )
++    if (this.config.useIndexSignature) {
++      this._declarationBlockConfig = {
++        blockTransformer(block) {
++          return `ResolversObject<${block}>`
++        },
++      }
+     }
+-    formatRootResolver(schemaTypeName, resolverType) {
+-        return `${schemaTypeName}${this.config.avoidOptionals ? '' : '?'}: ${resolverType},`;
++  }
++  formatRootResolver(schemaTypeName, resolverType) {
++    return `${schemaTypeName}${this.config.avoidOptionals ? '' : '?'}: ${resolverType},`
++  }
++  clearOptional(str) {
++    if (str.startsWith('Maybe')) {
++      return str.replace(/Maybe<(.*?)>$/, '$1')
+     }
+-    clearOptional(str) {
+-        if (str.startsWith('Maybe')) {
+-            return str.replace(/Maybe<(.*?)>$/, '$1');
+-        }
+-        return str;
+-    }
+-    ListType(node) {
+-        return `Maybe<${super.ListType(node)}>`;
+-    }
+-    wrapWithListType(str) {
+-        return `${this.config.immutableTypes ? 'ReadonlyArray' : 'Array'}<${str}>`;
+-    }
+-    getParentTypeForSignature(node) {
+-        if (this._federation.isResolveReferenceField(node) && this.config.wrapFieldDefinitions) {
+-            return 'UnwrappedObject<ParentType>';
+-        }
+-        return 'ParentType';
+-    }
+-    NamedType(node) {
+-        return `Maybe<${super.NamedType(node)}>`;
+-    }
+-    NonNullType(node) {
+-        const baseValue = super.NonNullType(node);
+-        return this.clearOptional(baseValue);
+-    }
+-    getPunctuation(declarationKind) {
+-        return ';';
++    return str
++  }
++  ListType(node) {
++    return `Maybe<${super.ListType(node)}>`
++  }
++  wrapWithListType(str) {
++    return `${this.config.immutableTypes ? 'ReadonlyArray' : 'Array'}<${str}>`
++  }
++  getParentTypeForSignature(node) {
++    if (this._federation.isResolveReferenceField(node) && this.config.wrapFieldDefinitions) {
++      return 'UnwrappedObject<ParentType>'
+     }
++    return 'ParentType'
++  }
++  NamedType(node) {
++    return `Maybe<${super.NamedType(node)}>`
++  }
++  NonNullType(node) {
++    const baseValue = super.NonNullType(node)
++    return this.clearOptional(baseValue)
++  }
++  getPunctuation(declarationKind) {
++    return ';'
++  }
+ }
+ 
+ const plugin = (schema, documents, config) => {
+-    const imports = [];
+-    if (!config.customResolveInfo) {
+-        imports.push('GraphQLResolveInfo');
+-    }
+-    const showUnusedMappers = typeof config.showUnusedMappers === 'boolean' ? config.showUnusedMappers : true;
+-    const noSchemaStitching = typeof config.noSchemaStitching === 'boolean' ? config.noSchemaStitching : false;
+-    if (config.noSchemaStitching === false) {
+-        // eslint-disable-next-line no-console
+-        console.warn(`The default behavior of 'noSchemaStitching' will be reversed in the next major release. Support for Schema Stitching will be disabled by default.`);
+-    }
+-    const indexSignature = config.useIndexSignature
+-        ? [
+-            'export type WithIndex<TObject> = TObject & Record<string, any>;',
+-            'export type ResolversObject<TObject> = WithIndex<TObject>;',
+-        ].join('\n')
+-        : '';
+-    const transformedSchema = config.federation ? addFederationReferencesToSchema(schema) : schema;
+-    const visitor = new TypeScriptResolversVisitor(config, transformedSchema);
+-    const printedSchema = config.federation
+-        ? printSchemaWithDirectives(transformedSchema)
+-        : printSchema(transformedSchema);
+-    const astNode = parse(printedSchema);
+-    // runs visitor
+-    const visitorResult = visit(astNode, { leave: visitor });
+-    const prepend = [];
+-    const defsToInclude = [];
+-    const stitchingResolverType = `
++  const imports = []
++  if (!config.customResolveInfo) {
++    imports.push('GraphQLResolveInfo')
++  }
++  const showUnusedMappers =
++    typeof config.showUnusedMappers === 'boolean' ? config.showUnusedMappers : true
++  const noSchemaStitching =
++    typeof config.noSchemaStitching === 'boolean' ? config.noSchemaStitching : false
++  if (config.noSchemaStitching === false) {
++    // eslint-disable-next-line no-console
++    console.warn(
++      `The default behavior of 'noSchemaStitching' will be reversed in the next major release. Support for Schema Stitching will be disabled by default.`
++    )
++  }
++  const indexSignature = config.useIndexSignature
++    ? [
++        'export type WithIndex<TObject> = TObject & Record<string, any>;',
++        'export type ResolversObject<TObject> = WithIndex<TObject>;',
++      ].join('\n')
++    : ''
++  const transformedSchema = config.federation ? addFederationReferencesToSchema(schema) : schema
++  const visitor = new TypeScriptResolversVisitor(config, transformedSchema)
++  const printedSchema = config.federation
++    ? printSchemaWithDirectives(transformedSchema)
++    : printSchema(transformedSchema)
++  const astNode = parse(printedSchema)
++  // runs visitor
++  const visitorResult = visit(astNode, { leave: visitor })
++  const prepend = []
++  const defsToInclude = []
++  const stitchingResolverType = `
+ export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
+   fragment: string;
+   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+ };
+-`;
+-    const resolverType = `export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =`;
+-    const resolverFnUsage = `ResolverFn<TResult, TParent, TContext, TArgs>`;
+-    const stitchingResolverUsage = `StitchingResolver<TResult, TParent, TContext, TArgs>`;
+-    if (visitor.hasFederation()) {
+-        if (visitor.config.wrapFieldDefinitions) {
+-            defsToInclude.push(`export type UnwrappedObject<T> = {
++`
++  const resolverType = `export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =`
++  const resolverFnUsage = `ResolverFn<TResult, TParent, TContext, TArgs>`
++  const stitchingResolverUsage = `StitchingResolver<TResult, TParent, TContext, TArgs>`
++  if (visitor.hasFederation()) {
++    if (visitor.config.wrapFieldDefinitions) {
++      defsToInclude.push(`export type UnwrappedObject<T> = {
+         [P in keyof T]: T[P] extends infer R | Promise<infer R> | (() => infer R2 | Promise<infer R2>)
+           ? R & R2 : T[P]
+-      };`);
+-        }
+-        defsToInclude.push(`export type ReferenceResolver<TResult, TReference, TContext> = (
++      };`)
++    }
++    defsToInclude.push(`export type ReferenceResolver<TResult, TReference, TContext> = (
+       reference: TReference,
+       context: TContext,
+       info: GraphQLResolveInfo
+-    ) => Promise<TResult> | TResult;`);
++    ) => Promise<TResult> | TResult;`)
++  }
++  if (noSchemaStitching) {
++    // Resolver = ResolverFn;
++    defsToInclude.push(`${resolverType} ${resolverFnUsage};`)
++  } else {
++    // StitchingResolver
++    // Resolver =
++    // | ResolverFn
++    // | StitchingResolver;
++    defsToInclude.push(
++      [
++        stitchingResolverType,
++        resolverType,
++        `  | ${resolverFnUsage}`,
++        `  | ${stitchingResolverUsage};`,
++      ].join('\n')
++    )
++  }
++  if (config.customResolverFn) {
++    const parsedMapper = parseMapper(config.customResolverFn)
++    if (parsedMapper.isExternal) {
++      if (parsedMapper.default) {
++        prepend.push(`import ResolverFn from '${parsedMapper.source}';`)
++      } else {
++        prepend.push(
++          `import { ${parsedMapper.import} ${
++            parsedMapper.import !== 'ResolverFn' ? 'as ResolverFn ' : ''
++          }} from '${parsedMapper.source}';`
++        )
++      }
++      prepend.push(``)
++    } else {
++      prepend.push(
++        `export type ResolverFn<TResult, TParent, TContext, TArgs> = ${parsedMapper.type}`
++      )
+     }
+-    if (noSchemaStitching) {
+-        // Resolver = ResolverFn;
+-        defsToInclude.push(`${resolverType} ${resolverFnUsage};`);
+-    }
+-    else {
+-        // StitchingResolver
+-        // Resolver =
+-        // | ResolverFn
+-        // | StitchingResolver;
+-        defsToInclude.push([stitchingResolverType, resolverType, `  | ${resolverFnUsage}`, `  | ${stitchingResolverUsage};`].join('\n'));
+-    }
+-    if (config.customResolverFn) {
+-        const parsedMapper = parseMapper(config.customResolverFn);
+-        if (parsedMapper.isExternal) {
+-            if (parsedMapper.default) {
+-                prepend.push(`import ResolverFn from '${parsedMapper.source}';`);
+-            }
+-            else {
+-                prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'ResolverFn' ? 'as ResolverFn ' : ''}} from '${parsedMapper.source}';`);
+-            }
+-            prepend.push(`export { ResolverFn };`);
+-        }
+-        else {
+-            prepend.push(`export type ResolverFn<TResult, TParent, TContext, TArgs> = ${parsedMapper.type}`);
+-        }
+-    }
+-    else {
+-        const defaultResolverFn = `
++  } else {
++    const defaultResolverFn = `
+ export type ResolverFn<TResult, TParent, TContext, TArgs> = (
+   parent: TParent,
+   args: TArgs,
+   context: TContext,
+   info: GraphQLResolveInfo
+-) => Promise<TResult> | TResult;`;
+-        defsToInclude.push(defaultResolverFn);
+-    }
+-    const header = `${indexSignature}
++) => Promise<TResult> | TResult;`
++    defsToInclude.push(defaultResolverFn)
++  }
++  const header = `${indexSignature}
+ 
+ ${visitor.getResolverTypeWrapperSignature()}
+ 
+@@ -195,45 +227,54 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
+   context: TContext,
+   info: GraphQLResolveInfo
+ ) => TResult | Promise<TResult>;
+-`;
+-    const resolversTypeMapping = visitor.buildResolversTypes();
+-    const resolversParentTypeMapping = visitor.buildResolversParentTypes();
+-    const { getRootResolver, getAllDirectiveResolvers, mappersImports, unusedMappers, hasScalars } = visitor;
+-    if (hasScalars()) {
+-        imports.push('GraphQLScalarType', 'GraphQLScalarTypeConfig');
+-    }
+-    if (showUnusedMappers && unusedMappers.length) {
+-        // eslint-disable-next-line no-console
+-        console.warn(`Unused mappers: ${unusedMappers.join(',')}`);
++`
++  const resolversTypeMapping = visitor.buildResolversTypes()
++  const resolversParentTypeMapping = visitor.buildResolversParentTypes()
++  const {
++    getRootResolver,
++    getAllDirectiveResolvers,
++    mappersImports,
++    unusedMappers,
++    hasScalars,
++  } = visitor
++  if (hasScalars()) {
++    imports.push('GraphQLScalarType', 'GraphQLScalarTypeConfig')
++  }
++  if (showUnusedMappers && unusedMappers.length) {
++    // eslint-disable-next-line no-console
++    console.warn(`Unused mappers: ${unusedMappers.join(',')}`)
++  }
++  if (imports.length) {
++    prepend.push(`import { ${imports.join(', ')} } from 'graphql';`)
++  }
++  if (config.customResolveInfo) {
++    const parsedMapper = parseMapper(config.customResolveInfo)
++    if (parsedMapper.isExternal) {
++      if (parsedMapper.default) {
++        prepend.push(`import GraphQLResolveInfo from '${parsedMapper.source}'`)
++      }
++      prepend.push(
++        `import { ${parsedMapper.import} ${
++          parsedMapper.import !== 'GraphQLResolveInfo' ? 'as GraphQLResolveInfo' : ''
++        } } from '${parsedMapper.source}';`
++      )
++    } else {
++      prepend.push(`type GraphQLResolveInfo = ${parsedMapper.type}`)
+     }
+-    if (imports.length) {
+-        prepend.push(`import { ${imports.join(', ')} } from 'graphql';`);
+-    }
+-    if (config.customResolveInfo) {
+-        const parsedMapper = parseMapper(config.customResolveInfo);
+-        if (parsedMapper.isExternal) {
+-            if (parsedMapper.default) {
+-                prepend.push(`import GraphQLResolveInfo from '${parsedMapper.source}'`);
+-            }
+-            prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'GraphQLResolveInfo' ? 'as GraphQLResolveInfo' : ''} } from '${parsedMapper.source}';`);
+-        }
+-        else {
+-            prepend.push(`type GraphQLResolveInfo = ${parsedMapper.type}`);
+-        }
+-    }
+-    prepend.push(...mappersImports, ...visitor.globalDeclarations);
+-    return {
+-        prepend,
+-        content: [
+-            header,
+-            resolversTypeMapping,
+-            resolversParentTypeMapping,
+-            ...visitorResult.definitions.filter(d => typeof d === 'string'),
+-            getRootResolver(),
+-            getAllDirectiveResolvers(),
+-        ].join('\n'),
+-    };
+-};
++  }
++  prepend.push(...mappersImports, ...visitor.globalDeclarations)
++  return {
++    prepend,
++    content: [
++      header,
++      resolversTypeMapping,
++      resolversParentTypeMapping,
++      ...visitorResult.definitions.filter((d) => typeof d === 'string'),
++      getRootResolver(),
++      getAllDirectiveResolvers(),
++    ].join('\n'),
++  }
++}
+ 
+-export { TypeScriptResolversVisitor, plugin };
++export { TypeScriptResolversVisitor, plugin }
+ //# sourceMappingURL=index.esm.js.map
+diff --git a/node_modules/@graphql-codegen/typescript-resolvers/index.esm.js.map b/node_modules/@graphql-codegen/typescript-resolvers/index.esm.js.map
+index df2de6b..9940073 100644
+--- a/node_modules/@graphql-codegen/typescript-resolvers/index.esm.js.map
++++ b/node_modules/@graphql-codegen/typescript-resolvers/index.esm.js.map
+@@ -1 +1,14 @@
+-{"version":3,"file":"index.esm.js","sources":["../../../dist/plugins/typescript/resolvers/src/visitor.js","../../../dist/plugins/typescript/resolvers/src/index.js"],"sourcesContent":["import autoBind from 'auto-bind';\nimport { BaseResolversVisitor, getConfigValue, } from '@graphql-codegen/visitor-plugin-common';\nimport { TypeScriptOperationVariablesToObject } from '@graphql-codegen/typescript';\nexport class TypeScriptResolversVisitor extends BaseResolversVisitor {\n    constructor(pluginConfig, schema) {\n        super(pluginConfig, {\n            avoidOptionals: getConfigValue(pluginConfig.avoidOptionals, false),\n            useIndexSignature: getConfigValue(pluginConfig.useIndexSignature, false),\n            wrapFieldDefinitions: getConfigValue(pluginConfig.wrapFieldDefinitions, false),\n        }, schema);\n        autoBind(this);\n        this.setVariablesTransformer(new TypeScriptOperationVariablesToObject(this.scalars, this.convertName, this.config.avoidOptionals, this.config.immutableTypes, null, [], this.config.enumPrefix, this.config.enumValues));\n        if (this.config.useIndexSignature) {\n            this._declarationBlockConfig = {\n                blockTransformer(block) {\n                    return `ResolversObject<${block}>`;\n                },\n            };\n        }\n    }\n    formatRootResolver(schemaTypeName, resolverType) {\n        return `${schemaTypeName}${this.config.avoidOptionals ? '' : '?'}: ${resolverType},`;\n    }\n    clearOptional(str) {\n        if (str.startsWith('Maybe')) {\n            return str.replace(/Maybe<(.*?)>$/, '$1');\n        }\n        return str;\n    }\n    ListType(node) {\n        return `Maybe<${super.ListType(node)}>`;\n    }\n    wrapWithListType(str) {\n        return `${this.config.immutableTypes ? 'ReadonlyArray' : 'Array'}<${str}>`;\n    }\n    getParentTypeForSignature(node) {\n        if (this._federation.isResolveReferenceField(node) && this.config.wrapFieldDefinitions) {\n            return 'UnwrappedObject<ParentType>';\n        }\n        return 'ParentType';\n    }\n    NamedType(node) {\n        return `Maybe<${super.NamedType(node)}>`;\n    }\n    NonNullType(node) {\n        const baseValue = super.NonNullType(node);\n        return this.clearOptional(baseValue);\n    }\n    getPunctuation(declarationKind) {\n        return ';';\n    }\n}\n//# sourceMappingURL=visitor.js.map","import { printSchemaWithDirectives } from '@graphql-toolkit/common';\nimport { parseMapper } from '@graphql-codegen/visitor-plugin-common';\nimport { addFederationReferencesToSchema } from '@graphql-codegen/plugin-helpers';\nimport { parse, visit, printSchema } from 'graphql';\nimport { TypeScriptResolversVisitor } from './visitor';\nexport const plugin = (schema, documents, config) => {\n    const imports = [];\n    if (!config.customResolveInfo) {\n        imports.push('GraphQLResolveInfo');\n    }\n    const showUnusedMappers = typeof config.showUnusedMappers === 'boolean' ? config.showUnusedMappers : true;\n    const noSchemaStitching = typeof config.noSchemaStitching === 'boolean' ? config.noSchemaStitching : false;\n    if (config.noSchemaStitching === false) {\n        // eslint-disable-next-line no-console\n        console.warn(`The default behavior of 'noSchemaStitching' will be reversed in the next major release. Support for Schema Stitching will be disabled by default.`);\n    }\n    const indexSignature = config.useIndexSignature\n        ? [\n            'export type WithIndex<TObject> = TObject & Record<string, any>;',\n            'export type ResolversObject<TObject> = WithIndex<TObject>;',\n        ].join('\\n')\n        : '';\n    const transformedSchema = config.federation ? addFederationReferencesToSchema(schema) : schema;\n    const visitor = new TypeScriptResolversVisitor(config, transformedSchema);\n    const printedSchema = config.federation\n        ? printSchemaWithDirectives(transformedSchema)\n        : printSchema(transformedSchema);\n    const astNode = parse(printedSchema);\n    // runs visitor\n    const visitorResult = visit(astNode, { leave: visitor });\n    const prepend = [];\n    const defsToInclude = [];\n    const stitchingResolverType = `\nexport type StitchingResolver<TResult, TParent, TContext, TArgs> = {\n  fragment: string;\n  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;\n};\n`;\n    const resolverType = `export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =`;\n    const resolverFnUsage = `ResolverFn<TResult, TParent, TContext, TArgs>`;\n    const stitchingResolverUsage = `StitchingResolver<TResult, TParent, TContext, TArgs>`;\n    if (visitor.hasFederation()) {\n        if (visitor.config.wrapFieldDefinitions) {\n            defsToInclude.push(`export type UnwrappedObject<T> = {\n        [P in keyof T]: T[P] extends infer R | Promise<infer R> | (() => infer R2 | Promise<infer R2>)\n          ? R & R2 : T[P]\n      };`);\n        }\n        defsToInclude.push(`export type ReferenceResolver<TResult, TReference, TContext> = (\n      reference: TReference,\n      context: TContext,\n      info: GraphQLResolveInfo\n    ) => Promise<TResult> | TResult;`);\n    }\n    if (noSchemaStitching) {\n        // Resolver = ResolverFn;\n        defsToInclude.push(`${resolverType} ${resolverFnUsage};`);\n    }\n    else {\n        // StitchingResolver\n        // Resolver =\n        // | ResolverFn\n        // | StitchingResolver;\n        defsToInclude.push([stitchingResolverType, resolverType, `  | ${resolverFnUsage}`, `  | ${stitchingResolverUsage};`].join('\\n'));\n    }\n    if (config.customResolverFn) {\n        const parsedMapper = parseMapper(config.customResolverFn);\n        if (parsedMapper.isExternal) {\n            if (parsedMapper.default) {\n                prepend.push(`import ResolverFn from '${parsedMapper.source}';`);\n            }\n            else {\n                prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'ResolverFn' ? 'as ResolverFn ' : ''}} from '${parsedMapper.source}';`);\n            }\n            prepend.push(`export { ResolverFn };`);\n        }\n        else {\n            prepend.push(`export type ResolverFn<TResult, TParent, TContext, TArgs> = ${parsedMapper.type}`);\n        }\n    }\n    else {\n        const defaultResolverFn = `\nexport type ResolverFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => Promise<TResult> | TResult;`;\n        defsToInclude.push(defaultResolverFn);\n    }\n    const header = `${indexSignature}\n\n${visitor.getResolverTypeWrapperSignature()}\n\n${defsToInclude.join('\\n')}\n\nexport type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;\n\nexport type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => TResult | Promise<TResult>;\n\nexport interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {\n  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;\n  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;\n}\n\nexport interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {\n  subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;\n  resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;\n}\n\nexport type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =\n  | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>\n  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;\n\nexport type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =\n  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)\n  | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;\n\nexport type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (\n  parent: TParent,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => Maybe<TTypes> | Promise<Maybe<TTypes>>;\n\nexport type isTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;\n\nexport type NextResolverFn<T> = () => Promise<T>;\n\nexport type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (\n  next: NextResolverFn<TResult>,\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => TResult | Promise<TResult>;\n`;\n    const resolversTypeMapping = visitor.buildResolversTypes();\n    const resolversParentTypeMapping = visitor.buildResolversParentTypes();\n    const { getRootResolver, getAllDirectiveResolvers, mappersImports, unusedMappers, hasScalars } = visitor;\n    if (hasScalars()) {\n        imports.push('GraphQLScalarType', 'GraphQLScalarTypeConfig');\n    }\n    if (showUnusedMappers && unusedMappers.length) {\n        // eslint-disable-next-line no-console\n        console.warn(`Unused mappers: ${unusedMappers.join(',')}`);\n    }\n    if (imports.length) {\n        prepend.push(`import { ${imports.join(', ')} } from 'graphql';`);\n    }\n    if (config.customResolveInfo) {\n        const parsedMapper = parseMapper(config.customResolveInfo);\n        if (parsedMapper.isExternal) {\n            if (parsedMapper.default) {\n                prepend.push(`import GraphQLResolveInfo from '${parsedMapper.source}'`);\n            }\n            prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'GraphQLResolveInfo' ? 'as GraphQLResolveInfo' : ''} } from '${parsedMapper.source}';`);\n        }\n        else {\n            prepend.push(`type GraphQLResolveInfo = ${parsedMapper.type}`);\n        }\n    }\n    prepend.push(...mappersImports, ...visitor.globalDeclarations);\n    return {\n        prepend,\n        content: [\n            header,\n            resolversTypeMapping,\n            resolversParentTypeMapping,\n            ...visitorResult.definitions.filter(d => typeof d === 'string'),\n            getRootResolver(),\n            getAllDirectiveResolvers(),\n        ].join('\\n'),\n    };\n};\nexport { TypeScriptResolversVisitor };\n//# sourceMappingURL=index.js.map"],"names":[],"mappings":"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"}
+\ No newline at end of file
++{
++  "version": 3,
++  "file": "index.esm.js",
++  "sources": [
++    "../../../dist/plugins/typescript/resolvers/src/visitor.js",
++    "../../../dist/plugins/typescript/resolvers/src/index.js"
++  ],
++  "sourcesContent": [
++    "import autoBind from 'auto-bind';\nimport { BaseResolversVisitor, getConfigValue, } from '@graphql-codegen/visitor-plugin-common';\nimport { TypeScriptOperationVariablesToObject } from '@graphql-codegen/typescript';\nexport class TypeScriptResolversVisitor extends BaseResolversVisitor {\n    constructor(pluginConfig, schema) {\n        super(pluginConfig, {\n            avoidOptionals: getConfigValue(pluginConfig.avoidOptionals, false),\n            useIndexSignature: getConfigValue(pluginConfig.useIndexSignature, false),\n            wrapFieldDefinitions: getConfigValue(pluginConfig.wrapFieldDefinitions, false),\n        }, schema);\n        autoBind(this);\n        this.setVariablesTransformer(new TypeScriptOperationVariablesToObject(this.scalars, this.convertName, this.config.avoidOptionals, this.config.immutableTypes, null, [], this.config.enumPrefix, this.config.enumValues));\n        if (this.config.useIndexSignature) {\n            this._declarationBlockConfig = {\n                blockTransformer(block) {\n                    return `ResolversObject<${block}>`;\n                },\n            };\n        }\n    }\n    formatRootResolver(schemaTypeName, resolverType) {\n        return `${schemaTypeName}${this.config.avoidOptionals ? '' : '?'}: ${resolverType},`;\n    }\n    clearOptional(str) {\n        if (str.startsWith('Maybe')) {\n            return str.replace(/Maybe<(.*?)>$/, '$1');\n        }\n        return str;\n    }\n    ListType(node) {\n        return `Maybe<${super.ListType(node)}>`;\n    }\n    wrapWithListType(str) {\n        return `${this.config.immutableTypes ? 'ReadonlyArray' : 'Array'}<${str}>`;\n    }\n    getParentTypeForSignature(node) {\n        if (this._federation.isResolveReferenceField(node) && this.config.wrapFieldDefinitions) {\n            return 'UnwrappedObject<ParentType>';\n        }\n        return 'ParentType';\n    }\n    NamedType(node) {\n        return `Maybe<${super.NamedType(node)}>`;\n    }\n    NonNullType(node) {\n        const baseValue = super.NonNullType(node);\n        return this.clearOptional(baseValue);\n    }\n    getPunctuation(declarationKind) {\n        return ';';\n    }\n}\n//# sourceMappingURL=visitor.js.map",
++    "import { printSchemaWithDirectives } from '@graphql-toolkit/common';\nimport { parseMapper } from '@graphql-codegen/visitor-plugin-common';\nimport { addFederationReferencesToSchema } from '@graphql-codegen/plugin-helpers';\nimport { parse, visit, printSchema } from 'graphql';\nimport { TypeScriptResolversVisitor } from './visitor';\nexport const plugin = (schema, documents, config) => {\n    const imports = [];\n    if (!config.customResolveInfo) {\n        imports.push('GraphQLResolveInfo');\n    }\n    const showUnusedMappers = typeof config.showUnusedMappers === 'boolean' ? config.showUnusedMappers : true;\n    const noSchemaStitching = typeof config.noSchemaStitching === 'boolean' ? config.noSchemaStitching : false;\n    if (config.noSchemaStitching === false) {\n        // eslint-disable-next-line no-console\n        console.warn(`The default behavior of 'noSchemaStitching' will be reversed in the next major release. Support for Schema Stitching will be disabled by default.`);\n    }\n    const indexSignature = config.useIndexSignature\n        ? [\n            'export type WithIndex<TObject> = TObject & Record<string, any>;',\n            'export type ResolversObject<TObject> = WithIndex<TObject>;',\n        ].join('\\n')\n        : '';\n    const transformedSchema = config.federation ? addFederationReferencesToSchema(schema) : schema;\n    const visitor = new TypeScriptResolversVisitor(config, transformedSchema);\n    const printedSchema = config.federation\n        ? printSchemaWithDirectives(transformedSchema)\n        : printSchema(transformedSchema);\n    const astNode = parse(printedSchema);\n    // runs visitor\n    const visitorResult = visit(astNode, { leave: visitor });\n    const prepend = [];\n    const defsToInclude = [];\n    const stitchingResolverType = `\nexport type StitchingResolver<TResult, TParent, TContext, TArgs> = {\n  fragment: string;\n  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;\n};\n`;\n    const resolverType = `export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =`;\n    const resolverFnUsage = `ResolverFn<TResult, TParent, TContext, TArgs>`;\n    const stitchingResolverUsage = `StitchingResolver<TResult, TParent, TContext, TArgs>`;\n    if (visitor.hasFederation()) {\n        if (visitor.config.wrapFieldDefinitions) {\n            defsToInclude.push(`export type UnwrappedObject<T> = {\n        [P in keyof T]: T[P] extends infer R | Promise<infer R> | (() => infer R2 | Promise<infer R2>)\n          ? R & R2 : T[P]\n      };`);\n        }\n        defsToInclude.push(`export type ReferenceResolver<TResult, TReference, TContext> = (\n      reference: TReference,\n      context: TContext,\n      info: GraphQLResolveInfo\n    ) => Promise<TResult> | TResult;`);\n    }\n    if (noSchemaStitching) {\n        // Resolver = ResolverFn;\n        defsToInclude.push(`${resolverType} ${resolverFnUsage};`);\n    }\n    else {\n        // StitchingResolver\n        // Resolver =\n        // | ResolverFn\n        // | StitchingResolver;\n        defsToInclude.push([stitchingResolverType, resolverType, `  | ${resolverFnUsage}`, `  | ${stitchingResolverUsage};`].join('\\n'));\n    }\n    if (config.customResolverFn) {\n        const parsedMapper = parseMapper(config.customResolverFn);\n        if (parsedMapper.isExternal) {\n            if (parsedMapper.default) {\n                prepend.push(`import ResolverFn from '${parsedMapper.source}';`);\n            }\n            else {\n                prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'ResolverFn' ? 'as ResolverFn ' : ''}} from '${parsedMapper.source}';`);\n            }\n            prepend.push(``);\n        }\n        else {\n            prepend.push(`export type ResolverFn<TResult, TParent, TContext, TArgs> = ${parsedMapper.type}`);\n        }\n    }\n    else {\n        const defaultResolverFn = `\nexport type ResolverFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => Promise<TResult> | TResult;`;\n        defsToInclude.push(defaultResolverFn);\n    }\n    const header = `${indexSignature}\n\n${visitor.getResolverTypeWrapperSignature()}\n\n${defsToInclude.join('\\n')}\n\nexport type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;\n\nexport type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => TResult | Promise<TResult>;\n\nexport interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {\n  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;\n  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;\n}\n\nexport interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {\n  subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;\n  resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;\n}\n\nexport type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =\n  | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>\n  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;\n\nexport type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =\n  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)\n  | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;\n\nexport type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (\n  parent: TParent,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => Maybe<TTypes> | Promise<Maybe<TTypes>>;\n\nexport type isTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;\n\nexport type NextResolverFn<T> = () => Promise<T>;\n\nexport type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (\n  next: NextResolverFn<TResult>,\n  parent: TParent,\n  args: TArgs,\n  context: TContext,\n  info: GraphQLResolveInfo\n) => TResult | Promise<TResult>;\n`;\n    const resolversTypeMapping = visitor.buildResolversTypes();\n    const resolversParentTypeMapping = visitor.buildResolversParentTypes();\n    const { getRootResolver, getAllDirectiveResolvers, mappersImports, unusedMappers, hasScalars } = visitor;\n    if (hasScalars()) {\n        imports.push('GraphQLScalarType', 'GraphQLScalarTypeConfig');\n    }\n    if (showUnusedMappers && unusedMappers.length) {\n        // eslint-disable-next-line no-console\n        console.warn(`Unused mappers: ${unusedMappers.join(',')}`);\n    }\n    if (imports.length) {\n        prepend.push(`import { ${imports.join(', ')} } from 'graphql';`);\n    }\n    if (config.customResolveInfo) {\n        const parsedMapper = parseMapper(config.customResolveInfo);\n        if (parsedMapper.isExternal) {\n            if (parsedMapper.default) {\n                prepend.push(`import GraphQLResolveInfo from '${parsedMapper.source}'`);\n            }\n            prepend.push(`import { ${parsedMapper.import} ${parsedMapper.import !== 'GraphQLResolveInfo' ? 'as GraphQLResolveInfo' : ''} } from '${parsedMapper.source}';`);\n        }\n        else {\n            prepend.push(`type GraphQLResolveInfo = ${parsedMapper.type}`);\n        }\n    }\n    prepend.push(...mappersImports, ...visitor.globalDeclarations);\n    return {\n        prepend,\n        content: [\n            header,\n            resolversTypeMapping,\n            resolversParentTypeMapping,\n            ...visitorResult.definitions.filter(d => typeof d === 'string'),\n            getRootResolver(),\n            getAllDirectiveResolvers(),\n        ].join('\\n'),\n    };\n};\nexport { TypeScriptResolversVisitor };\n//# sourceMappingURL=index.js.map"
++  ],
++  "names": [],
++  "mappings": "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"
++}
