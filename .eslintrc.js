@@ -52,6 +52,12 @@ module.exports = {
       },
     },
     {
+      files: ['src/api/**/*.ts'],
+      rules: {
+        '@typescript-eslint/no-non-null-assertion': 'off',
+      },
+    },
+    {
       files: ['**/*.test.*'],
       globals: {
         deepDescribe: false,
