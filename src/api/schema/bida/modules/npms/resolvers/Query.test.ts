@@ -3,8 +3,8 @@ import { analysis } from '../loaders'
 
 jest.mock('../loaders', () => ({ analysis: { load: jest.fn() } }))
 
-const { load } = analysis
-const { npmPackage: resolve } = Query
+const { load } = analysis as any
+const { npmPackage: resolve } = Query as any
 
 describe('api/bida/npm/resolvers/Query/npmPackage', () => {
   it('should extract metadata', async () => {

@@ -5,7 +5,7 @@ import { is } from '~app/utils/type-utils'
 
 const isSemVerStatus = is(SemverOutdateStatus)
 
-const versionDistance = curry((left?: string | SemVer, right?: string | SemVer) => {
+const versionDistance = curry((left: string | SemVer, right: string | SemVer) => {
   if (!left || !right) return SemverOutdateStatus.Unknown
 
   const coercedLeft = semver.coerce(left)

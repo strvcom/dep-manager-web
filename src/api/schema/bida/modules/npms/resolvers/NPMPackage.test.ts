@@ -3,7 +3,7 @@ import { analysis as analysisLoader } from '../loaders'
 
 jest.mock('../loaders', () => ({ analysis: { load: jest.fn() } }))
 
-const { load } = analysisLoader
+const { load } = analysisLoader as any
 
 describe('api/bida/npm/resolvers/NPMPackage', () => {
   beforeEach(jest.clearAllMocks)
@@ -12,8 +12,8 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
 
   describe('attachAnalysis', () => {
     it('should attach "analysis" field', async () => {
-      const pack = { name: 'name' }
-      const analysis = { result: 'value' }
+      const pack = { name: 'name' } as any
+      const analysis = { result: 'value' } as any
 
       load.mockReturnValueOnce(analysis)
 
@@ -21,7 +21,7 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
     })
 
     it('should throw when no name provided', async () => {
-      await expect(attachAnalysis({})).rejects.toThrow('without "name"')
+      await expect(attachAnalysis({} as any)).rejects.toThrow('without "name"')
     })
   })
 
@@ -35,7 +35,7 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
 
     it('should resolve to static value if available', async () => {
       const { resolve } = metadata('field')
-      expect(await resolve({ field: 'value' })).toBe('value')
+      expect(await resolve({ field: 'value' } as any)).toBe('value')
     })
 
     it('should resolve using analysis if static value is not available', async () => {
@@ -43,7 +43,7 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
 
       load.mockReturnValueOnce(getAnalysis({ field: 'value' }))
 
-      expect(await resolve({ name: 'name' })).toBe('value')
+      expect(await resolve({ name: 'name' } as any)).toBe('value')
       expect(load).toHaveBeenCalledTimes(1)
       expect(load).toHaveBeenCalledWith('name')
     })
@@ -52,13 +52,13 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
       const transform = jest.fn((value: string) => value.toUpperCase())
       const { resolve } = metadata('field', transform)
 
-      expect(await resolve({ field: 'value' })).toBe('VALUE')
+      expect(await resolve({ field: 'value' } as any)).toBe('VALUE')
       expect(transform).toHaveBeenCalledWith('value')
     })
 
     describe('license', () => {
       it('should get license from metadata', async () => {
-        const { resolve } = NPMPackage.license
+        const { resolve } = NPMPackage.license as any
         load.mockReturnValueOnce(getAnalysis({ license: 'MIT' }))
         expect(await resolve({ name: 'name' })).toBe('MIT')
       })
@@ -66,7 +66,7 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
 
     describe('description', () => {
       it('should get description from metadata', async () => {
-        const { resolve } = NPMPackage.description
+        const { resolve } = NPMPackage.description as any
         load.mockReturnValueOnce(getAnalysis({ description: 'value' }))
         expect(await resolve({ name: 'name' })).toBe('value')
       })
@@ -74,7 +74,7 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
 
     describe('private', () => {
       it('should get private from metadata', async () => {
-        const { resolve } = NPMPackage.private
+        const { resolve } = NPMPackage.private as any
         load.mockReturnValueOnce(getAnalysis({ private: true }))
         expect(await resolve({ name: 'name' })).toBe(true)
       })
@@ -82,7 +82,7 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
 
     describe('updatedAt', () => {
       it('should get updatedAt from metadata', async () => {
-        const { resolve } = NPMPackage.updatedAt
+        const { resolve } = NPMPackage.updatedAt as any
         load.mockReturnValueOnce(getAnalysis({ date: 'value' }))
         expect(await resolve({ name: 'name' })).toBe('value')
       })
@@ -90,7 +90,7 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
 
     describe('version', () => {
       it('should get version from metadata', async () => {
-        const { resolve } = NPMPackage.version
+        const { resolve } = NPMPackage.version as any
         load.mockReturnValueOnce(getAnalysis({ version: 'value' }))
         expect(await resolve({ name: 'name' })).toBe('value')
       })
@@ -99,7 +99,7 @@ describe('api/bida/npm/resolvers/NPMPackage', () => {
 
   describe('analysis', () => {
     it('should resolve analysis for a package', async () => {
-      const { resolve } = NPMPackage.analysis
+      const { resolve } = NPMPackage.analysis as any
       const analysis = getAnalysis({ field: 'value' })
       load.mockReturnValueOnce(analysis)
       expect(await resolve({ name: 'name' })).toEqual(analysis)

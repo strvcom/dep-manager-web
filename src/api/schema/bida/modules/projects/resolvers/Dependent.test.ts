@@ -1,6 +1,6 @@
 import { Dependent, getVersion } from './Dependent'
 
-const { version, name, id, outdateStatus } = Dependent
+const { version, name, id, outdateStatus } = Dependent as any
 
 describe('api/bida/projects/resolvers', () => {
   beforeEach(jest.clearAllMocks)
@@ -13,7 +13,7 @@ describe('api/bida/projects/resolvers', () => {
         { package: { name: 'second' }, version: '2.0.0' },
       ],
     },
-  }
+  } as any
 
   const __parent = { name: 'first', version: '0.9.0' }
 

@@ -415,6 +415,7 @@
 //   })
 // })
 
+// @ts-ignore
 describe('keep', () => {
   it('should keep', () => expect(true).toBe(true))
 })

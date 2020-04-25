@@ -21,10 +21,12 @@ export type SortFunction<T> = (a: T, b: T) => number
 
 const sorter = <T>({ list, sortBy, sortDirection = 'ASC', defaultSort }: SorterOptions<T>): T[] => {
   const sorters: SortFunction<T>[] = []
+
   if (sortBy) {
     const directionSorter = sortDirections[sortDirection]
     sorters.push(directionSorter(prop(sortBy)))
   }
+
   if (defaultSort) sorters.push(defaultSort)
 
   return sortWith(sorters, list)
@@ -47,10 +49,7 @@ const useSort = <T>({
 }: UseSortOptions<T>): [T[], SortOptionsSetter, CommonSortOptions] => {
   const [sortOptions, setSortState] = useState<CommonSortOptions>({ sortBy, sortDirection })
 
-  const setSort = pipe(
-    pick(['sortBy', 'sortDirection']),
-    setSortState
-  )
+  const setSort = pipe(pick(['sortBy', 'sortDirection']), setSortState)
 
   const sortCache = cacheKeys.concat(Object.values(sortOptions))
   const sorted = useMemo(() => sorter({ list, defaultSort, ...sortOptions }), sortCache)

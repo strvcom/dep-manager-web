@@ -3,12 +3,12 @@ import { analysis } from '../loaders'
 
 jest.mock('../loaders', () => ({ analysis: { load: jest.fn() } }))
 
-const { load } = analysis
+const { load } = analysis as any
 
 describe('api/bida/npm/resolvers/NPMDependency/outdateStatus', () => {
   beforeEach(jest.clearAllMocks)
 
-  const { resolve } = NPMDependency.outdateStatus
+  const { resolve } = NPMDependency.outdateStatus as any
   const getAnalysis = (metadata: any = {}) => ({ collected: { metadata } })
 
   it('should resolve to UNKNOWN when not version known', async () => {

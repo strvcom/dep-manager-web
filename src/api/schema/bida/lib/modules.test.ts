@@ -7,15 +7,15 @@ describe('api/lib/modules', () => {
   })
 
   it('should combine typeDefs', () => {
-    const a = { typeDefs: 'a' }
-    const b = { typeDefs: 'b' }
+    const a = { typeDefs: 'a' } as any
+    const b = { typeDefs: 'b' } as any
 
     expect(combine(a, b).typeDefs).toBe('a \n b')
   })
 
   it('should combine resolver types', () => {
-    const a = { resolvers: { A: {} } }
-    const b = { resolvers: { B: {} } }
+    const a = { resolvers: { A: {} } } as any
+    const b = { resolvers: { B: {} } } as any
 
     expect(combine(a, b).resolvers).toEqual({ A: {}, B: {} })
   })
@@ -24,8 +24,8 @@ describe('api/lib/modules', () => {
     const first = () => {}
     const second = () => {}
 
-    const a = { resolvers: { A: { first } } }
-    const b = { resolvers: { A: { second } } }
+    const a = { resolvers: { A: { first } } } as any
+    const b = { resolvers: { A: { second } } } as any
 
     expect(combine(a, b).resolvers).toEqual({ A: { first, second } })
   })
@@ -34,8 +34,8 @@ describe('api/lib/modules', () => {
     const first = () => {}
     const second = () => {}
 
-    const a = { resolvers: { A: { first } } }
-    const b = { resolvers: { A: { first: second } } }
+    const a = { resolvers: { A: { first } } } as any
+    const b = { resolvers: { A: { first: second } } } as any
 
     expect(combine(a, b).resolvers).toHaveProperty('A.first', second)
   })

@@ -1,6 +1,6 @@
 import { Query } from './Query'
 
-const { projects, project } = Query
+const { projects, project } = Query as any
 
 // @ts-ignore
 describe('api/bida/projects/resolvers', () => {

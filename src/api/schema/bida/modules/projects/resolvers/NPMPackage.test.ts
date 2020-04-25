@@ -12,7 +12,6 @@ import {
   visitor,
 } from './NPMPackage'
 
-const { dependents } = NPMPackage
 const projects = jest.fn()
 
 // inject
@@ -28,7 +27,7 @@ describe('api/bida/projects/resolvers/NPMPackage', () => {
         dependencies: [{ package: { name: 'first' } }, { package: { name: 'second' } }],
       },
     },
-  }
+  } as any
 
   describe('[dependsOn]', () => {
     it('should check if an edge depends on a library', () => {
@@ -225,7 +224,7 @@ describe('api/bida/projects/resolvers/NPMPackage', () => {
   })
 
   describe('::dependents', () => {
-    const { resolve } = dependents
+    const { resolve } = NPMPackage.dependents as any
 
     const build = () => ({
       root: { name: 'library', version: '1.0.0' },

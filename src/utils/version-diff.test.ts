@@ -3,9 +3,9 @@ import { versionDistance } from './version-diff'
 describe('utils/version-diff', () => {
   describe('versionDistance', () => {
     it('should return UNKNOWN when some version missing', () => {
-      expect(versionDistance(null, null)).toBe('UNKNOWN')
-      expect(versionDistance('1.0.0', null)).toBe('UNKNOWN')
-      expect(versionDistance(null, '1.0.0')).toBe('UNKNOWN')
+      expect(versionDistance('', '')).toBe('UNKNOWN')
+      expect(versionDistance('1.0.0', '')).toBe('UNKNOWN')
+      expect(versionDistance('', '1.0.0')).toBe('UNKNOWN')
     })
 
     it('should return UNKNOWN when some version is invalid', () => {

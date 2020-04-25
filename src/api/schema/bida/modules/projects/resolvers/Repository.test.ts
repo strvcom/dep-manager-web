@@ -1,14 +1,13 @@
 import { Repository } from './Repository'
 
-const { departments } = Repository
-
 describe('api/bida/projects/resolvers/Repository', () => {
-  const topics = (...names: string[]) => ({
-    nodes: names.map((name) => ({ topic: { name } })),
-  })
+  const topics = (...names: string[]) =>
+    ({
+      nodes: names.map((name) => ({ topic: { name } })),
+    } as any)
 
   describe('::departments', () => {
-    const { resolve } = departments
+    const { resolve } = Repository.departments as any
 
     it('should be empty if no topic available', () => {
       const repositoryTopics = topics()

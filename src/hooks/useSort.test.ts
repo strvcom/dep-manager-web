@@ -2,12 +2,7 @@ import { ascend, prop, reverse } from 'ramda'
 import { renderHook, cleanup, act } from 'react-hooks-testing-library'
 import { SortDirectionType } from 'react-virtualized'
 
-import { useSort, sorter, SortFunction, CommonSortOptions, SortOptionsSetter } from './useSort'
-
-interface Config<T = unknown> extends CommonSortOptions {
-  list: T[]
-  defaultSort: SortFunction<unknown>
-}
+import { useSort, sorter, CommonSortOptions, SortOptionsSetter } from './useSort'
 
 describe('hooks/useSort', () => {
   afterEach(cleanup)
@@ -30,8 +25,8 @@ describe('hooks/useSort', () => {
   const getConfig = (
     sortBy?: string,
     sortDirection?: SortDirectionType,
-    defaultSort?: SortFunction<unknown>
-  ): Config => ({
+    defaultSort?: (a: any, b: any) => number
+  ) => ({
     list,
     sortBy,
     sortDirection,
@@ -113,7 +108,7 @@ describe('hooks/useSort', () => {
 
     const { result } = renderHook(() => useSort({ list }))
 
-      // retrieve state again
+    // retrieve state again
     ;[sorted, setSort, config] = result.current
     expect(sorted).toEqual(list) // unsorted
     expect(config).toEqual(und)
