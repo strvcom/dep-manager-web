@@ -2,48 +2,39 @@ import { pathEq } from 'ramda'
 import mem from 'mem'
 
 import { versionDistance } from '~app/utils/version-diff'
-import { DependentNode, Repository } from './NPMPackage'
+import * as GT from '~generated/types'
 
 const getVersion = mem(
-  (lib: string, repository: Repository) => {
-    const dependency = repository.npmPackage.dependencies.find(pathEq(['package', 'name'], lib))
-    return dependency ? dependency.version : ''
-  },
+  (lib: string, repository: GT.Repository) =>
+    repository.npmPackage?.dependencies.find(pathEq(['package', 'name'], lib))?.version || '',
+
   { cacheKey: (lib, repository) => `${lib}^${repository.name}` }
 )
-
-/**
- * Dependent::version
- *
- * Resolves the version a dependent depends on the parent NPMPackage.
- */
-const version = ({ __parent: { name: lib }, repository }: DependentNode): string =>
-  getVersion(lib, repository)
-
-/**
- * Dependent::name
- *
- * Resolves the name of the dependent.
- */
-const name = ({ repository }: DependentNode): string => repository.name
-
-/**
- * Dependent::name
- *
- * Resolves the name of the dependent.
- */
-const id = ({ __parent, repository }: DependentNode): string =>
-  `${getVersion(__parent.name, repository)}@${repository.name}`
-
-/**
- * Dependent::outdatedStatus
- *
- * Shortcut resolver for outdate status on this dependent.
- */
-const outdateStatus = ({ __parent, repository }: DependentNode): string =>
-  versionDistance(getVersion(__parent.name, repository), __parent.version)
 
 // @tests
 export { getVersion }
 
-export const Dependent = { id, name, version, outdateStatus }
+const Dependent: GT.DependentResolvers = {
+  /**
+   * Resolves the version a dependent depends on the parent NPMPackage.
+   */
+  version: ({ __parent: { name: lib }, repository }) => getVersion(lib, repository),
+
+  /**
+   * Resolves the name of the dependent.
+   */
+  name: ({ repository }) => repository.name,
+
+  /**
+   * Resolves the name of the dependent.
+   */
+  id: ({ __parent, repository }) => `${getVersion(__parent.name, repository)}@${repository.name}`,
+
+  /**
+   * Shortcut resolver for outdate status on this dependent.
+   */
+  outdateStatus: ({ __parent: { name, version }, repository }) =>
+    versionDistance(getVersion(name, repository), version),
+}
+
+export { Dependent }

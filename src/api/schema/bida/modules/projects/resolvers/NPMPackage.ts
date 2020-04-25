@@ -22,8 +22,8 @@ import {
   set,
 } from 'ramda'
 
-import { Query, ProjectsArgs, ProjectEdge } from './Query'
-import { IGraphQLToolsResolveInfo } from 'graphql-tools'
+import * as GT from '~generated/types'
+import { Query } from './Query'
 
 const dependentsSelection = gql`
   fragment RepositoryDependencies on SearchResultItemConnection {
@@ -51,41 +51,20 @@ const dependentsSelection = gql`
  * @param name Dependence library name
  */
 const dependsOn = (name: string) =>
-  pipe<ProjectEdge, unknown[], boolean>(
-    pathOr([], ['node', 'npmPackage', 'dependencies']),
-    any(pathEq(['package', 'name'], name))
-  )
-
-export interface Repository {
-  name: string
-  npmPackage: NPMPackage
-}
-
-export interface DependentNode {
-  __typename: string
-  __parent: {
-    name: string
-    version: string
-  }
-  repository: Repository
-}
-
-interface DependentEdge {
-  cursor: string
-  node: DependentNode
-}
-
-type EdgeToDependent = (repository: ProjectEdge) => DependentEdge
+  pipe(pathOr([], ['node', 'npmPackage', 'dependencies']), any(pathEq(['package', 'name'], name)))
 
 /**
  * Normalize a Repository edge into an Dependent edge (with meta-data info)
  */
-const edgeToDependent = (name: string, version: string): EdgeToDependent => ({ cursor, node }) => ({
+const edgeToDependent = (name: string, version: string) => ({
+  cursor,
+  node,
+}: GT.SearchResultItemEdge) => ({
   cursor,
   node: {
-    __typename: 'Dependent',
+    __typename: 'Dependent' as const,
     __parent: { name, version },
-    repository: node as Repository,
+    repository: node as GT.Repository,
   },
 })
 
@@ -139,65 +118,6 @@ const visitor = {
   },
 }
 
-/**
- * NPMPackage::dependents
- *
- * Resolves the STRV repositories that depend on a given package.
- *
- * Currently, we rely on querying the repositories' package.json and
- * manually iterating each to look for dependencies on the root package.
- * This is not performatic at all. The APIs we have cannot resolve these
- * scenarios efficiently.
- *
- * @ALERT do NOT rely on pagination info when using this field!
- */
-const dependents = {
-  fragment: `... on NPMPackage { name version }`,
-  resolve: async (
-    { name, version }: NPMPackage,
-    args: ProjectsArgs,
-    context: object,
-    info: IGraphQLToolsResolveInfo
-  ) => {
-    /**
-     * Find the Dependent named fragments and transform into inline fragments.
-     */
-    const inlinedFragments = visit((info.fieldNodes as unknown) as FieldNode, {
-      FragmentSpread: {
-        leave: (node: FragmentSpreadNode): InlineFragmentNode | null | undefined => {
-          const fragment = info.fragments[node.name.value]
-
-          if (fragment.typeCondition && fragment.typeCondition.name.value === 'Dependent') {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { name, loc, ...fragmentNode } = fragment
-
-            return { ...fragmentNode, kind: 'InlineFragment' }
-          }
-        },
-      },
-    })
-
-    // transform request selection.
-    const fieldNodes = visit(inlinedFragments, visitor)
-
-    // reuse Query::projects delegation logic.
-    const projectsConnection = await Query.projects(null, args, context, {
-      ...info,
-      fieldNodes,
-    })
-
-    // find dependent edges.
-    const edges = projectsConnection.edges
-      .filter(dependsOn(name))
-      .map(edgeToDependent(name, version))
-
-    // "fix" counts.
-    const repositoryCount = edges.length
-
-    return { edges, repositoryCount }
-  },
-}
-
 interface NPMPackage {
   name: string
   version: string
@@ -210,4 +130,60 @@ interface NPMPackage {
 // @tests
 export { Query, dependsOn, edgeToDependent, isRepositoryField, visitor }
 
-export const NPMPackage = { dependents }
+const NPMPackage: GT.NpmPackageResolvers = {
+  /**
+   * NPMPackage::dependents
+   *
+   * Resolves the STRV repositories that depend on a given package.
+   *
+   * Currently, we rely on querying the repositories' package.json and
+   * manually iterating each to look for dependencies on the root package.
+   * This is not performatic at all. The APIs we have cannot resolve these
+   * scenarios efficiently.
+   *
+   * @ALERT do NOT rely on pagination info when using this field!
+   */
+  dependents: {
+    fragment: `... on NPMPackage { name version }`,
+    resolve: async ({ name, version }, args, context, info) => {
+      /**
+       * Find the Dependent named fragments and transform into inline fragments.
+       */
+      const inlinedFragments = visit((info.fieldNodes as unknown) as FieldNode, {
+        FragmentSpread: {
+          leave: (node: FragmentSpreadNode): InlineFragmentNode | null | undefined => {
+            const fragment = info.fragments[node.name.value]
+
+            if (fragment.typeCondition && fragment.typeCondition.name.value === 'Dependent') {
+              const { name: ignored1, loc: ignored2, ...fragmentNode } = fragment
+
+              return { ...fragmentNode, kind: 'InlineFragment' }
+            }
+          },
+        },
+      })
+
+      // transform request selection.
+      const fieldNodes = visit(inlinedFragments, visitor)
+
+      // reuse Query::projects delegation logic.
+      const projectsConnection = await Query.projects({}, args, context, {
+        ...info,
+        fieldNodes,
+      })
+
+      // find dependent edges.
+      const edges = projectsConnection!
+        .edges!.filter((edge): edge is GT.SearchResultItemEdge => !!edge)
+        .filter(dependsOn(name!))
+        .map(edgeToDependent(name!, version!))
+
+      // "fix" counts.
+      const repositoryCount = edges.length
+
+      return { edges, repositoryCount }
+    },
+  },
+}
+
+export { NPMPackage }

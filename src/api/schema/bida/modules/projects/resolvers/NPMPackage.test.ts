@@ -1,7 +1,6 @@
 /* eslint-disable no-shadow */
 import gql from 'graphql-tag'
 import { visit, print } from 'graphql/language'
-
 import { chance } from '~app/tests/utils/mocking'
 
 import {
@@ -240,7 +239,7 @@ describe('api/bida/projects/resolvers/NPMPackage', () => {
       node: {
         name: 'repo',
         npmPackage: {
-          dependencies: dependencies.map(name => ({ package: { name } })),
+          dependencies: dependencies.map((name) => ({ package: { name } })),
         },
       },
     })
@@ -253,7 +252,7 @@ describe('api/bida/projects/resolvers/NPMPackage', () => {
       await resolve(root, args, context, info)
 
       expect(projects).toHaveBeenCalledTimes(1)
-      expect(projects).toHaveBeenCalledWith(null, args, context, { ...info })
+      expect(projects).toHaveBeenCalledWith({}, args, context, { ...info })
     })
 
     it('should return a connection shape', async () => {

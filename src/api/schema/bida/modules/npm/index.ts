@@ -2,23 +2,12 @@
  * This module holds NPM asset resolving based on GitHub blob.
  */
 
-import { pathOr, pipe, propOr, toPairs, zipObj, map, omit } from 'ramda'
+import { pipe, propOr, toPairs, zipObj, map, omit } from 'ramda'
+import * as GT from '~generated/types'
 import typeDefs from './npm.graphql'
 
-interface NPMPackage {
-  id: string
-  name: string
-  version: string
-  dependencies: NPMDependency[]
-}
-interface NPMDependency {
-  id: string
-  name: string
-  version: string
-}
-
-const NPMPackage = {
-  id: ({ id, name }: NPMPackage): string => {
+const NPMPackage: GT.NpmPackageResolvers = {
+  id: ({ id, name }): string => {
     if (!id && !name) {
       throw new Error('NPMPackage::id must resolve to a valid value.')
     }
@@ -26,15 +15,15 @@ const NPMPackage = {
     return id || name
   },
 
-  dependencies: pipe<NPMPackage, NPMDependency[], [string, NPMDependency][], unknown>(
+  dependencies: pipe<GT.NpmPackage, GT.NpmDependency[], [string, GT.NpmDependency][], any>(
     propOr({}, 'dependencies'),
     toPairs,
     map(zipObj(['name', 'version']))
   ),
 }
 
-const NPMDependency = {
-  id: ({ name, version }: NPMPackage) => {
+const NPMDependency: GT.NpmDependencyResolvers = {
+  id: ({ name, version }) => {
     if (!name) {
       throw new Error('NPMDependency::id must have a name available.')
     }
@@ -47,10 +36,10 @@ const NPMDependency = {
   },
 
   // @TODO: deprecated?
-  package: omit(['version']),
+  package: omit(['version', '__typename']),
 }
 
-const Repository = {
+const Repository: GT.RepositoryResolvers = {
   /**
    * Resolves the package.json data of a repository, using GitHub "object" API.
    */
@@ -64,10 +53,8 @@ const Repository = {
         }
       }
     `,
-    resolve: pipe<object, string | null, NPMPackage>(
-      pathOr(null, ['npmPackageJSON', 'text']),
-      str => str && JSON.parse(str)
-    ),
+    resolve: ({ npmPackageJSON }) =>
+      npmPackageJSON?.text ? JSON.parse(npmPackageJSON?.text) : null,
   },
 }
 

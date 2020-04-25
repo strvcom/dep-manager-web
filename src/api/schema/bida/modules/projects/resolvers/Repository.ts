@@ -1,26 +1,14 @@
-import { DEPARTMENTS } from '../constants'
+import * as GT from '~generated/types'
+import { is } from '~app/utils/type-utils'
 
-interface ITopicsConnection {
-  nodes: Array<{
-    topic: {
-      name: string
-    }
-  }>
-}
-
-interface IRepository {
-  repositoryTopics: ITopicsConnection
-}
-
-/**
- * Repository::departments
- *
- * Resolves the STRV departments of a repository based on present topics.
- */
-const departments = {
-  fragment: `
+const Repository: GT.RepositoryResolvers = {
+  /**
+   * Resolves the STRV departments of a repository based on available topics.
+   */
+  departments: {
+    fragment: `
     ... on Repository {
-      repositoryTopics (first: 10) {
+      repositoryTopics (first: 100) {
         nodes {
           topic {
             name
@@ -29,11 +17,13 @@ const departments = {
       }
     }
   `,
-  resolve: ({ repositoryTopics }: IRepository): string[] =>
-    repositoryTopics.nodes
-      .map(({ topic: { name } }) => name)
-      .map(name => name.toUpperCase())
-      .filter(name => DEPARTMENTS.includes(name)),
+    resolve: ({ repositoryTopics }) =>
+      repositoryTopics.nodes
+        .filter((node) => !!node)
+        .map(({ topic: { name } }) => name)
+        .map((name) => name.toUpperCase())
+        .filter(is(GT.BidaDepartment)),
+  },
 }
 
-export const Repository = { departments }
+export { Repository }

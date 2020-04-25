@@ -4,7 +4,7 @@ const { departments } = Repository
 
 describe('api/bida/projects/resolvers/Repository', () => {
   const topics = (...names: string[]) => ({
-    nodes: names.map(name => ({ topic: { name } })),
+    nodes: names.map((name) => ({ topic: { name } })),
   })
 
   describe('::departments', () => {
