@@ -34,6 +34,7 @@ module.exports = {
       'all',
       { nestedBinaryExpressions: false, returnAssign: false, ignoreJSX: 'all' },
     ],
+    'react/prop-types': false,
     'react-hooks/exhaustive-deps': false,
     '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '[iI]gnored' }],
     '@typescript-eslint/explicit-function-return-type': 'off',
