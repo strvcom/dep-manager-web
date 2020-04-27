@@ -1,9 +1,7 @@
 import { ApolloLink, from, execute, Observable, toPromise } from 'apollo-link'
 import gql from 'graphql-tag'
 import getLog from 'debug'
-
-import { link as debug } from './debug'
-import { link as auth } from './auth'
+import { auth, debug } from './link'
 
 jest.mock('debug', () => {
   const log = jest.fn()
