@@ -5,6 +5,7 @@ import {
   InlineFragmentNode,
   FragmentSpreadNode,
   SelectionNode,
+  FragmentDefinitionNode,
 } from 'graphql/language'
 import gql from 'graphql-tag'
 
@@ -25,7 +26,7 @@ import {
 import * as GT from '~generated/types'
 import { Query } from './Query'
 
-const dependentsSelection = gql`
+const RepositoryDependencies = gql`
   fragment RepositoryDependencies on SearchResultItemConnection {
     edges {
       node {
@@ -43,7 +44,9 @@ const dependentsSelection = gql`
       }
     }
   }
-`.definitions[0].selectionSet.selections[0]
+`.definitions[0] as FragmentDefinitionNode
+
+const dependentsSelection = RepositoryDependencies.selectionSet.selections[0]
 
 /**
  * Verifies if an edge depends on a given library.

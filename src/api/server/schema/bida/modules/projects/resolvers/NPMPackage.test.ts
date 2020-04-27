@@ -63,7 +63,7 @@ describe('api/bida/projects/resolvers/NPMPackage', () => {
             name
           }
         }
-      `
+      ` as any
 
       const other = ast.definitions[0].selectionSet.selections[0]
       const repository = ast.definitions[0].selectionSet.selections[1]
