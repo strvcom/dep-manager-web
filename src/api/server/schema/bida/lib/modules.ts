@@ -2,7 +2,7 @@ import { NonNilProps } from 'tsdef'
 import { mergeDeepRight } from 'ramda'
 import { print, ASTNode } from 'graphql/language'
 import { Resolvers } from '~generated/types'
-import { ResolverContextType } from '~api/types'
+import { ResolverContextType } from '~api/server/types'
 
 export interface IGraphQLModule {
   typeDefs?: string // printed AST

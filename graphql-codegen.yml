@@ -1,7 +1,7 @@
 overwrite: true
 schema:
   - node_modules/@octokit/graphql-schema/schema.graphql
-  - ./src/api/**/*.graphql
+  - ./src/api/server/**/*.graphql
 documents: './src/**/*.gql'
 generates:
   ./src/@generated/types.ts:
@@ -12,8 +12,8 @@ generates:
     config:
       nonOptionalTypename: true
       defaultMapper: tsdef#DeepPartial<{T}>
-      contextType: ~api/types#ResolverContextType
-      customResolverFn: ~api/types#ResolverFn
+      contextType: ~api/server/types#ResolverContextType
+      customResolverFn: ~api/server/types#ResolverFn
 
   # ./src/@generated/schema.graphql:
   #   plugins:

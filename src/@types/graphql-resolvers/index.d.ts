@@ -1,5 +1,5 @@
 declare module 'graphql-resolvers' {
-  import { ResolverFn } from '~api/types'
+  import { ResolverFn } from '~api/server/types'
 
   export const skip: undefined
 

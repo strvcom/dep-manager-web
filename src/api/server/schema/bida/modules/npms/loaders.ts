@@ -16,7 +16,7 @@ const analysis = new DataLoader(async (names: string[]) => {
   const result = await response.json()
 
   // ensure result order.
-  return names.map(name => result[name])
+  return names.map((name) => result[name])
 })
 
 export { analysis }

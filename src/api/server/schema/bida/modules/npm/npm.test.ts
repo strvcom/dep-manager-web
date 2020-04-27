@@ -1,4 +1,4 @@
-import npm from './'
+import npm from '.'
 
 describe('api/bida/npm', () => {
   describe('resolvers', () => {
