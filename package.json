@@ -72,7 +72,7 @@
     "@octokit/auth-app": "^2.4.5",
     "@octokit/graphql-schema": "^7.7.1",
     "@octokit/rest": "^17.5.1",
-    "@rehooks/local-storage": "^1.4.0",
+    "@rehooks/local-storage": "^2.3.0",
     "apollo-link": "^1.2.14",
     "apollo-link-context": "^1.0.20",
     "apollo-link-dedup": "^1.0.21",
@@ -180,6 +180,7 @@
     "caniuse-lite": "1.0.30000957",
     "eslint-plugin-react": "^7.12.4",
     "graphql": "15.0.0",
-    "graphql-tools": "5.x.x"
+    "graphql-tools": "5.x.x",
+    "react": "16.13.1"
   }
 }
