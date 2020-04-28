@@ -1,4 +1,4 @@
-import { identity } from 'ramda'
+import { identity, defaultTo } from 'ramda'
 import { get } from 'lodash'
 import { pipeResolvers } from 'graphql-resolvers'
 import * as GT from '~generated/types'
@@ -32,7 +32,7 @@ const metadata = <T extends (input: any) => any>(field: string, transform?: T) =
 export { attachAnalysis, metadata }
 
 const NPMPackage: GT.NPMPackageResolvers = {
-  license: metadata('license'),
+  license: metadata('license', defaultTo('UNLICENSED')),
   description: metadata('description'),
   private: metadata('private', Boolean),
   updatedAt: metadata('date'),
