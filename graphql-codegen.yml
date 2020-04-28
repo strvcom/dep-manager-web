@@ -8,7 +8,8 @@ generates:
     plugins:
       - typescript
       - typescript-resolvers
-      - typescript-operations
+      - typescript-operations:
+          - avoidOptionals: true
       - ./typescript-operations-map
     config:
       nonOptionalTypename: true
@@ -16,6 +17,7 @@ generates:
       contextType: ~api/server/types#ResolverContextType
       customResolverFn: ~api/server/types#ResolverFn
       namingConvention: 'keep'
+      # avoidOptionals: true
 
   # ./src/@generated/schema.graphql:
   #   plugins:
