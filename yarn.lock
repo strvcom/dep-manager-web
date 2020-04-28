@@ -2338,12 +2338,10 @@
     react-lifecycles-compat "^3.0.4"
     warning "^3.0.0"
 
-"@rehooks/local-storage@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@rehooks/local-storage/-/local-storage-1.4.0.tgz#7f5127732525b3f385f1c5417f9c40452ead5b9a"
-  integrity sha512-YLIAWaObqn17mx24fhxaw6Hp/Bs/Gg/ptlPfrxx4CLi3GehdtGaM6jIzeDvmpn8uJsOm3/YB5yUL6awLsekjnA==
-  dependencies:
-    react "^16.8.6"
+"@rehooks/local-storage@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@rehooks/local-storage/-/local-storage-2.3.0.tgz#e2b90a93d3be70e7b7d69a5748abbcfa94261713"
+  integrity sha512-Lt7uVEse+Rxc1OBTy/dxSJoNtik2CAP+9w+2G2EzY04S+HPkNaUvnIHtWMCniqzZ6ctthvRPs1Pcriuexmr56A==
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
@@ -15562,7 +15560,7 @@ react-virtualized@^9.21.0:
     prop-types "^15.6.0"
     react-lifecycles-compat "^3.0.4"
 
-react@^16.13.1:
+react@16.13.1, react@^16.13.1, react@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.13.1.tgz#2e818822f1a9743122c063d6410d85c1e3afe48e"
   integrity sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w==
@@ -15570,16 +15568,6 @@ react@^16.13.1:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
     prop-types "^15.6.2"
-
-react@^16.8.1, react@^16.8.6:
-  version "16.8.6"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
-  integrity sha512-pC0uMkhLaHm11ZSJULfOBqV4tIZkx87ZLvbbQYunNixAAvjnC+snJCg0XQXn9VIsttVsbZP/H/ewzgsd5fxKXw==
-  dependencies:
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.2"
-    scheduler "^0.13.6"
 
 reactcss@^1.2.0:
   version "1.2.3"
