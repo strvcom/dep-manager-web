@@ -2,4 +2,5 @@
 **/*.graphql
 **/*.json
 
+src/@types/**/*
 src/generated/**/*
