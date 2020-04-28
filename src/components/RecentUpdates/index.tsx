@@ -1,12 +1,11 @@
 import React, { memo, FunctionComponent } from 'react'
 
+import { GT } from '~api/client'
 import WidgetContainer, { WidgetContainerProps, WidgetTitle } from '../Charts/Container'
 import { Items, ItemLink, TitleContainer, UpdatedTime } from '../../routes/Dashboard/widget-styled'
 
-import { RecentUpdates_library as ILibrary } from './graphql-types/RecentUpdates_library'
-
 interface IProps extends Pick<WidgetContainerProps, 'width'> {
-  libraries: ILibrary[]
+  libraries: GT.RecentUpdates_libraryFragment[]
 }
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -19,7 +18,7 @@ const RecentUpdates: FunctionComponent<IProps> = ({ width, libraries }: IProps) 
   <WidgetContainer width={width}>
     <WidgetTitle>Recent Updates</WidgetTitle>
     <Items>
-      {libraries.map(lib => (
+      {libraries.map((lib) => (
         <ItemLink to="#" key={lib.id}>
           <TitleContainer>
             <span>{lib.name}</span>

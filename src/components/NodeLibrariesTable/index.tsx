@@ -22,19 +22,18 @@ import Badge, { BadgeType } from '../Badge'
 import * as routes from '../../routes/routes'
 import { isValidLicense } from '../../utils/license'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
-
 import { useSort } from '../../hooks/useSort'
-import {
-  NodeLibraryTable_Library,
-  NodeLibraryTable_Library_package,
-} from './graphql-types/NodeLibraryTable_Library'
+import { GT } from '~api/client'
+
+type Library = GT.NodeLibraryTable_LibraryFragment
+type Package = Library['package']
 
 enum Distances {
   MAJOR = 'MAJOR',
   MINOR = 'MINOR',
 }
 
-type Outdates = Record<string, NodeLibraryTable_Library_package[]>
+type Outdates = Record<string, Package[]>
 type OutdateCounts = Record<string, number>
 
 interface NormalizedLibrary {
@@ -47,16 +46,13 @@ interface NormalizedLibrary {
 
 export interface NodeLibrariesTableProps {
   cacheKey?: string // key for verifying memoization
-  libraries: NodeLibraryTable_Library[]
+  libraries: Library[]
   outdates: Outdates
 }
 
 const defaultSort = ascend(prop('name'))
 
-const sumObject = pipe<Record<Distances, number>, number[], number>(
-  values,
-  sum
-)
+const sumObject = pipe<Record<Distances, number>, number[], number>(values, sum)
 
 const sumOutdates = pipe<OutdateCounts, OutdateCounts, number>(
   pick(Object.values(Distances)) as (obj: object) => Record<Distances, number>,
@@ -67,15 +63,12 @@ const sumOutdates = pipe<OutdateCounts, OutdateCounts, number>(
  * Flattens and processes a library data for easier display and sort operations.
  */
 const normalizeLibrary = mem(
-  (library: NodeLibraryTable_Library, allOutdates: Outdates): NormalizedLibrary => {
+  (library: Library, allOutdates: Outdates): NormalizedLibrary => {
     const name = library.package.name
     const license = library.package.license || ''
 
     const outdates: OutdateCounts = map(
-      pipe<NodeLibraryTable_Library_package[], NodeLibraryTable_Library_package[], number>(
-        filter(propEq('name', name)),
-        len
-      ),
+      pipe<Package[], Package[], number>(filter(propEq('name', name)), len),
       allOutdates
     )
     return {
@@ -110,7 +103,7 @@ const NodeLibrariesTable: FunctionComponent<NodeLibrariesTableProps> = ({
   const cacheKeys = cacheKey ? [cacheKey] : []
   const list = useMemo(
     // broken for better memoization.
-    () => libraries.map(library => normalizeLibrary(library, outdates)),
+    () => libraries.map((library) => normalizeLibrary(library, outdates)),
     cacheKeys
   )
 

@@ -1,20 +1,18 @@
 import React, { memo, useMemo } from 'react'
 import mem from 'mem'
-import { ascend, length as len, map, pick, pipe, propEq, prop, sum, values, Functor } from 'ramda'
+import { ascend, propEq, prop, sum } from 'ramda'
 
 import Table, { Column } from '../Table/index'
 import StatusColumn from '../Table/StatusColumn'
-import { BidaDepartment } from '../../config/types'
-import * as routes from '../../routes/routes'
-import anchorRowRenderer from '../../utils/anchorRowRenderer'
+import { BidaDepartment } from '~app/config/types'
+import * as routes from '~app/routes/routes'
+import anchorRowRenderer from '~app/utils/anchorRowRenderer'
+import { useSort, UseSortOptions } from '~app/hooks/useSort'
 
-import { useSort, UseSortOptions } from '../../hooks/useSort'
+import { GT } from '~api/client'
+import { SemverOutdateStatus as distances } from '~generated/types'
 
-import { SemverOutdateStatus as distances } from '../../generated/graphql-types'
-import {
-  NodeProjectsTable_projects as Project,
-  NodeProjectsTable_projects_npmPackage_dependencies as IDependency,
-} from './graphql-types/NodeProjectsTable_projects'
+type Project = GT.NodeProjectsTable_projectsFragment
 
 const departmentBaseURLs = {
   [BidaDepartment.BACKEND]: routes.backendProjects,
@@ -49,34 +47,23 @@ const renderOutdated = ({ rowData: { outdated } }: { rowData: { outdated: IOutda
   <StatusColumn outDated={outdated[distances.MAJOR]} alerts={outdated[distances.MINOR]} />
 )
 
-const getOutdated = (dependencies: Array<IDependency | null>) =>
-  pipe<string, (value: IDependency | null) => boolean, Array<IDependency | null>, number>(
-    propEq('outdateStatus'),
-    propEqFilter => dependencies.filter(propEqFilter),
-    len
-  )
-
-const sumOutdates = pipe(
-  pick(Object.values(distances)),
-  pipe<object, number[], number>(
-    values,
-    sum
-  )
-)
-
 /**
  * Flattens and processes a project data for easier display and sort operations.
  */
 const normalizeProject = mem(
-  (project: Project): NormalizedProject => {
+  (project: Project) => {
     const name = project.name
     const pushedAt = project.pushedAt
 
-    const dependencies = (project.npmPackage && project.npmPackage.dependencies) || []
-    const outdated = (map(getOutdated(dependencies), (distances as unknown) as Functor<
-      distances
-    >) as unknown) as IOutdatedCounts
-    const totalOutdated = sumOutdates(outdated)
+    const dependencies = project.npmPackage?.dependencies || []
+
+    const outdated = {} as IOutdatedCounts
+
+    for (const distance of Object.keys(distances)) {
+      outdated[distance] = dependencies.filter(propEq('outdateStatus', distance)).length
+    }
+
+    const totalOutdated = sum(Object.values(outdated))
 
     return { name, pushedAt, outdated, totalOutdated }
   },
@@ -91,14 +78,8 @@ const sortDefaults: UseSortOptions<NormalizedProject> = {
 }
 
 const NodeProjectsTable = ({ projects, department, cacheKey }: NodeProjectsTableProps) => {
-  // memoized normalization
-
   const cacheKeys = cacheKey ? [cacheKey] : []
-  const list = useMemo(
-    // broken for better memoization.
-    () => projects.map(project => normalizeProject(project)),
-    cacheKeys
-  )
+  const list = useMemo(() => projects.map(normalizeProject), cacheKeys)
 
   // state
 
