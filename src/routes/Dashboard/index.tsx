@@ -3,26 +3,21 @@ import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import ErrorBoundary from 'react-error-boundary'
 
 import * as routes from '../routes'
-import AuthenticatedQuery from '../../containers/AuthenticatedQuery'
-import Loading from '../../components/Loading'
-import NodeLibrariesTable from '../../components/NodeLibrariesTable'
-import NodeProjectsTable from '../../components/NodeProjectsTable'
-import ActualityWidget from '../../components/ActualityWidget'
-import RecentUpdates from '../../components/RecentUpdates'
+import Loading from '~app/components/Loading'
+import NodeLibrariesTable from '~app/components/NodeLibrariesTable'
+import NodeProjectsTable from '~app/components/NodeProjectsTable'
+import ActualityWidget from '~app/components/ActualityWidget'
+import RecentUpdates from '~app/components/RecentUpdates'
 
 import ProjectsOverviewWidget from './ProjectsOverviewWidget'
 import DashboardToolBar from './DashboardToolBar'
 import { TableContainer, StyledDashboard, WidgetContainer } from './styled'
 import { extractLibrariesInfo, filterProjectsBySearch } from './helpers'
 
-import { BidaDepartment, SemverOutdateStatus as distances } from '../../generated/graphql-types'
+import { useQuery, GT } from '~api/client'
+import { SemverOutdateStatus as distances } from '~app/@generated/types'
 
-import DASHBOARD_QUERY from './query.gql'
-
-import {
-  DASHBOARD_QUERY as Data,
-  DASHBOARD_QUERYVariables as Variables,
-} from './graphql-types/DASHBOARD_QUERY'
+import document from './query.gql'
 
 export type DashboarProps = RouteComponentProps<{
   department: string
@@ -32,8 +27,11 @@ export type DashboarProps = RouteComponentProps<{
 const Dashboard = ({ match }: DashboarProps) => {
   const { department, category } = match.params
   const [search, setSearch] = useState('')
-
   const cacheKey = department + search
+
+  const { data, loading, error } = useQuery('DASHBOARD_QUERY', document, {
+    variables: { department: department.toUpperCase() as GT.BidaDepartment },
+  })
 
   return (
     <>
@@ -45,77 +43,69 @@ const Dashboard = ({ match }: DashboarProps) => {
       />
 
       <StyledDashboard>
-        <AuthenticatedQuery<Data, Variables>
-          query={DASHBOARD_QUERY}
-          variables={{ department: department.toUpperCase() as BidaDepartment }}
-          children={({ data, loading, error }): React.ReactNode => {
-            if (error) throw error
-            if (loading) return <Loading />
-            if (!data) return null
+        {(() => {
+          if (error) throw error
+          if (loading) return <Loading />
+          if (!data) return null
 
-            const { projects, archived } = data
+          const { projects, archived } = data
 
-            const { libraries, uniqueLibraries, outdates, recentlyUpdated } = extractLibrariesInfo(
-              projects.edges
+          const { libraries, uniqueLibraries, outdates, recentlyUpdated } = extractLibrariesInfo(
+            projects.edges as any
+          )
+          const { [distances.MAJOR]: major } = outdates
+
+          const renderWidgets = () => (
+            <WidgetContainer>
+              <ProjectsOverviewWidget
+                total={projects.total}
+                archived={archived.total}
+                width="32%"
+              />
+
+              <ActualityWidget
+                title="Libraries Actuality"
+                width="32%"
+                outdated={major.length}
+                total={libraries.length}
+              />
+
+              <RecentUpdates libraries={recentlyUpdated} width="32%" />
+            </WidgetContainer>
+          )
+
+          const renderLibraries = () => {
+            const filtered = uniqueLibraries.filter(({ package: { name } }) =>
+              name.includes(search)
             )
-            const { [distances.MAJOR]: major } = outdates
-
-            const renderWidgets = () => (
-              <WidgetContainer>
-                <ProjectsOverviewWidget
-                  total={projects.total}
-                  archived={archived.total}
-                  width="32%"
-                />
-
-                <ActualityWidget
-                  title="Libraries Actuality"
-                  width="32%"
-                  outdated={major.length}
-                  total={libraries.length}
-                />
-
-                <RecentUpdates libraries={recentlyUpdated} width="32%" />
-              </WidgetContainer>
-            )
-
-            const renderLibraries = () => {
-              const filtered = uniqueLibraries.filter(({ package: { name } }) =>
-                name.includes(search)
-              )
-              return (
-                <NodeLibrariesTable libraries={filtered} outdates={outdates} cacheKey={cacheKey} />
-              )
-            }
-
-            const renderProjects = () => {
-              const filtered = filterProjectsBySearch(search)(projects.edges)
-              return (
-                <NodeProjectsTable
-                  department={department}
-                  projects={filtered}
-                  cacheKey={cacheKey}
-                />
-              )
-            }
-
             return (
-              <Suspense fallback={<Loading />}>
-                <ErrorBoundary>
-                  <TableContainer>
-                    <Route exact path={routes.dashboard} render={renderWidgets} />
-
-                    <Switch>
-                      <Route exact path={routes.libraries} render={renderLibraries} />
-
-                      <Route exact path={routes.projects} render={renderProjects} />
-                    </Switch>
-                  </TableContainer>
-                </ErrorBoundary>
-              </Suspense>
+              <NodeLibrariesTable libraries={filtered} outdates={outdates} cacheKey={cacheKey} />
             )
-          }}
-        />
+          }
+
+          const renderProjects = () => {
+            const filtered = filterProjectsBySearch(search)(projects.edges as any)
+            return (
+              <NodeProjectsTable department={department} projects={filtered} cacheKey={cacheKey} />
+            )
+          }
+
+          return (
+            <Suspense fallback={<Loading />}>
+              <ErrorBoundary>
+                <TableContainer>
+                  <Route exact path={routes.dashboard} render={renderWidgets} />
+
+                  <Switch>
+                    <Route exact path={routes.libraries} render={renderLibraries} />
+
+                    <Route exact path={routes.projects} render={renderProjects} />
+                  </Switch>
+                </TableContainer>
+              </ErrorBoundary>
+            </Suspense>
+          )
+        })()}
       </StyledDashboard>
     </>
   )
