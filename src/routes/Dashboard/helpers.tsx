@@ -27,18 +27,20 @@ import {
   filter,
   includes,
   defaultTo,
+  propEq,
 } from 'ramda'
 
-import {
-  DASHBOARD_QUERY_projects_edges_node_Repository as Repository,
-  DASHBOARD_QUERY_projects_edges as Projects,
-  DASHBOARD_QUERY_projects_edges_node as ProjectsNode,
-  DASHBOARD_QUERY_projects_edges_node as Project,
-  DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_dependencies as NPMDependency,
-  DASHBOARD_QUERY_projects_edges_node_Repository_npmPackage_dependencies_package as NPMPackage,
-} from './graphql-types/DASHBOARD_QUERY'
-import { SemverOutdateStatus } from '../../generated/graphql-types'
-import propEq from 'ramda/es/propEq'
+import { GT } from '~api/client'
+
+type Repository = any
+type Projects = any
+type ProjectsNode = any
+type Project = any
+type NPMDependency = any
+type NPMPackage = any
+
+type SemverOutdateStatus = GT.SemverOutdateStatus
+const SemverOutdateStatus = GT.SemverOutdateStatus
 
 interface Info {
   libraries: NPMDependency[]
@@ -73,7 +75,7 @@ const merger = (mergeMap: Record<string, <L, R>(l: L, r: R) => unknown>) =>
   mergeWithKey(
     cond([
       ...Object.keys(mergeMap).map(
-        key =>
+        (key) =>
           [equals(key), (k: string, l: unknown, r: unknown) => mergeMap[key](l, r)] as [
             ReturnType<typeof equals>,
             ReturnType<typeof nthArg>
@@ -131,27 +133,16 @@ export const getRecentlyUpdated = pipe<
   NPMDependency[],
   NPMDependency[],
   NPMDependency[]
->(
-  sortBy(pathOr(Number.POSITIVE_INFINITY, ['package', 'updatedAt'])),
-  reverse,
-  take(10)
-)
+>(sortBy(pathOr(Number.POSITIVE_INFINITY, ['package', 'updatedAt'])), reverse, take(10))
 
 const calcUniqueLibraries: (info: Info) => Info = setter(
   'uniqueLibraries',
-  pipe(
-    propOr([], 'libraries'),
-    getUniqueDependencies
-  )
+  pipe(propOr([], 'libraries'), getUniqueDependencies)
 )
 
 const calcRecentlyUpdated: (info: Info) => Info = setter(
   'recentlyUpdated',
-  pipe(
-    propOr([], 'uniqueLibraries'),
-    getRecentlyUpdated,
-    map(prop('package'))
-  )
+  pipe(propOr([], 'uniqueLibraries'), getRecentlyUpdated, map(prop('package')))
 )
 
 const extractLibrariesInfo = pipe<
@@ -173,12 +164,7 @@ const filterProjectsBySearch = (search: string) =>
   pipe<Projects[], ProjectsNode[], Repository[], Repository[]>(
     map(prop('node')),
     filter(propEq('__typename', 'Repository')),
-    filter(
-      pipe<Repository, string, boolean>(
-        prop('name'),
-        includes(search)
-      )
-    )
+    filter(pipe<Repository, string, boolean>(prop('name'), includes(search)))
   )
 
 // @tests
