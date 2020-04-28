@@ -54,16 +54,16 @@ type NPMSAnalysis {
 }
 
 extend type NPMPackage {
-  license: String
-  updatedAt: String
-  private: Boolean
-  description: String
-  analysis: NPMSAnalysis
+  license: String!
+  updatedAt: String!
+  private: Boolean!
+  description: String!
+  analysis: NPMSAnalysis!
 }
 
 extend type NPMDependency {
   package: NPMPackage!
-  outdateStatus: SemverOutdateStatus
+  outdateStatus: SemverOutdateStatus!
 }
 
 extend type Query {

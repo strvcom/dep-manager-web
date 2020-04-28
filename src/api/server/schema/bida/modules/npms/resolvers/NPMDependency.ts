@@ -3,7 +3,7 @@ import * as GT from '~generated/types'
 import { versionDistance } from '~app/utils/version-diff'
 import * as loaders from '../loaders'
 
-const NPMDependency: GT.NpmDependencyResolvers = {
+const NPMDependency: GT.NPMDependencyResolvers = {
   /**
    * Shortcut resolver for analyzing a package's outdate distance.
    */

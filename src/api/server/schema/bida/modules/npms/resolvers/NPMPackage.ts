@@ -7,7 +7,7 @@ import * as loaders from '../loaders'
 /**
  * Load analysis and inject into package object.
  */
-const attachAnalysis = async (root: GT.NpmPackage): Promise<GT.NpmPackage> => {
+const attachAnalysis = async (root: GT.NPMPackage): Promise<GT.NPMPackage> => {
   if (!root.name) {
     throw new Error('Cannot load package analysis without "name".')
   }
@@ -20,7 +20,7 @@ const attachAnalysis = async (root: GT.NpmPackage): Promise<GT.NpmPackage> => {
  */
 const metadata = <T extends (input: any) => any>(field: string, transform?: T) => ({
   fragment: '... on NPMPackage { name }',
-  resolve: async (parent: GT.NpmPackage) =>
+  resolve: async (parent: GT.NPMPackage) =>
     (transform || identity)(
       field in parent
         ? parent[field]
@@ -31,7 +31,7 @@ const metadata = <T extends (input: any) => any>(field: string, transform?: T) =
 // @tests
 export { attachAnalysis, metadata }
 
-const NPMPackage: GT.NpmPackageResolvers = {
+const NPMPackage: GT.NPMPackageResolvers = {
   license: metadata('license'),
   description: metadata('description'),
   private: metadata('private', Boolean),

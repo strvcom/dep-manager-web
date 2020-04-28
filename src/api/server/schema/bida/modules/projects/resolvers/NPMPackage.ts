@@ -133,7 +133,7 @@ interface NPMPackage {
 // @tests
 export { Query, dependsOn, edgeToDependent, isRepositoryField, visitor }
 
-const NPMPackage: GT.NpmPackageResolvers = {
+const NPMPackage: GT.NPMPackageResolvers = {
   /**
    * NPMPackage::dependents
    *
