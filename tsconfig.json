@@ -1,4 +1,5 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "sourceMap": true,
     "noUnusedLocals": false,
@@ -11,7 +12,10 @@
     "module": "esnext",
     "target": "esnext",
     "jsx": "preserve",
-    "lib": ["esnext", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "skipLibCheck": true,
     "strictFunctionTypes": true,
     "allowUnreachableCode": true,
@@ -25,15 +29,16 @@
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "noEmit": true,
-    "plugins": [{ "name": "typescript-styled-plugin" }],
-    "baseUrl": "./",
-    "paths": {
-      "~root/*": ["*"],
-      "~app/*": ["./src/*"],
-      "~api/*": ["./src/api/*"],
-      "~generated/*": ["./src/@generated/*"]
-    }
+    "plugins": [
+      {
+        "name": "typescript-styled-plugin"
+      }
+    ]
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
