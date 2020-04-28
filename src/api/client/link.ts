@@ -2,6 +2,7 @@ import scope from 'debug'
 import { ApolloLink, HttpLink } from '@apollo/client'
 import fetch from 'isomorphic-fetch'
 import { REACT_APP_GRAPHQL_ENDPOINT } from '~app/config/env'
+import { getAuthenticationToken } from '~app/config/auth'
 
 const debugScope = scope('bida:api:github')
 
@@ -20,7 +21,7 @@ const debug = new ApolloLink((operation, forward) => {
  * Authentication link.
  */
 const auth = new ApolloLink((operation, forward) => {
-  const { token } = operation.getContext()
+  const token = getAuthenticationToken()
 
   if (token) {
     operation.setContext({ headers: { authorization: `bearer ${token}` } })
