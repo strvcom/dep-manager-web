@@ -9,11 +9,13 @@ generates:
       - typescript
       - typescript-resolvers
       - typescript-operations
+      - ./typescript-operations-map
     config:
       nonOptionalTypename: true
       defaultMapper: tsdef#DeepPartial<{T}>
       contextType: ~api/server/types#ResolverContextType
       customResolverFn: ~api/server/types#ResolverFn
+      namingConvention: 'keep'
 
   # ./src/@generated/schema.graphql:
   #   plugins:
