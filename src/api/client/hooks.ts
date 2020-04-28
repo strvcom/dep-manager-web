@@ -7,6 +7,8 @@ import {
 } from '@apollo/client'
 
 import { OperationMap } from '~generated/types'
+import { useAuthenticationToken } from '~app/config/auth'
+import { useEffect } from 'react'
 
 type Queries = OperationMap['query']
 type Mutations = OperationMap['mutation']
@@ -18,7 +20,17 @@ const useQuery = <
   _name: OperationName,
   doc: DocumentNode,
   options?: QueryHookOptions<Types['data'], Types['variables']>
-) => apolloUseQuery<Types['data'], Types['variables']>(doc, options)
+) => {
+  const [token] = useAuthenticationToken()
+  const result = apolloUseQuery<Types['data'], Types['variables']>(doc, options)
+
+  // refresh store when switching auth state.
+  useEffect(() => {
+    result.refetch()
+  }, [token])
+
+  return result
+}
 
 const useMutation = <
   OperationName extends keyof Mutations,
