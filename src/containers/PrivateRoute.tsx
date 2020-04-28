@@ -11,9 +11,10 @@ interface IProps extends RouteProps {
 const PrivateRoute: React.FC<IProps> = ({ redirect, loading: loadingElement, ...rest }: IProps) => {
   const { data, loading } = useCurrentUser()
 
-  return loading ? 
+  // eslint-disable-next-line no-extra-parens
+  return loading ? (
     loadingElement || null
-   : data!.user ? (
+  ) : data?.user ? (
     <Route {...rest} />
   ) : (
     <Redirect to={redirect} />
