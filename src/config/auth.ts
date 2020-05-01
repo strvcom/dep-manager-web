@@ -1,9 +1,9 @@
 import { useLocalStorage, writeStorage } from '@rehooks/local-storage'
 import Netlify from 'netlify-auth-providers'
 
-import { REACT_APP_NETLIFY_SITE_ID, GITHUB_TOKEN_KEY } from './env'
+import { NODE_ENV, REACT_APP_NETLIFY_SITE_ID, GITHUB_TOKEN_KEY } from './env'
 
-if (!REACT_APP_NETLIFY_SITE_ID) {
+if (NODE_ENV !== 'test' && !REACT_APP_NETLIFY_SITE_ID) {
   throw new Error(`You must define REACT_APP_NETLIFY_SITE_ID env in order to start the application`)
 }
 
