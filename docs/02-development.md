@@ -3,7 +3,6 @@ title: Development
 description: Developers starting point
 ---
 
-
 # Development Guidelines
 
 ## Getting started
@@ -24,7 +23,7 @@ yarn
 **Set environment**
 
 ```sh
-cp .env.development .env
+cp .env.sample .env
 ```
 
 Modify `.env` [accordingly](#environment-variables).
@@ -51,32 +50,37 @@ Both are useful when you are developing independent parts of the application.
 
 You can define these variables either by prefixing any command, or by setting a [`.env`](https://github.com/motdotla/dotenv) file.
 
-| Variable                     | Used for                             | How to set                                                                    | Target      | Default                         |
-| ---------------------------- | ------------------------------------ | ----------------------------------------------------------------------------- | ----------- | ------------------------------- |
-| `REACT_APP_NETLIFY_SITE_ID`  | Authenticate using netlify           | `https://app.netlify.com/sites/[site-name]/settings/general#site-information` | production  |                                 |
-| `REACT_APP_GRAPHQL_ENDPOINT` | Connect to GraphQL API               | Should point to a running API, either locally or remote                       | any         | `http://localhost:9000/graphql` |
-| `DEBUG`                      | Enable debugging messages            | [`bida*`](https://github.com/visionmedia/debug)                               | any         |                                 |
-| `GITHUB_OAUTH_TOKEN`         | Running isolated API locally         | `https://github.com/settings/tokens`                                          | development |                                 |
-| `ENGINE_API_KEY`             | Tracking query execution performance | `https://engine.apollographql.com/service/[service name]/settings`            | development |                                 |
+| Variable                     | Required | Used for                             | How to set                                                                    | Default                                            |
+| ---------------------------- | -------- | ------------------------------------ | ----------------------------------------------------------------------------- | -------------------------------------------------- |
+| `REACT_APP_NETLIFY_SITE_ID`  | `true`   | Authenticate using netlify           | `https://app.netlify.com/sites/[site-name]/settings/general#site-information` | `f96fd685-82eb-4f99-8955-85c25edfee38`             |
+| `REACT_APP_GRAPHQL_ENDPOINT` | `true`   | Connect to GraphQL API               | Should point to a running API, either locally or remote                       | `http://localhost:9000/.netlify/functions/graphql` |
+| `GITHUB_ORG_ID`              | `true`   | Loading repository information from  | Should be the unique name of the GitHub organization                          | `strvcom`                                          |
+| `GITHUB_APP_ID`              | `true`   | Authorization                        | `https://github.com/settings/apps/[app-name]`                                 |                                                    |
+| `GITHUB_APP_CLIENT_ID`       | `true`   | Authorization                        | `https://github.com/settings/apps/[app-name]`                                 |                                                    |
+| `GITHUB_APP_CLIENT_SECRET`   | `true`   | Authorization                        | `https://github.com/settings/apps/[app-name]`                                 |                                                    |
+| `GITHUB_APP_PRIVATE_KEY`     | `true`   | Authorization                        | `https://github.com/settings/apps/[app-name]`                                 |                                                    |
+| `GITHUB_APP_INSTALLATION_ID` | `true`   | Authorization                        | `https://github.com/settings/apps/[app-name]/installations`                   |                                                    |
+| `DEBUG`                      | `false`  | Enable debugging messages            | `https://github.com/visionmedia/debug`                                        | `bida*`                                            |
+| `ENGINE_API_KEY`             | `false`  | Tracking query execution performance | `https://engine.apollographql.com/service/[service name]/settings`            |                                                    |
 
 ## Version control
 
 ### Branch
 
-1. All new branchs must start from `master` branch;
+1. All new branches must start from `master` branch;
 2. Every branch refers to an existing issue on GitHub;
-3. Each new feature or bug fix must be developet in it's own branch;
+3. Each new feature or bug fix must be developed in it's own branch;
 4. Branches must follow these naming conventions:
 
-    **Feature/Bug**: `issue/[issue]--[short-description]`
+   **Feature/Bug**: `issue/[issue]--[short-description]`
 
-    > Used for developing any planned task.
+   > Used for developing any planned task.
 
-    ~~**Hotfix**: `hotfix/[issue]--[short-description]`~~
+   ~~**Hotfix**: `hotfix/[issue]--[short-description]`~~
 
-    > ~~Used for developing unplanned production bug fixes.~~
+   > ~~Used for developing unplanned production bug fixes.~~
 
-    _This will only be used once we have a production version of the application. Before that, bugs should be addressed as common issues._
+   _This will only be used once we have a production version of the application. Before that, bugs should be addressed as common issues._
 
 ### Commit
 
@@ -84,7 +88,7 @@ Always use [Semantic Commits](https://seesparkbox.com/foundry/semantic_commit_me
 
 ### Integration
 
-Every branch should eventually generate a pull-request against the `master`. 
+Every branch should eventually generate a pull-request against the `master` branch.
 
 > _We do not use `dev`. Each pull-request is deployed on it's self contained [deploy preview](https://www.netlify.com/blog/2016/07/20/introducing-deploy-previews-in-netlify/)_
 

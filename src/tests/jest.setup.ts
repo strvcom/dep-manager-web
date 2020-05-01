@@ -1,14 +1,17 @@
 // @ts-ignore
-global.deepDescribe = (name: string, describer: () => void) => {
+const _describe = global.describe
+
+// @ts-ignore
+global.describe = (name: string, describer: () => void) => {
   const recurse = (names: string[]): void => {
     const curr = names.shift()
 
     if (names.length) {
       // @ts-ignore
-      describe(curr, () => recurse(names))
+      _describe(curr, () => recurse(names))
     } else {
       // @ts-ignore
-      describe(curr, describer)
+      _describe(curr, describer)
     }
   }
 
@@ -28,9 +31,7 @@ expect.extend({
     compare.toString = () => JSON.stringify(compare)
 
     // @ts-ignore
-    const pass = expect
-      .objectContaining(clone)
-      .asymmetricMatch(received.getContext())
+    const pass = expect.objectContaining(clone).asymmetricMatch(received.getContext())
 
     if (pass) {
       return {

@@ -1,4 +1,20 @@
 {
   "presets": ["@strv/react-scripts/babel"],
-  "plugins": ["ramda", "styled-components", "import-graphql"]
+  "plugins": [
+    "ramda",
+    "styled-components",
+    "import-graphql",
+    "@babel/plugin-proposal-optional-chaining",
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "~root": "./",
+          "~app": "./src",
+          "~api": "./src/api",
+          "~generated": "./src/@generated"
+        }
+      }
+    ]
+  ]
 }

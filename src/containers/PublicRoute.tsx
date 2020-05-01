@@ -1,23 +1,29 @@
 import React, { FunctionComponent } from 'react'
 import { Route, RouteProps, Redirect } from 'react-router-dom'
 import { LocationDescriptor } from 'history'
-
-import CurrentUserContainer from './CurrentUserContainer'
+import { useCurrentUser } from '~app/hooks/useCurrentUser'
 
 interface IProps extends RouteProps {
   redirect?: LocationDescriptor
-  loading?: React.ReactNode
+  loading?: React.ReactElement | null
 }
 
-const PublicRoute: FunctionComponent<IProps> = ({ redirect, loading, ...rest }: IProps) => (
-  <CurrentUserContainer>
-    {({ user, loading: isLoading }) => {
-      if (isLoading) return loading
+const PublicRoute: FunctionComponent<IProps> = ({
+  redirect,
+  loading: loadingElement,
+  ...rest
+}: IProps) => {
+  const { data, loading } = useCurrentUser()
 
-      return user && redirect ? <Redirect to={redirect} /> : <Route {...rest} />
-    }}
-  </CurrentUserContainer>
-)
+  // eslint-disable-next-line no-extra-parens
+  return loading ? (
+    loadingElement || null
+  ) : data?.user && redirect ? (
+    <Redirect to={redirect} />
+  ) : (
+    <Route {...rest} />
+  )
+}
 
 PublicRoute.defaultProps = {
   loading: null,

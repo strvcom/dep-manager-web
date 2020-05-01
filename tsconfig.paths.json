@@ -1,0 +1,12 @@
+// https://github.com/facebook/create-react-app/issues/5645#issuecomment-461999138
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "~root/*": ["*"],
+      "~app/*": ["./src/*"],
+      "~api/*": ["./src/api/*"],
+      "~generated/*": ["./src/@generated/*"]
+    }
+  }
+}

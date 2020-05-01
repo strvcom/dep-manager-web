@@ -1,15 +1,14 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import { ApolloProvider } from 'react-apollo'
-import GlobalStyle from './styles/global'
-import 'react-virtualized/styles.css'
-import App from './routes'
-import registerServiceWorker from './registerServiceWorker'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
-import Loading from './components/Loading'
 import PropTypes from 'prop-types'
+import ReactDOM from 'react-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { GraphQLProvider } from '~api/client'
+import GlobalStyle from './styles/global'
+import Loading from './components/Loading'
+import registerServiceWorker from './registerServiceWorker'
+import App from './routes'
 
-import { client } from './config/client'
+import 'react-virtualized/styles.css'
 
 if (process.env.NODE_ENV === 'development') {
   // Fix bug of errouneous prop-types on Route component
@@ -19,11 +18,12 @@ if (process.env.NODE_ENV === 'development') {
 
 ReactDOM.render(
   <React.Suspense fallback={<Loading />}>
-    <ApolloProvider client={client}>
+    <GraphQLProvider>
       <Router>
         <App />
       </Router>
-    </ApolloProvider>
+    </GraphQLProvider>
+
     <GlobalStyle />
   </React.Suspense>,
   document.getElementById('root')

@@ -1,2 +1,3 @@
 **/graphql-types/**/*
 src/generated/**/*
+src/@generated/**/*

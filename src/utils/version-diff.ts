@@ -1,19 +1,22 @@
 import { curry } from 'ramda'
 import semver, { SemVer } from 'semver'
+import { SemverOutdateStatus } from '~generated/types'
+import { is } from '~app/utils/type-utils'
 
-const versionDistance = curry(
-  (left?: string | SemVer, right?: string | SemVer): string => {
-    if (!left || !right) return 'UNKNOWN'
+const isSemVerStatus = is(SemverOutdateStatus)
 
-    const coercedLeft = semver.coerce(left)
-    const coercedRight = semver.coerce(right)
+const versionDistance = curry((left: string | SemVer, right: string | SemVer) => {
+  if (!left || !right) return SemverOutdateStatus.UNKNOWN
 
-    if (!coercedLeft || !coercedRight) return 'UNKNOWN'
+  const coercedLeft = semver.coerce(left)
+  const coercedRight = semver.coerce(right)
 
-    const distance = semver.diff(coercedLeft, coercedRight)
+  if (!coercedLeft || !coercedRight) return SemverOutdateStatus.UNKNOWN
 
-    return distance ? distance.toUpperCase() : 'UPTODATE'
-  }
-)
+  const distance = semver.diff(coercedLeft, coercedRight)?.toUpperCase()
+  if (distance) return isSemVerStatus(distance) ? distance : SemverOutdateStatus.UNKNOWN
+
+  return SemverOutdateStatus.UPTODATE
+})
 
 export { versionDistance }

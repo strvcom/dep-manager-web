@@ -3,7 +3,7 @@ import { isValidLicense } from './license'
 
 const licenses = Object.keys(License)
 
-deepDescribe('utils/isValidLicense', () => {
+describe('utils/isValidLicense', () => {
   const valids = (license: string): void =>
     it(`should allow ${license}`, () => {
       expect(isValidLicense(license)).toBe(true)

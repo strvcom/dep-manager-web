@@ -8,10 +8,10 @@ import { versionDistance } from '../../utils/version-diff'
 import anchorRowRenderer from '../../utils/anchorRowRenderer'
 import { BidaDepartment } from '../../config/types'
 import * as routes from '../../routes/routes'
-
 import { useSort } from '../../hooks/useSort'
+import { GT } from '~api/client'
 
-import { NodeLibraryDependentsTable_dependents as IDependent } from './graphql-types/NodeLibraryDependentsTable_dependents'
+type IDependent = GT.NodeLibraryDependentsTable_dependentsFragment
 
 interface INormalizedDependent {
   name: string
@@ -70,7 +70,7 @@ const NodeLibraryDependentsTable: FunctionComponent<IProps> = ({
   // memoized normalization
 
   const cacheKeys = cacheKey ? [cacheKey] : []
-  const list = useMemo(() => dependents.map(dep => normalize(dep, libraryVersion)), cacheKeys)
+  const list = useMemo(() => dependents.map((dep) => normalize(dep, libraryVersion)), cacheKeys)
 
   // state
 

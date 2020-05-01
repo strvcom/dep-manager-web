@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
-export const StyledDashboard = styled.main`
+export const StyledMain = styled.main`
   flex: 1 1 auto;
   display: flex;
   justify-content: center;
@@ -25,7 +25,7 @@ export const WidgetContainer = styled.section`
 
 export const Input = styled.input`
   padding: 12px 15px;
-  background-color: ${props => props.theme.backgroundColor};
+  background-color: ${(props) => props.theme.backgroundColor};
   border: none;
   outline: none;
   font-size: 14px;

@@ -1,0 +1,16 @@
+type NPMDependency {
+  id: String!
+  name: String!
+  version: String!
+}
+
+type NPMPackage {
+  id: String!
+  name: String!
+  version: String!
+  dependencies: [NPMDependency!]!
+}
+
+extend type Repository {
+  npmPackage: NPMPackage
+}

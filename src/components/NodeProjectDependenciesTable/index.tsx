@@ -10,11 +10,10 @@ import { BidaDepartment } from '../../config/types'
 import * as routes from '../../routes/routes'
 
 import { useSort } from '../../hooks/useSort'
+import { GT } from '~api/client'
 
-import {
-  NodeProjectsDependenciesTable_dependencies as IDependency,
-  NodeProjectsDependenciesTable_dependencies_package as IPackage,
-} from './graphql-types/NodeProjectsDependenciesTable_dependencies'
+type IDependency = GT.NodeProjectsDependenciesTable_dependenciesFragment
+type IPackage = IDependency['package']
 
 interface INormalizedDependency {
   outdateStatus: IDependency['outdateStatus']
@@ -71,7 +70,7 @@ const renderLicense = mem(
  * Flattens and processes a dependency data for easier display and sort operations.
  */
 const normalize = mem(
-  (dependency: IDependency): INormalizedDependency => ({
+  (dependency: IDependency) => ({
     outdateStatus: dependency.outdateStatus,
     currentVersion: dependency.version,
     name: dependency.package.name,
