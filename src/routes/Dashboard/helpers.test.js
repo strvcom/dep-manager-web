@@ -48,10 +48,7 @@ describe('routes/Dashboard/helpers', () => {
       it('should use mapper to merge two objects with conflicting keys', () => {
         const a = { key: 1, a: 1 }
         const b = { key: 2, b: 2 }
-
-        const merge = merger({
-          key: (l: number, r: number) => l + r,
-        })
+        const merge = merger({ key: (l, r) => l + r })
 
         expect(merge(a, b)).toEqual({ key: 3, a: 1, b: 2 })
       })
