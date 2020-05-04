@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react'
 import mem from 'mem'
-import { ascend, propEq, prop, sum } from 'ramda'
+import { propEq, prop, sum } from 'ramda'
 
 import Table, { Column } from '../Table/index'
 import StatusColumn from '../Table/StatusColumn'
@@ -72,9 +72,8 @@ const normalizeProject = mem(
 
 const sortDefaults: UseSortOptions<NormalizedProject> = {
   list: [],
-  defaultSort: ascend(prop('name')),
-  sortBy: 'name',
-  sortDirection: 'ASC',
+  sortBy: 'pushedAt',
+  sortDirection: 'DESC',
 }
 
 const NodeProjectsTable = ({ projects, department, cacheKey }: NodeProjectsTableProps) => {
