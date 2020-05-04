@@ -58,7 +58,7 @@ const normalize = mem(
     version: dependent.version,
     distance: versionDistance(libraryVersion, dependent.version),
   }),
-  { cacheKey: path(['node', 'id']) }
+  { cacheKey: path(['id']) }
 )
 
 const NodeLibraryDependentsTable: FunctionComponent<IProps> = ({
