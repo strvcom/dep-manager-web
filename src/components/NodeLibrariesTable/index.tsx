@@ -2,7 +2,7 @@ import React, { memo, useMemo, FunctionComponent } from 'react'
 import mem from 'mem'
 
 import {
-  ascend,
+  descend,
   filter,
   length as len,
   map,
@@ -50,7 +50,7 @@ export interface NodeLibrariesTableProps {
   outdates: Outdates
 }
 
-const defaultSort = ascend(prop('name'))
+const defaultSort = descend(prop('usage'))
 
 const sumObject = pipe<Record<Distances, number>, number[], number>(values, sum)
 
@@ -113,8 +113,8 @@ const NodeLibrariesTable: FunctionComponent<NodeLibrariesTableProps> = ({
     list,
     cacheKeys,
     defaultSort,
-    sortBy: 'name',
-    sortDirection: 'ASC',
+    sortBy: 'usage',
+    sortDirection: 'DESC',
   })
 
   // renderers.
