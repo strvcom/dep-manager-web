@@ -48,7 +48,7 @@ const DashboardContent: React.FC<{ department: GT.BidaDepartment; search: string
         total={libraries.length}
       />
 
-      <RecentUpdates libraries={recentlyUpdated} width="32%" />
+      <RecentUpdates department={department} libraries={recentlyUpdated} width="32%" />
     </WidgetContainer>
   )
 

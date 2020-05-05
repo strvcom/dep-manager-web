@@ -63,7 +63,7 @@ const NodeProjectDetails: FunctionComponent<IProps> = ({ match, department }: IP
           />
         </Content>
         <Sidebar>
-          <RecentUpdates libraries={recentLibraries} />
+          <RecentUpdates department={department} libraries={recentLibraries} />
 
           <ActualityWidget
             title="Libraries Actuality"

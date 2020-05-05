@@ -6,6 +6,7 @@ import { Items, ItemLink, TitleContainer, UpdatedTime } from '../../routes/Dashb
 
 interface IProps extends Pick<WidgetContainerProps, 'width'> {
   libraries: GT.RecentUpdates_libraryFragment[]
+  department: GT.BidaDepartment
 }
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -14,12 +15,15 @@ const dateFormatter = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
 })
 
-const RecentUpdates: FunctionComponent<IProps> = ({ width, libraries }: IProps) => (
+const RecentUpdates: FunctionComponent<IProps> = ({ department, width, libraries }: IProps) => (
   <WidgetContainer width={width}>
     <WidgetTitle>Recent Updates</WidgetTitle>
     <Items>
       {libraries.map((lib) => (
-        <ItemLink to="#" key={lib.id}>
+        <ItemLink
+          to={`/${department.toLowerCase()}/libraries/${encodeURIComponent(lib.name)}`}
+          key={lib.id}
+        >
           <TitleContainer>
             <span>{lib.name}</span>
             <span>{lib.version}</span>
