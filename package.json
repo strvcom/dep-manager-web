@@ -86,7 +86,7 @@
     "graphql-tag": "^2.10.0",
     "graphql-tools": "^5.0.0",
     "history": "^4.9.0",
-    "isomorphic-fetch": "^2.2.1",
+    "isomorphic-fetch": "^3.0.0",
     "mem": "^4.3.0",
     "netlify-auth-providers": "^1.0.0-alpha5",
     "patch-package": "^6.1.2",
