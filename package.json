@@ -163,7 +163,7 @@
     "prettier": "^2.0.5",
     "prettier-eslint-cli": "^4.7.1",
     "react-hooks-testing-library": "^0.4.1",
-    "simple-git": "^1.110.0",
+    "simple-git": "^3.5.0",
     "sort-package-json": "^1.22.1",
     "source-map-explorer": "^1.8.0",
     "storybook-react-router": "^1.0.5",
