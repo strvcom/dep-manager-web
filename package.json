@@ -89,7 +89,7 @@
     "isomorphic-fetch": "^2.2.1",
     "mem": "^4.3.0",
     "netlify-auth-providers": "^1.0.0-alpha5",
-    "patch-package": "^6.1.2",
+    "patch-package": "^6.2.1",
     "postinstall-postinstall": "^2.0.0",
     "prop-types": "^15.6.2",
     "ramda": "^0.26.1",
