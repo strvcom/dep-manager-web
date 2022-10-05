@@ -26,7 +26,9 @@
     "storybook:start": "start-storybook -p 9009 -s public",
     "test": "jest",
     "ts": "ts-node -r dotenv/config -O '{ \"isolatedModules\": false, \"module\": \"commonjs\" }' ",
-    "type-check": "tsc -p tsconfig.production.json"
+    "type-check": "tsc -p tsconfig.production.json",
+    "prepare": "yarn run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "husky": {
     "hooks": {
@@ -68,7 +70,7 @@
     ]
   },
   "dependencies": {
-    "@apollo/client": "^3.0.0-beta.44",
+    "@apollo/client": "^3.4.0",
     "@octokit/auth-app": "^2.4.5",
     "@octokit/graphql-schema": "^7.7.1",
     "@octokit/rest": "^17.5.1",
@@ -77,7 +79,7 @@
     "apollo-link-context": "^1.0.20",
     "apollo-link-dedup": "^1.0.21",
     "apollo-link-http": "^1.5.17",
-    "apollo-server-lambda": "^2.12.0",
+    "apollo-server-lambda": "^3.0.0",
     "aws-lambda": "^1.0.5",
     "dataloader": "^1.4.0",
     "debug": "^4.1.1",
@@ -86,13 +88,13 @@
     "graphql-tag": "^2.10.0",
     "graphql-tools": "^5.0.0",
     "history": "^4.9.0",
-    "isomorphic-fetch": "^2.2.1",
+    "isomorphic-fetch": "^3.0.0",
     "mem": "^4.3.0",
     "netlify-auth-providers": "^1.0.0-alpha5",
-    "patch-package": "^6.1.2",
+    "patch-package": "^6.2.1",
     "postinstall-postinstall": "^2.0.0",
     "prop-types": "^15.6.2",
-    "ramda": "^0.26.1",
+    "ramda": "^0.27.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^1.2.3",
@@ -104,7 +106,8 @@
     "styled-system": "^2.2.1",
     "ts-toolbelt": "^6.5.1",
     "tsdef": "^0.0.13",
-    "utility-types": "^3.6.1"
+    "utility-types": "^3.6.1",
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",
@@ -182,5 +185,6 @@
     "graphql": "15.0.0",
     "graphql-tools": "5.x.x",
     "react": "16.13.1"
-  }
+  },
+  "snyk": true
 }
